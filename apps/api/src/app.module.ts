@@ -22,7 +22,6 @@ import { User, Feedback, Project, AuditLog } from '@insightstream/database';
       database: process.env.DB_DATABASE || 'insightstream_dev',
       entities: [User, Feedback, Project, AuditLog],
       synchronize: process.env.NODE_ENV !== 'production', // Лише для розробки
-      dropSchema: process.env.NODE_ENV !== 'production',
     }),
     UsersModule,
     AuthModule,

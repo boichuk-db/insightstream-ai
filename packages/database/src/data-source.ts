@@ -12,7 +12,6 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || 'insight_password',
   database: process.env.DB_DATABASE || 'insightstream_dev',
   synchronize: process.env.NODE_ENV !== 'production', // Dev only
-  dropSchema: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV !== 'production',
   entities: [User, Feedback, Project, AuditLog],
   migrations: [],

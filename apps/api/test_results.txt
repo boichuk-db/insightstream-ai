@@ -1,0 +1,46 @@
+FAIL src/modules/feedback/feedback.service.spec.ts
+  FeedbackService
+    √ should be defined (7 ms)
+    create
+      √ should create feedback and call AI analysis (2 ms)
+      √ should throw error if content is missing (7 ms)
+    remove
+      × should successfully remove feedback if it exists (4 ms)
+      √ should throw error if feedback not found during removal (1 ms)
+
+  ● FeedbackService › remove › should successfully remove feedback if it exists
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "relations": Array [
+    +     "project",
+    +   ],
+        "where": Object {
+          "id": "uuid-123",
+    +     "project": Object {
+            "userId": "user-abc",
+    +     },
+        },
+      },
+
+    Number of calls: 1
+
+    [0m [90m 90 |[39m       [36mconst[39m result [33m=[39m [36mawait[39m service[33m.[39mremove(fbId[33m,[39m userId)[33m;[39m
+     [90m 91 |[39m       
+    [31m[1m>[22m[39m[90m 92 |[39m       expect(repo[33m.[39mfindOne)[33m.[39mtoHaveBeenCalledWith({ where[33m:[39m { id[33m:[39m fbId[33m,[39m userId } })[33m;[39m
+     [90m    |[39m                            [31m[1m^[22m[39m
+     [90m 93 |[39m       expect(repo[33m.[39mremove)[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m 94 |[39m       expect(result[33m.[39msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 95 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (modules/feedback/feedback.service.spec.ts:92:28)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 4 passed, 5 total
+Snapshots:   0 total
+Time:        2.308 s, estimated 3 s
+Ran all test suites matching src/modules/feedback/feedback.service.spec.ts.

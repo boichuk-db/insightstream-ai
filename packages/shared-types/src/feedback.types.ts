@@ -1,8 +1,9 @@
 export enum FeedbackStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
+  NEW = 'New',
+  IN_REVIEW = 'In Review',
+  IN_PROGRESS = 'In Progress',
+  DONE = 'Done',
+  REJECTED = 'Rejected',
 }
 
 export interface IFeedback {

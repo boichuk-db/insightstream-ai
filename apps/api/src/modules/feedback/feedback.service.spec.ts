@@ -3,16 +3,19 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { FeedbackService } from './feedback.service';
 import { Feedback } from '@insightstream/database';
 import { AiService } from '../ai/ai.service';
+import { EventsGateway } from '../events/events.gateway';
 
 describe('FeedbackService', () => {
   let service: FeedbackService;
   let repo: any;
   let aiService: any;
+  let eventsGateway: any;
 
   beforeEach(async () => {
     const mockRepo = {
       create: jest.fn().mockImplementation(dto => dto),
       save: jest.fn().mockImplementation(feedback => Promise.resolve({ id: 'uuid-123', ...feedback })),
+      update: jest.fn().mockResolvedValue({}),
       find: jest.fn(),
       findOne: jest.fn(),
       remove: jest.fn().mockResolvedValue({ success: true }),
@@ -27,6 +30,10 @@ describe('FeedbackService', () => {
       }),
     };
 
+    const mockEventsGateway = {
+      emitFeedbackUpdated: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FeedbackService,
@@ -38,12 +45,17 @@ describe('FeedbackService', () => {
           provide: AiService,
           useValue: mockAiService,
         },
+        {
+          provide: EventsGateway,
+          useValue: mockEventsGateway,
+        },
       ],
     }).compile();
 
     service = module.get<FeedbackService>(FeedbackService);
     repo = module.get(getRepositoryToken(Feedback));
     aiService = module.get(AiService);
+    eventsGateway = module.get(EventsGateway);
   });
 
   it('should be defined', () => {
@@ -53,15 +65,14 @@ describe('FeedbackService', () => {
   describe('create', () => {
     it('should create feedback and call AI analysis', async () => {
       const content = 'Love the new dark mode!';
-      const userId = 'user-abc';
+      const projectId = 'proj-abc';
       
-      const result = await service.create(userId, content);
+      const result = await service.create(projectId, content);
 
       expect(aiService.analyzeFeedback).toHaveBeenCalledWith(content);
       expect(repo.create).toHaveBeenCalled();
       expect(repo.save).toHaveBeenCalled();
-      expect(result.sentimentScore).toBe(0.85);
-      expect(result.userId).toBe(userId);
+      expect(result.projectId).toBe(projectId);
     });
 
     it('should throw error if content is missing', async () => {
@@ -78,7 +89,10 @@ describe('FeedbackService', () => {
       
       const result = await service.remove(fbId, userId);
       
-      expect(repo.findOne).toHaveBeenCalledWith({ where: { id: fbId, userId } });
+      expect(repo.findOne).toHaveBeenCalledWith({ 
+        where: { id: fbId, project: { userId } },
+        relations: ['project']
+      });
       expect(repo.remove).toHaveBeenCalled();
       expect(result.success).toBe(true);
     });

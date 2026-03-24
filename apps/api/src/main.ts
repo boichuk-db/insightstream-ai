@@ -7,16 +7,6 @@ import { DataSource } from 'typeorm';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Fix stale PostgreSQL enum types that survive DROP TABLE
-  try {
-    const dataSource = app.get(DataSource);
-    await dataSource.query(`ALTER TABLE feedbacks ALTER COLUMN status TYPE varchar(50) USING status::varchar`).catch(() => {});
-    await dataSource.query(`DROP TYPE IF EXISTS "feedbacks_status_enum" CASCADE`).catch(() => {});
-    await dataSource.query(`DROP TYPE IF EXISTS "feedbackstatus" CASCADE`).catch(() => {});
-    console.log('[Bootstrap] Cleaned up stale PG enum types for status column');
-  } catch (e) {
-    console.warn('[Bootstrap] Enum cleanup skipped:', e.message);
-  }
   
   const projectsService = app.get(ProjectsService);
 
