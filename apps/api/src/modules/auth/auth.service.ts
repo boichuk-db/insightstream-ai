@@ -22,8 +22,7 @@ export class AuthService {
       passwordHash,
     });
 
-    const { passwordHash: _, ...result } = user;
-    return result;
+    return this.login(user);
   }
 
   async validateUser(email: string, pass: string): Promise<any> {

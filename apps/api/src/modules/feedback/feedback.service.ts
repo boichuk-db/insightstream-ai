@@ -12,7 +12,7 @@ export class FeedbackService {
     private aiService: AiService,
   ) {}
 
-  async create(userId: string, content: string, source?: string) {
+  async create(projectId: string, content: string, source?: string) {
     if (!content) {
       throw new Error('Content is required');
     }
@@ -20,7 +20,7 @@ export class FeedbackService {
     try {
       const feedback = this.feedbackRepository.create({
         content,
-        userId,
+        projectId,
         source,
       });
 
@@ -42,13 +42,17 @@ export class FeedbackService {
 
   async findAllByUser(userId: string) {
     return this.feedbackRepository.find({
-      where: { userId },
+      where: { project: { userId } },
+      relations: ['project'],
       order: { createdAt: 'DESC' },
     });
   }
 
   async findOne(id: string, userId: string) {
-    return this.feedbackRepository.findOne({ where: { id, userId } });
+    return this.feedbackRepository.findOne({ 
+      where: { id, project: { userId } },
+      relations: ['project']
+    });
   }
 
   async remove(id: string, userId: string) {

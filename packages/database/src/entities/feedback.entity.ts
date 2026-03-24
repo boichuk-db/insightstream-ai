@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
+import type { Project } from './project.entity';
 import { FeedbackStatus } from '@insightstream/shared-types';
 
 @Entity('feedbacks')
@@ -34,10 +34,10 @@ export class Feedback {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, user => user.feedbacks, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  @ManyToOne('Project', (project: Project) => project.feedbacks, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'projectId' })
+  project: Project;
 
   @Column({ type: 'uuid' })
-  userId: string;
+  projectId: string;
 }

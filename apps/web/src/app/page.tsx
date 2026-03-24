@@ -13,10 +13,12 @@ export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
   const authMutation = useMutation({
     mutationFn: async () => {
+      setErrorMsg('');
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
       const { data } = await api.post(endpoint, { email, password });
       return data;
@@ -31,9 +33,16 @@ export default function Home() {
         setPassword('');
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Authentication Error:', error);
-      alert('Authentication failed. Please check your credentials.');
+      const serverMsg = error.response?.data?.message;
+      if (typeof serverMsg === 'string') {
+        setErrorMsg(serverMsg);
+      } else if (Array.isArray(serverMsg)) {
+        setErrorMsg(serverMsg[0]);
+      } else {
+        setErrorMsg(isLogin ? 'Invalid email or password.' : 'Failed to create account. User might already exist.');
+      }
     },
   });
 
@@ -133,6 +142,12 @@ export default function Home() {
             >
               {isLogin ? 'Sign In' : 'Sign Up'} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
+            
+            {errorMsg && (
+              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm text-center">
+                {errorMsg}
+              </div>
+            )}
           </form>
 
           <div className="mt-8 text-center text-sm text-neutral-500">

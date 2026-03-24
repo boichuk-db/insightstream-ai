@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Feedback } from './entities/feedback.entity';
+import { Project } from './entities/project.entity';
 import { AuditLog } from './entities/audit-log.entity';
 
 export const AppDataSource = new DataSource({
@@ -11,8 +12,9 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || 'insight_password',
   database: process.env.DB_DATABASE || 'insightstream_dev',
   synchronize: process.env.NODE_ENV !== 'production', // Dev only
+  dropSchema: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV !== 'production',
-  entities: [User, Feedback, AuditLog],
+  entities: [User, Feedback, Project, AuditLog],
   migrations: [],
   subscribers: [],
 });

@@ -5,10 +5,10 @@ import { FeedbackService } from './feedback.service';
 import { FeedbackController } from './feedback.controller';
 import { FeedbackPublicController } from './feedback.public.controller';
 import { AiModule } from '../ai/ai.module';
-import { UsersModule } from '../users/users.module';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Feedback]), AiModule, UsersModule],
+  imports: [TypeOrmModule.forFeature([Feedback]), AiModule, ProjectsModule],
   providers: [FeedbackService],
   controllers: [FeedbackController, FeedbackPublicController],
 })

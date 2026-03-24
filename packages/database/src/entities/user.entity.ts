@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
-import { Feedback } from './feedback.entity';
+import type { Project } from './project.entity';
 
 @Entity('users')
 export class User {
@@ -18,12 +18,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isPro: boolean;
 
-  @Column({ type: 'varchar', unique: true, nullable: true })
-  apiKey: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Feedback, feedback => feedback.user)
-  feedbacks: Feedback[];
+  @OneToMany('Project', (project: Project) => project.user)
+  projects: Project[];
 }

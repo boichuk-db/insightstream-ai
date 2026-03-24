@@ -30,4 +30,11 @@ export class UsersService {
     });
     return this.usersRepository.save(user);
   }
+
+  async generateApiKey(id: string): Promise<User | null> {
+    const user = await this.findOneById(id);
+    if (!user) return null;
+    user.apiKey = crypto.randomUUID();
+    return this.usersRepository.save(user);
+  }
 }

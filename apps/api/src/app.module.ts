@@ -6,7 +6,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
-import { User, Feedback, AuditLog } from '@insightstream/database';
+import { ProjectsModule } from './modules/projects/projects.module';
+import { User, Feedback, Project, AuditLog } from '@insightstream/database';
 
 @Module({
   imports: [
@@ -18,12 +19,14 @@ import { User, Feedback, AuditLog } from '@insightstream/database';
       username: process.env.DB_USERNAME || 'insight_user',
       password: process.env.DB_PASSWORD || 'insight_password',
       database: process.env.DB_DATABASE || 'insightstream_dev',
-      entities: [User, Feedback, AuditLog],
+      entities: [User, Feedback, Project, AuditLog],
       synchronize: process.env.NODE_ENV !== 'production', // Лише для розробки
+      dropSchema: process.env.NODE_ENV !== 'production',
     }),
     UsersModule,
     AuthModule,
     FeedbackModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
