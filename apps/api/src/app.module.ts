@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { EventsModule } from './modules/events/events.module';
 import { User, Feedback, Project, AuditLog } from '@insightstream/database';
 
 @Module({
@@ -27,6 +28,7 @@ import { User, Feedback, Project, AuditLog } from '@insightstream/database';
     AuthModule,
     FeedbackModule,
     ProjectsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

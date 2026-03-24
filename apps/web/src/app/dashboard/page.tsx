@@ -12,8 +12,10 @@ import { AnalyticsOverview } from '@/components/analytics/AnalyticsOverview';
 import { WidgetGeneratorModal } from '@/components/dashboard/WidgetGeneratorModal';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { CreateProjectModal } from '@/components/dashboard/CreateProjectModal';
+import { KanbanBoard } from '@/components/dashboard/KanbanBoard';
 import { cn } from '@/lib/utils';
 import { Code } from 'lucide-react';
+import { useSocket } from '@/hooks/useSocket';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -22,6 +24,20 @@ export default function Dashboard() {
   const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+
+  // Fetch user profile (includes id)
+  const { data: userProfile } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const { data } = await api.get('/users/me');
+      return data;
+    },
+  });
+
+  // REAL-TIME UPDATES: Listen for AI analysis completion or status changes
+  useSocket(userProfile?.id, () => {
+    queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+  });
 
   // Fetch projects
   const { data: projects } = useQuery({
@@ -33,15 +49,6 @@ export default function Dashboard() {
   });
 
   const activeProject = projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
-
-  // Fetch user profile (includes apiKey)
-  const { data: userProfile } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: async () => {
-      const { data } = await api.get('/users/me');
-      return data;
-    },
-  });
 
   // Fetch feedback
   const { data: allFeedbacks, isLoading, isError, refetch } = useQuery({
@@ -119,150 +126,107 @@ export default function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
-        
-        {/* Create Feedback Section */}
-        <section className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-xl relative overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-[50px] pointer-events-none" />
+      <main className="flex-1 overflow-hidden flex flex-col bg-neutral-950/20">
+        <div className="flex-1 overflow-y-auto w-full px-6 py-8 flex flex-col gap-10">
           
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Plus className="h-5 w-5 text-indigo-400" /> Let's test the Backend
-          </h2>
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (newFeedback.trim()) createMutation.mutate(newFeedback);
-            }} 
-            className="flex gap-4 items-start"
-          >
-            <Input 
-              placeholder="What do you think about the platform so far?" 
-              value={newFeedback}
-              onChange={(e) => setNewFeedback(e.target.value)}
-              className="flex-1"
-            />
-            <Button type="submit" isLoading={createMutation.isPending} disabled={!newFeedback.trim()}>
-              Submit
-            </Button>
-          </form>
-        </section>
+          {/* Dashboard Header Section */}
+          <section className="flex flex-col md:flex-row gap-6 items-start justify-between">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-indigo-400" /> Dashboard
+              </h1>
+              <p className="text-neutral-500 text-sm">Manage your project feedback and analysis.</p>
+            </div>
+            
+            <div className="w-full md:w-auto flex items-center gap-3">
+              <Button onClick={() => refetch()} className="bg-neutral-900 border border-neutral-800 text-white hover:bg-neutral-800 h-9 px-4 text-xs">
+                <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} /> Refresh Data
+              </Button>
+              <Button 
+                onClick={() => setIsWidgetModalOpen(true)}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-[0_0_20px_rgba(99,102,241,0.3)] h-9 px-4 text-xs"
+              >
+                <Code className="h-4 w-4 mr-2" /> Embed Widget
+              </Button>
+            </div>
+          </section>
 
-        {/* Analytics Section */}
-        {!isLoading && !isError && feedbacks?.length > 0 && (
-          <AnalyticsOverview feedbacks={feedbacks} />
-        )}
-
-        {/* Feedback List Section */}
-        <section className="flex flex-col flex-1">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-neutral-400" /> Your Feedback
-            </h2>
-            <Button onClick={() => refetch()} className="bg-neutral-900 border border-neutral-800 text-white hover:bg-neutral-800 h-8 px-3 text-xs">
-              <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} /> Refresh
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 auto-rows-max">
-            {isLoading ? (
-              [1, 2, 3].map(i => (
-                <div key={i} className="h-32 bg-neutral-900/50 rounded-xl border border-neutral-800/50 animate-pulse" />
-              ))
-            ) : isError ? (
-              <div className="col-span-full p-8 text-center border border-red-900/50 bg-red-950/20 rounded-xl text-red-400">
-                Failed to load feedback. Make sure your API is running.
+          {/* Create Feedback Card - Improved UX */}
+          <section className="bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-6 relative group transition-all duration-300 hover:bg-neutral-900/80 shadow-2xl shrink-0">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            
+            <div className="flex flex-col gap-6 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
+                  <Plus className="h-5 w-5 text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white leading-none">Manual Input Testing</h3>
+                  <p className="text-xs text-neutral-500 mt-1">Submit an internal feedback to test migrations or AI response tags.</p>
+                </div>
               </div>
-            ) : feedbacks?.length === 0 ? (
-              <div className="col-span-full py-16 text-center border border-dashed border-neutral-800 rounded-xl text-neutral-500 flex flex-col items-center gap-3">
-                <MessageSquare className="h-8 w-8 opacity-50" />
-                No feedback submitted yet.<br/> Try creating one above!
-              </div>
-            ) : (
-              <AnimatePresence>
-                {feedbacks?.map((fb: any, index: number) => (
-                  <motion.div
-                    key={fb.id}
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 hover:border-neutral-700 transition-colors flex flex-col group relative"
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded border border-indigo-500/20">
-                          {fb.source || 'Direct'}
-                        </span>
-                        {fb.category && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">
-                            {fb.category}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[10px] text-neutral-500 font-mono">
-                        {new Date(fb.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    
-                    <p className="text-neutral-200 text-sm leading-relaxed mb-3">
-                      {fb.content}
-                    </p>
 
-                    {fb.aiSummary && (
-                      <div className="mb-4 p-2 bg-neutral-950/50 rounded border border-neutral-800/50">
-                        <p className="text-[11px] text-neutral-400 italic leading-snug">
-                          <Sparkles className="h-3 w-3 inline mr-1 text-indigo-400" />
-                          {fb.aiSummary}
-                        </p>
-                      </div>
-                    )}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newFeedback.trim()) createMutation.mutate(newFeedback);
+                }} 
+                className="flex items-center gap-4 w-full"
+              >
+                <div className="flex-1">
+                  <Input 
+                    placeholder="Type a feedback message here..." 
+                    value={newFeedback}
+                    onChange={(e) => setNewFeedback(e.target.value)}
+                    className="w-full bg-neutral-950/80 border-neutral-800 focus:border-indigo-500 h-11 pl-4 text-sm"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  isLoading={createMutation.isPending} 
+                  disabled={!newFeedback.trim()}
+                  className="bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700 h-11 min-w-[140px] shrink-0"
+                >
+                  Post Internal
+                </Button>
+              </form>
+            </div>
+          </section>
 
-                    {fb.tags && fb.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {fb.tags.map((tag: string) => (
-                          <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-neutral-800 text-neutral-400 rounded-full border border-neutral-700">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+          {/* Analytics Overview Section */}
+          {!isLoading && !isError && feedbacks?.length > 0 && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
+               <AnalyticsOverview feedbacks={feedbacks} />
+            </div>
+          )}
 
-                    <div className="mt-auto pt-3 border-t border-neutral-800/50 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {fb.sentimentScore !== null && fb.sentimentScore !== undefined && (
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-12 h-1 bg-neutral-800 rounded-full overflow-hidden">
-                              <div 
-                                className={cn(
-                                  "h-full transition-all",
-                                  fb.sentimentScore > 0.6 ? "bg-emerald-500" : fb.sentimentScore < 0.4 ? "bg-red-500" : "bg-amber-500"
-                                )}
-                                style={{ width: `${fb.sentimentScore * 100}%` }}
-                              />
-                            </div>
-                            <span className="text-[10px] text-neutral-500 font-medium">
-                              {Math.round(fb.sentimentScore * 100)}%
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <button 
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this feedback?')) {
-                            deleteMutation.mutate(fb.id);
-                          }
-                        }}
-                        disabled={deleteMutation.isPending}
-                        className="text-neutral-500 hover:text-red-400 p-1.5 rounded transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            )}
-          </div>
-        </section>
+          {/* Kanban Board Section - Full Height within Scroll */}
+          <section className="flex flex-col gap-6 min-h-[600px] pb-20">
+            <div className="flex items-center gap-2">
+               <div className="p-1.5 bg-neutral-800/50 rounded-lg border border-neutral-700">
+                 <MessageSquare className="h-5 w-5 text-neutral-400" />
+               </div>
+               <h2 className="text-xl font-bold text-white">Feedback Pipelines</h2>
+            </div>
+
+            <div className="flex-1 min-h-[600px]">
+              {isLoading ? (
+                <div className="flex gap-4">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="h-[400px] w-72 bg-neutral-900/30 rounded-2xl border border-neutral-800/40 animate-pulse shrink-0" />
+                  ))}
+                </div>
+              ) : isError ? (
+                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-3xl text-red-400">
+                  <span className="block text-lg font-bold mb-1">Service Error</span>
+                  Failed to load feedback. Make sure your local API server is running on port 3001.
+                </div>
+              ) : (
+                <KanbanBoard initialFeedbacks={feedbacks || []} />
+              )}
+            </div>
+          </section>
+        </div>
       </main>
 
       <WidgetGeneratorModal 

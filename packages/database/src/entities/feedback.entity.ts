@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import type { Project } from './project.entity';
-import { FeedbackStatus } from '@insightstream/shared-types';
 
 @Entity('feedbacks')
 export class Feedback {
@@ -22,11 +21,11 @@ export class Feedback {
   @Column({ type: 'text', nullable: true })
   aiSummary: string;
 
+  @Column({ type: 'varchar', length: 50, default: 'New' })
+  status: string; // 'New', 'In Review', 'In Progress', 'Done', 'Rejected'
+
   @Column({ type: 'simple-array', nullable: true })
   tags: string[];
-
-  @Column({ type: 'enum', enum: FeedbackStatus, default: FeedbackStatus.PENDING })
-  status: FeedbackStatus;
 
   @CreateDateColumn()
   createdAt: Date;

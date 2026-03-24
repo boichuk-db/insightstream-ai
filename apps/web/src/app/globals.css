@@ -4,3 +4,27 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+@layer base {
+  * {
+    @apply border-neutral-800;
+  }
+  
+  /* Modern thin scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-800 rounded-full hover:bg-neutral-700 transition-colors;
+  }
+}
+
+.glass {
+  @apply bg-neutral-900/50 backdrop-blur-md border border-white/5;
+}
