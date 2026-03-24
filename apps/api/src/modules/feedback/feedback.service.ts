@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Feedback } from '@insightstream/database';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class FeedbackService {
   constructor(
     @InjectRepository(Feedback)
     private feedbackRepository: Repository<Feedback>,
+    private aiService: AiService,
   ) {}
 
   async create(userId: string, content: string, source?: string) {
@@ -21,6 +23,16 @@ export class FeedbackService {
         userId,
         source,
       });
+
+      // Analyze feedback content using AI
+      const analysis = await this.aiService.analyzeFeedback(content);
+      if (analysis) {
+        feedback.sentimentScore = analysis.sentimentScore;
+        feedback.category = analysis.category;
+        feedback.aiSummary = analysis.aiSummary;
+        feedback.tags = analysis.tags;
+      }
+
       return await this.feedbackRepository.save(feedback);
     } catch (error) {
       console.error('Feedback creation error:', error);
@@ -37,5 +49,14 @@ export class FeedbackService {
 
   async findOne(id: string, userId: string) {
     return this.feedbackRepository.findOne({ where: { id, userId } });
+  }
+
+  async remove(id: string, userId: string) {
+    const feedback = await this.findOne(id, userId);
+    if (!feedback) {
+      throw new Error('Feedback not found or access denied');
+    }
+    await this.feedbackRepository.remove(feedback);
+    return { success: true };
   }
 }

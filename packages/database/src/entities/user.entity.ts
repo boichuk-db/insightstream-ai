@@ -18,6 +18,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isPro: boolean;
 
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  apiKey: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

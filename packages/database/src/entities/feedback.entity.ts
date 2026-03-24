@@ -22,6 +22,9 @@ export class Feedback {
   @Column({ type: 'text', nullable: true })
   aiSummary: string;
 
+  @Column({ type: 'simple-array', nullable: true })
+  tags: string[];
+
   @Column({ type: 'enum', enum: FeedbackStatus, default: FeedbackStatus.PENDING })
   status: FeedbackStatus;
 

@@ -1,65 +1,151 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Sparkles, ArrowRight, Lock, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Home() {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const authMutation = useMutation({
+    mutationFn: async () => {
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const { data } = await api.post(endpoint, { email, password });
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.access_token) {
+        localStorage.setItem('access_token', data.access_token);
+        router.push('/dashboard');
+      } else if (!isLogin) {
+        // If registered successfully without token return, switch to login
+        setIsLogin(true);
+        setPassword('');
+      }
+    },
+    onError: (error) => {
+      console.error('Authentication Error:', error);
+      alert('Authentication failed. Please check your credentials.');
+    },
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen">
+      {/* Left side - Product showcase */}
+      <div className="hidden lg:flex flex-1 flex-col justify-between bg-neutral-900 p-12 relative overflow-hidden">
+        {/* Decorative dynamic shapes */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[100px] mix-blend-screen -translate-x-1/4 translate-y-1/4 pointer-events-none" />
+
+        <div className="relative z-10 text-white font-medium flex items-center gap-2 text-xl">
+          <Sparkles className="text-indigo-400" /> InsightStream AI
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        
+        <div className="relative z-10 max-w-lg mt-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl sm:text-5xl font-bold font-sans tracking-tight mb-6"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Turn every feedback into actionable insights.
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-neutral-400 text-lg sm:text-xl leading-relaxed"
           >
-            Documentation
-          </a>
+            A powerful, AI-driven platform for collecting, analyzing, and acting upon user feedback at scale. Welcome to the future of product development.
+          </motion.p>
         </div>
-      </main>
+
+        <div className="relative z-10 mt-12 text-sm text-neutral-500">
+          © {new Date().getFullYear()} InsightStream. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right side - Auth Form */}
+      <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 relative bg-neutral-950">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none lg:hidden" />
+        
+        <div className="w-full max-w-sm mx-auto relative z-10">
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-3xl font-bold tracking-tight mb-2">
+              {isLogin ? 'Welcome back' : 'Create an account'}
+            </h2>
+            <p className="text-neutral-400">
+              {isLogin 
+                ? 'Enter your credentials to access your dashboard.' 
+                : 'Sign up to start analyzing feedback with AI.'}
+            </p>
+          </div>
+
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              authMutation.mutate();
+            }} 
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300 ml-1">Email</label>
+              <div className="relative">
+                <Input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300 ml-1">Password</label>
+              <div className="relative">
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full mt-6" 
+              isLoading={authMutation.isPending}
+            >
+              {isLogin ? 'Sign In' : 'Sign Up'} <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </form>
+
+          <div className="mt-8 text-center text-sm text-neutral-500">
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors focus:outline-none"
+            >
+              {isLogin ? 'Sign up' : 'Sign in'}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Widget Test | InsightStream AI</title>
+    <style>
+        body { 
+          background: #f8fafc; 
+          font-family: 'Inter', -apple-system, sans-serif; 
+          height: 150vh; 
+          padding: 100px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .card {
+          background: white;
+          padding: 40px;
+          border-radius: 20px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+          max-width: 600px;
+          border: 1px solid #e2e8f0;
+        }
+        h1 { color: #0f172a; margin-bottom: 20px; }
+        p { color: #64748b; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Welcome to Your Website</h1>
+        <p>This is a demonstration of how the **InsightStream AI** feedback widget looks on a real page. Look at the bottom-right corner to see it in action!</p>
+        <p style="margin-top: 20px; font-size: 0.8em; color: #94a3b8;">Scroll down and play around with the widget.</p>
+    </div>
+
+    <script>
+      window.InsightStreamConfig = {
+        apiKey: '88888888-4444-4444-aaaa-bbbbbbbbbbbb',
+        color: '#6366f1', // Indigo to match our theme
+        shape: 'circle',
+        position: 'bottom-right'
+      };
+    </script>
+    
+    <!-- Widget Script - In production this would be a URL pointing to your CDN -->
+    <script src="./dist/widget.iife.js?v=6"></script>
+</body>
+</html>

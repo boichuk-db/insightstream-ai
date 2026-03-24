@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@insightstream/database';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +19,15 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
+  async findOneByApiKey(apiKey: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { apiKey } });
+  }
+
   async create(userData: Partial<User>): Promise<User> {
-    const user = this.usersRepository.create(userData);
+    const user = this.usersRepository.create({
+      ...userData,
+      apiKey: crypto.randomUUID(),
+    });
     return this.usersRepository.save(user);
   }
 }

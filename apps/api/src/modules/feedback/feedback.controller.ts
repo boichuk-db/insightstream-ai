@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Request, Param } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, UseGuards, Request, Param } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -27,5 +27,10 @@ export class FeedbackController {
   @Get(':id')
   async findOne(@Request() req: any, @Param('id') id: string) {
     return this.feedbackService.findOne(id, req.user.id);
+  }
+
+  @Delete(':id')
+  async remove(@Request() req: any, @Param('id') id: string) {
+    return this.feedbackService.remove(id, req.user.id);
   }
 }
