@@ -12,6 +12,7 @@ import { WidgetGeneratorModal } from '@/components/dashboard/WidgetGeneratorModa
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { CreateProjectModal } from '@/components/dashboard/CreateProjectModal';
 import { KanbanBoard } from '@/components/dashboard/KanbanBoard';
+import { DigestModal } from '@/components/dashboard/DigestModal';
 import { useSocket } from '@/hooks/useSocket';
 
 export default function Dashboard() {
@@ -22,6 +23,26 @@ export default function Dashboard() {
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDigestOpen, setIsDigestOpen] = useState(false);
+  const [digestData, setDigestData] = useState<any>(null);
+  const [digestLoading, setDigestLoading] = useState(false);
+  const [digestError, setDigestError] = useState<string | null>(null);
+
+  const handleOpenDigest = async () => {
+    if (!activeProject?.id) return;
+    setIsDigestOpen(true);
+    setDigestData(null);
+    setDigestError(null);
+    setDigestLoading(true);
+    try {
+      const { data } = await api.get(`/digest/preview/${activeProject.id}`);
+      setDigestData(data);
+    } catch (e: any) {
+      setDigestError(e?.response?.data?.message || 'Не вдалося згенерувати digest');
+    } finally {
+      setDigestLoading(false);
+    }
+  };
 
   const { data: userProfile } = useQuery({
     queryKey: ['userProfile'],
@@ -55,6 +76,50 @@ export default function Dashboard() {
   });
 
   const feedbacks = allFeedbacks?.filter((fb: any) => fb.projectId === activeProject?.id) || [];
+
+  const [seedProgress, setSeedProgress] = useState<string | null>(null);
+
+  const SEED_FEEDBACKS = [
+    'The app crashes every time I try to upload a file larger than 5MB. This is a critical bug!',
+    'Login page keeps throwing a 401 error even with correct credentials. Very frustrating.',
+    'Dashboard is incredibly slow to load — takes over 10 seconds on first open.',
+    'The new dark mode looks amazing! Great work on the UI redesign.',
+    'Would love to see CSV export for the analytics section. Super useful feature request.',
+    'Got charged twice for my subscription this month. Please fix billing ASAP.',
+    'The mobile layout is completely broken on iPhone 14. Buttons overlap the navigation bar.',
+    'API rate limiting is too aggressive — 100 req/min is not enough for our use case.',
+    'Onboarding flow is very smooth and intuitive. New users will have no trouble getting started.',
+    'The real-time notifications are a game changer. Love how instant the updates are!',
+    'Search functionality doesn\'t work at all — returns no results even for exact matches.',
+    'Integration with Slack is missing. This is a must-have for our team workflow.',
+    'The AI summaries are surprisingly accurate. Saves us hours of manual review every week.',
+    'Password reset email never arrives. Been waiting 30 minutes — checked spam too.',
+    'Kanban board drag and drop is buttery smooth. Really impressive UX!',
+    'Would be great to have team collaboration features — shared projects and comments.',
+    'Widget embed code breaks our website layout on Safari. Works fine on Chrome.',
+    'The pricing page is confusing — not clear what\'s included in each plan.',
+    'Customer support responded in under 5 minutes. Absolutely stellar service!',
+    'Data export is too slow — generating a 500-row CSV takes over 2 minutes.',
+  ];
+
+  const handleSeedFeedbacks = async () => {
+    if (!activeProject?.id) return;
+    setSeedProgress('Починаємо...');
+    for (let i = 0; i < SEED_FEEDBACKS.length; i++) {
+      setSeedProgress(`Додаємо ${i + 1}/${SEED_FEEDBACKS.length}...`);
+      try {
+        await api.post('/feedback', {
+          content: SEED_FEEDBACKS[i],
+          projectId: activeProject.id,
+          source: 'Seed Data',
+        });
+        await new Promise(r => setTimeout(r, 400));
+      } catch {
+        // continue on error
+      }
+    }
+    setSeedProgress(null);
+  };
 
   const createMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -171,6 +236,14 @@ export default function Dashboard() {
                 >
                   Post Internal
                 </Button>
+                <Button
+                  type="button"
+                  onClick={handleSeedFeedbacks}
+                  disabled={!!seedProgress || !activeProject?.id}
+                  className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 h-11 w-full sm:w-auto shrink-0 font-semibold"
+                >
+                  {seedProgress ?? '🌱 Seed 20 feedbacks'}
+                </Button>
               </form>
             </div>
           </section>
@@ -184,14 +257,24 @@ export default function Dashboard() {
 
           {/* Kanban Board */}
           <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-neutral-800/50 rounded-lg border border-neutral-700">
-                <MessageSquare className="h-5 w-5 text-neutral-400" />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-neutral-800/50 rounded-lg border border-neutral-700">
+                  <MessageSquare className="h-5 w-5 text-neutral-400" />
+                </div>
+                <h2 className="text-xl font-bold text-white">Feedback Pipelines</h2>
               </div>
-              <h2 className="text-xl font-bold text-white">Feedback Pipelines</h2>
+              <button
+                onClick={handleOpenDigest}
+                disabled={!activeProject?.id}
+                className="flex items-center gap-2 px-3 h-9 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-xs font-semibold hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Digest
+              </button>
             </div>
 
-            <div className="flex-1 min-h-[600px] w-full max-w-full overflow-hidden">
+            <div className="flex-1 w-full max-w-full">
               {isLoading ? (
                 <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
                   {[1, 2, 3, 4, 5].map(i => (
@@ -216,6 +299,13 @@ export default function Dashboard() {
         </div>
       </main>
 
+      <DigestModal
+        isOpen={isDigestOpen}
+        onClose={() => setIsDigestOpen(false)}
+        isLoading={digestLoading}
+        data={digestData}
+        error={digestError}
+      />
       <WidgetGeneratorModal
         isOpen={isWidgetModalOpen}
         onClose={() => setIsWidgetModalOpen(false)}

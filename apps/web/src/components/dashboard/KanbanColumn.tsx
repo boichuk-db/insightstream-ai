@@ -11,9 +11,10 @@ interface KanbanColumnProps {
   isDeleting: boolean;
   colorClass: string;
   onStatusChange: (id: string, status: string) => void;
+  isDragDisabled?: boolean;
 }
 
-export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange }: KanbanColumnProps) {
+export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange, isDragDisabled }: KanbanColumnProps) {
   return (
     <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl group/column">
       <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.04]">
@@ -51,6 +52,7 @@ export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeletin
                 onDelete={onDeleteFeedback}
                 isDeleting={isDeleting}
                 onStatusChange={onStatusChange}
+                isDragDisabled={isDragDisabled}
               />
             ))}
             {provided.placeholder}

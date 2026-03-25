@@ -18,13 +18,14 @@ interface KanbanCardProps {
   onDelete: (id: string) => void;
   isDeleting: boolean;
   onStatusChange: (id: string, status: string) => void;
+  isDragDisabled?: boolean;
 }
 
-export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChange }: KanbanCardProps) {
+export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChange, isDragDisabled }: KanbanCardProps) {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <Draggable draggableId={feedback.id} index={index}>
+    <Draggable draggableId={feedback.id} index={index} isDragDisabled={isDragDisabled}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}

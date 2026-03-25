@@ -28,6 +28,42 @@ export class AiService {
     'workflow', 'email', 'notifications'
   ];
 
+  async generateWeeklyDigest(stats: {
+    projectName: string;
+    totalCount: number;
+    avgSentiment: number;
+    categories: Record<string, number>;
+    topTags: string[];
+    mostNegative: Array<{ content: string; sentimentScore: number | null }>;
+  }): Promise<string> {
+    if (!this.model) return '<p>AI summary unavailable — Gemini key not configured.</p>';
+
+    const prompt = `
+You are a product analytics assistant. Based on the weekly feedback data below, write a concise executive digest (3–4 short paragraphs) in plain HTML.
+Use only <p> tags. Be specific, actionable, and direct. Do not use markdown, headers, or bullet lists.
+
+Project: ${stats.projectName}
+Period: past 7 days
+Total feedbacks: ${stats.totalCount}
+Average sentiment: ${Math.round(stats.avgSentiment * 100)}% positive
+Category breakdown: ${Object.entries(stats.categories).map(([k, v]) => `${k}: ${v}`).join(', ')}
+Top tags: ${stats.topTags.join(', ') || 'none'}
+Most negative feedbacks:
+${stats.mostNegative.map((f, i) => `${i + 1}. [${Math.round((f.sentimentScore ?? 0.5) * 100)}%] ${f.content}`).join('\n')}
+
+Write the digest now:`;
+
+    try {
+      const result = await this.model.generateContent(prompt);
+      const text = (await result.response).text().trim();
+      // Return as-is (already HTML paragraphs)
+      return text || '<p>No summary generated.</p>';
+    } catch (err) {
+      console.error('Gemini digest error:', err);
+      return '<p>AI summary could not be generated this week.</p>';
+    }
+  }
+
   async analyzeFeedback(content: string) {
     if (!this.model) {
       console.warn('Gemini API key not found, skipping AI analysis.');
