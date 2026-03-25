@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    env_file: .env.prod
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-insight_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-insight_password}
+      POSTGRES_DB: ${DB_DATABASE:-insightstream_dev}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-insight_user} -d ${DB_DATABASE:-insightstream_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file: .env.prod
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: db
+    ports:
+      - "3001:3001"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: always
+    depends_on:
+      - api
+    env_file: .env.prod
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+  redis_data:

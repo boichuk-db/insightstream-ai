@@ -18,9 +18,11 @@ export class FeedbackService {
     private projectsService: ProjectsService,
   ) {}
 
-  async create(projectId: string, content: string, userId: string, source?: string) {
-    // Verify the user owns this project — throws NotFoundException if not
-    await this.projectsService.findOne(projectId, userId);
+  async create(projectId: string, content: string, userId?: string, source?: string) {
+    // Verify the user owns this project if userId is provided
+    if (userId) {
+      await this.projectsService.findOne(projectId, userId);
+    }
 
     const feedback = this.feedbackRepository.create({
       content,
@@ -40,7 +42,17 @@ export class FeedbackService {
           aiSummary: analysis.aiSummary,
           tags: analysis.tags,
         });
-        this.eventsGateway.emitFeedbackUpdated(userId);
+        
+        // Only emit if we have a userId to target
+        if (userId) {
+          this.eventsGateway.emitFeedbackUpdated(userId);
+        } else {
+          // For public feedback, we might want to emit to the project owner
+          const project = await this.projectsService.findByOnlyId(projectId);
+          if (project?.userId) {
+            this.eventsGateway.emitFeedbackUpdated(project.userId);
+          }
+        }
       }
     }).catch(err => this.logger.error('Background AI analysis failed', err));
 

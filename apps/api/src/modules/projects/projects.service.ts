@@ -44,6 +44,10 @@ export class ProjectsService {
     return this.projectsRepository.findOne({ where: { apiKey } });
   }
 
+  async findByOnlyId(id: string): Promise<Project | null> {
+    return this.projectsRepository.findOne({ where: { id } });
+  }
+
   async remove(id: string, userId: string): Promise<void> {
     const project = await this.findOne(id, userId);
     await this.projectsRepository.remove(project);

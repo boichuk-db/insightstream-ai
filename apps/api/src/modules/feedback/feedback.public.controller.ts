@@ -44,6 +44,6 @@ export class FeedbackPublicController {
       }
     }
 
-    return this.feedbackService.create(project.id, body.content, body.source || 'Widget');
+    return this.feedbackService.create(project.id, body.content, undefined, body.source || 'Widget');
   }
 }
