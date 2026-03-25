@@ -7,7 +7,7 @@ FROM base AS pruner
 ARG APP
 WORKDIR /app
 COPY . .
-RUN if [ "$APP" = "api" ]; then turbo prune --scope=$APP --scope=widget --docker; else turbo prune --scope=$APP --docker; fi
+RUN turbo prune --scope=$APP --docker
 
 # Builder stage
 FROM base AS builder
@@ -17,7 +17,7 @@ COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
-RUN if [ "$APP" = "api" ]; then pnpm turbo build --filter=$APP --filter=widget; else pnpm turbo build --filter=$APP; fi
+RUN pnpm turbo build --filter=$APP
 
 # Runner stage
 FROM node:20-alpine AS runner
