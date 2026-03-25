@@ -11,8 +11,6 @@ import { ProjectsModule } from './modules/projects/projects.module';
 import { EventsModule } from './modules/events/events.module';
 import { DigestModule } from './modules/digest/digest.module';
 import { User, Feedback, Project, AuditLog } from '@insightstream/database';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 @Module({
   imports: [
@@ -34,10 +32,6 @@ import { join } from 'path';
     ProjectsModule,
     EventsModule,
     DigestModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', '..', 'widget', 'dist'),
-      exclude: ['/api/(.*)'],
-    }),
   ],
   controllers: [AppController],
   providers: [AppService],
