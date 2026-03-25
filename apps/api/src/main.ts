@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ProjectsService } from './modules/projects/projects.service';
-import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,15 +19,11 @@ async function bootstrap() {
 
       try {
         const originUrl = new URL(origin);
-        console.log('🔍 CORS Check - Incoming origin:', origin);
-        console.log('🔍 CORS Check - FRONTEND_URL:', process.env.FRONTEND_URL);
-        // Allow local development and the main dashboard frontend
         if (
           originUrl.hostname === 'localhost' ||
           originUrl.hostname === '127.0.0.1' ||
           origin === process.env.FRONTEND_URL
         ) {
-          console.log('✅ CORS Allowed');
           return callback(null, true);
         }
 

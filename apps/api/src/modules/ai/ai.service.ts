@@ -95,11 +95,9 @@ Write the digest now:`;
     `;
 
     try {
-      console.log('Sending to Gemini:', content);
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      console.log('Gemini raw response:', text);
       
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {

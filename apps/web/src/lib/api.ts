@@ -1,11 +1,7 @@
 import axios from 'axios';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-console.log('🔍 API URL:', apiUrl);
-console.log('🔍 NEXT_PUBLIC_API_URL env:', process.env.NEXT_PUBLIC_API_URL);
-
 export const api = axios.create({
-  baseURL: apiUrl,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
 });
 
 api.interceptors.request.use((config) => {

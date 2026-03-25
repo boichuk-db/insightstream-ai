@@ -75,13 +75,13 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
             </button>
           </div>
 
-          <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4 break-words">
+          <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
             {feedback.content}
           </p>
 
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-neutral-950/50 rounded border border-neutral-800/50">
-              <p className="text-[11px] text-neutral-400 italic leading-snug line-clamp-2 break-words">
+              <p className="text-[11px] text-neutral-400 italic leading-snug line-clamp-2 wrap-break-word">
                 <Sparkles className="h-3 w-3 inline mr-1 text-indigo-400" />
                 {feedback.aiSummary}
               </p>

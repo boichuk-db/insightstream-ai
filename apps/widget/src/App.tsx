@@ -56,7 +56,7 @@ function App() {
   `;
 
   return (
-    <div className={`fixed bottom-12 ${position === 'bottom-right' ? 'right-12' : 'left-12'} font-sans z-[999999] flex flex-col items-end`}>
+    <div className={`fixed bottom-12 ${position === 'bottom-right' ? 'right-12' : 'left-12'} font-sans z-999999 flex flex-col items-end`}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -73,7 +73,7 @@ function App() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-base tracking-tight leading-none mb-1">InsightStream AI</h3>
-                  <p className="text-[10px] text-neutral-500 uppercase tracking-[0.1em] font-bold">Feedback Intelligence</p>
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Feedback Intelligence</p>
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@ function App() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-white/[0.03] text-center border-t border-white/[0.05] flex items-center justify-center gap-2 opacity-60">
+            <div className="px-6 py-4 bg-white/3 text-center border-t border-white/5 flex items-center justify-center gap-2 opacity-60">
               <Sparkles size={12} className="text-indigo-400" />
               <p className="text-[9px] text-neutral-400 uppercase tracking-[0.25em] font-black">
                 InsightStream AI Intelligence

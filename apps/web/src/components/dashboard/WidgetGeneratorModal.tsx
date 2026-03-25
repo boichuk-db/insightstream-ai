@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, Code, Sparkles, Check, Type, Maximize, LayoutTemplate } from 'lucide-react';
+import { X, Copy, Code, Sparkles, Check, Type, Maximize, LayoutTemplate, Key } from 'lucide-react';
 
 interface WidgetGeneratorModalProps {
   isOpen: boolean;
@@ -27,18 +27,28 @@ export function WidgetGeneratorModal({ isOpen, onClose, apiKey }: WidgetGenerato
   const [selectedPosition, setSelectedPosition] = useState<typeof POSITIONS[number]>('bottom-right');
   const [selectedFramework, setSelectedFramework] = useState<typeof FRAMEWORKS[number]>('html');
   const [copied, setCopied] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(false);
+
+  const handleCopyKey = () => {
+    navigator.clipboard.writeText(apiKey);
+    setCopiedKey(true);
+    setTimeout(() => setCopiedKey(false), 2000);
+  };
 
   const getSnippet = () => {
     const scriptUrl = process.env.NEXT_PUBLIC_WIDGET_URL || 'http://localhost:8080/dist/widget.iife.js';
-    
+    const keyPlaceholder = 'YOUR_API_KEY';
+
     if (selectedFramework === 'react') {
       return `import { useEffect } from 'react';
+
+const INSIGHT_STREAM_API_KEY = '${keyPlaceholder}';
 
 export default function InsightStreamWidget() {
   useEffect(() => {
     // 1. Set configuration
     (window as any).InsightStreamConfig = {
-      apiKey: '${apiKey}',
+      apiKey: INSIGHT_STREAM_API_KEY,
       color: '${selectedColor.value}',
       shape: '${selectedShape}',
       position: '${selectedPosition}'
@@ -65,6 +75,8 @@ export default function InsightStreamWidget() {
     if (selectedFramework === 'angular') {
       return `import { Component, OnInit, OnDestroy } from '@angular/core';
 
+const INSIGHT_STREAM_API_KEY = '${keyPlaceholder}';
+
 @Component({
   selector: 'app-insight-stream',
   template: '',
@@ -75,12 +87,12 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     (window as any).InsightStreamConfig = {
-      apiKey: '${apiKey}',
+      apiKey: INSIGHT_STREAM_API_KEY,
       color: '${selectedColor.value}',
       shape: '${selectedShape}',
       position: '${selectedPosition}'
     };
-    
+
     this.scriptElement = document.createElement('script');
     this.scriptElement.src = "${scriptUrl}";
     this.scriptElement.async = true;
@@ -99,7 +111,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
     return `<!-- InsightStream AI Widget -->
 <script id="insight-stream-config">
   window.InsightStreamConfig = {
-    apiKey: '${apiKey}',
+    apiKey: '${keyPlaceholder}',
     color: '${selectedColor.value}',
     shape: '${selectedShape}',
     position: '${selectedPosition}'
@@ -205,6 +217,26 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* API Key */}
+            <div>
+              <h3 className="text-sm font-semibold text-neutral-300 mb-2 flex items-center gap-2">
+                <Key size={14} className="text-neutral-500" /> Your API Key
+              </h3>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-indigo-300 font-mono truncate select-all">
+                  {apiKey}
+                </code>
+                <button
+                  onClick={handleCopyKey}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg transition-colors border border-neutral-700"
+                >
+                  {copiedKey ? <Check size={14} /> : <Copy size={14} />}
+                  {copiedKey ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+              <p className="mt-1.5 text-xs text-neutral-500">Replace <code className="text-neutral-400 bg-neutral-800 px-1 py-0.5 rounded">YOUR_API_KEY</code> in the snippet below with this key.</p>
             </div>
 
             {/* Code Snippet */}
