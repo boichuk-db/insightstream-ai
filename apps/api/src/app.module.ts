@@ -24,7 +24,7 @@ import { User, Feedback, Project, AuditLog } from '@insightstream/database';
       password: process.env.DB_PASSWORD || 'insight_password',
       database: process.env.DB_DATABASE || 'insightstream_dev',
       entities: [User, Feedback, Project, AuditLog],
-      synchronize: process.env.NODE_ENV !== 'production',
+      synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || process.env.NODE_ENV !== 'production',
     }),
     UsersModule,
     AuthModule,
