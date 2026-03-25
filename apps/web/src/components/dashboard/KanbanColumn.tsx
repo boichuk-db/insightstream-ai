@@ -10,11 +10,12 @@ interface KanbanColumnProps {
   onDeleteFeedback: (id: string) => void;
   isDeleting: boolean;
   colorClass: string;
+  onStatusChange: (id: string, status: string) => void;
 }
 
-export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass }: KanbanColumnProps) {
+export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange }: KanbanColumnProps) {
   return (
-    <div className="flex flex-col w-[320px] shrink-0 h-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl flex-1 group/column">
+    <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl group/column">
       <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.04]">
         <h3 className="font-bold text-white text-sm flex items-center gap-2">
           <span className={cn("w-2.5 h-2.5 rounded-full", colorClass, "shadow-[0_0_10px_rgba(255,255,255,0.1)]")} />
@@ -43,12 +44,13 @@ export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeletin
             )}
             
             {feedbacks.map((fb, index) => (
-              <KanbanCard 
-                key={fb.id} 
-                feedback={fb} 
-                index={index} 
+              <KanbanCard
+                key={fb.id}
+                feedback={fb}
+                index={index}
                 onDelete={onDeleteFeedback}
                 isDeleting={isDeleting}
+                onStatusChange={onStatusChange}
               />
             ))}
             {provided.placeholder}

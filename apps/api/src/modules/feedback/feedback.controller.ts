@@ -9,14 +9,10 @@ export class FeedbackController {
 
   @Post()
   async create(@Request() req: any, @Body() body: { content: string; projectId: string; source?: string }) {
-    if (!body || !body.content || !body.projectId) {
-      return { 
-        statusCode: 400, 
-        message: 'Content and projectId are required', 
-      };
+    if (!body?.content || !body?.projectId) {
+      return { statusCode: 400, message: 'Content and projectId are required' };
     }
-    // Note: We should verify the user owns the project here, but skipping for brevity
-    return this.feedbackService.create(body.projectId, body.content, body.source);
+    return this.feedbackService.create(body.projectId, body.content, req.user.id, body.source);
   }
 
   @Get()
@@ -31,18 +27,9 @@ export class FeedbackController {
 
   @Patch(':id/status')
   async updateStatus(@Request() req: any, @Param('id') id: string, @Body('status') status: string) {
-    console.log('[FeedbackController] Incoming Status Update:', { id, status, userId: req.user?.id });
-    try {
-      const result = await this.feedbackService.updateStatus(id, status, req.user.id);
-      console.log('[FeedbackController] Success');
-      return result;
-    } catch (e) {
-      console.error('[FeedbackController] ERROR:', e.message);
-      throw e;
-    }
+    return this.feedbackService.updateStatus(id, status, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Request() req: any, @Param('id') id: string) {
     return this.feedbackService.remove(id, req.user.id);

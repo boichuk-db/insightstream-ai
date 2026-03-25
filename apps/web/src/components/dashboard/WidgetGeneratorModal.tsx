@@ -29,7 +29,7 @@ export function WidgetGeneratorModal({ isOpen, onClose, apiKey }: WidgetGenerato
   const [copied, setCopied] = useState(false);
 
   const getSnippet = () => {
-    const scriptUrl = "http://localhost:8080/dist/widget.iife.js";
+    const scriptUrl = process.env.NEXT_PUBLIC_WIDGET_URL || 'http://localhost:8080/dist/widget.iife.js';
     
     if (selectedFramework === 'react') {
       return `import { useEffect } from 'react';

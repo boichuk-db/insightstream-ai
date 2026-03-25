@@ -69,6 +69,24 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
     }
   });
 
+  const handleStatusChange = useCallback((id: string, newStatus: string) => {
+    // Find which column the card is currently in
+    const sourceColumnId = Object.keys(columns).find(colId =>
+      columns[colId].some((fb: any) => fb.id === id)
+    );
+    if (!sourceColumnId || sourceColumnId === newStatus) return;
+
+    const sourceColumn = [...(columns[sourceColumnId] || [])];
+    const destColumn = [...(columns[newStatus] || [])];
+    const itemIndex = sourceColumn.findIndex((fb: any) => fb.id === id);
+    const [movedItem] = sourceColumn.splice(itemIndex, 1);
+    movedItem.status = newStatus;
+    destColumn.unshift(movedItem);
+
+    setColumns({ ...columns, [sourceColumnId]: sourceColumn, [newStatus]: destColumn });
+    updateStatusMutation.mutate({ id, status: newStatus });
+  }, [columns, updateStatusMutation]);
+
   const handleDragEnd = useCallback((result: DropResult) => {
     const { source, destination, draggableId } = result;
 
@@ -111,7 +129,7 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
   }
 
   return (
-    <div className="flex min-h-[500px] w-full gap-5 overflow-x-auto pb-6 scrollbar-hide">
+    <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
       <DragDropContext onDragEnd={handleDragEnd}>
         {COLUMNS.map(col => (
           <KanbanColumn
@@ -122,6 +140,7 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
             feedbacks={columns[col.id] || []}
             onDeleteFeedback={(id) => deleteMutation.mutate(id)}
             isDeleting={deleteMutation.isPending}
+            onStatusChange={handleStatusChange}
           />
         ))}
       </DragDropContext>

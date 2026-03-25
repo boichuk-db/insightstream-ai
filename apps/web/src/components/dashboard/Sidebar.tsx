@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, Plus, Sparkles, User, Code, LayoutDashboard, ChevronDown, Check, Trash2, Settings } from 'lucide-react';
+import { LogOut, Plus, Sparkles, User, LayoutDashboard, ChevronDown, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,26 +9,45 @@ export function Sidebar({
   activeProject, 
   onSelectProject, 
   onCreateProject,
-  onOpenWidgetModal,
   onDeleteProject,
   isDeletingProject,
   userProfile,
-  onLogout 
+  onLogout,
+  isOpen,
+  onClose
 }: {
   projects: any[];
   activeProject: any;
   onSelectProject: (id: string) => void;
   onCreateProject: () => void;
-  onOpenWidgetModal: () => void;
   onDeleteProject: (id: string) => void;
   isDeletingProject: boolean;
   userProfile: any;
   onLogout: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <div className="w-64 h-screen flex flex-col bg-neutral-900 border-r border-neutral-800 shrink-0 relative overflow-hidden">
+    <>
+      {/* Mobile Backdrop */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" 
+          />
+        )}
+      </AnimatePresence>
+
+      <div className={cn(
+        "fixed inset-y-0 left-0 w-64 h-screen bg-neutral-900 border-r border-neutral-800 shrink-0 z-50 flex flex-col transition-transform duration-300 lg:relative lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
       {/* Decorative Glow */}
       <div className="absolute top-0 left-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
@@ -107,13 +126,6 @@ export function Sidebar({
         <button className="flex items-center gap-3 w-full p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 font-medium text-sm transition-colors">
           <LayoutDashboard className="h-4 w-4" /> Dashboard
         </button>
-        
-        <button 
-          onClick={onOpenWidgetModal}
-          className="flex items-center gap-3 w-full p-2.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800/50 font-medium text-sm transition-colors"
-        >
-          <Code className="h-4 w-4" /> Embed Widget
-        </button>
 
         <div className="my-2 border-t border-neutral-800/50 mx-2" />
         <div className="px-3 mb-1 text-[10px] uppercase tracking-wider text-neutral-500 font-semibold">
@@ -156,6 +168,7 @@ export function Sidebar({
           <LogOut className="h-4 w-4 mr-2" /> Sign Out
         </Button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:3001';
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export function useSocket(userId: string | undefined, onFeedbackUpdated: () => void) {
   const socketRef = useRef<Socket | null>(null);
   const callbackRef = useRef(onFeedbackUpdated);
 
-  // Keep the callback ref up to date
   useEffect(() => {
     callbackRef.current = onFeedbackUpdated;
   }, [onFeedbackUpdated]);
@@ -15,24 +14,23 @@ export function useSocket(userId: string | undefined, onFeedbackUpdated: () => v
   useEffect(() => {
     if (!userId) return;
 
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
     const socket = io(SOCKET_URL, {
-      transports: ['websocket'], // Force websocket to avoid huge amount of polling requests
+      transports: ['websocket'],
+      auth: { token },
     });
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      console.log('Connected to socket server');
-    });
-
-    socket.on(`feedbackUpdated:${userId}`, () => {
-      console.log('Real-time feedback update received!');
+    socket.on('feedbackUpdated', () => {
       callbackRef.current();
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [userId]); // Only depend on userId
+  }, [userId]);
 
   return socketRef.current;
 }

@@ -19,8 +19,7 @@ export class UsersController {
       user = await this.usersService.generateApiKey(user.id);
     }
     
-    // Omit password from the response
-    const { password, ...result } = user as any;
+    const { passwordHash, ...result } = user as any;
     return result;
   }
 }

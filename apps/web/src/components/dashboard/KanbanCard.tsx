@@ -1,16 +1,28 @@
+import { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Sparkles, Trash2, CalendarDays } from 'lucide-react';
+import { Sparkles, Trash2, CalendarDays, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+
+const STATUSES = [
+  { id: 'New', color: 'bg-indigo-500' },
+  { id: 'In Review', color: 'bg-amber-500' },
+  { id: 'In Progress', color: 'bg-blue-500' },
+  { id: 'Done', color: 'bg-emerald-500' },
+  { id: 'Rejected', color: 'bg-red-500' },
+];
 
 interface KanbanCardProps {
   feedback: any;
   index: number;
   onDelete: (id: string) => void;
   isDeleting: boolean;
+  onStatusChange: (id: string, status: string) => void;
 }
 
-export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCardProps) {
+export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChange }: KanbanCardProps) {
+  const [showPicker, setShowPicker] = useState(false);
+
   return (
     <Draggable draggableId={feedback.id} index={index}>
       {(provided, snapshot) => (
@@ -18,11 +30,13 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCard
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onClick={() => setShowPicker(v => !v)}
           className={cn(
-            "bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
-            snapshot.isDragging 
-              ? "border-indigo-500 shadow-2xl z-50 ring-2 ring-indigo-500/50 opacity-100" 
-              : "hover:border-neutral-700 hover:bg-neutral-800/50"
+            "w-full overflow-hidden bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
+            snapshot.isDragging
+              ? "border-indigo-500 shadow-2xl z-50 ring-2 ring-indigo-500/50 opacity-100"
+              : "hover:border-neutral-700 hover:bg-neutral-800/50",
+            showPicker && "border-neutral-700 bg-neutral-800/50"
           )}
           style={{
             ...provided.draggableProps.style,
@@ -47,9 +61,10 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCard
                 </span>
               )}
             </div>
-            
-            <button 
-              onClick={() => {
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
                 if (confirm('Delete this feedback?')) onDelete(feedback.id);
               }}
               disabled={isDeleting}
@@ -59,21 +74,19 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCard
             </button>
           </div>
 
-          <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4">
+          <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4 break-words">
             {feedback.content}
           </p>
 
-          {/* AI Summary snippet if exists */}
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-neutral-950/50 rounded border border-neutral-800/50">
-              <p className="text-[11px] text-neutral-400 italic leading-snug line-clamp-2">
+              <p className="text-[11px] text-neutral-400 italic leading-snug line-clamp-2 break-words">
                 <Sparkles className="h-3 w-3 inline mr-1 text-indigo-400" />
                 {feedback.aiSummary}
               </p>
             </div>
           )}
 
-          {/* Tags */}
           {feedback.tags && feedback.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {feedback.tags.map((tag: string) => (
@@ -85,11 +98,10 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCard
           )}
 
           <div className="mt-auto pt-3 border-t border-neutral-800/50 flex items-center justify-between">
-            {/* Sentiment Score */}
             {feedback.sentimentScore !== null && feedback.sentimentScore !== undefined ? (
               <div className="flex items-center gap-1.5">
                 <div className="w-10 h-1 bg-neutral-800 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className={cn(
                       "h-full transition-all",
                       feedback.sentimentScore > 0.6 ? "bg-emerald-500" : feedback.sentimentScore < 0.4 ? "bg-red-500" : "bg-amber-500"
@@ -103,12 +115,51 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting }: KanbanCard
               </div>
             ) : <div />}
 
-            {/* Date */}
             <div className="flex items-center text-[10px] text-neutral-500 font-mono gap-1">
               <CalendarDays className="h-3 w-3" />
               {formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
             </div>
           </div>
+
+          {/* Status picker */}
+          {showPicker && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="mt-3 pt-3 border-t border-neutral-700 flex flex-col gap-1"
+            >
+              <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Move to</p>
+              <div className="grid grid-cols-1 gap-1">
+                {STATUSES.map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      if (s.id !== feedback.status) onStatusChange(feedback.id, s.id);
+                      setShowPicker(false);
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 w-full px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left",
+                      s.id === feedback.status
+                        ? "bg-neutral-700 text-white cursor-default"
+                        : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                    )}
+                  >
+                    <span className={cn("w-2 h-2 rounded-full shrink-0", s.color)} />
+                    {s.id}
+                    {s.id === feedback.status && (
+                      <span className="ml-auto text-[9px] text-neutral-500">current</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tap hint for mobile — visible only when picker is closed */}
+          {!showPicker && (
+            <div className="absolute bottom-3 right-3 flex items-center gap-0.5 text-neutral-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <ChevronDown className="h-3 w-3" />
+            </div>
+          )}
         </div>
       )}
     </Draggable>
