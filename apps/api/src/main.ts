@@ -17,15 +17,18 @@ async function bootstrap() {
   app.enableCors({
     origin: async (origin, callback) => {
       if (!origin) return callback(null, true);
-      
+
       try {
         const originUrl = new URL(origin);
+        console.log('🔍 CORS Check - Incoming origin:', origin);
+        console.log('🔍 CORS Check - FRONTEND_URL:', process.env.FRONTEND_URL);
         // Allow local development and the main dashboard frontend
         if (
-          originUrl.hostname === 'localhost' || 
+          originUrl.hostname === 'localhost' ||
           originUrl.hostname === '127.0.0.1' ||
           origin === process.env.FRONTEND_URL
         ) {
+          console.log('✅ CORS Allowed');
           return callback(null, true);
         }
 
