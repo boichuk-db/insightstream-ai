@@ -7,6 +7,7 @@ declare global {
   interface Window {
     InsightStreamConfig?: {
       apiKey?: string;
+      apiUrl?: string;
       color?: string;
       shape?: 'circle' | 'square' | 'rounded';
       position?: 'bottom-right' | 'bottom-left';
@@ -30,7 +31,8 @@ function App() {
 
     setStatus('loading');
     try {
-      await axios.post('http://localhost:3001/feedback/public', {
+      const apiUrl = window.InsightStreamConfig?.apiUrl || 'https://api-production-05c4.up.railway.app';
+      await axios.post(`${apiUrl}/feedback/public`, {
         apiKey: config.apiKey,
         content,
         source: 'Widget'
