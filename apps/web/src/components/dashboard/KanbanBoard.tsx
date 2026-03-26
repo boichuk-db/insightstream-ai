@@ -288,19 +288,22 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
         </div>
 
         <div className="relative z-20 flex items-center gap-3">
-          <button
+          <Button
+            variant="danger"
+            size="sm"
             onClick={() => {
               if (confirm('Archive all "Done" and "Rejected" cards?')) {
                 archiveMutation.mutate();
               }
             }}
-            disabled={archiveMutation.isPending || (displayColumns['Done']?.length === 0 && displayColumns['Rejected']?.length === 0)}
-            className="w-full md:w-auto flex items-center justify-center gap-2 h-9 px-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-[11px] font-bold text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/40 transition-all active:scale-95 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm"
+            isLoading={archiveMutation.isPending}
+            disabled={displayColumns['Done']?.length === 0 && displayColumns['Rejected']?.length === 0}
+            className="w-full md:w-auto px-4"
           >
-            <Archive className="h-4 w-4" />
+            <Archive className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Clean Board</span>
             <span className="sm:hidden">Archive Done</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -335,19 +338,21 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
 
   return (
     <div className="relative">
-      <button
+      <Button
+        variant="brand"
+        size="xs"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "h-8 rounded-xl border border-brand-border/50 bg-brand-surface/50 px-3 flex items-center gap-2 transition-all hover:bg-brand-surface group/btn",
+          "bg-brand-surface/50 transition-all px-3",
           isOpen && "border-indigo-500/30 bg-indigo-500/5 text-brand"
         )}
       >
         <FileDown className="h-3.5 w-3.5 text-brand-muted group-hover/btn:text-white" />
-        <span className="text-[11px] uppercase tracking-wider font-semibold text-brand-muted group-hover/btn:text-white">Export</span>
+        <span className="mx-1">Export</span>
         <div className="h-3 w-px bg-brand-border/50 mx-1" />
-        <span className="text-[11px] font-medium text-brand-muted group-hover/btn:text-white truncate max-w-[100px]">{activeTitle}</span>
-        <ChevronDown className={cn("h-3 w-3 text-brand-muted group-hover/btn:text-white transition-all", isOpen && "rotate-180")} />
-      </button>
+        <span className="truncate max-w-[100px] lowercase first-letter:uppercase">{activeTitle}</span>
+        <ChevronDown className={cn("ml-2 h-3 w-3 text-brand-muted group-hover/btn:text-white transition-all", isOpen && "rotate-180")} />
+      </Button>
 
       <AnimatePresence>
         {isOpen && (
@@ -394,20 +399,24 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
 
                 {/* Export Actions */}
                 <div className="grid grid-cols-2 gap-2">
-                  <button
+                  <Button
+                    variant="brand"
+                    size="sm"
                     onClick={() => { onExportCSV(); setIsOpen(false); }}
-                    className="flex items-center justify-center gap-2 h-9 rounded-xl border border-brand-border bg-brand-bg text-[10px] font-bold text-brand-muted hover:text-emerald-400 hover:border-emerald-500/40 transition-all active:scale-95"
+                    className="hover:text-emerald-400 hover:border-emerald-500/40"
                   >
-                    <FileDown className="h-3.5 w-3.5" />
+                    <FileDown className="h-3.5 w-3.5 mr-2" />
                     CSV
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="brand"
+                    size="sm"
                     onClick={() => { onExportPDF(); setIsOpen(false); }}
-                    className="flex items-center justify-center gap-2 h-9 rounded-xl border border-brand-border bg-brand-bg text-[10px] font-bold text-brand-muted hover:text-indigo-400 hover:border-indigo-500/40 transition-all active:scale-95"
+                    className="hover:text-indigo-400 hover:border-indigo-500/40"
                   >
-                    <Printer className="h-3.5 w-3.5" />
+                    <Printer className="h-3.5 w-3.5 mr-2" />
                     PDF
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>

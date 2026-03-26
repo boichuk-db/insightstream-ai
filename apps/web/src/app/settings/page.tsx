@@ -7,6 +7,7 @@ import { PLAN_CONFIGS, PlanType, formatLimit, getPlanConfig } from '@/lib/plans'
 import { Sparkles, ArrowLeft, User, Mail, Calendar, Loader2, Check, Shield, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { useTeam } from '@/hooks/useTeam';
@@ -104,12 +105,14 @@ export default function SettingsPage() {
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <div className="relative z-10 brand-page-container">
             <header className="flex items-center gap-4 mb-10">
-              <button
+              <Button
+                variant="brand"
+                size="sm"
                 onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-colors"
+                className="lg:hidden"
               >
                 <Menu size={20} />
-              </button>
+              </Button>
               <button
                 onClick={() => router.push('/dashboard')}
                 className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
@@ -231,26 +234,19 @@ export default function SettingsPage() {
                       <Check className="h-3.5 w-3.5" /> Active Plan
                     </div>
                   ) : (
-                    <button
+                    <Button
+                      variant={planType === PlanType.BUSINESS ? 'primary' : planType === PlanType.PRO ? 'primary' : 'secondary'}
+                      size="sm"
                       onClick={() => upgradeMutation.mutate(planType)}
-                      disabled={isUpgrading}
+                      isLoading={isUpgrading}
                       className={cn(
-                        "py-2 rounded-lg text-xs font-semibold transition-all disabled:opacity-50",
-                        planType === PlanType.BUSINESS
-                          ? "bg-amber-500 hover:bg-amber-600 text-black"
-                          : planType === PlanType.PRO
-                            ? "bg-indigo-500 hover:bg-indigo-600 text-white"
-                            : "bg-zinc-800 hover:bg-zinc-700 text-white"
+                        "w-full font-bold",
+                        planType === PlanType.BUSINESS && "bg-amber-500 hover:bg-amber-600 text-black border-transparent",
+                        planType === PlanType.PRO && "bg-indigo-600 hover:bg-indigo-700 text-white border-transparent"
                       )}
                     >
-                      {isUpgrading ? (
-                        <span className="flex items-center justify-center gap-1.5">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Changing...
-                        </span>
-                      ) : (
-                        `Switch to ${config.name}`
-                      )}
-                    </button>
+                      Switch to {config.name}
+                    </Button>
                   )}
                 </div>
               );

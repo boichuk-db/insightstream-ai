@@ -244,15 +244,19 @@ export default function Dashboard() {
                   type="submit"
                   isLoading={createMutation.isPending}
                   disabled={!newFeedback.trim()}
-                  className="bg-brand-surface hover:bg-brand-border/50 text-white border border-brand-border h-11 w-full sm:min-w-[140px] sm:w-auto shrink-0"
+                  variant="brand"
+                  size="md"
+                  className="w-full sm:min-w-[140px] sm:w-auto shrink-0"
                 >
                   Post Internal
                 </Button>
                 <Button
                   type="button"
+                  variant="brand"
+                  size="md"
                   onClick={handleSeedFeedbacks}
                   disabled={!!seedProgress || !activeProject?.id}
-                  className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 h-11 w-full sm:w-auto shrink-0 font-semibold"
+                  className="border-amber-500/30 text-amber-500/80 hover:text-amber-400 hover:bg-amber-500/5 w-full sm:w-auto shrink-0 font-bold"
                 >
                   {seedProgress ?? '🌱 Seed 20 feedbacks'}
                 </Button>

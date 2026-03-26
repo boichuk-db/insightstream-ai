@@ -137,6 +137,8 @@ export default function Home() {
 
             <Button 
               type="submit" 
+              variant="primary"
+              size="lg"
               className="w-full mt-6" 
               isLoading={authMutation.isPending}
             >

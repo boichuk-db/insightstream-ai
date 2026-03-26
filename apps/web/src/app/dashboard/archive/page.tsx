@@ -216,23 +216,23 @@ export default function ArchivePage() {
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] uppercase tracking-wider text-brand-muted font-bold">Per page:</span>
-                  <div className="flex bg-brand-bg border border-brand-border rounded-lg p-0.5">
+                  <div className="flex bg-brand-bg border border-brand-border rounded-xl p-0.5">
                     {[20, 50, 100].map((size) => (
-                      <button
+                      <Button
                         key={size}
+                        variant={itemsPerPage === size ? 'primary' : 'ghost'}
+                        size="xs"
                         onClick={() => {
                           setItemsPerPage(size);
                           setCurrentPage(1);
                         }}
                         className={cn(
-                          "px-2 py-1 text-[10px] font-bold rounded-md transition-all",
-                          itemsPerPage === size
-                            ? "bg-indigo-500/10 text-indigo-400 shadow-sm"
-                            : "text-brand-muted hover:text-white"
+                          "px-3 h-7 rounded-lg",
+                          itemsPerPage === size ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/30" : "hover:bg-white/5"
                         )}
                       >
                         {size}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -240,36 +240,36 @@ export default function ArchivePage() {
 
               <div className="flex items-center gap-2">
                 <Button 
-                  variant="ghost" 
-                  size="sm" 
+                  variant="brand" 
+                  size="xs" 
                   disabled={currentPage === 1} 
-                  className="h-8 rounded-lg"
                   onClick={() => setCurrentPage(prev => prev - 1)}
+                  className="px-3"
                 >
                   Previous
                 </Button>
                 <div className="flex items-center gap-1">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
+                    <Button
                       key={page}
+                      variant={currentPage === page ? 'primary' : 'brand'}
+                      size="xs"
                       onClick={() => setCurrentPage(page)}
                       className={cn(
-                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold border transition-all",
-                        currentPage === page
-                          ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
-                          : "text-brand-muted border-transparent hover:border-brand-border hover:text-white"
+                        "w-8 px-0",
+                        currentPage === page ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30" : "bg-transparent border-transparent text-brand-muted hover:border-brand-border"
                       )}
                     >
                       {page}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 <Button 
-                  variant="ghost" 
-                  size="sm" 
+                  variant="brand" 
+                  size="xs" 
                   disabled={currentPage === totalPages || totalPages === 0} 
-                  className="h-8 rounded-lg"
                   onClick={() => setCurrentPage(prev => prev + 1)}
+                  className="px-3"
                 >
                   Next
                 </Button>

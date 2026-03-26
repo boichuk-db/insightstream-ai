@@ -116,7 +116,7 @@ export default function ActivityPage() {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                     <Button variant="outline" size="sm" className="h-8 rounded-lg border-brand-border text-[10px] uppercase font-bold tracking-wider">
+                     <Button variant="brand" size="xs" className="px-3">
                         <Filter className="h-3 w-3 mr-2" /> All Events
                      </Button>
                   </div>

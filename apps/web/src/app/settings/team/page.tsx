@@ -140,12 +140,14 @@ export default function TeamSettingsPage() {
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <div className="relative z-10 brand-page-container">
             <header className="flex items-center gap-4 mb-10">
-              <button
+              <Button
+                variant="brand"
+                size="sm"
                 onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-colors"
+                className="lg:hidden"
               >
                 <Menu size={20} />
-              </button>
+              </Button>
               <button
                 onClick={() => router.push('/dashboard')}
                 className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
@@ -198,9 +200,11 @@ export default function TeamSettingsPage() {
               />
               <Button
                 type="submit"
+                variant="primary"
+                size="md"
                 isLoading={inviteMutation.isPending}
                 disabled={!inviteEmail.trim()}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white h-10 px-6"
+                className="px-6"
               >
                 Send Invite
               </Button>
@@ -229,12 +233,14 @@ export default function TeamSettingsPage() {
                       Invited by {inv.invitedByEmail} · Expires {new Date(inv.expiresAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="xs"
                     onClick={() => cancelInvitationMutation.mutate(inv.id)}
-                    className="p-1.5 text-brand-muted hover:text-red-400 transition-colors"
+                    className="hover:text-red-400"
                   >
                     <X className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -290,16 +296,18 @@ export default function TeamSettingsPage() {
 
                     {/* Remove (Admin+, can't remove owner) */}
                     {isAdmin && member.role !== 'owner' && (
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="xs"
                         onClick={() => {
                           if (confirm(`Remove ${member.email} from the team?`)) {
                             removeMemberMutation.mutate(member.userId);
                           }
                         }}
-                        className="p-1.5 text-brand-muted hover:text-red-400 transition-colors"
+                        className="hover:text-red-400"
                       >
                         <Trash2 className="h-4 w-4" />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

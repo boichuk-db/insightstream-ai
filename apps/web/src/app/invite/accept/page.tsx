@@ -91,7 +91,11 @@ function AcceptInviteContent() {
             <p className="text-zinc-400 mb-6">
               You've already joined <strong className="text-white">{info.teamName}</strong>.
             </p>
-            <Button onClick={() => router.push('/dashboard')} className="bg-indigo-500 hover:bg-indigo-600 text-white">
+            <Button 
+              variant="primary" 
+              size="md" 
+              onClick={() => router.push('/dashboard')}
+            >
               Go to Dashboard
             </Button>
           </div>
@@ -122,20 +126,19 @@ function AcceptInviteContent() {
 
             {isLoggedIn ? (
               <Button
+                variant="primary"
+                size="lg"
                 onClick={() => acceptMutation.mutate()}
                 isLoading={acceptMutation.isPending}
-                className="w-full bg-indigo-500 hover:bg-indigo-600 text-white h-11"
+                className="w-full"
               >
                 Join Team
               </Button>
             ) : (
               <div className="space-y-3">
                 <p className="text-sm text-neutral-500 mb-4">Sign in or create an account to join.</p>
-                <a
-                  href={`/auth?redirect=/invite/accept?token=${token}`}
-                  className="block w-full"
-                >
-                  <Button className="w-full bg-indigo-500 hover:bg-indigo-600 text-white h-11">
+                <a href={`/auth?redirect=/invite/accept?token=${token}`} className="block w-full">
+                  <Button variant="primary" size="lg" className="w-full">
                     Sign In to Join
                   </Button>
                 </a>

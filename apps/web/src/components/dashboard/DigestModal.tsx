@@ -2,6 +2,7 @@
 
 import { X, Sparkles, TrendingDown, Tag, BarChart2, CalendarDays, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface DigestData {
   projectName: string;
@@ -67,9 +68,14 @@ export function DigestModal({ isOpen, onClose, isLoading, data, error }: DigestM
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-brand-muted hover:text-white transition-colors rounded-lg hover:bg-zinc-800">
+          <Button 
+            variant="ghost" 
+            size="xs" 
+            onClick={onClose} 
+            className="p-1.5 hover:bg-zinc-800"
+          >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
