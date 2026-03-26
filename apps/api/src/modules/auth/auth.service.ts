@@ -2,12 +2,14 @@ import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
+import { TeamsService } from '../teams/teams.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private teamsService: TeamsService,
   ) {}
 
   async register(email: string, pass: string) {
@@ -22,6 +24,9 @@ export class AuthService {
       passwordHash,
     });
 
+    // Auto-create personal team for new user
+    await this.teamsService.createPersonalTeam(user.id);
+
     return this.login(user);
   }
 
@@ -35,14 +40,14 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
+    const payload = { email: user.email, sub: user.id, role: user.role, plan: user.plan };
     return {
       access_token: this.jwtService.sign(payload),
       user: {
         id: user.id,
         email: user.email,
         role: user.role,
-        isPro: user.isPro,
+        plan: user.plan,
       },
     };
   }

@@ -11,13 +11,15 @@ interface KanbanColumnProps {
   isDeleting: boolean;
   colorClass: string;
   onStatusChange: (id: string, status: string) => void;
+  onReanalyzeFeedback: (id: string) => void;
+  isReanalyzing: boolean;
   isDragDisabled?: boolean;
 }
 
-export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange, isDragDisabled }: KanbanColumnProps) {
+export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange, isDragDisabled, onReanalyzeFeedback, isReanalyzing }: KanbanColumnProps) {
   return (
     <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl group/column">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.04]">
+      <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/4">
         <h3 className="font-bold text-white text-sm flex items-center gap-2">
           <span className={cn("w-2.5 h-2.5 rounded-full", colorClass, "shadow-[0_0_10px_rgba(255,255,255,0.1)]")} />
           {title}
@@ -34,7 +36,7 @@ export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeletin
             {...provided.droppableProps}
             className={cn(
               "flex-1 overflow-y-auto p-3 space-y-3 min-h-[300px] transition-colors scrollbar-hide",
-              snapshot.isDraggingOver ? "bg-white/[0.02]" : ""
+              snapshot.isDraggingOver ? "bg-white/2" : ""
             )}
           >
             {feedbacks.length === 0 && !snapshot.isDraggingOver && (
@@ -52,6 +54,8 @@ export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeletin
                 onDelete={onDeleteFeedback}
                 isDeleting={isDeleting}
                 onStatusChange={onStatusChange}
+                onReanalyze={onReanalyzeFeedback}
+                isReanalyzing={isReanalyzing}
                 isDragDisabled={isDragDisabled}
               />
             ))}

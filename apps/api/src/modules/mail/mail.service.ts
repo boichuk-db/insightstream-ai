@@ -31,7 +31,18 @@ export class MailService {
 
   async send(to: string, subject: string, html: string): Promise<void> {
     if (!this.transporter) {
-      this.logger.warn(`[SKIP] Email to ${to} — SMTP not configured.`);
+      this.logger.warn(`[DEVELOPMENT MODE] Email to: ${to}`);
+      this.logger.warn(`Subject: ${subject}`);
+      
+      // Try to extract link from HTML for convenience
+      const linkMatch = html.match(/href="([^"]+)"/);
+      if (linkMatch) {
+        this.logger.log(`🔗 Action Link: ${linkMatch[1]}`);
+      }
+
+      console.log('\x1b[36m%s\x1b[0m', '------------------- EMAIL PREVIEW -------------------');
+      console.log(html.replace(/<[^>]*>?/gm, ' ').trim()); // simple strip tags
+      console.log('\x1b[36m%s\x1b[0m', '-----------------------------------------------------');
       return;
     }
 

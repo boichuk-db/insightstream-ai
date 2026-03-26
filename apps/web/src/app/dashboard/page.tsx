@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
@@ -12,8 +13,12 @@ import { WidgetGeneratorModal } from '@/components/dashboard/WidgetGeneratorModa
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { CreateProjectModal } from '@/components/dashboard/CreateProjectModal';
 import { KanbanBoard } from '@/components/dashboard/KanbanBoard';
+import { CommentsPanel } from '@/components/dashboard/CommentsPanel';
+import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { DigestModal } from '@/components/dashboard/DigestModal';
 import { useSocket } from '@/hooks/useSocket';
+import { useTeam } from '@/hooks/useTeam';
+import { isPaidPlan } from '@/lib/plans';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -27,6 +32,9 @@ export default function Dashboard() {
   const [digestData, setDigestData] = useState<any>(null);
   const [digestLoading, setDigestLoading] = useState(false);
   const [digestError, setDigestError] = useState<string | null>(null);
+
+  const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
+  const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(null);
 
   const handleOpenDigest = async () => {
     if (!activeProject?.id) return;
@@ -61,6 +69,14 @@ export default function Dashboard() {
     queryKey: ['projects'],
     queryFn: async () => {
       const { data } = await api.get('/projects');
+      return data;
+    },
+  });
+
+  const { data: usage } = useQuery({
+    queryKey: ['planUsage'],
+    queryFn: async () => {
+      const { data } = await api.get('/plans/usage');
       return data;
     },
   });
@@ -130,8 +146,14 @@ export default function Dashboard() {
       setNewFeedback('');
       // No manual invalidation — socket event from backend triggers it after AI analysis
     },
-    onError: () => {
-      alert('Failed to send feedback.');
+    onError: (error: any) => {
+      if (error.response?.data?.error === 'PlanLimitExceeded') {
+        if (confirm(`${error.response.data.message}\n\nWould you like to upgrade your plan?`)) {
+          router.push('/pricing');
+        }
+      } else {
+        alert('Failed to send feedback.');
+      }
     },
   });
 
@@ -166,6 +188,10 @@ export default function Dashboard() {
         onLogout={handleLogout}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        teams={teams}
+        activeTeam={activeTeam}
+        onSwitchTeam={switchTeam}
+        userRole={userRole}
       />
 
       <main className="flex-1 overflow-hidden flex flex-col bg-neutral-950/20">
@@ -197,6 +223,53 @@ export default function Dashboard() {
               <span className="xs:hidden">Embed</span>
             </Button>
           </section>
+
+          {/* Usage Meters */}
+          {usage && (
+            <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Plan</p>
+                <p className="text-lg font-bold text-white">{usage.planName}</p>
+              </div>
+              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Projects</p>
+                <p className="text-lg font-bold text-white">
+                  {usage.projects.current} <span className="text-neutral-500 text-sm font-normal">/ {usage.projects.max ?? '∞'}</span>
+                </p>
+                {usage.projects.max && (
+                  <div className="mt-2 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${usage.projects.current / usage.projects.max > 0.8 ? 'bg-amber-500' : 'bg-indigo-500'}`}
+                      style={{ width: `${Math.min(100, (usage.projects.current / usage.projects.max) * 100)}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Feedbacks / mo</p>
+                <p className="text-lg font-bold text-white">
+                  {usage.feedbacksThisMonth.current} <span className="text-neutral-500 text-sm font-normal">/ {usage.feedbacksThisMonth.max ?? '∞'}</span>
+                </p>
+                {usage.feedbacksThisMonth.max && (
+                  <div className="mt-2 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${usage.feedbacksThisMonth.current / usage.feedbacksThisMonth.max > 0.8 ? 'bg-amber-500' : 'bg-indigo-500'}`}
+                      style={{ width: `${Math.min(100, (usage.feedbacksThisMonth.current / usage.feedbacksThisMonth.max) * 100)}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">AI Analysis</p>
+                <p className="text-lg font-bold text-white capitalize">{usage.features.aiAnalysis}</p>
+                {!isPaidPlan(usage.plan) && (
+                  <Link href="/pricing" className="text-[10px] text-indigo-400 hover:text-indigo-300 font-medium mt-1 inline-block">
+                    Upgrade for full AI
+                  </Link>
+                )}
+              </div>
+            </section>
+          )}
 
           {/* Manual Input */}
           <section className="bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-6 relative group transition-all duration-300 hover:bg-neutral-900/80 shadow-2xl shrink-0">
@@ -255,6 +328,11 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* Activity Feed */}
+          {activeTeamId && (
+            <ActivityFeed teamId={activeTeamId} />
+          )}
+
           {/* Kanban Board */}
           <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
             <div className="flex items-center justify-between gap-2">
@@ -292,7 +370,10 @@ export default function Dashboard() {
                   Failed to load feedback. Make sure your local API server is running on port 3001.
                 </div>
               ) : (
-                <KanbanBoard initialFeedbacks={feedbacks || []} />
+                <KanbanBoard 
+                  initialFeedbacks={feedbacks || []} 
+                  projectId={activeProject?.id} 
+                />
               )}
             </div>
           </section>
@@ -315,6 +396,11 @@ export default function Dashboard() {
         isOpen={isCreateProjectModalOpen}
         onClose={() => setIsCreateProjectModalOpen(false)}
         onCreated={(id) => setSelectedProjectId(id)}
+      />
+      <CommentsPanel
+        feedbackId={commentsFeedbackId}
+        onClose={() => setCommentsFeedbackId(null)}
+        currentUserId={userProfile?.id}
       />
     </div>
   );

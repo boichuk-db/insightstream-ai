@@ -15,8 +15,11 @@ export class User {
   @Column({ type: 'varchar', default: 'user' })
   role: string;
 
-  @Column({ type: 'boolean', default: false })
-  isPro: boolean;
+  @Column({ type: 'varchar', length: 20, default: 'FREE' })
+  plan: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  planUpdatedAt: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;

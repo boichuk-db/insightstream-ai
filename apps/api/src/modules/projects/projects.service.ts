@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '@insightstream/database';
+import { Project, TeamMember } from '@insightstream/database';
+import { PlanLimitsService } from '../plans/plan-limits.service';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -9,12 +10,21 @@ export class ProjectsService {
   constructor(
     @InjectRepository(Project)
     private projectsRepository: Repository<Project>,
+    @InjectRepository(TeamMember)
+    private memberRepo: Repository<TeamMember>,
+    private planLimitsService: PlanLimitsService,
   ) {}
 
-  async create(userId: string, data: { name: string; domain?: string }): Promise<Project> {
+  async create(userId: string, data: { name: string; domain?: string; teamId?: string }): Promise<Project> {
+    const check = await this.planLimitsService.canCreateProject(userId);
+    const plan = await this.planLimitsService.getUserPlan(userId);
+    this.planLimitsService.assertAllowed(check, 'projects', plan);
+
     const project = this.projectsRepository.create({
-      ...data,
+      name: data.name,
+      domain: data.domain,
       userId,
+      teamId: data.teamId || null,
       apiKey: crypto.randomUUID(),
     });
     return this.projectsRepository.save(project);
@@ -27,17 +37,41 @@ export class ProjectsService {
     });
 
     if (projects.length === 0) {
-      // Auto-create a default project for backward compatibility and UX
-      const defaultProject = await this.create(userId, { name: 'Default Project', domain: 'localhost' });
+      const defaultProject = await this.projectsRepository.save(
+        this.projectsRepository.create({
+          name: 'Default Project',
+          domain: 'localhost',
+          userId,
+          apiKey: crypto.randomUUID(),
+        }),
+      );
       projects = [defaultProject];
     }
     return projects;
   }
 
+  async findAllByTeam(teamId: string): Promise<Project[]> {
+    return this.projectsRepository.find({
+      where: { teamId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOne(id: string, userId: string): Promise<Project> {
-    const project = await this.projectsRepository.findOne({ where: { id, userId } });
+    const project = await this.projectsRepository.findOne({ where: { id } });
     if (!project) throw new NotFoundException('Project not found');
-    return project;
+
+    // Check access: direct owner or team member
+    if (project.userId === userId) return project;
+
+    if (project.teamId) {
+      const member = await this.memberRepo.findOne({
+        where: { teamId: project.teamId, userId },
+      });
+      if (member) return project;
+    }
+
+    throw new NotFoundException('Project not found');
   }
 
   async findByApiKey(apiKey: string): Promise<Project | null> {

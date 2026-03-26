@@ -30,8 +30,18 @@ export class FeedbackController {
     return this.feedbackService.updateStatus(id, status, req.user.id);
   }
 
+  @Post(':id/reanalyze')
+  async reanalyze(@Request() req: any, @Param('id') id: string) {
+    return this.feedbackService.reanalyze(id, req.user.id);
+  }
+
   @Delete(':id')
   async remove(@Request() req: any, @Param('id') id: string) {
     return this.feedbackService.remove(id, req.user.id);
+  }
+
+  @Post('bulk-archive')
+  async bulkArchive(@Request() req: any, @Body('projectId') projectId: string) {
+    return this.feedbackService.bulkArchive(projectId, req.user.id);
   }
 }

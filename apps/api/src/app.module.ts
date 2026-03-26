@@ -10,7 +10,12 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { EventsModule } from './modules/events/events.module';
 import { DigestModule } from './modules/digest/digest.module';
-import { User, Feedback, Project, AuditLog } from '@insightstream/database';
+import { PlansModule } from './modules/plans/plans.module';
+import { TeamsModule } from './modules/teams/teams.module';
+import { InvitationsModule } from './modules/invitations/invitations.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { ActivityModule } from './modules/activity/activity.module';
+import { User, Feedback, Project, AuditLog, Team, TeamMember, Invitation, Comment, ActivityEvent } from '@insightstream/database';
 
 @Module({
   imports: [
@@ -23,7 +28,7 @@ import { User, Feedback, Project, AuditLog } from '@insightstream/database';
       username: process.env.DB_USERNAME || 'insight_user',
       password: process.env.DB_PASSWORD || 'insight_password',
       database: process.env.DB_DATABASE || 'insightstream_dev',
-      entities: [User, Feedback, Project, AuditLog],
+      entities: [User, Feedback, Project, AuditLog, Team, TeamMember, Invitation, Comment, ActivityEvent],
       synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || process.env.NODE_ENV !== 'production',
     }),
     UsersModule,
@@ -32,6 +37,11 @@ import { User, Feedback, Project, AuditLog } from '@insightstream/database';
     ProjectsModule,
     EventsModule,
     DigestModule,
+    PlansModule,
+    TeamsModule,
+    InvitationsModule,
+    CommentsModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

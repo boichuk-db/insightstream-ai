@@ -5,6 +5,7 @@ import { Repository, MoreThan } from 'typeorm';
 import { Project, Feedback, User } from '@insightstream/database';
 import { AiService } from '../ai/ai.service';
 import { MailService } from '../mail/mail.service';
+import { PlanLimitsService } from '../plans/plan-limits.service';
 
 @Injectable()
 export class DigestService {
@@ -16,6 +17,7 @@ export class DigestService {
     @InjectRepository(User) private users: Repository<User>,
     private ai: AiService,
     private mail: MailService,
+    private planLimitsService: PlanLimitsService,
   ) {}
 
   /** Runs every Monday at 09:00 AM */
@@ -36,8 +38,16 @@ export class DigestService {
     mostNegative: Array<{ content: string; sentimentScore: number | null }>;
     aiSummary: string;
   }> {
-    const project = await this.projects.findOne({ where: { id: projectId } });
+    const project = await this.projects.findOne({ where: { id: projectId }, relations: ['user'] });
     if (!project) throw new Error(`Project ${projectId} not found`);
+
+    // Gate digest preview by plan
+    if ((project as any).user?.id) {
+      const hasDigest = await this.planLimitsService.canUseFeature((project as any).user.id, 'weeklyDigest');
+      if (!hasDigest) {
+        throw new Error('Weekly digest is available on Pro and Business plans. Please upgrade.');
+      }
+    }
 
     const since = new Date();
     since.setDate(since.getDate() - 7);
@@ -66,6 +76,17 @@ export class DigestService {
 
     for (const project of allProjects) {
       try {
+        // Skip digest for users whose plan doesn't include it
+        const ownerId = (project as any).user?.id;
+        if (ownerId) {
+          const hasDigest = await this.planLimitsService.canUseFeature(ownerId, 'weeklyDigest');
+          if (!hasDigest) {
+            this.logger.debug(`Project "${project.name}" — owner plan does not include weekly digest, skipping.`);
+            skipped++;
+            continue;
+          }
+        }
+
         const weekFeedbacks = await this.feedbacks.find({
           where: { projectId: project.id, createdAt: MoreThan(since) },
           order: { createdAt: 'DESC' },

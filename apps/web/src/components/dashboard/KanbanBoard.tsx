@@ -5,10 +5,12 @@ import { FilterBar } from './FilterBar';
 import { api } from '@/lib/api';
 import { exportToCSV, exportToPDF } from '@/lib/exportFeedbacks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FileDown, Printer, ChevronDown } from 'lucide-react';
+import { FileDown, Printer, ChevronDown, Archive } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface KanbanBoardProps {
   initialFeedbacks: any[];
+  projectId: string;
 }
 
 const COLUMNS = [
@@ -56,7 +58,7 @@ function applyFilters(
   return result;
 }
 
-export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
+export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
   const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
 
@@ -171,6 +173,31 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
     }
   });
 
+  const reanalyzeMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.post(`/feedback/${id}/reanalyze`);
+    },
+    onSuccess: () => {
+      // Socket will trigger invalidation, but manual invalidate is safer for feedback from user
+      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+    },
+    onError: (err: any) => {
+      alert(`Re-analysis failed: ${err?.response?.data?.message || err.message}`);
+    }
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: async () => {
+      await api.post('/feedback/bulk-archive', { projectId });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+    },
+    onError: (err: any) => {
+      alert(`Archiving failed: ${err?.response?.data?.message || err.message}`);
+    }
+  });
+
   const handleStatusChange = useCallback((id: string, newStatus: string) => {
     const sourceColumnId = Object.keys(columns).find(colId =>
       columns[colId].some((fb: any) => fb.id === id)
@@ -275,6 +302,21 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
           <Printer className="h-3 w-3" />
           PDF
         </button>
+
+        <div className="h-4 w-px bg-neutral-800 mx-1" />
+
+        <button
+          onClick={() => {
+            if (confirm('Archive all "Done" and "Rejected" cards?')) {
+              archiveMutation.mutate();
+            }
+          }}
+          disabled={archiveMutation.isPending || (displayColumns['Done']?.length === 0 && displayColumns['Rejected']?.length === 0)}
+          className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-neutral-800 bg-neutral-950 text-[10px] font-semibold text-neutral-400 hover:text-amber-400 hover:border-amber-500/40 transition-colors disabled:opacity-30 disabled:hover:text-neutral-400 disabled:hover:border-neutral-800"
+        >
+          <Archive className="h-3 w-3" />
+          Clean Board (Archive)
+        </button>
       </div>
 
       <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
@@ -289,6 +331,8 @@ export function KanbanBoard({ initialFeedbacks }: KanbanBoardProps) {
               onDeleteFeedback={(id) => deleteMutation.mutate(id)}
               isDeleting={deleteMutation.isPending}
               onStatusChange={handleStatusChange}
+              onReanalyzeFeedback={(id) => reanalyzeMutation.mutate(id)}
+              isReanalyzing={reanalyzeMutation.isPending}
               isDragDisabled={hasActiveFilters}
             />
           ))}

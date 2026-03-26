@@ -43,39 +43,34 @@ insightstream-ai/
 
 - **Embeddable Feedback Widget** — Lightweight JS snippet that can be embedded on any website. Validates API keys and enforces domain whitelisting for security.
 
-- **AI-Powered Analysis** — Every feedback submission is analyzed by Gemini AI in the background (non-blocking). Extracts:
-  - Sentiment score (0–1)
-  - Category (Bug, Feature, UI/UX, Performance, etc.)
-  - Summary (≤15 words)
-  - Tags from a predefined taxonomy (`urgent`, `crash`, `login`, `api`, etc.)
+- **AI-Powered Analysis** — Every feedback submission is analyzed by Gemini AI in the background. Extracts sentiment, category, summary, and taxonomy tags (`urgent`, `crash`, etc.) in real-time.
 
-- **Kanban Board** — Drag-and-drop feedback pipeline with 5 columns:
-  - `New` → `In Review` → `In Progress` → `Done` → `Rejected`
-  - Optimistic UI updates via `@tanstack/react-query`
-  - Uses `@hello-pangea/dnd` for smooth drag interactions
+- **Kanban Board** — Drag-and-drop feedback pipeline with 5 columns: `New`, `In Review`, `In Progress`, `Done`, `Rejected`. Features optimistic UI updates via TanStack Query.
 
-- **Real-Time Updates (Socket.io)** — AI analysis results push to the dashboard instantly via WebSockets. No page refresh required — cards update live as AI finishes processing.
+- **Advanced Filtering** — Instant search across feedback content and AI summaries. Filter by dynamically generated tags from AI analysis.
 
-- **Multi-Project Support** — Users can create multiple projects, each with its own API key, domain whitelist, and isolated feedback stream.
+- **Real-Time Updates (Socket.io)** — AI results and status changes push to the dashboard instantly. No page refresh required — cards update live as AI finishes processing.
 
-- **Analytics Overview** — Visual dashboard section with sentiment distribution and category breakdown charts (Recharts).
+- **Team Collaboration** — Robust invitation system with role-based access control (Admin, Member, Viewer). Shared project management for groups.
 
-- **Authentication** — JWT-based auth with Passport. Registration, login, and protected API routes.
+- **AI Digests** — On-demand and scheduled weekly summary reports. Generates high-level trends, top issues, and sentiment shifts using Gemini AI.
 
-- **Premium Dark UI** — Glassmorphism, custom thin scrollbars, micro-animations, gradient accents, and responsive layout.
+- **Data Export** — Professional reports exported as CSV or PDF directly from the dashboard, supporting filtered views or individual columns.
+
+- **Activity & Comments** — Real-time activity feed for team actions and nested comment threads on feedback cards for internal discussion.
+
+- **Usage & Subscription** — Integrated plan tier system (Free, Pro, Business) with usage meters and feature gating.
+
+- **Premium Dark UI** — High-performance glassmorphism interface built with Next.js 16, React 19, and TailwindCSS 4.
 
 ### In Progress / Planned
 
-- [ ] **Weekly AI Digests** — Automated summary emails with trends, top issues, and sentiment shifts
-- [ ] **Advanced Filtering** — Filter Kanban cards by category, sentiment, tags, date range
-- [ ] **User Roles & Teams** — Invite team members, assign feedback cards, role-based access
-- [ ] **Redis Caching** — Cache frequent queries (feedback lists, analytics aggregations)
-- [ ] **Webhook Integrations** — Push feedback events to Slack, Discord, Jira
-- [ ] **Export** — CSV/PDF export of feedback data and analytics reports
-- [ ] **Production Deployment** — Docker multi-stage builds, CI/CD pipeline, environment configs
-- [ ] **E2E Tests** — Playwright tests for the full feedback lifecycle
-- [ ] **Rate Limiting** — Protect public widget endpoint from abuse
-- [ ] **Audit Log UI** — Display the `AuditLog` entity data in the dashboard
+- [ ] **Webhook Integrations** — Push feedback events to Slack, Discord, or Jira automatically.
+- [ ] **Redis Caching** — Cache frequent analytics aggregations and project configurations for ultra-fast loading.
+- [ ] **E2E Testing** — Comprehensive Playwright test suite for the full feedback lifecycle.
+- [ ] **Rate Limiting** — Enhanced protection for public widget endpoints from high-volume abuse.
+- [ ] **i18n Support** — Multi-language support for both the dashboard and the embeddable widget.
+- [ ] **Dark/Light Mode** — Seamless theme switching (currently optimized for premium Dark mode).
 
 ---
 
@@ -198,40 +193,45 @@ The widget respects the **domain whitelist** set on your project. Requests from 
 
 ## Project Structure Details
 
-### `apps/api` — Backend
+### `apps/api` — NestJS Backend
 
 ```
 src/modules/
-├── ai/          # Gemini AI integration, prompt engineering
-├── auth/        # JWT strategy, guards, login/register
-├── events/      # Socket.io gateway for real-time push
-├── feedback/    # CRUD + status updates + public widget endpoint
-├── projects/    # Multi-project management, API key generation
-└── users/       # User entity management
+├── ai/           # Gemini AI integration & prompt engineering
+├── auth/         # JWT strategies & RBAC guards
+├── events/       # Socket.io gateways for real-time push
+├── feedback/     # Feedback CRUD & status management
+├── projects/     # Multi-project management & API keys
+├── teams/        # Team membership & role management
+├── invitations/  # Email-based team invitations
+├── digest/       # AI report generation (Preview & Cron)
+├── activity/     # Audit logs & team activity tracking
+├── comments/     # Internal discussion threads
+└── plans/        # Usage limits & subscription tiers
 ```
 
-### `apps/web` — Dashboard
+### `apps/web` — Next.js Dashboard
 
 ```
 src/
 ├── app/
-│   ├── page.tsx           # Landing / auth page
-│   └── dashboard/page.tsx # Main dashboard with Kanban
+│   ├── (auth)/        # Registration & Login routes
+│   └── dashboard/     # Main dashboard with Kanban & Analytics
 ├── components/
-│   ├── analytics/         # Charts and overview cards
-│   ├── dashboard/         # Sidebar, KanbanBoard, KanbanColumn, KanbanCard,
-│   │                      #   WidgetGeneratorModal, CreateProjectModal
-│   └── ui/                # Button, Input, reusable primitives
+│   ├── analytics/     # Charts (Recharts) & insight cards
+│   ├── dashboard/     # KanbanBoard, Sidebar, Modals, ActivityFeed,
+│   │                  #   FilterBar, DigestModal, CommentsPanel
+│   └── ui/            # Centralized design system components
 ├── hooks/
-│   └── useSocket.ts       # Real-time Socket.io hook
+│   └── useTeam.ts     # Team & Project context management
 └── lib/
-    ├── api.ts             # Axios instance with JWT interceptor
-    └── utils.ts           # cn() utility
+    ├── api.ts         # Axios instance with interceptors
+    └── exportFeedbacks.ts # CSV & PDF generator logic
 ```
 
 ### `apps/widget` — Embeddable Widget
 
-Built with Vite, outputs a single `widget.js` bundle. Features floating action button, feedback form, and customizable themes.
+Built with Vite, outputs a single `widget.js` bundle. Features a floating bubble, AI-ready feedback forms, and domain verification.
 
 ---
 

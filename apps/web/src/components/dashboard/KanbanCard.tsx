@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Sparkles, Trash2, CalendarDays, ChevronDown } from 'lucide-react';
+import { Sparkles, Trash2, CalendarDays, ChevronDown, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -18,10 +18,14 @@ interface KanbanCardProps {
   onDelete: (id: string) => void;
   isDeleting: boolean;
   onStatusChange: (id: string, status: string) => void;
+  onReanalyze: (id: string) => void;
+  isReanalyzing: boolean;
   isDragDisabled?: boolean;
+  onOpenComments?: (feedbackId: string) => void;
+  commentCount?: number;
 }
 
-export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChange, isDragDisabled }: KanbanCardProps) {
+export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChange, isDragDisabled, onOpenComments, commentCount, onReanalyze, isReanalyzing }: KanbanCardProps) {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
@@ -63,21 +67,53 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
               )}
             </div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (confirm('Delete this feedback?')) onDelete(feedback.id);
-              }}
-              disabled={isDeleting}
-              className="text-neutral-500 hover:text-red-400 p-1 rounded transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onReanalyze(feedback.id);
+                }}
+                disabled={isReanalyzing}
+                title="Re-run AI Analysis"
+                className={cn(
+                  "p-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/5 text-indigo-400 hover:bg-indigo-500/15 hover:border-indigo-500/40 transition-all",
+                  isReanalyzing && "animate-pulse cursor-not-allowed opacity-70"
+                )}
+              >
+                <Sparkles className={cn("h-3.5 w-3.5", isReanalyzing && "animate-spin")} />
+              </button>
+              
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (confirm('Delete this feedback?')) onDelete(feedback.id);
+                }}
+                disabled={isDeleting}
+                className="text-neutral-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
             {feedback.content}
           </p>
+
+          {!feedback.aiSummary && !isReanalyzing && (
+            <div className="mb-3 p-3 bg-indigo-500/5 border border-dashed border-indigo-500/20 rounded-xl flex items-center justify-between group/re">
+              <span className="text-[11px] text-neutral-500">Not analyzed yet</span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onReanalyze(feedback.id);
+                }}
+                className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+              >
+                <Sparkles size={12} /> Analyze
+              </button>
+            </div>
+          )}
 
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-neutral-950/50 rounded border border-neutral-800/50">
@@ -116,9 +152,21 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
               </div>
             ) : <div />}
 
-            <div className="flex items-center text-[10px] text-neutral-500 font-mono gap-1">
-              <CalendarDays className="h-3 w-3" />
-              {formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenComments?.(feedback.id);
+                }}
+                className="flex items-center gap-1 text-[10px] text-neutral-500 hover:text-indigo-400 transition-colors"
+              >
+                <MessageCircle className="h-3 w-3" />
+                {commentCount || 0}
+              </button>
+              <div className="flex items-center text-[10px] text-neutral-500 font-mono gap-1">
+                <CalendarDays className="h-3 w-3" />
+                {formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
+              </div>
             </div>
           </div>
 

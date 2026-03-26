@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
 import type { User } from './user.entity';
+import type { Team } from './team.entity';
 import type { Feedback } from './feedback.entity';
 
 @Entity('projects')
@@ -25,6 +26,14 @@ export class Project {
 
   @Column({ type: 'uuid' })
   userId: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  @Index()
+  teamId: string | null;
+
+  @ManyToOne('Team', (team: Team) => team.projects, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'teamId' })
+  team: Team;
 
   @OneToMany('Feedback', (feedback: Feedback) => feedback.project)
   feedbacks: Feedback[];

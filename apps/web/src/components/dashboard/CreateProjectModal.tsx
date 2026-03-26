@@ -31,9 +31,12 @@ export function CreateProjectModal({
       if (onCreated) onCreated(newProject.id);
       onClose();
     },
-    onError: (error) => {
-      console.error('Failed to create project:', error);
-      alert('Failed to create project. Please try again.');
+    onError: (error: any) => {
+      if (error.response?.data?.error === 'PlanLimitExceeded') {
+        alert(error.response.data.message);
+      } else {
+        alert('Failed to create project. Please try again.');
+      }
     }
   });
 
