@@ -1,13 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-geist-mono);
+  
+  --color-brand-primary: var(--color-indigo-500);
+  --color-brand-bg: #09090b;
+  --color-brand-surface: #161618; /* slightly lighter than bg */
+  --color-brand-border: #2a2a2d; /* slightly lighter and more visible */
+  --color-brand-muted: #71717a;
+  --color-brand-accent: var(--color-indigo-400);
 }
 
 @layer base {
-  * {
-    @apply border-neutral-800;
+  *, ::after, ::before {
+    @apply border-brand-border;
+    border-width: 0;
+    border-style: solid;
   }
   
   /* Modern thin scrollbars */
@@ -21,18 +30,22 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-800 rounded-full hover:bg-neutral-700 transition-colors;
+    @apply bg-brand-border rounded-full hover:bg-zinc-700 transition-colors;
   }
 }
 
 .glass {
-  @apply bg-neutral-900/50 backdrop-blur-md border border-white/5;
+  @apply bg-brand-surface/50 backdrop-blur-xl border border-white/5 shadow-2xl;
 }
 
-.scrollbar-hide {
+.brand-page-container {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }

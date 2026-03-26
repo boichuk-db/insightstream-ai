@@ -9,22 +9,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, MessageSquare, Sparkles, Menu, Code } from 'lucide-react';
 import { AnalyticsOverview } from '@/components/analytics/AnalyticsOverview';
-import { WidgetGeneratorModal } from '@/components/dashboard/WidgetGeneratorModal';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { CreateProjectModal } from '@/components/dashboard/CreateProjectModal';
 import { KanbanBoard } from '@/components/dashboard/KanbanBoard';
 import { CommentsPanel } from '@/components/dashboard/CommentsPanel';
-import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { DigestModal } from '@/components/dashboard/DigestModal';
 import { useSocket } from '@/hooks/useSocket';
 import { useTeam } from '@/hooks/useTeam';
-import { isPaidPlan } from '@/lib/plans';
 
 export default function Dashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [newFeedback, setNewFeedback] = useState('');
-  const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -73,13 +69,7 @@ export default function Dashboard() {
     },
   });
 
-  const { data: usage } = useQuery({
-    queryKey: ['planUsage'],
-    queryFn: async () => {
-      const { data } = await api.get('/plans/usage');
-      return data;
-    },
-  });
+
 
   const activeProject = projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
 
@@ -91,7 +81,9 @@ export default function Dashboard() {
     },
   });
 
-  const feedbacks = allFeedbacks?.filter((fb: any) => fb.projectId === activeProject?.id) || [];
+  const feedbacks = allFeedbacks?.filter((fb: any) => 
+    fb.projectId === activeProject?.id && fb.status !== 'Archived'
+  ) || [];
 
   const [seedProgress, setSeedProgress] = useState<string | null>(null);
 
@@ -176,7 +168,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-neutral-950 overflow-hidden">
+    <div className="flex h-screen bg-brand-bg overflow-hidden">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}
@@ -194,7 +186,7 @@ export default function Dashboard() {
         userRole={userRole}
       />
 
-      <main className="flex-1 overflow-hidden flex flex-col bg-neutral-950/20">
+      <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
         <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-8 sm:gap-10 max-w-full">
 
           {/* Header */}
@@ -202,7 +194,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-neutral-900 border border-neutral-800 rounded-lg text-neutral-400 hover:text-white"
+                className="lg:hidden p-2 bg-brand-bg rounded-xl border border-brand-border text-brand-muted hover:text-white"
               >
                 <Menu size={20} />
               </button>
@@ -210,69 +202,16 @@ export default function Dashboard() {
                 <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2">
                   <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-400" /> Dashboard
                 </h1>
-                <p className="hidden xs:block text-neutral-500 text-xs sm:text-sm">Manage your project feedback and analysis.</p>
+                <p className="hidden xs:block text-brand-muted text-xs sm:text-sm">Manage your project feedback and analysis.</p>
               </div>
             </div>
 
-            <Button
-              onClick={() => setIsWidgetModalOpen(true)}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-[0_0_20px_rgba(99,102,241,0.3)] h-9 px-3 sm:px-4 text-xs"
-            >
-              <Code className="h-4 w-4 mr-2" />
-              <span className="hidden xs:inline">Embed Widget</span>
-              <span className="xs:hidden">Embed</span>
-            </Button>
           </section>
 
-          {/* Usage Meters */}
-          {usage && (
-            <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
-                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Plan</p>
-                <p className="text-lg font-bold text-white">{usage.planName}</p>
-              </div>
-              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
-                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Projects</p>
-                <p className="text-lg font-bold text-white">
-                  {usage.projects.current} <span className="text-neutral-500 text-sm font-normal">/ {usage.projects.max ?? '∞'}</span>
-                </p>
-                {usage.projects.max && (
-                  <div className="mt-2 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${usage.projects.current / usage.projects.max > 0.8 ? 'bg-amber-500' : 'bg-indigo-500'}`}
-                      style={{ width: `${Math.min(100, (usage.projects.current / usage.projects.max) * 100)}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
-                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Feedbacks / mo</p>
-                <p className="text-lg font-bold text-white">
-                  {usage.feedbacksThisMonth.current} <span className="text-neutral-500 text-sm font-normal">/ {usage.feedbacksThisMonth.max ?? '∞'}</span>
-                </p>
-                {usage.feedbacksThisMonth.max && (
-                  <div className="mt-2 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${usage.feedbacksThisMonth.current / usage.feedbacksThisMonth.max > 0.8 ? 'bg-amber-500' : 'bg-indigo-500'}`}
-                      style={{ width: `${Math.min(100, (usage.feedbacksThisMonth.current / usage.feedbacksThisMonth.max) * 100)}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-xl p-4">
-                <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">AI Analysis</p>
-                <p className="text-lg font-bold text-white capitalize">{usage.features.aiAnalysis}</p>
-                {!isPaidPlan(usage.plan) && (
-                  <Link href="/pricing" className="text-[10px] text-indigo-400 hover:text-indigo-300 font-medium mt-1 inline-block">
-                    Upgrade for full AI
-                  </Link>
-                )}
-              </div>
-            </section>
-          )}
+
 
           {/* Manual Input */}
-          <section className="bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-6 relative group transition-all duration-300 hover:bg-neutral-900/80 shadow-2xl shrink-0">
+          <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 relative group transition-all duration-300 hover:bg-brand-surface/80 shadow-2xl shrink-0">
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
             <div className="flex flex-col gap-6 relative z-10">
@@ -282,7 +221,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white leading-none">Manual Input Testing</h3>
-                  <p className="text-xs text-neutral-500 mt-1">Submit an internal feedback to test migrations or AI response tags.</p>
+                  <p className="text-xs text-brand-muted mt-1">Submit an internal feedback to test migrations or AI response tags.</p>
                 </div>
               </div>
 
@@ -298,14 +237,14 @@ export default function Dashboard() {
                     placeholder="Type a feedback message here..."
                     value={newFeedback}
                     onChange={(e) => setNewFeedback(e.target.value)}
-                    className="w-full bg-neutral-950/80 border-neutral-800 focus:border-indigo-500 h-11 pl-4 text-sm"
+                    className="w-full bg-brand-surface/60 border-brand-border/50 focus:border-indigo-500 h-11 pl-4 text-sm"
                   />
                 </div>
                 <Button
                   type="submit"
                   isLoading={createMutation.isPending}
                   disabled={!newFeedback.trim()}
-                  className="bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700 h-11 w-full sm:min-w-[140px] sm:w-auto shrink-0"
+                  className="bg-brand-surface hover:bg-brand-border/50 text-white border border-brand-border h-11 w-full sm:min-w-[140px] sm:w-auto shrink-0"
                 >
                   Post Internal
                 </Button>
@@ -328,17 +267,13 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Activity Feed */}
-          {activeTeamId && (
-            <ActivityFeed teamId={activeTeamId} />
-          )}
 
           {/* Kanban Board */}
           <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-neutral-800/50 rounded-lg border border-neutral-700">
-                  <MessageSquare className="h-5 w-5 text-neutral-400" />
+                <div className="p-1.5 bg-brand-border/50 rounded-xl border border-brand-border/50">
+                  <MessageSquare className="h-5 w-5 text-brand-muted" />
                 </div>
                 <h2 className="text-xl font-bold text-white">Feedback Pipelines</h2>
               </div>
@@ -356,16 +291,16 @@ export default function Dashboard() {
               {isLoading ? (
                 <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-[600px] bg-neutral-900/50 rounded-2xl border border-neutral-800/50 p-4 space-y-4 animate-pulse">
-                      <div className="h-6 w-1/3 bg-neutral-800 rounded mb-2" />
+                    <div key={i} className="flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-[600px] bg-brand-surface/50 rounded-2xl border border-brand-border/50 p-4 space-y-4 animate-pulse">
+                      <div className="h-6 w-1/3 bg-brand-border rounded mb-2" />
                       {[1, 2, 3].map(j => (
-                        <div key={j} className="h-32 w-full bg-neutral-800/40 rounded-xl border border-neutral-800/40" />
+                        <div key={j} className="h-32 w-full bg-brand-border/40 rounded-xl border border-brand-border/40" />
                       ))}
                     </div>
                   ))}
                 </div>
               ) : isError ? (
-                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-3xl text-red-400">
+                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
                   <span className="block text-lg font-bold mb-1">Service Error</span>
                   Failed to load feedback. Make sure your local API server is running on port 3001.
                 </div>
@@ -386,11 +321,6 @@ export default function Dashboard() {
         isLoading={digestLoading}
         data={digestData}
         error={digestError}
-      />
-      <WidgetGeneratorModal
-        isOpen={isWidgetModalOpen}
-        onClose={() => setIsWidgetModalOpen(false)}
-        apiKey={activeProject?.apiKey || 'LOADING...'}
       />
       <CreateProjectModal
         isOpen={isCreateProjectModalOpen}

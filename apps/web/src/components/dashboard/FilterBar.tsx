@@ -1,7 +1,10 @@
 'use client';
 
-import { Search, X, Tag } from 'lucide-react';
+import { useState } from 'react';
+import { Filter, X, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../ui/button';
 
 interface FilterBarProps {
   searchText: string;
@@ -16,77 +19,107 @@ interface FilterBarProps {
 }
 
 export function FilterBar({
-  searchText, onSearchChange,
   selectedTags, onToggleTag,
   allTags,
   totalCount, filteredCount,
   hasActiveFilters, onClearFilters,
 }: FilterBarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="flex flex-col gap-3 bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-4">
-      {/* Row 1: Search + Sentiment + Clear */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[180px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-500 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search feedbacks..."
-            value={searchText}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full h-8 pl-8 pr-3 bg-neutral-950/80 border border-neutral-800 rounded-lg text-xs text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/60 transition-colors"
-          />
-          {searchText && (
-            <button
-              onClick={() => onSearchChange('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
-            >
-              <X className="h-3 w-3" />
-            </button>
+    <div className="relative">
+      <div className="flex items-center gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "h-8 rounded-xl border border-brand-border/50 bg-brand-surface/50 px-3 flex items-center gap-2 transition-all hover:bg-brand-surface group",
+            hasActiveFilters && "border-indigo-500/30 bg-indigo-500/5 text-indigo-400 font-bold"
           )}
-        </div>
+        >
+          <Filter className={cn("h-3.5 w-3.5", hasActiveFilters ? "text-indigo-400" : "text-brand-muted group-hover:text-white")} />
+          <span className="text-[11px] uppercase tracking-wider">Filter</span>
+          {selectedTags.length > 0 && (
+            <span className="flex items-center justify-center bg-indigo-500 text-white text-[9px] w-4 h-4 rounded-full ml-0.5">
+              {selectedTags.length}
+            </span>
+          )}
+          <ChevronDown className={cn("h-3 w-3 transition-transform text-brand-muted group-hover:text-white", isOpen && "rotate-180")} />
+        </Button>
 
         {hasActiveFilters && (
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-[10px] font-mono text-neutral-500">
-              {filteredCount}<span className="text-neutral-700">/{totalCount}</span>
-            </span>
-            <button
-              onClick={onClearFilters}
-              className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all"
-            >
-              <X className="h-3 w-3" />
-              Clear
-            </button>
-          </div>
+          <button
+            onClick={onClearFilters}
+            className="flex items-center gap-1.5 px-2 h-8 text-[10px] uppercase tracking-widest font-bold text-brand-muted hover:text-red-400 transition-colors"
+          >
+            <X className="h-3 w-3" />
+            Clear
+          </button>
         )}
       </div>
 
-      {/* Row 2: Tags */}
-      {allTags.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <Tag className="h-3 w-3 text-neutral-600 shrink-0" />
-          {allTags.map(tag => (
-            <button
-              key={tag}
-              onClick={() => onToggleTag(tag)}
-              className={cn(
-                "text-[10px] px-1.5 py-0.5 rounded-md border transition-all",
-                selectedTags.includes(tag)
-                  ? "bg-indigo-500/15 border-indigo-500/40 text-indigo-400"
-                  : "bg-neutral-950 border-neutral-800 text-neutral-500 hover:border-neutral-700 hover:text-neutral-400"
-              )}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute top-full left-0 mt-2 w-72 bg-brand-surface border border-brand-border rounded-2xl shadow-2xl z-50 p-4"
             >
-              #{tag}
-            </button>
-          ))}
-        </div>
-      )}
+              <div className="flex items-center justify-between mb-4 border-b border-brand-border/50 pb-3">
+                <h4 className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                   <Filter className="h-3 w-3 text-indigo-400" /> Refine View
+                </h4>
+                <p className="text-[10px] text-brand-muted font-mono">
+                  {filteredCount}/{totalCount}
+                </p>
+              </div>
 
-      {hasActiveFilters && (
-        <p className="text-[10px] text-neutral-600 italic">
-          Drag &amp; drop is disabled while filters are active.
-        </p>
-      )}
+              {/* Tags Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-brand-muted tracking-widest">Tags</span>
+                  {selectedTags.length > 0 && (
+                    <button onClick={() => onClearFilters()} className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300">Reset</button>
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto no-scrollbar py-1">
+                  {allTags.length > 0 ? (
+                    allTags.map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => onToggleTag(tag)}
+                        className={cn(
+                          "px-2.5 py-1.5 rounded-xl text-[11px] font-medium border transition-all flex items-center gap-1.5",
+                          selectedTags.includes(tag)
+                            ? "bg-indigo-500/20 border-indigo-500/50 text-indigo-400"
+                            : "bg-brand-bg border-brand-border text-brand-muted hover:border-zinc-700 hover:text-white"
+                        )}
+                      >
+                        {selectedTags.includes(tag) && <Check className="h-3 w-3" />}
+                        #{tag}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-[11px] text-brand-muted italic py-2 px-1 text-center w-full">No tags available yet.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-brand-border/50">
+                <p className="text-[9px] text-brand-muted italic leading-relaxed text-center">
+                  Drag & drop is disabled when filters are active.
+                </p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '../components/providers';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: '--font-plus-jakarta',
   subsets: ['latin'],
 });
 
@@ -26,9 +26,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+      className={`${plusJakartaSans.variable} ${geistMono.variable} antialiased h-full`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30">
+      <body className="min-h-full flex flex-col font-sans bg-zinc-950 text-zinc-50 selection:bg-indigo-500/30">
         <Providers>
           {children}
         </Providers>

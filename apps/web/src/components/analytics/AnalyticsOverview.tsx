@@ -77,8 +77,8 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-neutral-900 border border-neutral-800 p-3 rounded-lg shadow-xl">
-          <p className="text-neutral-300 font-medium mb-1">{label}</p>
+        <div className="bg-brand-surface border border-brand-border rounded-lg shadow-xl p-3">
+          <p className="text-zinc-300 font-medium mb-1">{label}</p>
           <div className="flex items-center gap-2">
             <div 
               className="w-2 h-2 rounded-full" 
@@ -98,14 +98,14 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 w-full">
       
       {/* Sentiment Trend Chart */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+      <div className="bg-brand-surface border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
         
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-indigo-400" /> Sentiment Trend
           </h3>
-          <span className="text-xs text-neutral-500 px-2.5 py-1 bg-neutral-950 rounded-full border border-neutral-800">
+          <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
             Avg Score (%)
           </span>
         </div>
@@ -147,7 +147,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-neutral-500 text-sm gap-2">
+            <div className="flex items-center justify-center h-full text-brand-muted text-sm gap-2">
               <Info size={16} /> Not enough AI sentiment data yet.
             </div>
           )}
@@ -155,14 +155,14 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
       </div>
 
       {/* Category Distribution Chart */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+      <div className="bg-brand-surface border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
         
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <PieChart className="h-5 w-5 text-emerald-400" /> Category Distribution
           </h3>
-          <span className="text-xs text-neutral-500 px-2.5 py-1 bg-neutral-950 rounded-full border border-neutral-800">
+          <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
             Total count
           </span>
         </div>
@@ -200,7 +200,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-             <div className="flex items-center justify-center h-full text-neutral-500 text-sm gap-2">
+             <div className="flex items-center justify-center h-full text-zinc-500 text-sm gap-2">
                <Info size={16} /> No categories found.
              </div>
           )}

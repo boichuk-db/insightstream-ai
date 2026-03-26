@@ -36,10 +36,10 @@ function formatFeatureValue(key: string, value: any): string | boolean {
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const;
 const CARD_STYLES: Record<PlanType, { border: string; badge: string; glow: string; btn: string }> = {
   [PlanType.FREE]: {
-    border: 'border-neutral-800',
+    border: 'border-brand-border',
     badge: '',
     glow: '',
-    btn: 'bg-neutral-800 hover:bg-neutral-700 text-white',
+    btn: 'bg-brand-surface hover:bg-brand-surface-hover text-white',
   },
   [PlanType.PRO]: {
     border: 'border-indigo-500/50',
@@ -83,7 +83,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 relative overflow-hidden">
+    <div className="min-h-screen bg-zinc-950 relative overflow-hidden">
       {/* Decorative */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -91,7 +91,7 @@ export default function PricingPage() {
         {/* Back */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-300 transition-colors mb-12"
+          className="flex items-center gap-2 text-sm text-brand-muted hover:text-zinc-300 transition-colors mb-12"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
@@ -117,7 +117,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-neutral-400 text-lg max-w-md mx-auto"
+            className="text-zinc-400 text-lg max-w-md mx-auto"
           >
             Start free, upgrade when you need more power. No hidden fees.
           </motion.p>
@@ -136,7 +136,7 @@ export default function PricingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i + 0.3 }}
-                className={`relative flex flex-col bg-neutral-900/60 border ${styles.border} rounded-2xl p-8 ${styles.glow} ${isPopular ? 'md:-mt-4 md:mb-0' : ''}`}
+                className={`relative flex flex-col bg-brand-bg/60 border-brand-border/50 ${styles.border} rounded-2xl p-8 ${styles.glow} ${isPopular ? 'md:-mt-4 md:mb-0' : ''}`}
               >
                 {isPopular && (
                   <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold ${styles.badge}`}>
@@ -146,7 +146,7 @@ export default function PricingPage() {
 
                 <div className="mb-8">
                   <h3 className="text-xl font-bold mb-1">{config.name}</h3>
-                  <p className="text-sm text-neutral-500">{config.description}</p>
+                  <p className="text-sm text-brand-muted">{config.description}</p>
                 </div>
 
                 <div className="mb-8">
@@ -155,7 +155,7 @@ export default function PricingPage() {
                       {config.price === 0 ? 'Free' : `$${config.price}`}
                     </span>
                     {config.price > 0 && (
-                      <span className="text-neutral-500 text-sm">/month</span>
+                      <span className="text-brand-muted text-sm">/month</span>
                     )}
                   </div>
                 </div>
@@ -173,11 +173,11 @@ export default function PricingPage() {
                             <Check className="h-3 w-3 text-emerald-400" />
                           </div>
                         ) : (
-                          <div className="w-5 h-5 rounded-full bg-neutral-800 flex items-center justify-center shrink-0">
-                            <X className="h-3 w-3 text-neutral-600" />
+                          <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
+                            <X className="h-3 w-3 text-zinc-600" />
                           </div>
                         )}
-                        <span className={`text-sm ${isEnabled ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                        <span className={`text-sm ${isEnabled ? 'text-zinc-300' : 'text-zinc-600'}`}>
                           {typeof display === 'string' ? `${label}: ${display}` : label}
                         </span>
                       </div>
@@ -206,7 +206,7 @@ export default function PricingPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-neutral-600">
+        <div className="text-center text-sm text-zinc-600">
           All plans include SSL encryption, 99.9% uptime SLA, and community support.
         </div>
       </div>

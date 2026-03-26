@@ -10,6 +10,7 @@ import { useTeam } from '@/hooks/useTeam';
 import { Sparkles, Archive, ArrowLeft, Trash2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSocket } from '@/hooks/useSocket';
+import { cn } from '@/lib/utils';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 
 export default function ArchivePage() {
@@ -17,6 +18,8 @@ export default function ArchivePage() {
   const queryClient = useQueryClient();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { teams, activeTeam, switchTeam, userRole } = useTeam();
 
@@ -54,6 +57,12 @@ export default function ArchivePage() {
     fb.projectId === activeProject?.id && fb.status === 'Archived'
   ) || [];
 
+  const totalPages = Math.ceil(archivedFeedbacks.length / itemsPerPage);
+  const paginatedFeedbacks = archivedFeedbacks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const restoreMutation = useMutation({
     mutationFn: async (id: string) => {
       await api.patch(`/feedback/${id}/status`, { status: 'New' });
@@ -78,7 +87,7 @@ export default function ArchivePage() {
   };
 
   return (
-    <div className="flex h-screen bg-neutral-950 overflow-hidden">
+    <div className="flex h-screen bg-brand-bg overflow-hidden">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}
@@ -96,85 +105,180 @@ export default function ArchivePage() {
         userRole={userRole}
       />
 
-      <main className="flex-1 overflow-hidden flex flex-col bg-neutral-950/20">
+      <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
-          <header className="flex items-center justify-between">
+          <div className="brand-page-container pt-0 flex flex-col gap-8 h-full">
+            <header className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => router.push('/dashboard')}
-                className="p-2 bg-neutral-900 border border-neutral-800 rounded-xl text-neutral-400 hover:text-white transition-colors"
+                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
+                title="Back to Dashboard"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <Archive className="text-amber-500 h-6 w-6" /> Archive
                 </h1>
-                <p className="text-neutral-500 text-sm">View or restore archived feedback for {activeProject?.name}.</p>
+                <p className="text-brand-muted text-sm">View or restore archived feedback for {activeProject?.name}.</p>
               </div>
             </div>
           </header>
 
-          <section className="flex-1">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-48 bg-neutral-900/50 rounded-2xl border border-neutral-800 animate-pulse" />
-                ))}
-              </div>
-            ) : archivedFeedbacks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-neutral-800 rounded-3xl bg-neutral-900/20">
-                <Archive className="h-12 w-12 text-neutral-800 mb-4" />
-                <p className="text-neutral-500">No archived feedback found.</p>
-              </div>
-            ) : (
-              <DragDropContext onDragEnd={() => {}}>
-                <Droppable droppableId="archive-list">
-                  {(provided) => (
-                    <div 
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20"
-                    >
-                      {archivedFeedbacks.map((fb: any, index: number) => (
-                        <div key={fb.id} className="relative group">
-                          <KanbanCard 
-                            feedback={fb} 
-                            index={index}
-                            onDelete={(id: string) => deleteMutation.mutate(id)}
-                            isDeleting={deleteMutation.isPending}
-                            onStatusChange={() => {}}
-                            onReanalyze={() => {}}
-                            isReanalyzing={false}
-                            isDragDisabled={true}
-                          />
-                          <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center gap-4">
-                            <Button
+          <section className="bg-brand-surface/40 border border-brand-border/50 rounded-2xl overflow-hidden shadow-xl flex flex-col flex-1 min-h-0">
+            <div className="overflow-x-auto flex-1 custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-brand-border/50 bg-brand-surface/60">
+                    <th className="px-6 py-4 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Feedback</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Category</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Archived At</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-brand-muted uppercase tracking-widest text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-brand-border/30">
+                  {isLoading ? (
+                    [1, 2, 3, 4, 5].map(i => (
+                      <tr key={i} className="animate-pulse">
+                        <td className="px-6 py-6"><div className="h-4 bg-brand-border/50 rounded w-full" /></td>
+                        <td className="px-6 py-6"><div className="h-6 bg-brand-border/50 rounded-full w-20" /></td>
+                        <td className="px-6 py-6"><div className="h-4 bg-brand-border/50 rounded w-24" /></td>
+                        <td className="px-6 py-6"><div className="h-8 bg-brand-border/50 rounded-xl w-32 ml-auto" /></td>
+                      </tr>
+                    ))
+                  ) : paginatedFeedbacks.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-20 text-center">
+                        <div className="flex flex-col items-center justify-center opacity-40">
+                          <Archive className="h-12 w-12 mb-4" />
+                          <p className="text-sm font-medium">No archived feedback items found.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedFeedbacks.map((fb: any) => (
+                      <tr key={fb.id} className="hover:bg-brand-surface/30 transition-colors group">
+                        <td className="px-6 py-5 max-w-md">
+                          <p className="text-sm text-zinc-200 line-clamp-2 leading-relaxed">
+                            {fb.content}
+                          </p>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className={cn(
+                            "px-2.5 py-1 rounded-full text-[10px] font-bold border",
+                            fb.category === 'Feature' ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400" :
+                            fb.category === 'Bug' ? "bg-red-500/10 border-red-500/30 text-red-400" :
+                            "bg-brand-bg border-brand-border text-brand-muted"
+                          )}>
+                            {fb.category || 'Feedback'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className="text-xs text-brand-muted font-medium">
+                            {new Date(fb.updatedAt).toLocaleDateString()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 px-3 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg"
                               onClick={() => restoreMutation.mutate(fb.id)}
-                              isLoading={restoreMutation.isPending}
-                              className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                              disabled={restoreMutation.isPending}
                             >
-                              <RotateCcw className="h-4 w-4 mr-2" /> Restore
+                              <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Restore
                             </Button>
-                            <Button
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 px-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
                               onClick={() => deleteMutation.mutate(fb.id)}
-                              isLoading={deleteMutation.isPending}
-                              className="bg-red-500 hover:bg-red-600 text-white"
+                              disabled={deleteMutation.isPending}
                             >
-                              <Trash2 className="h-4 w-4 mr-2" /> Delete
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
                             </Button>
                           </div>
-                        </div>
-                      ))}
-                      {provided.placeholder}
-                    </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-                </Droppable>
-              </DragDropContext>
-            )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination UI */}
+            <div className="px-6 py-4 bg-brand-surface/20 border-t border-brand-border/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <p className="text-xs text-brand-muted whitespace-nowrap">
+                  Showing <span className="text-zinc-200 font-bold">{Math.min(itemsPerPage, paginatedFeedbacks.length)}</span> of <span className="text-zinc-200 font-bold">{archivedFeedbacks.length}</span> results
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wider text-brand-muted font-bold">Per page:</span>
+                  <div className="flex bg-brand-bg border border-brand-border rounded-lg p-0.5">
+                    {[20, 50, 100].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => {
+                          setItemsPerPage(size);
+                          setCurrentPage(1);
+                        }}
+                        className={cn(
+                          "px-2 py-1 text-[10px] font-bold rounded-md transition-all",
+                          itemsPerPage === size
+                            ? "bg-indigo-500/10 text-indigo-400 shadow-sm"
+                            : "text-brand-muted hover:text-white"
+                        )}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  disabled={currentPage === 1} 
+                  className="h-8 rounded-lg"
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={cn(
+                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold border transition-all",
+                        currentPage === page
+                          ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+                          : "text-brand-muted border-transparent hover:border-brand-border hover:text-white"
+                      )}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  disabled={currentPage === totalPages || totalPages === 0} 
+                  className="h-8 rounded-lg"
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </section>
         </div>
-      </main>
+      </div>
+    </main>
     </div>
   );
 }

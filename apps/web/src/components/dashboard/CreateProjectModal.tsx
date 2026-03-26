@@ -49,14 +49,14 @@ export function CreateProjectModal({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-md overflow-hidden relative"
+          className="bg-brand-bg border-brand-border rounded-2xl w-full max-w-md overflow-hidden relative"
         >
           {/* Header */}
-          <div className="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
+          <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
               Create New Project
             </h3>
-            <button onClick={onClose} className="text-neutral-400 hover:text-white transition-colors">
+            <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -64,7 +64,7 @@ export function CreateProjectModal({
           {/* Body */}
           <div className="p-6 space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300 ml-1">Project Name <span className="text-red-400">*</span></label>
+              <label className="text-sm font-medium text-zinc-300 ml-1">Project Name <span className="text-red-400">*</span></label>
               <div className="relative">
                 <Input
                   type="text"
@@ -74,12 +74,12 @@ export function CreateProjectModal({
                   className="pl-10"
                   required
                 />
-                <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300 ml-1">Domain <span className="text-red-400">*</span></label>
+              <label className="text-sm font-medium text-zinc-300 ml-1">Domain <span className="text-red-400">*</span></label>
               <div className="relative">
                 <Input
                   type="text"
@@ -89,11 +89,11 @@ export function CreateProjectModal({
                   className="pl-10"
                   required
                 />
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
               </div>
             </div>
             
-            <p className="text-xs text-neutral-500 pt-2 leading-relaxed">
+            <p className="text-xs text-brand-muted pt-2 leading-relaxed">
               A unique API Key will be automatically generated. You can use this key to identify feedback from your website.
             </p>
           </div>
@@ -101,7 +101,7 @@ export function CreateProjectModal({
           {/* Footer */}
           <div className="p-6 pt-0 flex gap-3">
             <Button 
-              className="flex-1 bg-transparent border border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+              className="flex-1 bg-transparent border border-zinc-700 hover:bg-zinc-800 text-zinc-300"
               onClick={onClose}
               disabled={createMutation.isPending}
             >

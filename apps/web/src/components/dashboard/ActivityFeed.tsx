@@ -35,7 +35,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
   if (!teamId) return null;
 
   return (
-    <div className="bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-5">
+    <div className="bg-brand-surface/60 border-brand-border/50 rounded-2xl p-5">
       <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
         <Activity className="h-4 w-4 text-indigo-400" /> Recent Activity
       </h3>
@@ -43,17 +43,17 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-10 bg-neutral-800/40 rounded-lg animate-pulse" />
+            <div key={i} className="h-10 bg-brand-border/40 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : !events?.length ? (
-        <p className="text-sm text-neutral-500 text-center py-4">No activity yet</p>
+        <p className="text-sm text-brand-muted text-center py-4">No activity yet</p>
       ) : (
         <div className="space-y-1">
           {events.map((event: any, i: number) => {
             const config = ACTION_CONFIG[event.action] || {
               icon: Activity,
-              color: 'text-neutral-400',
+              color: 'text-zinc-400',
               label: event.action,
             };
             const Icon = config.icon;
@@ -64,23 +64,23 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-neutral-800/30 transition-colors"
+                className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-brand-surface/30 transition-colors"
               >
                 <div className={`mt-0.5 ${config.color}`}>
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-neutral-300 leading-relaxed">
-                    <span className="font-medium text-neutral-200">{event.actorEmail}</span>{' '}
+                  <p className="text-xs text-zinc-300 leading-relaxed">
+                    <span className="font-medium text-zinc-200">{event.actorEmail}</span>{' '}
                     {config.label}
                     {event.metadata?.email && (
-                      <span className="text-neutral-500"> ({event.metadata.email})</span>
+                      <span className="text-brand-muted"> ({event.metadata.email})</span>
                     )}
                     {event.metadata?.teamName && (
-                      <span className="text-neutral-500"> "{event.metadata.teamName}"</span>
+                      <span className="text-brand-muted"> "{event.metadata.teamName}"</span>
                     )}
                   </p>
-                  <p className="text-[10px] text-neutral-600 mt-0.5">
+                  <p className="text-[10px] text-zinc-600 mt-0.5">
                     {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
                   </p>
                 </div>

@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen">
       {/* Left side - Product showcase */}
-      <div className="hidden lg:flex flex-1 flex-col justify-between bg-neutral-900 p-12 relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 flex-col justify-between bg-zinc-900 p-12 relative overflow-hidden">
         {/* Decorative dynamic shapes */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[100px] mix-blend-screen -translate-x-1/4 translate-y-1/4 pointer-events-none" />
@@ -71,19 +71,19 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-neutral-400 text-lg sm:text-xl leading-relaxed"
+            className="text-zinc-400 text-lg sm:text-xl leading-relaxed"
           >
             A powerful, AI-driven platform for collecting, analyzing, and acting upon user feedback at scale. Welcome to the future of product development.
           </motion.p>
         </div>
 
-        <div className="relative z-10 mt-12 text-sm text-neutral-500">
+        <div className="relative z-10 mt-12 text-sm text-brand-muted">
           © {new Date().getFullYear()} InsightStream. All rights reserved.
         </div>
       </div>
 
       {/* Right side - Auth Form */}
-      <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 relative bg-neutral-950">
+      <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 relative bg-zinc-950">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none lg:hidden" />
         
         <div className="w-full max-w-sm mx-auto relative z-10">
@@ -91,7 +91,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold tracking-tight mb-2">
               {isLogin ? 'Welcome back' : 'Create an account'}
             </h2>
-            <p className="text-neutral-400">
+            <p className="text-zinc-400">
               {isLogin 
                 ? 'Enter your credentials to access your dashboard.' 
                 : 'Sign up to start analyzing feedback with AI.'}
@@ -106,7 +106,7 @@ export default function Home() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300 ml-1">Email</label>
+              <label className="text-sm font-medium text-zinc-300 ml-1">Email</label>
               <div className="relative">
                 <Input
                   type="email"
@@ -116,12 +116,12 @@ export default function Home() {
                   className="pl-10"
                   required
                 />
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300 ml-1">Password</label>
+              <label className="text-sm font-medium text-zinc-300 ml-1">Password</label>
               <div className="relative">
                 <Input
                   type="password"
@@ -131,7 +131,7 @@ export default function Home() {
                   className="pl-10"
                   required
                 />
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
               </div>
             </div>
 
@@ -144,13 +144,13 @@ export default function Home() {
             </Button>
             
             {errorMsg && (
-              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm text-center">
+              <div className="mt-4 p-3 bg-brand-surface/60 border border-brand-border rounded text-red-400 text-sm text-center">
                 {errorMsg}
               </div>
             )}
           </form>
 
-          <div className="mt-8 text-center text-sm text-neutral-500">
+          <div className="mt-8 text-center text-sm text-zinc-500">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
               onClick={() => setIsLogin(!isLogin)}

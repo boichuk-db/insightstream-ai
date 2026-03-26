@@ -44,8 +44,8 @@ function AcceptInviteContent() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
-        <div className="text-neutral-400 text-center">
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+        <div className="text-zinc-400 text-center">
           <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
           <h1 className="text-xl font-bold text-white mb-2">Invalid Link</h1>
           <p>No invitation token found.</p>
@@ -55,22 +55,22 @@ function AcceptInviteContent() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-brand-bg flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-neutral-900/60 border border-neutral-800/50 rounded-2xl p-8 text-center"
+        className="w-full max-w-md bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-8 text-center"
       >
         {isLoading ? (
           <div className="py-8">
             <div className="w-12 h-12 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-neutral-400">Loading invitation...</p>
+            <p className="text-zinc-400">Loading invitation...</p>
           </div>
         ) : isError ? (
           <div>
             <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
             <h1 className="text-xl font-bold text-white mb-2">Invitation Not Found</h1>
-            <p className="text-neutral-400 mb-6">This invitation link may be invalid or expired.</p>
+            <p className="text-zinc-400 mb-6">This invitation link may be invalid or expired.</p>
             <a href="/" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium">
               Go to homepage
             </a>
@@ -79,7 +79,7 @@ function AcceptInviteContent() {
           <div>
             <Clock className="h-12 w-12 mx-auto mb-4 text-amber-400" />
             <h1 className="text-xl font-bold text-white mb-2">Invitation Expired</h1>
-            <p className="text-neutral-400 mb-6">
+            <p className="text-zinc-400 mb-6">
               This invitation to <strong className="text-white">{info.teamName}</strong> has expired.
               Ask the team admin to send a new one.
             </p>
@@ -88,7 +88,7 @@ function AcceptInviteContent() {
           <div>
             <CheckCircle className="h-12 w-12 mx-auto mb-4 text-emerald-400" />
             <h1 className="text-xl font-bold text-white mb-2">Already Accepted</h1>
-            <p className="text-neutral-400 mb-6">
+            <p className="text-zinc-400 mb-6">
               You've already joined <strong className="text-white">{info.teamName}</strong>.
             </p>
             <Button onClick={() => router.push('/dashboard')} className="bg-indigo-500 hover:bg-indigo-600 text-white">
@@ -152,7 +152,7 @@ export default function AcceptInvitePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
           <div className="w-12 h-12 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }

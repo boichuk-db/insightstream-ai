@@ -18,13 +18,13 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeleting, colorClass, onStatusChange, isDragDisabled, onReanalyzeFeedback, isReanalyzing }: KanbanColumnProps) {
   return (
-    <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl group/column">
+    <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-brand-surface/40 border border-brand-border/40 rounded-2xl shadow-xl group/column">
       <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/4">
         <h3 className="font-bold text-white text-sm flex items-center gap-2">
           <span className={cn("w-2.5 h-2.5 rounded-full", colorClass, "shadow-[0_0_10px_rgba(255,255,255,0.1)]")} />
           {title}
         </h3>
-        <span className="text-[10px] font-mono font-bold text-neutral-400 px-2 py-0.5 bg-neutral-800 rounded-md border border-neutral-700">
+        <span className="text-[10px] font-mono font-bold text-brand-muted px-2 py-0.5 bg-zinc-800 rounded-md border border-zinc-700">
           {feedbacks.length}
         </span>
       </div>
@@ -40,7 +40,7 @@ export function KanbanColumn({ id, title, feedbacks, onDeleteFeedback, isDeletin
             )}
           >
             {feedbacks.length === 0 && !snapshot.isDraggingOver && (
-              <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-neutral-600 border-2 border-dashed border-neutral-800/60 rounded-xl m-2 bg-neutral-900/20">
+              <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-zinc-600 border-2 border-dashed border-zinc-800/60 rounded-xl m-2 bg-zinc-900/20">
                 <Search className="h-6 w-6 mb-2 opacity-30" />
                 <span className="text-xs font-medium opacity-50">Empty</span>
               </div>

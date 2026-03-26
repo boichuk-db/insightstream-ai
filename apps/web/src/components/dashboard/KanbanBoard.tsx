@@ -5,8 +5,10 @@ import { FilterBar } from './FilterBar';
 import { api } from '@/lib/api';
 import { exportToCSV, exportToPDF } from '@/lib/exportFeedbacks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FileDown, Printer, ChevronDown, Archive } from 'lucide-react';
+import { FileDown, Printer, ChevronDown, Archive, Check } from 'lucide-react';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface KanbanBoardProps {
   initialFeedbacks: any[];
@@ -247,76 +249,59 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
 
   if (!mounted) {
     return (
-      <div className="h-64 flex items-center justify-center text-neutral-500">
+      <div className="h-64 flex items-center justify-center text-brand-muted">
         Loading Board...
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <FilterBar
-        searchText={searchText}
-        onSearchChange={setSearchText}
-        selectedTags={selectedTags}
-        onToggleTag={handleToggleTag}
-        allTags={allTags}
-        totalCount={totalCount}
-        filteredCount={filteredCount}
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={handleClearFilters}
-      />
+    <div className="flex flex-col gap-6 w-full">
+      {/* Board Header / Action Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-brand-surface border border-brand-border rounded-2xl shadow-lg relative group z-30">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        <div className="flex items-center gap-4 flex-wrap relative z-20">
+          <FilterBar
+            searchText={searchText}
+            onSearchChange={setSearchText}
+            selectedTags={selectedTags}
+            onToggleTag={handleToggleTag}
+            allTags={allTags}
+            totalCount={totalCount}
+            filteredCount={filteredCount}
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={handleClearFilters}
+          />
 
-      {/* Export bar */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600">Export</span>
+          <div className="h-4 w-px bg-brand-border/50 hidden md:block" />
 
-        <div className="relative">
-          <select
-            value={exportScope}
-            onChange={e => setExportScope(e.target.value)}
-            className="h-7 pl-2 pr-6 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-neutral-300 appearance-none focus:outline-none focus:border-neutral-700 cursor-pointer"
-          >
-            <option value="all">All columns ({totalCount})</option>
-            {COLUMNS.map(c => (
-              <option key={c.id} value={c.id}>
-                {c.title} ({displayColumns[c.id]?.length ?? 0})
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 h-3 w-3 text-neutral-500" />
+          <ExportMenu 
+            scope={exportScope} 
+            onScopeChange={setExportScope} 
+            onExportCSV={handleExportCSV} 
+            onExportPDF={handleExportPDF}
+            columns={COLUMNS} 
+            displayColumns={displayColumns} 
+            totalCount={totalCount} 
+          />
         </div>
 
-        <button
-          onClick={handleExportCSV}
-          className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-neutral-800 bg-neutral-950 text-[10px] font-semibold text-neutral-400 hover:text-emerald-400 hover:border-emerald-500/40 transition-colors"
-        >
-          <FileDown className="h-3 w-3" />
-          CSV
-        </button>
-
-        <button
-          onClick={handleExportPDF}
-          className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-neutral-800 bg-neutral-950 text-[10px] font-semibold text-neutral-400 hover:text-indigo-400 hover:border-indigo-500/40 transition-colors"
-        >
-          <Printer className="h-3 w-3" />
-          PDF
-        </button>
-
-        <div className="h-4 w-px bg-neutral-800 mx-1" />
-
-        <button
-          onClick={() => {
-            if (confirm('Archive all "Done" and "Rejected" cards?')) {
-              archiveMutation.mutate();
-            }
-          }}
-          disabled={archiveMutation.isPending || (displayColumns['Done']?.length === 0 && displayColumns['Rejected']?.length === 0)}
-          className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-neutral-800 bg-neutral-950 text-[10px] font-semibold text-neutral-400 hover:text-amber-400 hover:border-amber-500/40 transition-colors disabled:opacity-30 disabled:hover:text-neutral-400 disabled:hover:border-neutral-800"
-        >
-          <Archive className="h-3 w-3" />
-          Clean Board (Archive)
-        </button>
+        <div className="relative z-20 flex items-center gap-3">
+          <button
+            onClick={() => {
+              if (confirm('Archive all "Done" and "Rejected" cards?')) {
+                archiveMutation.mutate();
+              }
+            }}
+            disabled={archiveMutation.isPending || (displayColumns['Done']?.length === 0 && displayColumns['Rejected']?.length === 0)}
+            className="w-full md:w-auto flex items-center justify-center gap-2 h-9 px-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-[11px] font-bold text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/40 transition-all active:scale-95 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm"
+          >
+            <Archive className="h-4 w-4" />
+            <span className="hidden sm:inline">Clean Board</span>
+            <span className="sm:hidden">Archive Done</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
@@ -338,6 +323,97 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
           ))}
         </DragDropContext>
       </div>
+    </div>
+  );
+}
+
+function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, displayColumns, totalCount }: any) {
+  const [isOpen, setIsOpen] = useState(false);
+  const activeTitle = scope === 'all' 
+    ? `All columns (${totalCount})` 
+    : `${scope} (${displayColumns[scope]?.length ?? 0})`;
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "h-8 rounded-xl border border-brand-border/50 bg-brand-surface/50 px-3 flex items-center gap-2 transition-all hover:bg-brand-surface group/btn",
+          isOpen && "border-indigo-500/30 bg-indigo-500/5 text-brand"
+        )}
+      >
+        <FileDown className="h-3.5 w-3.5 text-brand-muted group-hover/btn:text-white" />
+        <span className="text-[11px] uppercase tracking-wider font-semibold text-brand-muted group-hover/btn:text-white">Export</span>
+        <div className="h-3 w-px bg-brand-border/50 mx-1" />
+        <span className="text-[11px] font-medium text-brand-muted group-hover/btn:text-white truncate max-w-[100px]">{activeTitle}</span>
+        <ChevronDown className={cn("h-3 w-3 text-brand-muted group-hover/btn:text-white transition-all", isOpen && "rotate-180")} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 4, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 4, scale: 0.98 }}
+              className="absolute top-full left-0 mt-2 w-64 bg-brand-surface border border-brand-border rounded-2xl shadow-2xl z-50 overflow-hidden p-3"
+            >
+              <div className="space-y-4">
+                {/* Scope Selection */}
+                <div>
+                  <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-2 px-1">Select Scope</h4>
+                  <div className="grid grid-cols-1 gap-1">
+                    <button
+                      onClick={() => onScopeChange('all')}
+                      className={cn(
+                        "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
+                        scope === 'all' ? "bg-indigo-500/15 text-indigo-400 font-bold" : "text-brand-muted hover:bg-brand-bg hover:text-white"
+                      )}
+                    >
+                      All columns ({totalCount})
+                      {scope === 'all' && <Check className="h-3 w-3" />}
+                    </button>
+                    {columns.map((c: any) => (
+                      <button
+                        key={c.id}
+                        onClick={() => onScopeChange(c.id)}
+                        className={cn(
+                          "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
+                          scope === c.id ? "bg-indigo-500/15 text-indigo-400 font-bold" : "text-brand-muted hover:bg-brand-bg hover:text-white"
+                        )}
+                      >
+                        {c.title} ({displayColumns[c.id]?.length ?? 0})
+                        {scope === c.id && <Check className="h-3 w-3" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="h-px bg-brand-border/50" />
+
+                {/* Export Actions */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => { onExportCSV(); setIsOpen(false); }}
+                    className="flex items-center justify-center gap-2 h-9 rounded-xl border border-brand-border bg-brand-bg text-[10px] font-bold text-brand-muted hover:text-emerald-400 hover:border-emerald-500/40 transition-all active:scale-95"
+                  >
+                    <FileDown className="h-3.5 w-3.5" />
+                    CSV
+                  </button>
+                  <button
+                    onClick={() => { onExportPDF(); setIsOpen(false); }}
+                    className="flex items-center justify-center gap-2 h-9 rounded-xl border border-brand-border bg-brand-bg text-[10px] font-bold text-brand-muted hover:text-indigo-400 hover:border-indigo-500/40 transition-all active:scale-95"
+                  >
+                    <Printer className="h-3.5 w-3.5" />
+                    PDF
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -37,11 +37,11 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
           {...provided.dragHandleProps}
           onClick={() => setShowPicker(v => !v)}
           className={cn(
-            "w-full overflow-hidden bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
+            "w-full overflow-hidden bg-brand-surface border border-brand-border/50 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
             snapshot.isDragging
               ? "border-indigo-500 shadow-2xl z-50 ring-2 ring-indigo-500/50 opacity-100"
-              : "hover:border-neutral-700 hover:bg-neutral-800/50",
-            showPicker && "border-neutral-700 bg-neutral-800/50"
+              : "hover:border-zinc-700 hover:bg-brand-border/50",
+            showPicker && "border-zinc-700 bg-brand-border/50"
           )}
           style={{
             ...provided.draggableProps.style,
@@ -60,7 +60,7 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
                   feedback.category === 'Bug' ? "bg-red-500/10 text-red-400 border-red-500/20" :
                   feedback.category === 'Feature' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                   feedback.category === 'UI/UX' ? "bg-pink-500/10 text-pink-400 border-pink-500/20" :
-                  "bg-neutral-800 text-neutral-300 border-neutral-700"
+                  "bg-brand-border textbg-brand-bg border-brand-border/50"
                 )}>
                   {feedback.category}
                 </span>
@@ -89,20 +89,20 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
                   if (confirm('Delete this feedback?')) onDelete(feedback.id);
                 }}
                 disabled={isDeleting}
-                className="text-neutral-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                className="text-brand-muted hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          <p className="text-neutral-200 text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
+          <p className="text-zinc-200 text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
             {feedback.content}
           </p>
 
           {!feedback.aiSummary && !isReanalyzing && (
             <div className="mb-3 p-3 bg-indigo-500/5 border border-dashed border-indigo-500/20 rounded-xl flex items-center justify-between group/re">
-              <span className="text-[11px] text-neutral-500">Not analyzed yet</span>
+              <span className="text-[11px] text-brand-muted">Not analyzed yet</span>
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
@@ -116,8 +116,8 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
           )}
 
           {feedback.aiSummary && (
-            <div className="mb-3 p-2 bg-neutral-950/50 rounded border border-neutral-800/50">
-              <p className="text-[11px] text-neutral-400 italic leading-snug line-clamp-2 wrap-break-word">
+            <div className="mb-3 p-2 bg-brand-bg/50 rounded border border-brand-border/50">
+              <p className="text-[11px] text-zinc-400 italic leading-snug line-clamp-2 wrap-break-word">
                 <Sparkles className="h-3 w-3 inline mr-1 text-indigo-400" />
                 {feedback.aiSummary}
               </p>
@@ -127,17 +127,17 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
           {feedback.tags && feedback.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {feedback.tags.map((tag: string) => (
-                <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-neutral-950 text-neutral-500 rounded-md border border-neutral-800">
+                <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-brand-bg text-brand-muted rounded-md border border-brand-border">
                   #{tag}
                 </span>
               ))}
             </div>
           )}
 
-          <div className="mt-auto pt-3 border-t border-neutral-800/50 flex items-center justify-between">
+          <div className="mt-auto pt-3 border-t border-brand-border/50 flex items-center justify-between">
             {feedback.sentimentScore !== null && feedback.sentimentScore !== undefined ? (
               <div className="flex items-center gap-1.5">
-                <div className="w-10 h-1 bg-neutral-800 rounded-full overflow-hidden">
+                <div className="w-10 h-1 bg-brand-border rounded-full overflow-hidden">
                   <div
                     className={cn(
                       "h-full transition-all",
@@ -146,7 +146,7 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
                     style={{ width: `${feedback.sentimentScore * 100}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-neutral-500 font-medium font-mono">
+                <span className="text-[10px] text-brand-muted font-medium font-mono">
                   {Math.round(feedback.sentimentScore * 100)}%
                 </span>
               </div>
@@ -158,12 +158,12 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
                   e.stopPropagation();
                   onOpenComments?.(feedback.id);
                 }}
-                className="flex items-center gap-1 text-[10px] text-neutral-500 hover:text-indigo-400 transition-colors"
+                className="flex items-center gap-1 text-[10px] text-brand-muted hover:text-indigo-400 transition-colors"
               >
                 <MessageCircle className="h-3 w-3" />
                 {commentCount || 0}
               </button>
-              <div className="flex items-center text-[10px] text-neutral-500 font-mono gap-1">
+              <div className="flex items-center text-[10px] text-brand-muted font-mono gap-1">
                 <CalendarDays className="h-3 w-3" />
                 {formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
               </div>
@@ -174,9 +174,9 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
           {showPicker && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="mt-3 pt-3 border-t border-neutral-700 flex flex-col gap-1"
+              className="mt-3 pt-3 border-t border-zinc-700 flex flex-col gap-1"
             >
-              <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">Move to</p>
+              <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">Move to</p>
               <div className="grid grid-cols-1 gap-1">
                 {STATUSES.map(s => (
                   <button
@@ -188,14 +188,14 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
                     className={cn(
                       "flex items-center gap-2 w-full px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left",
                       s.id === feedback.status
-                        ? "bg-neutral-700 text-white cursor-default"
-                        : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                        ? "bg-zinc-700 text-white cursor-default"
+                        : "text-zinc-400 hover:bg-brand-border hover:text-white"
                     )}
                   >
                     <span className={cn("w-2 h-2 rounded-full shrink-0", s.color)} />
                     {s.id}
                     {s.id === feedback.status && (
-                      <span className="ml-auto text-[9px] text-neutral-500">current</span>
+                      <span className="ml-auto text-[9px] text-brand-muted">current</span>
                     )}
                   </button>
                 ))}
@@ -205,7 +205,7 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
 
           {/* Tap hint for mobile — visible only when picker is closed */}
           {!showPicker && (
-            <div className="absolute bottom-3 right-3 flex items-center gap-0.5 text-neutral-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute bottom-3 right-3 flex items-center gap-0.5 text-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               <ChevronDown className="h-3 w-3" />
             </div>
           )}

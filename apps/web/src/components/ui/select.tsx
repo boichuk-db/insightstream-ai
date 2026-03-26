@@ -35,12 +35,12 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-200 ring-offset-neutral-950 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
+          "flex h-10 w-full items-center justify-between rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-sm text-zinc-200 ring-offset-brand-bg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
           isOpen && "border-indigo-500/50 ring-2 ring-indigo-500/20"
         )}
       >
         <span className="capitalize">{selectedOption}</span>
-        <ChevronDown className={cn("h-4 w-4 text-neutral-500 transition-transform duration-200", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("h-4 w-4 text-zinc-500 transition-transform duration-200", isOpen && "rotate-180")} />
       </button>
 
       <AnimatePresence>
@@ -50,7 +50,7 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute z-50 mt-1.5 w-full min-w-[120px] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950 p-1 shadow-2xl"
+            className="absolute z-50 mt-1.5 w-full min-w-[120px] overflow-hidden rounded-xl border border-brand-border bg-brand-bg p-1 shadow-2xl"
           >
             <div className="flex flex-col gap-0.5">
               {options.map((option) => (
@@ -65,7 +65,7 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
                     "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors",
                     value === option 
                       ? "bg-indigo-500/10 text-indigo-400 font-medium" 
-                      : "text-neutral-400 hover:bg-neutral-900 hover:text-neutral-200"
+                      : "text-brand-muted hover:bg-brand-surface hover:text-zinc-200"
                   )}
                 >
                   <span className="capitalize">{option}</span>
