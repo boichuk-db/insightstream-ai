@@ -150,19 +150,16 @@ export default function TeamSettingsPage() {
               </Button>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
+                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
                 title="Back to Dashboard"
               >
                 <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
               </button>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                  <Users className="h-6 w-6 text-indigo-400" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold">{activeTeam?.name || 'Team'} Settings</h1>
-                  <p className="text-sm text-brand-muted">Manage members, roles, and invitations</p>
-                </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                  <Users className="h-8 w-8 text-indigo-400" /> {activeTeam?.name || 'Team'} Settings
+                </h1>
+                <p className="text-sm text-brand-muted mt-1">Manage members, roles, and invitations</p>
               </div>
             </header>
 
@@ -173,7 +170,7 @@ export default function TeamSettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 mb-8"
           >
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
               <Mail className="h-5 w-5 text-indigo-400" /> Invite Member
             </h2>
             <form
@@ -220,7 +217,9 @@ export default function TeamSettingsPage() {
             transition={{ delay: 0.05 }}
             className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 mb-8"
           >
-            <h2 className="text-lg font-bold mb-4">Pending Invitations</h2>
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <Mail className="h-5 w-5 text-indigo-400" /> Pending Invitations
+            </h2>
             <div className="space-y-3">
               {pendingInvitations.map((inv: any) => (
                 <div key={inv.id} className="flex items-center justify-between p-3 bg-brand-bg/50 rounded-xl border border-brand-border/50">
@@ -239,7 +238,7 @@ export default function TeamSettingsPage() {
                     onClick={() => cancelInvitationMutation.mutate(inv.id)}
                     className="hover:text-red-400"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 text-indigo-400" />
                   </Button>
                 </div>
               ))}
@@ -254,8 +253,8 @@ export default function TeamSettingsPage() {
           transition={{ delay: 0.1 }}
           className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6"
         >
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Shield className="h-5 w-5 text-emerald-400" /> Members ({members?.length || 0})
+          <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+            <Shield className="h-5 w-5 text-indigo-400" /> Members ({members?.length || 0})
           </h2>
 
           {membersLoading ? (
@@ -270,7 +269,7 @@ export default function TeamSettingsPage() {
                 <div key={member.id} className="flex items-center justify-between p-3 bg-brand-bg/50 rounded-xl border border-brand-border/50">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-brand-border flex items-center justify-center border border-zinc-700 text-zinc-400">
-                      {member.role === 'owner' ? <Crown className="h-4 w-4 text-amber-400" /> : <Users className="h-4 w-4" />}
+                      {member.role === 'owner' ? <Crown className="h-4 w-4 text-amber-400" /> : <Users className="h-4 w-4 text-indigo-400" />}
                     </div>
                     <div>
                       <span className="text-sm font-medium text-zinc-200">{member.email}</span>
@@ -306,7 +305,7 @@ export default function TeamSettingsPage() {
                         }}
                         className="hover:text-red-400"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 text-indigo-400" />
                       </Button>
                     )}
                   </div>

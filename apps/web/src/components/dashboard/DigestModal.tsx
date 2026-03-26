@@ -3,6 +3,7 @@
 import { X, Sparkles, TrendingDown, Tag, BarChart2, CalendarDays, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { getCategoryColor } from '@/lib/colors';
 
 interface DigestData {
   projectName: string;
@@ -23,16 +24,6 @@ interface DigestModalProps {
   error: string | null;
 }
 
-const CATEGORY_COLOR: Record<string, string> = {
-  Bug: 'bg-red-500',
-  Feature: 'bg-emerald-500',
-  'UI/UX': 'bg-pink-500',
-  Improvement: 'bg-blue-500',
-  Performance: 'bg-orange-500',
-  Billing: 'bg-yellow-500',
-  Support: 'bg-violet-500',
-  Security: 'bg-rose-600',
-};
 
 export function DigestModal({ isOpen, onClose, isLoading, data, error }: DigestModalProps) {
   if (!isOpen) return null;
@@ -63,7 +54,7 @@ export function DigestModal({ isOpen, onClose, isLoading, data, error }: DigestM
             </div>
             <div>
               <h2 className="text-sm font-bold text-white">AI Weekly Digest</h2>
-              <p className="text-[11px] text-brand-muted">
+              <p className="text-xs text-brand-muted">
                 {data ? `${data.projectName} · ${since} – сьогодні` : 'Генерація...'}
               </p>
             </div>
@@ -140,7 +131,7 @@ export function DigestModal({ isOpen, onClose, isLoading, data, error }: DigestM
                       .sort((a, b) => b[1] - a[1])
                       .map(([cat, count]) => {
                         const pct = Math.round((count / data.totalCount) * 100);
-                        const barColor = CATEGORY_COLOR[cat] || 'bg-zinc-500';
+                        const barColor = getCategoryColor(cat).bg.replace('/10', ''); // Use full opacity for bars
                         return (
                           <div key={cat} className="flex items-center gap-3">
                             <span className="text-xs text-zinc-400 w-24 shrink-0">{cat}</span>

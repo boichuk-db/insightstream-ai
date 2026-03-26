@@ -74,21 +74,19 @@ export default function ActivityPage() {
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => router.push('/dashboard')}
-                  className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
+                  className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
                 >
                   <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
                 </button>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Activity className="h-4 w-4 text-indigo-400" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400">System Logs</span>
-                  </div>
-                  <h1 className="text-3xl font-bold text-white tracking-tight">Recent Activity</h1>
+                  <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                    <Activity className="h-8 w-8 text-indigo-400" /> Recent Activity
+                  </h1>
                 </div>
               </div>
 
               <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-brand-surface/40 border border-brand-border/50 rounded-2xl backdrop-blur-sm">
-                <Clock className="h-4 w-4 text-brand-muted" />
+                <Clock className="h-4 w-4 text-indigo-400" />
                 <span className="text-xs font-medium text-brand-muted">Real-time updates enabled</span>
               </div>
             </div>
@@ -117,7 +115,7 @@ export default function ActivityPage() {
                   
                   <div className="flex items-center gap-2">
                      <Button variant="brand" size="xs" className="px-3">
-                        <Filter className="h-3 w-3 mr-2" /> All Events
+                        <Filter className="h-3 w-3 mr-2 text-indigo-400" /> All Events
                      </Button>
                   </div>
                 </div>

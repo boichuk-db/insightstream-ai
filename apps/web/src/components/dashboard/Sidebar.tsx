@@ -82,14 +82,14 @@ export function Sidebar({
             >
               <div className="flex items-center gap-2 px-2">
                 <div className="flex flex-col items-start">
-                  <span className="text-[10px] text-brand-muted font-medium uppercase tracking-wider">Team</span>
+                  <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider">Team</span>
                   <span className="text-sm font-semibold text-zinc-200 truncate max-w-[130px]">
                     {activeTeam?.name || 'Select team'}
                   </span>
                 </div>
               </div>
               {teams.length > 1 && (
-                <ChevronDown className={cn("h-4 w-4 text-brand-muted transition-transform", isTeamDropdownOpen && "rotate-180")} />
+                <ChevronDown className={cn("h-4 w-4 text-indigo-400/60 transition-transform", isTeamDropdownOpen && "rotate-180")} />
               )}
             </button>
 
@@ -137,12 +137,12 @@ export function Sidebar({
             className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors group"
           >
             <div className="flex flex-col items-start px-2">
-              <span className="text-[10px] text-brand-muted font-medium uppercase tracking-wider mb-0.5">Active Project</span>
+              <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider mb-0.5">Active Project</span>
               <span className="text-sm font-semibold text-zinc-200 truncate max-w-[140px]">
                 {activeProject?.name || 'Loading...'}
               </span>
             </div>
-            <ChevronDown className={cn("h-4 w-4 text-brand-muted transition-transform", isDropdownOpen && "rotate-180")} />
+            <ChevronDown className={cn("h-4 w-4 text-indigo-400/60 transition-transform", isDropdownOpen && "rotate-180")} />
           </button>
 
           <AnimatePresence>
@@ -205,7 +205,7 @@ export function Sidebar({
               : "text-zinc-400 hover:text-white hover:bg-brand-border"
           )}
         >
-          <LayoutDashboard className="h-4 w-4" /> Dashboard
+          <LayoutDashboard className="h-4 w-4 text-indigo-400" /> Dashboard
         </Link>
         <Link 
           href="/dashboard/archive" 
@@ -216,7 +216,7 @@ export function Sidebar({
               : "text-zinc-400 hover:text-white hover:bg-brand-border"
           )}
         >
-          <Archive className="h-4 w-4" /> Archive
+          <Archive className="h-4 w-4 text-indigo-400" /> Archive
         </Link>
         <Link 
           href="/dashboard/activity" 
@@ -227,7 +227,7 @@ export function Sidebar({
               : "text-zinc-400 hover:text-white hover:bg-brand-border"
           )}
         >
-          <Activity className="h-4 w-4" /> Activity Log
+          <Activity className="h-4 w-4 text-indigo-400" /> Activity Log
         </Link>
         <Link 
           href="/dashboard/embed" 
@@ -238,7 +238,7 @@ export function Sidebar({
               : "text-zinc-400 hover:text-white hover:bg-brand-border"
           )}
         >
-          <Code className="h-4 w-4" /> Embed Widget
+          <Code className="h-4 w-4 text-indigo-400" /> Embed Widget
         </Link>
 
         <div className="my-1 h-px bg-brand-border/30 mx-2" />
@@ -252,7 +252,7 @@ export function Sidebar({
               : "text-zinc-400 hover:text-white hover:bg-brand-border"
           )}
         >
-          <Settings className="h-4 w-4" /> Settings
+          <Settings className="h-4 w-4 text-indigo-400" /> Settings
         </Link>
         {activeTeam && (
           <Link 
@@ -264,7 +264,7 @@ export function Sidebar({
                 : "text-zinc-400 hover:text-white hover:bg-brand-border"
             )}
           >
-            <Users className="h-4 w-4" /> Team Settings
+            <Users className="h-4 w-4 text-indigo-400" /> Team Settings
           </Link>
         )}
 
@@ -283,7 +283,7 @@ export function Sidebar({
           title={projects.length <= 1 ? "Cannot delete the last remaining project" : "Delete the active project"}
           className="flex items-center gap-3 w-full p-2.5 rounded-lg text-brand-muted hover:text-red-400 hover:bg-red-500/10 font-medium text-sm transition-colors disabled:opacity-50 disabled:hover:text-brand-muted disabled:hover:bg-transparent disabled:cursor-not-allowed group"
         >
-          <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform" /> Delete Project
+          <Trash2 className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" /> Delete Project
         </button>
       </div>
 
@@ -309,7 +309,7 @@ export function Sidebar({
                 {getPlanConfig(userProfile?.plan || 'FREE').name}
               </span>
               {userRole && (
-                <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
+                <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400">
                   {userRole}
                 </span>
               )}
@@ -327,7 +327,7 @@ export function Sidebar({
           size="xs"
           className="w-full text-zinc-400 hover:text-white justify-start px-3"
         >
-          <LogOut className="h-4 w-4 mr-2" /> Sign Out
+          <LogOut className="h-4 w-4 mr-2 text-indigo-400" /> Sign Out
         </Button>
       </div>
       </div>

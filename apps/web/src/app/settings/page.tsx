@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { PLAN_CONFIGS, PlanType, formatLimit, getPlanConfig } from '@/lib/plans';
-import { Sparkles, ArrowLeft, User, Mail, Calendar, Loader2, Check, Shield, Menu } from 'lucide-react';
+import { Sparkles, ArrowLeft, User, Mail, Calendar, Loader2, Check, Shield, Menu, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -121,7 +121,9 @@ export default function SettingsPage() {
                 <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
               </button>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                  <Settings className="h-8 w-8 text-indigo-400" /> Settings
+                </h1>
                 <p className="text-brand-muted text-sm mt-1">Manage your account and subscription plan.</p>
               </div>
             </header>
@@ -132,19 +134,19 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6 mb-8"
         >
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <User className="h-5 w-5 text-zinc-400" /> Profile
+          <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+            <User className="h-5 w-5 text-indigo-400" /> Profile
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-              <Mail className="h-4 w-4 text-brand-muted" />
+              <Mail className="h-4 w-4 text-indigo-400" />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold">Email</p>
                 <p className="text-sm text-zinc-200">{userProfile?.email}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-              <Calendar className="h-4 w-4 text-brand-muted" />
+              <Calendar className="h-4 w-4 text-indigo-400" />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold">Member since</p>
                 <p className="text-sm text-zinc-200">
@@ -163,8 +165,8 @@ export default function SettingsPage() {
             transition={{ delay: 0.1 }}
             className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6 mb-8"
           >
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Shield className="h-5 w-5 text-zinc-400" /> Current Usage
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <Shield className="h-5 w-5 text-indigo-400" /> Current Usage
             </h2>
             <div className="grid sm:grid-cols-3 gap-4">
               <UsageMeter label="Projects" current={usage.projects.current} max={usage.projects.max} />
@@ -184,7 +186,7 @@ export default function SettingsPage() {
           transition={{ delay: 0.2 }}
           className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6"
         >
-          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
             <Sparkles className="h-5 w-5 text-indigo-400" /> Subscription Plan
           </h2>
           <p className="text-sm text-brand-muted mb-6">Select a plan that fits your needs. Changes take effect immediately.</p>

@@ -194,15 +194,15 @@ export default function Dashboard() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-brand-bg rounded-xl border border-brand-border text-brand-muted hover:text-white"
+                className="lg:hidden p-2 bg-brand-bg rounded-xl border border-brand-border text-indigo-400 hover:text-indigo-300"
               >
                 <Menu size={20} />
               </button>
               <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-400" /> Dashboard
+                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                  <Sparkles className="h-8 w-8 text-indigo-400" /> Dashboard
                 </h1>
-                <p className="hidden xs:block text-brand-muted text-xs sm:text-sm">Manage your project feedback and analysis.</p>
+                <p className="hidden xs:block text-brand-muted text-sm mt-1">Manage your project feedback and analysis.</p>
               </div>
             </div>
 
@@ -215,15 +215,12 @@ export default function Dashboard() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
             <div className="flex flex-col gap-6 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                  <Plus className="h-5 w-5 text-indigo-400" />
-                </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white leading-none">Manual Input Testing</h3>
-                  <p className="text-xs text-brand-muted mt-1">Submit an internal feedback to test migrations or AI response tags.</p>
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <Plus className="h-5 w-5 text-indigo-400" /> Manual Input Testing
+                  </h2>
+                  <p className="text-xs text-brand-muted mt-1">Submit internal feedback to test migrations or AI response tags.</p>
                 </div>
-              </div>
 
               <form
                 onSubmit={(e) => {
@@ -275,20 +272,21 @@ export default function Dashboard() {
           {/* Kanban Board */}
           <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-brand-border/50 rounded-xl border border-brand-border/50">
-                  <MessageSquare className="h-5 w-5 text-brand-muted" />
-                </div>
-                <h2 className="text-xl font-bold text-white">Feedback Pipelines</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-indigo-400" /> Feedback Pipelines
+                </h2>
               </div>
-              <button
+              <Button
+                variant="brand"
+                size="xs"
                 onClick={handleOpenDigest}
                 disabled={!activeProject?.id}
-                className="flex items-center gap-2 px-3 h-9 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-xs font-semibold hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="bg-indigo-500/10 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/20"
               >
-                <Sparkles className="h-3.5 w-3.5" />
+                <Sparkles className="h-3.5 w-3.5 mr-2" />
                 AI Digest
-              </button>
+              </Button>
             </div>
 
             <div className="flex-1 w-full max-w-full">

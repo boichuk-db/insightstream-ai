@@ -3,9 +3,9 @@ import { Draggable } from '@hello-pangea/dnd';
 import { Sparkles, Trash2, CalendarDays, ChevronDown, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { getCategoryColor } from '@/lib/colors';
 
 const STATUSES = [
-  { id: 'New', color: 'bg-indigo-500' },
   { id: 'In Review', color: 'bg-amber-500' },
   { id: 'In Progress', color: 'bg-blue-500' },
   { id: 'Done', color: 'bg-emerald-500' },
@@ -57,10 +57,9 @@ export function KanbanCard({ feedback, index, onDelete, isDeleting, onStatusChan
               {feedback.category && (
                 <span className={cn(
                   "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border",
-                  feedback.category === 'Bug' ? "bg-red-500/10 text-red-400 border-red-500/20" :
-                  feedback.category === 'Feature' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                  feedback.category === 'UI/UX' ? "bg-pink-500/10 text-pink-400 border-pink-500/20" :
-                  "bg-brand-border textbg-brand-bg border-brand-border/50"
+                  getCategoryColor(feedback.category).bg,
+                  getCategoryColor(feedback.category).text,
+                  getCategoryColor(feedback.category).border
                 )}>
                   {feedback.category}
                 </span>

@@ -347,11 +347,11 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
           isOpen && "border-indigo-500/30 bg-indigo-500/5 text-brand"
         )}
       >
-        <FileDown className="h-3.5 w-3.5 text-brand-muted group-hover/btn:text-white" />
+        <FileDown className="h-3.5 w-3.5 text-indigo-400 group-hover/btn:text-white" />
         <span className="mx-1">Export</span>
         <div className="h-3 w-px bg-brand-border/50 mx-1" />
         <span className="truncate max-w-[100px] lowercase first-letter:uppercase">{activeTitle}</span>
-        <ChevronDown className={cn("ml-2 h-3 w-3 text-brand-muted group-hover/btn:text-white transition-all", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("ml-2 h-3 w-3 text-indigo-400 transition-all", isOpen && "rotate-180")} />
       </Button>
 
       <AnimatePresence>
@@ -372,7 +372,7 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
                     <button
                       onClick={() => onScopeChange('all')}
                       className={cn(
-                        "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
+                        "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
                         scope === 'all' ? "bg-indigo-500/15 text-indigo-400 font-bold" : "text-brand-muted hover:bg-brand-bg hover:text-white"
                       )}
                     >
@@ -389,7 +389,7 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
                         )}
                       >
                         {c.title} ({displayColumns[c.id]?.length ?? 0})
-                        {scope === c.id && <Check className="h-3 w-3" />}
+                        {scope === c.id && <Check className="h-3 w-3 text-indigo-400" />}
                       </button>
                     ))}
                   </div>
@@ -414,7 +414,7 @@ function ExportMenu({ scope, onScopeChange, onExportCSV, onExportPDF, columns, d
                     onClick={() => { onExportPDF(); setIsOpen(false); }}
                     className="hover:text-indigo-400 hover:border-indigo-500/40"
                   >
-                    <Printer className="h-3.5 w-3.5 mr-2" />
+                    <Printer className="h-3.5 w-3.5 mr-2 text-indigo-400" />
                     PDF
                   </Button>
                 </div>

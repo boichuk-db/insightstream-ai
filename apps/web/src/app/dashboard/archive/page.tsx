@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSocket } from '@/hooks/useSocket';
 import { cn } from '@/lib/utils';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import { getCategoryColor } from '@/lib/colors';
 
 export default function ArchivePage() {
   const router = useRouter();
@@ -112,16 +113,16 @@ export default function ArchivePage() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => router.push('/dashboard')}
-                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
+                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
                 title="Back to Dashboard"
               >
                 <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Archive className="text-amber-500 h-6 w-6" /> Archive
+                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                  <Archive className="text-indigo-400 h-8 w-8" /> Archive
                 </h1>
-                <p className="text-brand-muted text-sm">View or restore archived feedback for {activeProject?.name}.</p>
+                <p className="text-brand-muted text-sm mt-1">View or restore archived feedback for {activeProject?.name}.</p>
               </div>
             </div>
           </header>
@@ -151,7 +152,7 @@ export default function ArchivePage() {
                     <tr>
                       <td colSpan={4} className="px-6 py-20 text-center">
                         <div className="flex flex-col items-center justify-center opacity-40">
-                          <Archive className="h-12 w-12 mb-4" />
+                          <Archive className="h-12 w-12 mb-4 text-indigo-400" />
                           <p className="text-sm font-medium">No archived feedback items found.</p>
                         </div>
                       </td>
@@ -167,9 +168,9 @@ export default function ArchivePage() {
                         <td className="px-6 py-5">
                           <span className={cn(
                             "px-2.5 py-1 rounded-full text-[10px] font-bold border",
-                            fb.category === 'Feature' ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400" :
-                            fb.category === 'Bug' ? "bg-red-500/10 border-red-500/30 text-red-400" :
-                            "bg-brand-bg border-brand-border text-brand-muted"
+                            getCategoryColor(fb.category).bg,
+                            getCategoryColor(fb.category).text,
+                            getCategoryColor(fb.category).border
                           )}>
                             {fb.category || 'Feedback'}
                           </span>
@@ -188,7 +189,7 @@ export default function ArchivePage() {
                               onClick={() => restoreMutation.mutate(fb.id)}
                               disabled={restoreMutation.isPending}
                             >
-                              <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Restore
+                               <RotateCcw className="h-3.5 w-3.5 mr-1.5 text-indigo-400" /> Restore
                             </Button>
                             <Button 
                               variant="ghost" 
@@ -197,7 +198,7 @@ export default function ArchivePage() {
                               onClick={() => deleteMutation.mutate(fb.id)}
                               disabled={deleteMutation.isPending}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                               <Trash2 className="h-3.5 w-3.5 mr-1.5 text-indigo-400" /> Delete
                             </Button>
                           </div>
                         </td>

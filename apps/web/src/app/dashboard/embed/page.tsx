@@ -206,8 +206,8 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
                 </button>
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
-                    <Code className="text-indigo-400 h-6 w-6 sm:h-8 sm:w-8" /> Embed Widget
+                  <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                    <Code className="text-indigo-400 h-8 w-8" /> Embed Widget
                   </h1>
                   <p className="text-brand-muted text-sm mt-1">Configure and install the feedback widget on your website.</p>
                 </div>
@@ -222,14 +222,14 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* Visual Config */}
               <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
-                <h3 className="text-sm font-bold text-white mb-8 flex items-center gap-2">
-                  <SettingsIcon className="h-4 w-4 text-indigo-400" /> Visual Configuration
-                </h3>
+                <h2 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
+                  <SettingsIcon className="h-5 w-5 text-indigo-400" /> Visual Configuration
+                </h2>
 
                 <div className="flex flex-col gap-12">
                   {/* Row 1: Colors (Full Width) */}
                   <div>
-                    <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">Brand Color</h4>
+                    <h3 className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] mb-4">Brand Color</h3>
                     <div className="flex gap-4 flex-wrap items-center">
                       <div className="flex gap-3 flex-wrap">
                         {COLORS.map((color) => (
@@ -285,7 +285,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     </div>
 
                     <div className="min-w-0">
-                      <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">Screen Position</h4>
+                      <h3 className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] mb-4">Screen Position</h3>
                       <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit max-w-full overflow-x-auto no-scrollbar">
                         {POSITIONS.map(pos => (
                           <button 
@@ -310,9 +310,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* Implementation Snippet */}
               <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <LayoutTemplate className="h-4 w-4 text-indigo-400" /> Implementation Code
-                  </h3>
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <LayoutTemplate className="h-5 w-5 text-indigo-400" /> Implementation Code
+                  </h2>
                   <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit">
                     {FRAMEWORKS.map(fw => (
                       <button 
@@ -347,7 +347,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                 </div>
 
                 <div className="mt-4 flex items-start gap-3 p-4 bg-brand-bg/50 rounded-xl border border-brand-border/50">
-                  <Globe className="h-4 w-4 text-brand-muted mt-0.5 shrink-0" />
+                  <Globe className="h-4 w-4 text-indigo-400 mt-0.5 shrink-0" />
                   <p className="text-xs text-brand-muted leading-relaxed">
                     {selectedFramework === 'html' && <>Paste this script into the <code>&lt;body&gt;</code> tag of your website. It handles loading and initialization automatically.</>}
                     {selectedFramework === 'react' && <>Import and use this component in your React <code>App.tsx</code> or layout wrapper. Make sure to install dependencies if needed.</>}
@@ -363,9 +363,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* API Key Box */}
               <section className="bg-indigo-500 border border-indigo-400 rounded-2xl p-6 shadow-[0_0_30px_rgba(99,102,241,0.2)] text-white relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-                <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                  <Key className="h-4 w-4" /> Project API Key
-                </h3>
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <Key className="h-5 w-5" /> Project API Key
+                </h2>
                 <div className="flex items-center gap-2 mb-3">
                   <code className="flex-1 bg-black/20 border border-white/20 rounded-xl px-4 py-3 text-sm font-mono truncate">
                     {apiKey}
@@ -377,23 +377,23 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     {copiedKey ? <Check size={18} /> : <Copy size={18} />}
                   </button>
                 </div>
-                <p className="text-[11px] text-indigo-100 leading-relaxed italic opacity-80">
+                <p className="text-xs text-indigo-100 leading-relaxed italic opacity-80">
                   * Keeping your API Key secure is important. Do not expose it in public repositories.
                 </p>
               </section>
 
               {/* Instructions / Best Practices */}
               <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl space-y-5">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-indigo-400" /> Installation Guide
-                </h3>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-indigo-400" /> Quick Installation Guide
+                </h2>
                 
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">1</div>
                     <div>
                       <h4 className="text-xs font-bold text-zinc-200">Select Project</h4>
-                      <p className="text-[11px] text-brand-muted mt-1 leading-relaxed">Make sure you've selected the correct project in the sidebar before copying the code.</p>
+                      <p className="text-xs text-brand-muted mt-1 leading-relaxed">Make sure you've selected the correct project in the sidebar before copying the code.</p>
                     </div>
                   </div>
                   
@@ -401,15 +401,15 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">2</div>
                     <div>
                       <h4 className="text-xs font-bold text-zinc-200">Copy & Paste</h4>
-                      <p className="text-[11px] text-brand-muted mt-1 leading-relaxed">Copy the generated code snippet and place it in your application's root component or HTML file.</p>
+                      <p className="text-xs text-brand-muted mt-1 leading-relaxed">Copy the generated code snippet and place it in your application's root component or HTML file.</p>
                     </div>
                   </div>
 
                   <div className="flex gap-4">
                     <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">3</div>
                     <div>
-                      <h4 className="text-xs font-bold text-zinc-200">Verify Connection</h4>
-                      <p className="text-[11px] text-brand-muted mt-1 leading-relaxed">After installation, submit a test feedback. It should appear on your Kanban board instantly.</p>
+                      <h3 className="text-xs font-bold text-zinc-200">Verify Connection</h3>
+                      <p className="text-xs text-brand-muted mt-1 leading-relaxed">After installation, submit a test feedback. It should appear on your Kanban board instantly.</p>
                     </div>
                   </div>
                 </div>

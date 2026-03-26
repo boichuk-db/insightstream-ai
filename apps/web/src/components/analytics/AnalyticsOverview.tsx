@@ -15,6 +15,7 @@ import {
   Cell
 } from 'recharts';
 import { TrendingUp, PieChart, Info } from 'lucide-react';
+import { CATEGORY_COLORS } from '@/lib/colors';
 
 interface Feedback {
   id: string;
@@ -72,7 +73,6 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
 
   if (!feedbacks || feedbacks.length === 0) return null;
 
-  const CATEGORY_COLORS = ['#818cf8', '#34d399', '#f472b6', '#fbbf24', '#a78bfa'];
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -194,7 +194,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
                   animationDuration={1500}
                 >
                   {chartData.categories.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[entry.name]?.hex || CATEGORY_COLORS['Uncategorized'].hex} />
                   ))}
                 </Bar>
               </BarChart>
