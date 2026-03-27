@@ -6,12 +6,16 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { TeamsModule } from '../teams/teams.module';
+import { MailModule } from '../mail/mail.module';
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './google.strategy';
+import { GitHubStrategy } from './github.strategy';
 
 @Module({
   imports: [
     UsersModule,
     TeamsModule,
+    MailModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -22,7 +26,7 @@ import { JwtStrategy } from './jwt.strategy';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, GitHubStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
