@@ -1,3 +1,7 @@
+// ConfigModule.forRoot() runs after this file — load .env manually so SENTRY_DSN is available
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('dotenv').config();
+
 import * as Sentry from '@sentry/nestjs';
 
 Sentry.init({
