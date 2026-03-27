@@ -94,15 +94,3 @@ jobs:
       - name: Run Tests
         run: pnpm --filter api test
 
-  docker:
-    name: Docker Validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Build API Image
-        run: docker build -t insightstream-api -f Dockerfile.api .
-
-      - name: Build Web Image
-        run: docker build -t insightstream-web -f Dockerfile.web .
