@@ -23,7 +23,7 @@ export class PlansController {
 
   @Get()
   getAllPlans() {
-    return Object.entries(PLAN_CONFIGS).map(([key, config]) => ({
+    return (Object.entries(PLAN_CONFIGS) as [string, PlanConfig][]).map(([key, config]) => ({
       type: key,
       ...config,
       maxProjects: config.maxProjects === Infinity ? null : config.maxProjects,
