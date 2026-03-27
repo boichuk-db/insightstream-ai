@@ -6,7 +6,7 @@ RUN npm install -g pnpm@9.12.0 turbo@2.1.3
 FROM base AS pruner
 WORKDIR /app
 COPY . .
-RUN turbo prune --scope=web --docker
+RUN turbo prune web --docker
 
 # Builder
 FROM base AS builder

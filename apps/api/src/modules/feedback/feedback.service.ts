@@ -23,6 +23,9 @@ export class FeedbackService {
   ) {}
 
   async create(projectId: string, content: string, userId?: string, source?: string) {
+    if (!content) {
+      throw new Error('Content is required');
+    }
     // Verify the user owns this project if userId is provided
     if (userId) {
       await this.projectsService.findOne(projectId, userId);

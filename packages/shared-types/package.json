@@ -6,7 +6,6 @@
   "types": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint src/",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
