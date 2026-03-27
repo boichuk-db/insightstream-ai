@@ -24,7 +24,7 @@ function ResetPasswordForm() {
     },
     onSuccess: () => {
       setSuccess(true);
-      setTimeout(() => router.push('/?reset=success'), 2000);
+      setTimeout(() => router.replace('/?reset=success'), 2000);
     },
   });
 
