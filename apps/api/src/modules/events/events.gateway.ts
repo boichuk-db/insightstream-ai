@@ -44,6 +44,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   emitFeedbackUpdated(userId: string) {
-    this.server.to(`user-${userId}`).emit('feedbackUpdated', { timestamp: new Date() });
+    this.server
+      .to(`user-${userId}`)
+      .emit('feedbackUpdated', { timestamp: new Date() });
   }
 }

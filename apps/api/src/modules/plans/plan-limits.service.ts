@@ -1,7 +1,16 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual } from 'typeorm';
-import { User, Project, Feedback, TeamMember, Team, PlanType, PLAN_CONFIGS, PlanLimits } from '@insightstream/database';
+import {
+  User,
+  Project,
+  Feedback,
+  TeamMember,
+  Team,
+  PlanType,
+  PLAN_CONFIGS,
+  PlanLimits,
+} from '@insightstream/database';
 
 @Injectable()
 export class PlanLimitsService {
@@ -22,7 +31,9 @@ export class PlanLimitsService {
     return PLAN_CONFIGS[plan] || PLAN_CONFIGS[PlanType.FREE];
   }
 
-  async canCreateProject(userId: string): Promise<{ allowed: boolean; current: number; max: number }> {
+  async canCreateProject(
+    userId: string,
+  ): Promise<{ allowed: boolean; current: number; max: number }> {
     const plan = await this.getUserPlan(userId);
     const limits = this.getLimits(plan);
     const current = await this.projectRepo.count({ where: { userId } });
@@ -33,7 +44,9 @@ export class PlanLimitsService {
     };
   }
 
-  async canCreateFeedback(userId: string): Promise<{ allowed: boolean; current: number; max: number }> {
+  async canCreateFeedback(
+    userId: string,
+  ): Promise<{ allowed: boolean; current: number; max: number }> {
     const plan = await this.getUserPlan(userId);
     const limits = this.getLimits(plan);
 
@@ -56,15 +69,22 @@ export class PlanLimitsService {
     };
   }
 
-  async canCreateFeedbackForProject(projectId: string): Promise<{ allowed: boolean; current: number; max: number }> {
-    const project = await this.projectRepo.findOne({ where: { id: projectId } });
+  async canCreateFeedbackForProject(
+    projectId: string,
+  ): Promise<{ allowed: boolean; current: number; max: number }> {
+    const project = await this.projectRepo.findOne({
+      where: { id: projectId },
+    });
     if (!project) {
       return { allowed: false, current: 0, max: 0 };
     }
     return this.canCreateFeedback(project.userId);
   }
 
-  async canUseFeature(userId: string, feature: keyof PlanLimits): Promise<boolean> {
+  async canUseFeature(
+    userId: string,
+    feature: keyof PlanLimits,
+  ): Promise<boolean> {
     const plan = await this.getUserPlan(userId);
     const limits = this.getLimits(plan);
     const value = limits[feature];
@@ -74,8 +94,13 @@ export class PlanLimitsService {
     return false;
   }
 
-  async canInviteMember(teamId: string): Promise<{ allowed: boolean; current: number; max: number }> {
-    const team = await this.teamRepo.findOne({ where: { id: teamId }, relations: ['owner'] });
+  async canInviteMember(
+    teamId: string,
+  ): Promise<{ allowed: boolean; current: number; max: number }> {
+    const team = await this.teamRepo.findOne({
+      where: { id: teamId },
+      relations: ['owner'],
+    });
     if (!team) return { allowed: false, current: 0, max: 0 };
 
     const ownerPlan = (team.owner?.plan as PlanType) || PlanType.FREE;
@@ -99,7 +124,10 @@ export class PlanLimitsService {
       planName: PLAN_CONFIGS[plan].name,
       price: PLAN_CONFIGS[plan].price,
       projects: { current: projectCheck.current, max: limits.maxProjects },
-      feedbacksThisMonth: { current: feedbackCheck.current, max: limits.maxFeedbacksPerMonth },
+      feedbacksThisMonth: {
+        current: feedbackCheck.current,
+        max: limits.maxFeedbacksPerMonth,
+      },
       features: {
         aiAnalysis: limits.aiAnalysis,
         weeklyDigest: limits.weeklyDigest,
@@ -109,7 +137,11 @@ export class PlanLimitsService {
     };
   }
 
-  assertAllowed(check: { allowed: boolean; current: number; max: number }, resourceName: string, plan: string) {
+  assertAllowed(
+    check: { allowed: boolean; current: number; max: number },
+    resourceName: string,
+    plan: string,
+  ) {
     if (!check.allowed) {
       throw new ForbiddenException({
         statusCode: 403,

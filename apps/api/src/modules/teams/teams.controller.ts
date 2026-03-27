@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Delete, Patch, Param, Body, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Patch,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TeamRoleGuard, RequireTeamRole } from './team-role.guard';
 import { TeamRole } from '@insightstream/database';
@@ -37,7 +48,7 @@ export class TeamsController {
   @UseGuards(TeamRoleGuard)
   async getMembers(@Param('teamId') teamId: string) {
     const members = await this.teamsService.getMembers(teamId);
-    return members.map(m => ({
+    return members.map((m) => ({
       id: m.id,
       userId: m.userId,
       email: m.user?.email,
@@ -67,7 +78,12 @@ export class TeamsController {
     @Body() body: { role: TeamRole },
     @Request() req: any,
   ) {
-    return this.teamsService.changeMemberRole(teamId, userId, body.role, req.user.id);
+    return this.teamsService.changeMemberRole(
+      teamId,
+      userId,
+      body.role,
+      req.user.id,
+    );
   }
 
   @Delete(':teamId')
@@ -106,7 +122,7 @@ export class TeamsController {
       limit: limit ? parseInt(limit, 10) : 50,
       offset: offset ? parseInt(offset, 10) : 0,
     });
-    return events.map(e => ({
+    return events.map((e) => ({
       id: e.id,
       action: e.action,
       actorEmail: e.actor?.email,

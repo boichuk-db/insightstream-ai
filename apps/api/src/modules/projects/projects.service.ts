@@ -15,7 +15,10 @@ export class ProjectsService {
     private planLimitsService: PlanLimitsService,
   ) {}
 
-  async create(userId: string, data: { name: string; domain?: string; teamId?: string }): Promise<Project> {
+  async create(
+    userId: string,
+    data: { name: string; domain?: string; teamId?: string },
+  ): Promise<Project> {
     const check = await this.planLimitsService.canCreateProject(userId);
     const plan = await this.planLimitsService.getUserPlan(userId);
     this.planLimitsService.assertAllowed(check, 'projects', plan);
@@ -89,6 +92,6 @@ export class ProjectsService {
 
   async getAllDomains(): Promise<string[]> {
     const projects = await this.projectsRepository.find({ select: ['domain'] });
-    return projects.map(p => p.domain).filter(Boolean) as string[];
+    return projects.map((p) => p.domain).filter(Boolean) as string[];
   }
 }

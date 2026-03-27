@@ -1,11 +1,23 @@
-import { Injectable, ForbiddenException, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import {
-  Invitation, InvitationStatus, Team, TeamMember, TeamRole, User,
-  ActivityAction, PLAN_CONFIGS, PlanType,
+  Invitation,
+  InvitationStatus,
+  Team,
+  TeamMember,
+  TeamRole,
+  User,
+  ActivityAction,
+  PLAN_CONFIGS,
+  PlanType,
 } from '@insightstream/database';
 import { MailService } from '../mail/mail.service';
 import { ActivityService } from '../activity/activity.service';
@@ -13,7 +25,8 @@ import { ActivityService } from '../activity/activity.service';
 @Injectable()
 export class InvitationsService {
   constructor(
-    @InjectRepository(Invitation) private invitationRepo: Repository<Invitation>,
+    @InjectRepository(Invitation)
+    private invitationRepo: Repository<Invitation>,
     @InjectRepository(TeamMember) private memberRepo: Repository<TeamMember>,
     @InjectRepository(Team) private teamRepo: Repository<Team>,
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -22,7 +35,12 @@ export class InvitationsService {
     private config: ConfigService,
   ) {}
 
-  async create(teamId: string, email: string, role: TeamRole, invitedById: string): Promise<Invitation> {
+  async create(
+    teamId: string,
+    email: string,
+    role: TeamRole,
+    invitedById: string,
+  ): Promise<Invitation> {
     // Check if already a member
     const existingUser = await this.userRepo.findOne({ where: { email } });
     if (existingUser) {
@@ -39,11 +57,16 @@ export class InvitationsService {
       where: { teamId, email, status: InvitationStatus.PENDING },
     });
     if (pendingInvite) {
-      throw new ConflictException('An invitation is already pending for this email');
+      throw new ConflictException(
+        'An invitation is already pending for this email',
+      );
     }
 
     // Check plan limits for team members
-    const team = await this.teamRepo.findOne({ where: { id: teamId }, relations: ['owner'] });
+    const team = await this.teamRepo.findOne({
+      where: { id: teamId },
+      relations: ['owner'],
+    });
     if (!team) throw new NotFoundException('Team not found');
 
     const ownerPlan = (team.owner?.plan as PlanType) || PlanType.FREE;
@@ -81,7 +104,8 @@ export class InvitationsService {
     );
 
     // Send invitation email
-    const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl =
+      this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const inviteLink = `${frontendUrl}/invite/accept?token=${token}`;
     const inviter = await this.userRepo.findOne({ where: { id: invitedById } });
 
@@ -121,7 +145,10 @@ export class InvitationsService {
     if (new Date() > invitation.expiresAt) {
       invitation.status = InvitationStatus.EXPIRED;
       await this.invitationRepo.save(invitation);
-      return { status: InvitationStatus.EXPIRED, teamName: invitation.team?.name };
+      return {
+        status: InvitationStatus.EXPIRED,
+        teamName: invitation.team?.name,
+      };
     }
 
     return {

@@ -5,8 +5,7 @@ import { ProjectsService } from './modules/projects/projects.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  
+
   const projectsService = app.get(ProjectsService);
 
   // Cached domains to avoid DB hit on every preflight
@@ -32,16 +31,21 @@ async function bootstrap() {
           cachedDomains = await projectsService.getAllDomains();
           cacheTime = Date.now();
         }
-        
-        const isAllowed = cachedDomains.some(domain => 
-          originUrl.hostname === domain || originUrl.hostname.endsWith(`.${domain}`)
+
+        const isAllowed = cachedDomains.some(
+          (domain) =>
+            originUrl.hostname === domain ||
+            originUrl.hostname.endsWith(`.${domain}`),
         );
-        
+
         if (isAllowed) {
           return callback(null, true);
         }
-        
-        return callback(new Error(`CORS Error: Origin ${origin} not in whitelist`), false);
+
+        return callback(
+          new Error(`CORS Error: Origin ${origin} not in whitelist`),
+          false,
+        );
       } catch (err) {
         return callback(new Error('Invalid origin'), false);
       }

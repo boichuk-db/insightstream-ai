@@ -22,7 +22,12 @@ export class FeedbackService {
     private planLimitsService: PlanLimitsService,
   ) {}
 
-  async create(projectId: string, content: string, userId?: string, source?: string) {
+  async create(
+    projectId: string,
+    content: string,
+    userId?: string,
+    source?: string,
+  ) {
     if (!content) {
       throw new Error('Content is required');
     }
@@ -35,11 +40,16 @@ export class FeedbackService {
       this.planLimitsService.assertAllowed(check, 'feedbacks this month', plan);
     } else {
       // Public widget — check limit via project owner
-      const check = await this.planLimitsService.canCreateFeedbackForProject(projectId);
+      const check =
+        await this.planLimitsService.canCreateFeedbackForProject(projectId);
       const project = await this.projectsService.findByOnlyId(projectId);
       if (project) {
         const plan = await this.planLimitsService.getUserPlan(project.userId);
-        this.planLimitsService.assertAllowed(check, 'feedbacks this month', plan);
+        this.planLimitsService.assertAllowed(
+          check,
+          'feedbacks this month',
+          plan,
+        );
       }
     }
 
@@ -53,34 +63,43 @@ export class FeedbackService {
     const savedFeedback = await this.feedbackRepository.save(feedback);
 
     // Determine the owner's AI analysis level
-    const ownerId = userId || (await this.projectsService.findByOnlyId(projectId))?.userId;
+    const ownerId =
+      userId || (await this.projectsService.findByOnlyId(projectId))?.userId;
     let aiLevel: string = 'basic';
     if (ownerId) {
-      const limits = this.planLimitsService.getLimits(await this.planLimitsService.getUserPlan(ownerId));
+      const limits = this.planLimitsService.getLimits(
+        await this.planLimitsService.getUserPlan(ownerId),
+      );
       aiLevel = limits.aiAnalysis;
     }
 
     if (aiLevel !== 'none') {
       // Trigger AI analysis in background
-      this.aiService.analyzeFeedback(content).then(async (analysis) => {
-        if (analysis) {
-          await this.feedbackRepository.update(savedFeedback.id, {
-            sentimentScore: analysis.sentimentScore,
-            category: analysis.category,
-            aiSummary: aiLevel === 'full' ? analysis.aiSummary : undefined,
-            tags: aiLevel === 'full' ? analysis.tags : undefined,
-          });
+      this.aiService
+        .analyzeFeedback(content)
+        .then(async (analysis) => {
+          if (analysis) {
+            await this.feedbackRepository.update(savedFeedback.id, {
+              sentimentScore: analysis.sentimentScore,
+              category: analysis.category,
+              aiSummary: aiLevel === 'full' ? analysis.aiSummary : undefined,
+              tags: aiLevel === 'full' ? analysis.tags : undefined,
+            });
 
-          if (userId) {
-            this.eventsGateway.emitFeedbackUpdated(userId);
-          } else {
-            const project = await this.projectsService.findByOnlyId(projectId);
-            if (project?.userId) {
-              this.eventsGateway.emitFeedbackUpdated(project.userId);
+            if (userId) {
+              this.eventsGateway.emitFeedbackUpdated(userId);
+            } else {
+              const project =
+                await this.projectsService.findByOnlyId(projectId);
+              if (project?.userId) {
+                this.eventsGateway.emitFeedbackUpdated(project.userId);
+              }
             }
           }
-        }
-      }).catch(err => this.logger.error('Background AI analysis failed', err));
+        })
+        .catch((err) =>
+          this.logger.error('Background AI analysis failed', err),
+        );
     }
 
     return savedFeedback;
@@ -129,7 +148,11 @@ export class FeedbackService {
     return { success: true };
   }
 
-  async updateStatus(id: string, status: string, userId: string): Promise<Feedback> {
+  async updateStatus(
+    id: string,
+    status: string,
+    userId: string,
+  ): Promise<Feedback> {
     const feedback = await this.findOne(id, userId);
     if (!feedback) {
       throw new ForbiddenException('Feedback not found or access denied');
@@ -153,11 +176,14 @@ export class FeedbackService {
     const ownerId = userId || feedback.project?.userId;
     let aiLevel: string = 'basic';
     if (ownerId) {
-      const limits = this.planLimitsService.getLimits(await this.planLimitsService.getUserPlan(ownerId));
+      const limits = this.planLimitsService.getLimits(
+        await this.planLimitsService.getUserPlan(ownerId),
+      );
       aiLevel = limits.aiAnalysis;
     }
 
-    if (aiLevel === 'none') return { success: false, message: 'AI Analysis disabled for your plan' };
+    if (aiLevel === 'none')
+      return { success: false, message: 'AI Analysis disabled for your plan' };
 
     try {
       const analysis = await this.aiService.analyzeFeedback(feedback.content);

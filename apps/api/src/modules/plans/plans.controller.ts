@@ -1,4 +1,11 @@
-import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PlanLimitsService } from './plan-limits.service';
 import { PlanType, PlanConfig, PLAN_CONFIGS } from '@insightstream/database';
@@ -16,11 +23,14 @@ export class PlansController {
 
   @Get()
   getAllPlans() {
-    return (Object.entries(PLAN_CONFIGS) as [string, PlanConfig][]).map(([key, config]) => ({
+    return Object.entries(PLAN_CONFIGS).map(([key, config]) => ({
       type: key,
       ...config,
       maxProjects: config.maxProjects === Infinity ? null : config.maxProjects,
-      maxFeedbacksPerMonth: config.maxFeedbacksPerMonth === Infinity ? null : config.maxFeedbacksPerMonth,
+      maxFeedbacksPerMonth:
+        config.maxFeedbacksPerMonth === Infinity
+          ? null
+          : config.maxFeedbacksPerMonth,
     }));
   }
 
@@ -36,7 +46,10 @@ export class PlansController {
       },
       feedbacksThisMonth: {
         ...summary.feedbacksThisMonth,
-        max: summary.feedbacksThisMonth.max === Infinity ? null : summary.feedbacksThisMonth.max,
+        max:
+          summary.feedbacksThisMonth.max === Infinity
+            ? null
+            : summary.feedbacksThisMonth.max,
       },
     };
   }

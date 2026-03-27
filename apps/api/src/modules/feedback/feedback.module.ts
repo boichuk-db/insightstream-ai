@@ -9,7 +9,12 @@ import { ProjectsModule } from '../projects/projects.module';
 import { PlansModule } from '../plans/plans.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Feedback, TeamMember]), AiModule, ProjectsModule, PlansModule],
+  imports: [
+    TypeOrmModule.forFeature([Feedback, TeamMember]),
+    AiModule,
+    ProjectsModule,
+    PlansModule,
+  ],
   providers: [FeedbackService],
   controllers: [FeedbackController, FeedbackPublicController],
 })

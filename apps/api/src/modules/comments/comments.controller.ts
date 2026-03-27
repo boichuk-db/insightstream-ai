@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 
@@ -19,7 +28,7 @@ export class CommentsController {
   @Get('feedbacks/:feedbackId/comments')
   async findByFeedback(@Param('feedbackId') feedbackId: string) {
     const comments = await this.commentsService.findByFeedback(feedbackId);
-    return comments.map(c => ({
+    return comments.map((c) => ({
       id: c.id,
       content: c.content,
       userId: c.userId,

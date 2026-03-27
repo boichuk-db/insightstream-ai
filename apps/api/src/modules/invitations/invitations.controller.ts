@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TeamRoleGuard, RequireTeamRole } from '../teams/team-role.guard';
 import { TeamRole } from '@insightstream/database';
@@ -30,7 +40,7 @@ export class InvitationsController {
   @RequireTeamRole(TeamRole.ADMIN)
   async listPending(@Param('teamId') teamId: string) {
     const invitations = await this.invitationsService.listPending(teamId);
-    return invitations.map(inv => ({
+    return invitations.map((inv) => ({
       id: inv.id,
       email: inv.email,
       role: inv.role,

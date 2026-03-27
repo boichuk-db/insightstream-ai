@@ -1,7 +1,17 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comment, Feedback, Project, TeamMember, ActivityAction } from '@insightstream/database';
+import {
+  Comment,
+  Feedback,
+  Project,
+  TeamMember,
+  ActivityAction,
+} from '@insightstream/database';
 import { ActivityService } from '../activity/activity.service';
 
 @Injectable()
@@ -13,7 +23,11 @@ export class CommentsService {
     private activityService: ActivityService,
   ) {}
 
-  async create(feedbackId: string, userId: string, content: string): Promise<Comment> {
+  async create(
+    feedbackId: string,
+    userId: string,
+    content: string,
+  ): Promise<Comment> {
     // Verify feedback exists and user has team access
     const feedback = await this.feedbackRepo.findOne({
       where: { id: feedbackId },
@@ -26,7 +40,8 @@ export class CommentsService {
       const member = await this.memberRepo.findOne({
         where: { teamId: project.teamId, userId },
       });
-      if (!member) throw new ForbiddenException('You are not a member of this team');
+      if (!member)
+        throw new ForbiddenException('You are not a member of this team');
     } else if (project.userId !== userId) {
       throw new ForbiddenException('Access denied');
     }
@@ -74,7 +89,9 @@ export class CommentsService {
           where: { teamId: project.teamId, userId },
         });
         if (!member || (member.role !== 'owner' && member.role !== 'admin')) {
-          throw new ForbiddenException('Only comment author or team admin can delete');
+          throw new ForbiddenException(
+            'Only comment author or team admin can delete',
+          );
         }
       } else {
         throw new ForbiddenException('Only comment author can delete');

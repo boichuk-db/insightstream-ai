@@ -27,7 +27,10 @@ export class ActivityService {
     return this.activityRepo.save(event);
   }
 
-  async getTeamActivity(teamId: string, options: { limit?: number; offset?: number } = {}) {
+  async getTeamActivity(
+    teamId: string,
+    options: { limit?: number; offset?: number } = {},
+  ) {
     const { limit = 50, offset = 0 } = options;
     return this.activityRepo.find({
       where: { teamId },

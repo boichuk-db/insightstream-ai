@@ -1,4 +1,11 @@
-import { Controller, Post, Body, UnauthorizedException, ForbiddenException, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  ForbiddenException,
+  Headers,
+} from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { ProjectsService } from '../projects/projects.service';
 
@@ -25,18 +32,26 @@ export class FeedbackPublicController {
 
     if (project.domain) {
       if (!origin) {
-        throw new ForbiddenException('Direct API access is not allowed. Requests must originate from the whitelisted domain.');
+        throw new ForbiddenException(
+          'Direct API access is not allowed. Requests must originate from the whitelisted domain.',
+        );
       }
-      
+
       try {
         const originUrl = new URL(origin);
-        const isLocalhost = originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1';
-        
+        const isLocalhost =
+          originUrl.hostname === 'localhost' ||
+          originUrl.hostname === '127.0.0.1';
+
         // Support exact match or subdomains
-        const isAuthorized = originUrl.hostname === project.domain || originUrl.hostname.endsWith(`.${project.domain}`);
+        const isAuthorized =
+          originUrl.hostname === project.domain ||
+          originUrl.hostname.endsWith(`.${project.domain}`);
 
         if (!isLocalhost && !isAuthorized) {
-          throw new ForbiddenException(`Origin '${originUrl.hostname}' is not whitelisted for this project.`);
+          throw new ForbiddenException(
+            `Origin '${originUrl.hostname}' is not whitelisted for this project.`,
+          );
         }
       } catch (e) {
         if (e instanceof ForbiddenException) throw e;
@@ -44,6 +59,11 @@ export class FeedbackPublicController {
       }
     }
 
-    return this.feedbackService.create(project.id, body.content, undefined, body.source || 'Widget');
+    return this.feedbackService.create(
+      project.id,
+      body.content,
+      undefined,
+      body.source || 'Widget',
+    );
   }
 }

@@ -38,14 +38,22 @@ export class DigestService {
     mostNegative: Array<{ content: string; sentimentScore: number | null }>;
     aiSummary: string;
   }> {
-    const project = await this.projects.findOne({ where: { id: projectId }, relations: ['user'] });
+    const project = await this.projects.findOne({
+      where: { id: projectId },
+      relations: ['user'],
+    });
     if (!project) throw new Error(`Project ${projectId} not found`);
 
     // Gate digest preview by plan
     if ((project as any).user?.id) {
-      const hasDigest = await this.planLimitsService.canUseFeature((project as any).user.id, 'weeklyDigest');
+      const hasDigest = await this.planLimitsService.canUseFeature(
+        (project as any).user.id,
+        'weeklyDigest',
+      );
       if (!hasDigest) {
-        throw new Error('Weekly digest is available on Pro and Business plans. Please upgrade.');
+        throw new Error(
+          'Weekly digest is available on Pro and Business plans. Please upgrade.',
+        );
       }
     }
 
@@ -58,9 +66,10 @@ export class DigestService {
     });
 
     const stats = this.buildStats(project.name, weekFeedbacks);
-    const aiSummary = weekFeedbacks.length > 0
-      ? await this.ai.generateWeeklyDigest(stats)
-      : '<p>No feedbacks in the last 7 days to analyse.</p>';
+    const aiSummary =
+      weekFeedbacks.length > 0
+        ? await this.ai.generateWeeklyDigest(stats)
+        : '<p>No feedbacks in the last 7 days to analyse.</p>';
 
     return { ...stats, since: since.toISOString(), aiSummary };
   }
@@ -79,9 +88,14 @@ export class DigestService {
         // Skip digest for users whose plan doesn't include it
         const ownerId = (project as any).user?.id;
         if (ownerId) {
-          const hasDigest = await this.planLimitsService.canUseFeature(ownerId, 'weeklyDigest');
+          const hasDigest = await this.planLimitsService.canUseFeature(
+            ownerId,
+            'weeklyDigest',
+          );
           if (!hasDigest) {
-            this.logger.debug(`Project "${project.name}" — owner plan does not include weekly digest, skipping.`);
+            this.logger.debug(
+              `Project "${project.name}" — owner plan does not include weekly digest, skipping.`,
+            );
             skipped++;
             continue;
           }
@@ -93,14 +107,18 @@ export class DigestService {
         });
 
         if (weekFeedbacks.length === 0) {
-          this.logger.debug(`Project "${project.name}" — no feedbacks this week, skipping.`);
+          this.logger.debug(
+            `Project "${project.name}" — no feedbacks this week, skipping.`,
+          );
           skipped++;
           continue;
         }
 
         const ownerEmail = (project as any).user?.email;
         if (!ownerEmail) {
-          this.logger.warn(`Project "${project.name}" — owner email not found, skipping.`);
+          this.logger.warn(
+            `Project "${project.name}" — owner email not found, skipping.`,
+          );
           skipped++;
           continue;
         }
@@ -116,7 +134,9 @@ export class DigestService {
         );
 
         sent++;
-        this.logger.log(`Digest sent for "${project.name}" → ${ownerEmail} (${weekFeedbacks.length} feedbacks)`);
+        this.logger.log(
+          `Digest sent for "${project.name}" → ${ownerEmail} (${weekFeedbacks.length} feedbacks)`,
+        );
       } catch (err) {
         this.logger.error(`Failed digest for project "${project.name}":`, err);
         skipped++;
@@ -134,12 +154,20 @@ export class DigestService {
     let sentimentCount = 0;
 
     for (const fb of feedbacks) {
-      if (fb.category) categories[fb.category] = (categories[fb.category] || 0) + 1;
-      if (fb.tags) fb.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; });
-      if (fb.sentimentScore != null) { sentimentSum += fb.sentimentScore; sentimentCount++; }
+      if (fb.category)
+        categories[fb.category] = (categories[fb.category] || 0) + 1;
+      if (fb.tags)
+        fb.tags.forEach((t) => {
+          tagCounts[t] = (tagCounts[t] || 0) + 1;
+        });
+      if (fb.sentimentScore != null) {
+        sentimentSum += fb.sentimentScore;
+        sentimentCount++;
+      }
     }
 
-    const avgSentiment = sentimentCount > 0 ? sentimentSum / sentimentCount : 0.5;
+    const avgSentiment =
+      sentimentCount > 0 ? sentimentSum / sentimentCount : 0.5;
 
     const topTags = Object.entries(tagCounts)
       .sort((a, b) => b[1] - a[1])
@@ -147,12 +175,22 @@ export class DigestService {
       .map(([tag]) => tag);
 
     const mostNegative = [...feedbacks]
-      .filter(fb => fb.sentimentScore != null)
+      .filter((fb) => fb.sentimentScore != null)
       .sort((a, b) => (a.sentimentScore ?? 0.5) - (b.sentimentScore ?? 0.5))
       .slice(0, 5)
-      .map(fb => ({ content: fb.content, sentimentScore: fb.sentimentScore }));
+      .map((fb) => ({
+        content: fb.content,
+        sentimentScore: fb.sentimentScore,
+      }));
 
-    return { projectName, totalCount: feedbacks.length, avgSentiment, categories, topTags, mostNegative };
+    return {
+      projectName,
+      totalCount: feedbacks.length,
+      avgSentiment,
+      categories,
+      topTags,
+      mostNegative,
+    };
   }
 
   private renderEmail(
@@ -161,17 +199,31 @@ export class DigestService {
     aiSummary: string,
     since: Date,
   ): string {
-    const sentimentColor = stats.avgSentiment > 0.6 ? '#10b981' : stats.avgSentiment < 0.4 ? '#ef4444' : '#f59e0b';
+    const sentimentColor =
+      stats.avgSentiment > 0.6
+        ? '#10b981'
+        : stats.avgSentiment < 0.4
+          ? '#ef4444'
+          : '#f59e0b';
     const sentimentPct = Math.round(stats.avgSentiment * 100);
     const dateRange = `${since.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
-    const topCategory = Object.entries(stats.categories).sort((a, b) => b[1] - a[1])[0];
+    const topCategory = Object.entries(stats.categories).sort(
+      (a, b) => b[1] - a[1],
+    )[0];
 
     const categoryRows = Object.entries(stats.categories)
       .sort((a, b) => b[1] - a[1])
       .map(([cat, count]) => {
         const pct = Math.round((count / stats.totalCount) * 100);
-        const barColor = cat === 'Bug' ? '#ef4444' : cat === 'Feature' ? '#10b981' : cat === 'UI/UX' ? '#ec4899' : '#6366f1';
+        const barColor =
+          cat === 'Bug'
+            ? '#ef4444'
+            : cat === 'Feature'
+              ? '#10b981'
+              : cat === 'UI/UX'
+                ? '#ec4899'
+                : '#6366f1';
         return `
           <tr>
             <td style="padding:6px 0;font-size:13px;color:#374151;width:110px">${cat}</td>
@@ -182,19 +234,28 @@ export class DigestService {
             </td>
             <td style="padding:6px 0;font-size:13px;color:#6b7280;text-align:right;white-space:nowrap">${count} (${pct}%)</td>
           </tr>`;
-      }).join('');
+      })
+      .join('');
 
-    const negativeRows = stats.mostNegative.length > 0
-      ? stats.mostNegative.map(fb => `
+    const negativeRows =
+      stats.mostNegative.length > 0
+        ? stats.mostNegative
+            .map(
+              (fb) => `
           <tr>
             <td style="padding:8px 12px;font-size:12px;color:#374151;border-bottom:1px solid #f3f4f6;vertical-align:top">${this.escape(fb.content)}</td>
             <td style="padding:8px 12px;font-size:12px;font-weight:700;color:#ef4444;white-space:nowrap;border-bottom:1px solid #f3f4f6;text-align:right;vertical-align:top">${Math.round((fb.sentimentScore ?? 0.5) * 100)}%</td>
-          </tr>`).join('')
-      : `<tr><td colspan="2" style="padding:12px;color:#9ca3af;font-size:12px">No negative feedbacks this week.</td></tr>`;
+          </tr>`,
+            )
+            .join('')
+        : `<tr><td colspan="2" style="padding:12px;color:#9ca3af;font-size:12px">No negative feedbacks this week.</td></tr>`;
 
-    const tagBadges = stats.topTags.map(t =>
-      `<span style="display:inline-block;margin:3px 4px 3px 0;padding:2px 8px;background:#ede9fe;color:#5b21b6;border-radius:12px;font-size:11px;font-weight:600">#${this.escape(t)}</span>`
-    ).join('');
+    const tagBadges = stats.topTags
+      .map(
+        (t) =>
+          `<span style="display:inline-block;margin:3px 4px 3px 0;padding:2px 8px;background:#ede9fe;color:#5b21b6;border-radius:12px;font-size:11px;font-weight:600">#${this.escape(t)}</span>`,
+      )
+      .join('');
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -247,9 +308,13 @@ export class DigestService {
           </table>
 
           <!-- Top tags -->
-          ${stats.topTags.length > 0 ? `
+          ${
+            stats.topTags.length > 0
+              ? `
           <h2 style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;text-transform:uppercase;letter-spacing:.06em">🏷️ Top Tags</h2>
-          <div style="margin-bottom:28px">${tagBadges}</div>` : ''}
+          <div style="margin-bottom:28px">${tagBadges}</div>`
+              : ''
+          }
 
           <!-- Most negative -->
           <h2 style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;text-transform:uppercase;letter-spacing:.06em">⚠️ Top Concerns</h2>
@@ -280,6 +345,9 @@ export class DigestService {
   }
 
   private escape(str: string) {
-    return (str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return (str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 }

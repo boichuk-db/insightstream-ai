@@ -14,11 +14,11 @@ export class UsersController {
     if (!user) {
       return null;
     }
-    
+
     if (!user.apiKey) {
       user = await this.usersService.generateApiKey(user.id);
     }
-    
+
     const { passwordHash, ...result } = user as any;
     return result;
   }

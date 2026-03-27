@@ -17,15 +17,35 @@ export class AiService {
 
   // Predefined taxonomy for Kanban filtering
   private readonly ALLOWED_CATEGORIES = [
-    'Bug', 'Feature', 'Improvement', 'UI/UX', 
-    'Performance', 'Billing', 'Support', 'Security'
+    'Bug',
+    'Feature',
+    'Improvement',
+    'UI/UX',
+    'Performance',
+    'Billing',
+    'Support',
+    'Security',
   ];
 
   private readonly ALLOWED_TAGS = [
-    'urgent', 'crash', 'login', 'signup', 'api', 'dashboard', 
-    'widget', 'slow', 'design', 'mobile', 'desktop', 
-    'integration', 'pricing', 'documentation', 'missing-data', 
-    'workflow', 'email', 'notifications'
+    'urgent',
+    'crash',
+    'login',
+    'signup',
+    'api',
+    'dashboard',
+    'widget',
+    'slow',
+    'design',
+    'mobile',
+    'desktop',
+    'integration',
+    'pricing',
+    'documentation',
+    'missing-data',
+    'workflow',
+    'email',
+    'notifications',
   ];
 
   async generateWeeklyDigest(stats: {
@@ -36,7 +56,8 @@ export class AiService {
     topTags: string[];
     mostNegative: Array<{ content: string; sentimentScore: number | null }>;
   }): Promise<string> {
-    if (!this.model) return '<p>AI summary unavailable — Gemini key not configured.</p>';
+    if (!this.model)
+      return '<p>AI summary unavailable — Gemini key not configured.</p>';
 
     const prompt = `
 You are a product analytics assistant. Based on the weekly feedback data below, write a concise executive digest (3–4 short paragraphs) in plain HTML.
@@ -46,7 +67,9 @@ Project: ${stats.projectName}
 Period: past 7 days
 Total feedbacks: ${stats.totalCount}
 Average sentiment: ${Math.round(stats.avgSentiment * 100)}% positive
-Category breakdown: ${Object.entries(stats.categories).map(([k, v]) => `${k}: ${v}`).join(', ')}
+Category breakdown: ${Object.entries(stats.categories)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(', ')}
 Top tags: ${stats.topTags.join(', ') || 'none'}
 Most negative feedbacks:
 ${stats.mostNegative.map((f, i) => `${i + 1}. [${Math.round((f.sentimentScore ?? 0.5) * 100)}%] ${f.content}`).join('\n')}
@@ -98,13 +121,13 @@ Write the digest now:`;
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      
+
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-         console.error('Gemini returned invalid format:', text);
-         return null;
+        console.error('Gemini returned invalid format:', text);
+        return null;
       }
-      
+
       const parsed = JSON.parse(jsonMatch[0]);
 
       // Strict Validation & Post-Processing
@@ -113,15 +136,16 @@ Write the digest now:`;
           .map((tag: string) => tag.toLowerCase().trim())
           .filter((tag: string) => this.ALLOWED_TAGS.includes(tag));
       }
-      
+
       if (parsed.category) {
         // Find correct casing or fallback to 'Support'
-        const validCat = this.ALLOWED_CATEGORIES.find(c => c.toLowerCase() === parsed.category.toLowerCase());
+        const validCat = this.ALLOWED_CATEGORIES.find(
+          (c) => c.toLowerCase() === parsed.category.toLowerCase(),
+        );
         parsed.category = validCat || 'Support';
       }
 
       return parsed;
-
     } catch (error) {
       console.error('Gemini Analysis Error:', error);
       return null;
