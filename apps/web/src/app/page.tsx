@@ -22,6 +22,7 @@ function AuthForm() {
 
   // Show OAuth error if redirected back from failed OAuth
   const oauthError = searchParams.get('error');
+  const resetSuccess = searchParams.get('reset') === 'success';
 
   const authMutation = useMutation({
     mutationFn: async () => {
@@ -101,6 +102,12 @@ function AuthForm() {
           <span className="bg-zinc-950 px-2 text-zinc-500">or</span>
         </div>
       </div>
+
+      {resetSuccess && (
+        <div className="mb-4 p-3 bg-green-950/40 border border-green-800/50 rounded text-green-400 text-sm text-center">
+          Password updated successfully. Please sign in.
+        </div>
+      )}
 
       {(oauthError || errorMsg) && (
         <div className="mb-4 p-3 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm text-center">

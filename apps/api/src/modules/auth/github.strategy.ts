@@ -25,7 +25,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       profile.emails?.[0]?.value;
 
     if (!email) {
-      done(new Error('No email returned from GitHub'), undefined);
+      done(null, false);
       return;
     }
     done(null, { email, githubId: profile.id });

@@ -58,8 +58,14 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: any, @Res() res: any) {
-    const { access_token } = await this.authService.oauthLogin(req.user);
     const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    // NOTE: When the strategy calls done(null, false), Passport's default AuthGuard
+    // throws a 401 UnauthorizedException before this handler runs, so the !req.user
+    // branch below is a belt-and-suspenders guard for custom guard scenarios only.
+    if (!req.user) {
+      return res.redirect(`${frontendUrl}/?error=no_email`);
+    }
+    const { access_token } = await this.authService.oauthLogin(req.user);
     res.redirect(`${frontendUrl}/auth/oauth/callback?token=${access_token}`);
   }
 
@@ -73,8 +79,14 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubCallback(@Req() req: any, @Res() res: any) {
-    const { access_token } = await this.authService.oauthLogin(req.user);
     const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    // NOTE: When the strategy calls done(null, false), Passport's default AuthGuard
+    // throws a 401 UnauthorizedException before this handler runs, so the !req.user
+    // branch below is a belt-and-suspenders guard for custom guard scenarios only.
+    if (!req.user) {
+      return res.redirect(`${frontendUrl}/?error=no_email`);
+    }
+    const { access_token } = await this.authService.oauthLogin(req.user);
     res.redirect(`${frontendUrl}/auth/oauth/callback?token=${access_token}`);
   }
 }
