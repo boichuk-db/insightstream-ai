@@ -36,6 +36,7 @@
     "@nestjs/serve-static": "^5.0.4",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.17",
+    "@sentry/nestjs": "^10.46.0",
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "nodemailer": "^8.0.4",
