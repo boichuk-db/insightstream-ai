@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSelectedProject } from '@/hooks/useSelectedProject';
 import { api } from '@/lib/api';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { CreateProjectModal } from '@/components/dashboard/CreateProjectModal';
@@ -31,7 +32,7 @@ const FRAMEWORKS = ['html', 'react', 'angular'] as const;
 
 export default function EmbedPage() {
   const router = useRouter();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   

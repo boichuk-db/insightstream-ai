@@ -12,13 +12,14 @@ import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { useTeam } from '@/hooks/useTeam';
 import { useState } from 'react';
+import { useSelectedProject } from '@/hooks/useSelectedProject';
 
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const;
 
 export default function SettingsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const { teams, activeTeam, switchTeam, userRole } = useTeam();

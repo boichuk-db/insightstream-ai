@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSelectedProject } from '@/hooks/useSelectedProject';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
@@ -22,7 +23,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [newFeedback, setNewFeedback] = useState('');
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDigestOpen, setIsDigestOpen] = useState(false);
   const [digestData, setDigestData] = useState<any>(null);

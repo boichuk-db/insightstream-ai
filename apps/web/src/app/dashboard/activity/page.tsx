@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSelectedProject } from '@/hooks/useSelectedProject';
 import { api } from '@/lib/api';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { useRouter } from 'next/navigation';
@@ -13,7 +14,7 @@ import { motion } from 'framer-motion';
 export default function ActivityPage() {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
 
   const { data: userProfile } = useQuery({
     queryKey: ['userProfile'],

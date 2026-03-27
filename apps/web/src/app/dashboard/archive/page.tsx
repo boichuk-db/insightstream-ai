@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSelectedProject } from '@/hooks/useSelectedProject';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Sidebar } from '@/components/dashboard/Sidebar';
@@ -17,7 +18,7 @@ import { getCategoryColor } from '@/lib/colors';
 export default function ArchivePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
