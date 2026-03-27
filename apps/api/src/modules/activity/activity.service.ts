@@ -22,7 +22,7 @@ export class ActivityService {
       projectId: params.projectId || null,
       actorId: params.actorId,
       action: params.action,
-      metadata: params.metadata || null,
+      metadata: params.metadata ?? undefined,
     });
     return this.activityRepo.save(event);
   }

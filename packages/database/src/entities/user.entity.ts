@@ -21,6 +21,9 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   planUpdatedAt: Date | null;
 
+  @Column({ type: 'varchar', unique: true, nullable: true, default: null })
+  apiKey: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 
