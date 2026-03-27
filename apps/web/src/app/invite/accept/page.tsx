@@ -1,8 +1,9 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Users, CheckCircle, XCircle, Clock } from 'lucide-react';
@@ -12,12 +13,7 @@ function AcceptInviteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access_token');
-    setIsLoggedIn(!!accessToken);
-  }, []);
+  const [isLoggedIn] = useState(() => typeof window !== 'undefined' ? !!localStorage.getItem('access_token') : false);
 
   const { data: info, isLoading, isError } = useQuery({
     queryKey: ['invitationInfo', token],
@@ -71,9 +67,9 @@ function AcceptInviteContent() {
             <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
             <h1 className="text-xl font-bold text-white mb-2">Invitation Not Found</h1>
             <p className="text-zinc-400 mb-6">This invitation link may be invalid or expired.</p>
-            <a href="/" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium">
+            <Link href="/" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium">
               Go to homepage
-            </a>
+            </Link>
           </div>
         ) : info?.status === 'expired' ? (
           <div>

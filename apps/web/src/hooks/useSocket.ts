@@ -32,5 +32,4 @@ export function useSocket(userId: string | undefined, onFeedbackUpdated: () => v
     };
   }, [userId]);
 
-  return socketRef.current;
 }

@@ -72,6 +72,7 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -90,6 +91,7 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
       newCols[status].push(fb);
     });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setColumns(newCols);
   }, [initialFeedbacks]);
 

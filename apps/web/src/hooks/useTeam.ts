@@ -21,13 +21,9 @@ export interface Team {
 
 export function useTeam() {
   const queryClient = useQueryClient();
-  const [activeTeamId, setActiveTeamId] = useState<string | null>(null);
-
-  // Load saved team from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('activeTeamId');
-    if (saved) setActiveTeamId(saved);
-  }, []);
+  const [activeTeamId, setActiveTeamId] = useState<string | null>(
+    () => (typeof window !== 'undefined' ? localStorage.getItem('activeTeamId') : null)
+  );
 
   const { data: teams, isLoading: teamsLoading } = useQuery<Team[]>({
     queryKey: ['teams'],
@@ -41,6 +37,7 @@ export function useTeam() {
   useEffect(() => {
     if (teams?.length && !activeTeamId) {
       const firstTeam = teams[0];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveTeamId(firstTeam.id);
       localStorage.setItem('activeTeamId', firstTeam.id);
     }

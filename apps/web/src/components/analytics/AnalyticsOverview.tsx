@@ -31,6 +31,26 @@ interface AnalyticsProps {
   feedbacks: Feedback[];
 }
 
+function CustomTooltip({ active, payload, label }: any) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-brand-surface border border-brand-border rounded-lg shadow-xl p-3">
+        <p className="text-zinc-300 font-medium mb-1">{label}</p>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: payload[0].payload.fill || payload[0].color }}
+          />
+          <p className="text-white font-bold">
+            {payload[0].value} {payload[0].name === 'score' ? '%' : 'items'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
 export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
   const chartData = useMemo(() => {
     if (!feedbacks || feedbacks.length === 0) return { sentiment: [], categories: [] };
@@ -72,27 +92,6 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
   }, [feedbacks]);
 
   if (!feedbacks || feedbacks.length === 0) return null;
-
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-brand-surface border border-brand-border rounded-lg shadow-xl p-3">
-          <p className="text-zinc-300 font-medium mb-1">{label}</p>
-          <div className="flex items-center gap-2">
-            <div 
-              className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: payload[0].payload.fill || payload[0].color }}
-            />
-            <p className="text-white font-bold">
-              {payload[0].value} {payload[0].name === 'score' ? '%' : 'items'}
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 w-full">
