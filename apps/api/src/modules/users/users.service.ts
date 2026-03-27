@@ -37,4 +37,20 @@ export class UsersService {
     user.apiKey = crypto.randomUUID();
     return this.usersRepository.save(user);
   }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { resetPwdToken: token } });
+  }
+
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { googleId } });
+  }
+
+  async findByGithubId(githubId: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { githubId } });
+  }
+
+  async save(user: User): Promise<User> {
+    return this.usersRepository.save(user);
+  }
 }
