@@ -41,3 +41,4 @@ tmp
 
 # Git worktrees
 .worktrees/
+.obsidian/
