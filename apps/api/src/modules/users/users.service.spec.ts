@@ -24,7 +24,7 @@ describe('UsersService — new auth methods', () => {
   });
 
   it('findByResetToken returns user when token matches', async () => {
-    const user = { id: '1', resetPwdToken: 'abc' } as User;
+    const user = { id: '1', resetPwdToken: 'abc' } as unknown as User;
     mockRepo.findOne.mockResolvedValue(user);
     const result = await service.findByResetToken('abc');
     expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { resetPwdToken: 'abc' } });
@@ -37,7 +37,7 @@ describe('UsersService — new auth methods', () => {
   });
 
   it('findByGoogleId queries by googleId', async () => {
-    const user = { id: '1', googleId: 'g123' } as User;
+    const user = { id: '1', googleId: 'g123' } as unknown as User;
     mockRepo.findOne.mockResolvedValue(user);
     const result = await service.findByGoogleId('g123');
     expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { googleId: 'g123' } });
@@ -45,14 +45,14 @@ describe('UsersService — new auth methods', () => {
   });
 
   it('findByGithubId queries by githubId', async () => {
-    const user = { id: '1', githubId: 'gh456' } as User;
+    const user = { id: '1', githubId: 'gh456' } as unknown as User;
     mockRepo.findOne.mockResolvedValue(user);
     await service.findByGithubId('gh456');
     expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { githubId: 'gh456' } });
   });
 
   it('save calls repository.save', async () => {
-    const user = { id: '1' } as User;
+    const user = { id: '1' } as unknown as User;
     mockRepo.save.mockResolvedValue(user);
     await service.save(user);
     expect(mockRepo.save).toHaveBeenCalledWith(user);
