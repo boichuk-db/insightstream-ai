@@ -16,6 +16,7 @@ import { TeamRole } from '@insightstream/database';
 import { TeamsService } from './teams.service';
 import { ActivityService } from '../activity/activity.service';
 import { ProjectsService } from '../projects/projects.service';
+import { UpdateTeamDto } from './dto/update-team.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('teams')
@@ -84,6 +85,17 @@ export class TeamsController {
       body.role,
       req.user.id,
     );
+  }
+
+  @Patch(':teamId')
+  @UseGuards(TeamRoleGuard)
+  @RequireTeamRole(TeamRole.OWNER)
+  async updateTeam(
+    @Param('teamId') teamId: string,
+    @Body() body: UpdateTeamDto,
+    @Request() req: any,
+  ) {
+    return this.teamsService.update(teamId, req.user.id, body);
   }
 
   @Delete(':teamId')

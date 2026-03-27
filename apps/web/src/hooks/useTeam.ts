@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 
@@ -67,11 +67,31 @@ export function useTeam() {
   const switchTeam = useCallback((teamId: string) => {
     setActiveTeamId(teamId);
     localStorage.setItem('activeTeamId', teamId);
-    // Invalidate team-scoped queries
     queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
     queryClient.invalidateQueries({ queryKey: ['teamProjects'] });
     queryClient.invalidateQueries({ queryKey: ['teamActivity'] });
   }, [queryClient]);
+
+  const createTeam = useMutation({
+    mutationFn: async (name: string) => {
+      const { data } = await api.post('/teams', { name });
+      return data as Team;
+    },
+    onSuccess: (newTeam) => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      switchTeam(newTeam.id);
+    },
+  });
+
+  const updateTeamName = useMutation({
+    mutationFn: async ({ teamId, name }: { teamId: string; name: string }) => {
+      const { data } = await api.patch(`/teams/${teamId}`, { name });
+      return data as Team;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+    },
+  });
 
   return {
     teams: teams || [],
@@ -81,5 +101,7 @@ export function useTeam() {
     userRole,
     teamsLoading,
     switchTeam,
+    createTeam,
+    updateTeamName,
   };
 }

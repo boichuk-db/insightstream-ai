@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getPlanConfig, isPaidPlan, PlanType } from '@/lib/plans';
+import { CreateTeamModal } from '@/components/teams/CreateTeamModal';
+import { CreateTeamProjectModal } from '@/components/teams/CreateTeamProjectModal';
 
 export function Sidebar({
   projects,
@@ -41,6 +43,10 @@ export function Sidebar({
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
+  const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+  const [isCreateTeamProjectOpen, setIsCreateTeamProjectOpen] = useState(false);
+
+  const isAdminOrOwner = userRole === 'owner' || userRole === 'admin';
 
   const isActive = (path: string) => pathname === path;
 
@@ -124,6 +130,17 @@ export function Sidebar({
                         </button>
                       ))}
                     </div>
+                    <div className="p-1 border-t border-brand-border">
+                      <button
+                        onClick={() => {
+                          setIsTeamDropdownOpen(false);
+                          setIsCreateTeamOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
+                      >
+                        <Plus className="h-4 w-4" /> Create team
+                      </button>
+                    </div>
                   </motion.div>
                 </>
               )}
@@ -177,15 +194,27 @@ export function Sidebar({
                     ))}
                   </div>
                   <div className="p-1 border-t border-brand-border">
-                    <button 
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        onCreateProject();
-                      }}
-                      className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
-                    >
-                      <Plus className="h-4 w-4" /> Create New Project
-                    </button>
+                    {isAdminOrOwner && activeTeam ? (
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          setIsCreateTeamProjectOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
+                      >
+                        <Plus className="h-4 w-4" /> New project
+                      </button>
+                    ) : !activeTeam ? (
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onCreateProject();
+                        }}
+                        className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
+                      >
+                        <Plus className="h-4 w-4" /> New project
+                      </button>
+                    ) : null}
                   </div>
                 </motion.div>
               </>
@@ -331,6 +360,17 @@ export function Sidebar({
         </Button>
       </div>
       </div>
+      <CreateTeamModal
+        isOpen={isCreateTeamOpen}
+        onClose={() => setIsCreateTeamOpen(false)}
+      />
+      {activeTeam && (
+        <CreateTeamProjectModal
+          isOpen={isCreateTeamProjectOpen}
+          onClose={() => setIsCreateTeamProjectOpen(false)}
+          teamId={activeTeam.id}
+        />
+      )}
     </>
   );
 }

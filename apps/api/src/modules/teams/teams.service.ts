@@ -171,6 +171,19 @@ export class TeamsService {
     return updated;
   }
 
+  async update(
+    teamId: string,
+    userId: string,
+    data: { name: string },
+  ): Promise<Team> {
+    const team = await this.findOne(teamId);
+    if (team.ownerId !== userId) {
+      throw new ForbiddenException('Only the team owner can rename the team');
+    }
+    team.name = data.name;
+    return this.teamRepo.save(team);
+  }
+
   async deleteTeam(teamId: string, userId: string): Promise<void> {
     const team = await this.findOne(teamId);
     if (team.ownerId !== userId) {
