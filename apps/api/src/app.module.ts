@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { SentryModule } from '@sentry/nestjs/setup';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
@@ -29,6 +30,7 @@ import {
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({

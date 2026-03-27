@@ -1,11 +1,16 @@
 import './instrument';
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ProjectsService } from './modules/projects/projects.service';
+import { SentryExceptionFilter } from './filters/sentry-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new SentryExceptionFilter(httpAdapter));
 
   const projectsService = app.get(ProjectsService);
 
