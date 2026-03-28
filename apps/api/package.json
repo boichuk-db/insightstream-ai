@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.5.0",
     "@insightstream/database": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
