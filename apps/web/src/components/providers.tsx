@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -14,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   // Handle bfcache restoration — refetch stale queries when page is restored
@@ -24,13 +24,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         queryClient.invalidateQueries();
       }
     };
-    window.addEventListener('pageshow', handler);
-    return () => window.removeEventListener('pageshow', handler);
+    window.addEventListener("pageshow", handler);
+    return () => window.removeEventListener("pageshow", handler);
   }, [queryClient]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }

@@ -17,10 +17,10 @@ Integrate Sentry error monitoring into both `apps/api` (NestJS) and `apps/web` (
 
 Two separate Sentry projects, each with its own DSN:
 
-| App | Sentry Platform | DSN env var |
-|-----|-----------------|-------------|
-| `apps/api` | NestJS | `SENTRY_DSN` |
-| `apps/web` | Next.js | `NEXT_PUBLIC_SENTRY_DSN` |
+| App        | Sentry Platform | DSN env var              |
+| ---------- | --------------- | ------------------------ |
+| `apps/api` | NestJS          | `SENTRY_DSN`             |
+| `apps/web` | Next.js         | `NEXT_PUBLIC_SENTRY_DSN` |
 
 **DSNs must only be stored in env vars — never committed to git.**
 
@@ -44,13 +44,13 @@ Sentry instrumentation must run **before** any NestJS module is imported. This i
 Standalone file with `Sentry.init()`. Imported as the first side-effect in `main.ts`.
 
 ```ts
-import * as Sentry from '@sentry/nestjs';
+import * as Sentry from "@sentry/nestjs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV ?? 'development',
-  enabled: process.env.NODE_ENV !== 'test',
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  environment: process.env.NODE_ENV ?? "development",
+  enabled: process.env.NODE_ENV !== "test",
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
   sendDefaultPii: false,
 });
 ```
@@ -98,12 +98,12 @@ Register in `main.ts` as global filter via `app.useGlobalFilters()`.
 Runs in the browser. Captures client-side JS errors and browser performance.
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   replaysOnErrorSampleRate: 0, // session replay disabled
 });
 ```
@@ -112,12 +112,12 @@ Sentry.init({
 Runs during SSR and in Next.js server components. Captures server-side errors.
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
 });
 ```
 
@@ -125,7 +125,7 @@ Sentry.init({
 Runs in Next.js edge runtime (middleware). Minimal config.
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -138,11 +138,11 @@ Next.js built-in hook for initializing server/edge Sentry configs at startup.
 
 ```ts
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('../sentry.server.config');
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("../sentry.server.config");
   }
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('../sentry.edge.config');
+  if (process.env.NEXT_RUNTIME === "edge") {
+    await import("../sentry.edge.config");
   }
 }
 ```
@@ -151,9 +151,11 @@ export async function register() {
 Wrap existing config with `withSentryConfig()`. This enables source map upload on build so stack traces in Sentry show original TypeScript code instead of minified JS.
 
 ```ts
-import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from "@sentry/nextjs";
 
-const nextConfig = { /* existing config */ };
+const nextConfig = {
+  /* existing config */
+};
 
 export default withSentryConfig(nextConfig, {
   silent: true,
@@ -173,16 +175,19 @@ export default withSentryConfig(nextConfig, {
 ## Environment Variables
 
 ### `apps/api/.env` (add)
+
 ```
 SENTRY_DSN=<api-dsn>
 ```
 
 ### `apps/web/.env.local` (add)
+
 ```
 NEXT_PUBLIC_SENTRY_DSN=<web-dsn>
 ```
 
 ### Railway (production)
+
 Add both vars to the respective Railway services via the Railway dashboard environment variables UI.
 
 ---
@@ -199,6 +204,7 @@ Add both vars to the respective Railway services via the Railway dashboard envir
 ## Verification
 
 After deploying, trigger a test error:
+
 - **API:** Call a non-existent endpoint or temporarily throw in a controller
 - **Web:** Throw in a client component or call `Sentry.captureMessage('test')`
 

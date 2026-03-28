@@ -1,35 +1,47 @@
 function escapeHtml(str: string) {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function csvCell(value: string) {
-  const escaped = (value ?? '').replace(/"/g, '""');
+  const escaped = (value ?? "").replace(/"/g, '""');
   return `"${escaped}"`;
 }
 
 export function exportToCSV(feedbacks: any[], filename: string) {
-  const headers = ['#', 'Content', 'AI Summary', 'Category', 'Sentiment %', 'Tags', 'Source', 'Status', 'Created At'];
+  const headers = [
+    "#",
+    "Content",
+    "AI Summary",
+    "Category",
+    "Sentiment %",
+    "Tags",
+    "Source",
+    "Status",
+    "Created At",
+  ];
 
   const rows = feedbacks.map((fb, i) => [
     String(i + 1),
-    csvCell(fb.content || ''),
-    csvCell(fb.aiSummary || ''),
-    csvCell(fb.category || ''),
-    fb.sentimentScore != null ? String(Math.round(fb.sentimentScore * 100)) : '',
-    csvCell((fb.tags || []).join(', ')),
-    csvCell(fb.source || ''),
-    csvCell(fb.status || ''),
-    csvCell(fb.createdAt ? new Date(fb.createdAt).toLocaleString() : ''),
+    csvCell(fb.content || ""),
+    csvCell(fb.aiSummary || ""),
+    csvCell(fb.category || ""),
+    fb.sentimentScore != null
+      ? String(Math.round(fb.sentimentScore * 100))
+      : "",
+    csvCell((fb.tags || []).join(", ")),
+    csvCell(fb.source || ""),
+    csvCell(fb.status || ""),
+    csvCell(fb.createdAt ? new Date(fb.createdAt).toLocaleString() : ""),
   ]);
 
-  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = `${filename}.csv`;
   document.body.appendChild(a);
@@ -39,42 +51,49 @@ export function exportToCSV(feedbacks: any[], filename: string) {
 }
 
 const SENTIMENT_COLOR = (score: number | null) => {
-  if (score == null) return '#888';
-  if (score > 0.6) return '#10b981';
-  if (score < 0.4) return '#ef4444';
-  return '#f59e0b';
+  if (score == null) return "#888";
+  if (score > 0.6) return "#10b981";
+  if (score < 0.4) return "#ef4444";
+  return "#f59e0b";
 };
 
 const CATEGORY_STYLE: Record<string, string> = {
-  Bug: 'background:#fee2e2;color:#991b1b',
-  Feature: 'background:#d1fae5;color:#065f46',
-  'UI/UX': 'background:#fce7f3;color:#831843',
+  Bug: "background:#fee2e2;color:#991b1b",
+  Feature: "background:#d1fae5;color:#065f46",
+  "UI/UX": "background:#fce7f3;color:#831843",
 };
 
 export function exportToPDF(feedbacks: any[], title: string) {
-  const rows = feedbacks.map((fb, i) => {
-    const catStyle = CATEGORY_STYLE[fb.category] || 'background:#f3f4f6;color:#374151';
-    const sentiment = fb.sentimentScore != null
-      ? `<span style="font-weight:600;color:${SENTIMENT_COLOR(fb.sentimentScore)}">${Math.round(fb.sentimentScore * 100)}%</span>`
-      : '—';
-    const tags = (fb.tags || []).map((t: string) =>
-      `<span style="display:inline-block;margin:1px 2px;padding:0 4px;background:#f1f5f9;border-radius:3px;font-size:9px;color:#475569">#${escapeHtml(t)}</span>`
-    ).join('');
-    const cat = fb.category
-      ? `<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;${catStyle}">${escapeHtml(fb.category)}</span>`
-      : '—';
+  const rows = feedbacks
+    .map((fb, i) => {
+      const catStyle =
+        CATEGORY_STYLE[fb.category] || "background:#f3f4f6;color:#374151";
+      const sentiment =
+        fb.sentimentScore != null
+          ? `<span style="font-weight:600;color:${SENTIMENT_COLOR(fb.sentimentScore)}">${Math.round(fb.sentimentScore * 100)}%</span>`
+          : "—";
+      const tags = (fb.tags || [])
+        .map(
+          (t: string) =>
+            `<span style="display:inline-block;margin:1px 2px;padding:0 4px;background:#f1f5f9;border-radius:3px;font-size:9px;color:#475569">#${escapeHtml(t)}</span>`,
+        )
+        .join("");
+      const cat = fb.category
+        ? `<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;${catStyle}">${escapeHtml(fb.category)}</span>`
+        : "—";
 
-    return `<tr>
+      return `<tr>
       <td style="color:#9ca3af;width:28px">${i + 1}</td>
-      <td style="max-width:220px;word-break:break-word">${escapeHtml(fb.content || '')}</td>
-      <td style="max-width:180px;word-break:break-word;color:#6b7280;font-style:italic">${escapeHtml(fb.aiSummary || '—')}</td>
+      <td style="max-width:220px;word-break:break-word">${escapeHtml(fb.content || "")}</td>
+      <td style="max-width:180px;word-break:break-word;color:#6b7280;font-style:italic">${escapeHtml(fb.aiSummary || "—")}</td>
       <td>${cat}</td>
       <td style="text-align:center">${sentiment}</td>
-      <td style="word-break:break-word">${tags || '—'}</td>
-      <td style="color:#6b7280;font-size:9px;white-space:nowrap">${fb.status || ''}</td>
-      <td style="color:#9ca3af;font-size:9px;white-space:nowrap">${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : ''}</td>
+      <td style="word-break:break-word">${tags || "—"}</td>
+      <td style="color:#6b7280;font-size:9px;white-space:nowrap">${fb.status || ""}</td>
+      <td style="color:#9ca3af;font-size:9px;white-space:nowrap">${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : ""}</td>
     </tr>`;
-  }).join('');
+    })
+    .join("");
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -102,7 +121,7 @@ export function exportToPDF(feedbacks: any[], title: string) {
 <body>
 <header>
   <h1>${escapeHtml(title)}</h1>
-  <p>Exported ${new Date().toLocaleString()} &middot; ${feedbacks.length} item${feedbacks.length !== 1 ? 's' : ''}</p>
+  <p>Exported ${new Date().toLocaleString()} &middot; ${feedbacks.length} item${feedbacks.length !== 1 ? "s" : ""}</p>
 </header>
 <table>
   <thead>
@@ -116,7 +135,7 @@ export function exportToPDF(feedbacks: any[], title: string) {
 </body>
 </html>`;
 
-  const win = window.open('', '_blank', 'width=1000,height=700');
+  const win = window.open("", "_blank", "width=1000,height=700");
   if (win) {
     win.document.write(html);
     win.document.close();

@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const STORAGE_KEY = 'selectedProjectId';
+const STORAGE_KEY = "selectedProjectId";
 
 export function useSelectedProject() {
-  const [selectedProjectId, setSelectedProjectIdState] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
+  const [selectedProjectId, setSelectedProjectIdState] = useState<
+    string | null
+  >(() => {
+    if (typeof window === "undefined") return null;
     return localStorage.getItem(STORAGE_KEY);
   });
 

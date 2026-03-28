@@ -92,6 +92,6 @@ export class ProjectsService {
 
   async getAllDomains(): Promise<string[]> {
     const projects = await this.projectsRepository.find({ select: ['domain'] });
-    return projects.map((p) => p.domain).filter(Boolean) as string[];
+    return projects.map((p) => p.domain).filter(Boolean);
   }
 }

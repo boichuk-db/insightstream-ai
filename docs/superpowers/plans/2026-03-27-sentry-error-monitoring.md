@@ -12,25 +12,26 @@
 
 ## File Map
 
-| Action | Path | Responsibility |
-|--------|------|----------------|
-| Create | `apps/api/src/instrument.ts` | Sentry.init() for API — must run before any other import |
-| Modify | `apps/api/src/main.ts` | Add `import './instrument'` as first line |
-| Modify | `apps/api/src/app.module.ts` | Add `SentryModule.forRoot()` to imports |
-| Create | `apps/api/src/filters/sentry-exception.filter.ts` | Global filter — captures all exceptions to Sentry |
-| Modify | `apps/api/.env` | Add `SENTRY_DSN` |
-| Create | `apps/web/sentry.client.config.ts` | Sentry init for browser runtime |
-| Create | `apps/web/sentry.server.config.ts` | Sentry init for SSR / server components |
-| Create | `apps/web/sentry.edge.config.ts` | Sentry init for edge runtime (middleware) |
-| Create | `apps/web/src/instrumentation.ts` | Next.js hook that loads server/edge configs at startup |
-| Modify | `apps/web/next.config.ts` | Wrap with `withSentryConfig()` for source maps |
-| Modify | `apps/web/.env.local` | Add `NEXT_PUBLIC_SENTRY_DSN` |
+| Action | Path                                              | Responsibility                                           |
+| ------ | ------------------------------------------------- | -------------------------------------------------------- |
+| Create | `apps/api/src/instrument.ts`                      | Sentry.init() for API — must run before any other import |
+| Modify | `apps/api/src/main.ts`                            | Add `import './instrument'` as first line                |
+| Modify | `apps/api/src/app.module.ts`                      | Add `SentryModule.forRoot()` to imports                  |
+| Create | `apps/api/src/filters/sentry-exception.filter.ts` | Global filter — captures all exceptions to Sentry        |
+| Modify | `apps/api/.env`                                   | Add `SENTRY_DSN`                                         |
+| Create | `apps/web/sentry.client.config.ts`                | Sentry init for browser runtime                          |
+| Create | `apps/web/sentry.server.config.ts`                | Sentry init for SSR / server components                  |
+| Create | `apps/web/sentry.edge.config.ts`                  | Sentry init for edge runtime (middleware)                |
+| Create | `apps/web/src/instrumentation.ts`                 | Next.js hook that loads server/edge configs at startup   |
+| Modify | `apps/web/next.config.ts`                         | Wrap with `withSentryConfig()` for source maps           |
+| Modify | `apps/web/.env.local`                             | Add `NEXT_PUBLIC_SENTRY_DSN`                             |
 
 ---
 
 ## Task 1: Install packages and add env vars
 
 **Files:**
+
 - Modify: `apps/api/.env`
 - Modify: `apps/web/.env.local`
 
@@ -82,6 +83,7 @@ git commit -m "chore: install @sentry/nestjs and @sentry/nextjs"
 ## Task 2: API — Sentry instrumentation bootstrap
 
 **Files:**
+
 - Create: `apps/api/src/instrument.ts`
 - Modify: `apps/api/src/main.ts`
 
@@ -90,13 +92,13 @@ git commit -m "chore: install @sentry/nestjs and @sentry/nextjs"
 Create `apps/api/src/instrument.ts`:
 
 ```ts
-import * as Sentry from '@sentry/nestjs';
+import * as Sentry from "@sentry/nestjs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV ?? 'development',
-  enabled: process.env.NODE_ENV !== 'test',
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  environment: process.env.NODE_ENV ?? "development",
+  enabled: process.env.NODE_ENV !== "test",
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
   sendDefaultPii: false,
 });
 ```
@@ -106,17 +108,17 @@ Sentry.init({
 Open `apps/api/src/main.ts`. The current first line is:
 
 ```ts
-import 'reflect-metadata';
+import "reflect-metadata";
 ```
 
 Replace the entire file with:
 
 ```ts
-import './instrument';
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ProjectsService } from './modules/projects/projects.service';
+import "./instrument";
+import "reflect-metadata";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ProjectsService } from "./modules/projects/projects.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -134,8 +136,8 @@ async function bootstrap() {
       try {
         const originUrl = new URL(origin);
         if (
-          originUrl.hostname === 'localhost' ||
-          originUrl.hostname === '127.0.0.1' ||
+          originUrl.hostname === "localhost" ||
+          originUrl.hostname === "127.0.0.1" ||
           origin === process.env.FRONTEND_URL
         ) {
           return callback(null, true);
@@ -162,7 +164,7 @@ async function bootstrap() {
           false,
         );
       } catch (err) {
-        return callback(new Error('Invalid origin'), false);
+        return callback(new Error("Invalid origin"), false);
       }
     },
     credentials: true,
@@ -193,6 +195,7 @@ git commit -m "feat(api): add Sentry instrumentation bootstrap"
 ## Task 3: API — SentryModule and global exception filter
 
 **Files:**
+
 - Create: `apps/api/src/filters/sentry-exception.filter.ts`
 - Modify: `apps/api/src/app.module.ts`
 - Modify: `apps/api/src/main.ts`
@@ -202,9 +205,9 @@ git commit -m "feat(api): add Sentry instrumentation bootstrap"
 Create `apps/api/src/filters/sentry-exception.filter.ts`:
 
 ```ts
-import { ArgumentsHost, Catch } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
-import * as Sentry from '@sentry/nestjs';
+import { ArgumentsHost, Catch } from "@nestjs/common";
+import { BaseExceptionFilter } from "@nestjs/core";
+import * as Sentry from "@sentry/nestjs";
 
 @Catch()
 export class SentryExceptionFilter extends BaseExceptionFilter {
@@ -220,7 +223,7 @@ export class SentryExceptionFilter extends BaseExceptionFilter {
 Open `apps/api/src/app.module.ts`. Add the import at the top:
 
 ```ts
-import { SentryModule } from '@sentry/nestjs/setup';
+import { SentryModule } from "@sentry/nestjs/setup";
 ```
 
 Then add `SentryModule.forRoot()` as the **first entry** in the `imports` array (before `ConfigModule`):
@@ -257,8 +260,8 @@ export class AppModule {}
 Open `apps/api/src/main.ts`. Add the import after the existing imports:
 
 ```ts
-import { HttpAdapterHost } from '@nestjs/core';
-import { SentryExceptionFilter } from './filters/sentry-exception.filter';
+import { HttpAdapterHost } from "@nestjs/core";
+import { SentryExceptionFilter } from "./filters/sentry-exception.filter";
 ```
 
 Inside `bootstrap()`, after `const app = await NestFactory.create(AppModule);`, add:
@@ -317,6 +320,7 @@ git commit -m "feat(api): add Sentry global exception filter and SentryModule"
 ## Task 4: Web — Sentry configs and Next.js integration
 
 **Files:**
+
 - Create: `apps/web/sentry.client.config.ts`
 - Create: `apps/web/sentry.server.config.ts`
 - Create: `apps/web/sentry.edge.config.ts`
@@ -338,12 +342,12 @@ If docs exist, skim for any changes to `instrumentation.ts` or `next.config` API
 Create `apps/web/sentry.client.config.ts`:
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   // Session replay is disabled — overkill for current scale
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0,
@@ -355,12 +359,12 @@ Sentry.init({
 Create `apps/web/sentry.server.config.ts`:
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
 });
 ```
 
@@ -369,7 +373,7 @@ Sentry.init({
 Create `apps/web/sentry.edge.config.ts`:
 
 ```ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -383,12 +387,12 @@ Create `apps/web/src/instrumentation.ts`:
 
 ```ts
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('../sentry.server.config');
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("../sentry.server.config");
   }
 
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('../sentry.edge.config');
+  if (process.env.NEXT_RUNTIME === "edge") {
+    await import("../sentry.edge.config");
   }
 }
 ```
@@ -401,7 +405,7 @@ Open `apps/web/next.config.ts`. Current content:
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: "standalone",
 };
 
 export default nextConfig;
@@ -410,11 +414,11 @@ export default nextConfig;
 Replace with:
 
 ```ts
-import type { NextConfig } from 'next';
-import { withSentryConfig } from '@sentry/nextjs';
+import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: "standalone",
 };
 
 export default withSentryConfig(nextConfig, {
@@ -442,7 +446,7 @@ pnpm --filter web dev
 Open the browser console on any page and run:
 
 ```js
-throw new Error('sentry test from browser');
+throw new Error("sentry test from browser");
 ```
 
 Check the Sentry `insightstream-web` project dashboard — the error should appear within ~30 seconds.

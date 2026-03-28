@@ -1,9 +1,9 @@
 export enum FeedbackStatus {
-  NEW = 'New',
-  IN_REVIEW = 'In Review',
-  IN_PROGRESS = 'In Progress',
-  DONE = 'Done',
-  REJECTED = 'Rejected',
+  NEW = "New",
+  IN_REVIEW = "In Review",
+  IN_PROGRESS = "In Progress",
+  DONE = "Done",
+  REJECTED = "Rejected",
 }
 
 export interface IFeedback {

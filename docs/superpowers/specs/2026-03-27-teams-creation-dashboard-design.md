@@ -45,6 +45,7 @@ PATCH /teams/:teamId   — update team name (OWNER only)
 ```
 
 All other operations already exist:
+
 - `POST /teams` — create team
 - `POST /teams/:teamId/projects` — create project in team
 - `DELETE /teams/:teamId` — delete team
@@ -60,9 +61,11 @@ All other operations already exist:
 **Entry point:** Sidebar, below team list — "+" icon or "Create team" text button
 
 **Modal fields:**
+
 - Team name (required, min 2 chars, max 50)
 
 **On submit:**
+
 1. `POST /teams { name }` → response: `{ id, name, ownerId }`
 2. Invalidate `['teams']` React Query cache
 3. Call `switchTeam(newTeam.id)` to activate new team
@@ -79,9 +82,11 @@ All other operations already exist:
 **Visibility:** Only shown to ADMIN or OWNER (check `userRole` from `useTeam()`)
 
 **Modal fields:**
+
 - Project name (required, min 2 chars, max 100)
 
 **On submit:**
+
 1. `POST /teams/:activeTeamId/projects { name }` → response: project object
 2. Invalidate `['team-projects', activeTeamId]` React Query cache
 3. Navigate to new project page
@@ -94,12 +99,14 @@ All other operations already exist:
 **Entry point:** `/settings/team` page — inline edit next to team name (pencil icon)
 
 **Behavior:**
+
 - Click pencil → input field replaces text
 - Save (Enter or button) → `PATCH /teams/:teamId { name }`
 - Cancel (Escape or button) → revert to original
 - Only rendered for OWNER role
 
 **Backend additions:**
+
 - `PATCH /teams/:teamId` route (requires OWNER via `@RequireTeamRole(TeamRole.OWNER)`)
 - `TeamsService.update(teamId, { name })` — validates name, saves
 - `UpdateTeamDto { name: string }` with class-validator decorators
@@ -111,6 +118,7 @@ All other operations already exist:
 **Entry point:** `/settings/team` — "Danger zone" section, OWNER only
 
 **Confirmation flow:**
+
 - Click "Delete team" button → confirmation modal
 - Modal asks user to type team name to confirm
 - Submit → `DELETE /teams/:teamId`
@@ -123,6 +131,7 @@ All other operations already exist:
 ### 2.1 Route: `/teams/[teamId]`
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ [Team Name]            [Members: 4]          │
@@ -137,6 +146,7 @@ All other operations already exist:
 ```
 
 **Project card shows:**
+
 - Project name
 - Feedback count
 - Last activity date
@@ -173,12 +183,12 @@ Each item shows relative timestamp ("2 hours ago").
 
 ## Components
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `CreateTeamModal` | `components/teams/` | Create team form + API call |
-| `CreateProjectModal` | `components/teams/` | Create project in team form |
-| `ActivityFeed` | `components/teams/` | Render `ActivityEvent[]` list |
-| Team dashboard page | `app/teams/[teamId]/page.tsx` | Team overview layout |
+| Component            | Location                      | Purpose                       |
+| -------------------- | ----------------------------- | ----------------------------- |
+| `CreateTeamModal`    | `components/teams/`           | Create team form + API call   |
+| `CreateProjectModal` | `components/teams/`           | Create project in team form   |
+| `ActivityFeed`       | `components/teams/`           | Render `ActivityEvent[]` list |
+| Team dashboard page  | `app/teams/[teamId]/page.tsx` | Team overview layout          |
 
 ---
 

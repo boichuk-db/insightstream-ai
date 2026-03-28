@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Globe, Type } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Globe, Type } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function CreateTeamProjectModal({
   isOpen,
@@ -19,25 +19,28 @@ export function CreateTeamProjectModal({
   teamId: string;
   onCreated?: (projectId: string) => void;
 }) {
-  const [name, setName] = useState('');
-  const [domain, setDomain] = useState('');
+  const [name, setName] = useState("");
+  const [domain, setDomain] = useState("");
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await api.post(`/teams/${teamId}/projects`, { name, domain });
+      const { data } = await api.post(`/teams/${teamId}/projects`, {
+        name,
+        domain,
+      });
       return data;
     },
     onSuccess: (newProject) => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      queryClient.invalidateQueries({ queryKey: ['teamProjects', teamId] });
-      setName('');
-      setDomain('');
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["teamProjects", teamId] });
+      setName("");
+      setDomain("");
       onCreated?.(newProject.id);
       onClose();
     },
     onError: (err: any) => {
-      alert(err?.response?.data?.message || 'Failed to create project');
+      alert(err?.response?.data?.message || "Failed to create project");
     },
   });
 
@@ -53,8 +56,13 @@ export function CreateTeamProjectModal({
           className="bg-brand-bg border border-brand-border rounded-2xl w-full max-w-md overflow-hidden"
         >
           <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-            <h3 className="text-xl font-bold text-white">Create Team Project</h3>
-            <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
+            <h3 className="text-xl font-bold text-white">
+              Create Team Project
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-zinc-400 hover:text-white transition-colors"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>

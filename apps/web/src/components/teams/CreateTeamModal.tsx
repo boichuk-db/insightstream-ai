@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useTeam } from '@/hooks/useTeam';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useTeam } from "@/hooks/useTeam";
 
 export function CreateTeamModal({
   isOpen,
@@ -14,17 +14,17 @@ export function CreateTeamModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const { createTeam } = useTeam();
 
   const handleSubmit = async () => {
     if (!name.trim()) return;
     try {
       await createTeam.mutateAsync(name.trim());
-      setName('');
+      setName("");
       onClose();
     } catch (err: any) {
-      alert(err?.response?.data?.message || 'Failed to create team');
+      alert(err?.response?.data?.message || "Failed to create team");
     }
   };
 
@@ -43,7 +43,10 @@ export function CreateTeamModal({
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
               <Users className="h-5 w-5 text-indigo-400" /> Create New Team
             </h3>
-            <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
+            <button
+              onClick={onClose}
+              className="text-zinc-400 hover:text-white transition-colors"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -58,7 +61,7 @@ export function CreateTeamModal({
                 placeholder="e.g. Product Team"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 autoFocus
               />
             </div>

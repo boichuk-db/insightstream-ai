@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { ChevronDown, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import * as React from "react";
+import { ChevronDown, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SelectProps {
   value: string;
@@ -13,18 +13,27 @@ interface SelectProps {
   placeholder?: string;
 }
 
-export function Select({ value, onChange, options, className, placeholder }: SelectProps) {
+export function Select({
+  value,
+  onChange,
+  options,
+  className,
+  placeholder,
+}: SelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const selectedOption = value || placeholder;
@@ -36,11 +45,16 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-sm text-zinc-200 ring-offset-brand-bg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
-          isOpen && "border-indigo-500/50 ring-2 ring-indigo-500/20"
+          isOpen && "border-indigo-500/50 ring-2 ring-indigo-500/20",
         )}
       >
         <span className="capitalize">{selectedOption}</span>
-        <ChevronDown className={cn("h-4 w-4 text-zinc-500 transition-transform duration-200", isOpen && "rotate-180")} />
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-zinc-500 transition-transform duration-200",
+            isOpen && "rotate-180",
+          )}
+        />
       </button>
 
       <AnimatePresence>
@@ -63,9 +77,9 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
                   }}
                   className={cn(
                     "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors",
-                    value === option 
-                      ? "bg-indigo-500/10 text-indigo-400 font-medium" 
-                      : "text-brand-muted hover:bg-brand-surface hover:text-zinc-200"
+                    value === option
+                      ? "bg-indigo-500/10 text-indigo-400 font-medium"
+                      : "text-brand-muted hover:bg-brand-surface hover:text-zinc-200",
                   )}
                 >
                   <span className="capitalize">{option}</span>

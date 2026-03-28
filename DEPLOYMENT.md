@@ -58,14 +58,17 @@ Save this value — you'll use it later.
 6. **Save this URL** — you'll need it for Railway
 
 #### Create Tables
+
 You have two options:
 
 **Option 1: Auto-sync (quick, for pet projects)**
+
 - Just set `synchronize: true` in the .env.prod when deploying
 - TypeORM will create tables automatically on first API startup
 - ⚠️ Not recommended for production, but fine for a pet project
 
 **Option 2: Manual migrations (safer)**
+
 - Run locally: `npm run typeorm migration:generate` (then commit migrations)
 - But you don't have migrations yet, so Option 1 is easier for now
 
@@ -99,11 +102,13 @@ Railway provides a free tier with $5 monthly credit (enough for a pet project).
 In Railway dashboard, go to **Settings** for the deployment:
 
 - **Build Command**:
+
   ```
   pnpm install && pnpm turbo build --filter=api
   ```
 
 - **Start Command**:
+
   ```
   node apps/api/dist/main
   ```
@@ -133,6 +138,7 @@ PORT=3001
 ### 3d. Enable Persistent Volume (Optional)
 
 If you want to preserve database backups:
+
 - Go to **Volumes** → **+ Add Volume**
 - Mount path: `/data`
 - This persists data if the container restarts
@@ -265,6 +271,7 @@ If you're serving the widget from Next.js `public/`:
 ### "Database tables don't exist"
 
 If schema isn't created:
+
 - Option 1: Set `synchronize: true` temporarily in production (only do once)
 - Option 2: Create a manual SQL script to initialize tables
 - Option 3: Use migrations (requires setting up migration files first)
@@ -275,12 +282,12 @@ For a pet project, Option 1 is fine.
 
 ## Cost Breakdown
 
-| Service | Free Tier | Notes |
-|---------|-----------|-------|
-| Vercel | Unlimited | Generous free tier for Next.js |
-| Railway | $5/month credit | More than enough for a small API |
-| Supabase | 500 MB database | Enough for thousands of records |
-| Neon | 10 GB database | Larger free tier if you need it |
+| Service  | Free Tier       | Notes                            |
+| -------- | --------------- | -------------------------------- |
+| Vercel   | Unlimited       | Generous free tier for Next.js   |
+| Railway  | $5/month credit | More than enough for a small API |
+| Supabase | 500 MB database | Enough for thousands of records  |
+| Neon     | 10 GB database  | Larger free tier if you need it  |
 
 **Total**: **$0-5 per month**
 
@@ -289,12 +296,14 @@ For a pet project, Option 1 is fine.
 ## Local Development vs Production
 
 **Local** (docker-compose.yml):
+
 - Uses local `.env` with `localhost` URLs
 - PostgreSQL in Docker
 - Redis in Docker (unused but provisioned)
 - Separate containers for API, web, DB
 
 **Production** (this guide):
+
 - API on Railway (always-on container)
 - Frontend on Vercel (serverless, auto-scaling)
 - Database on Supabase/Neon (managed)
@@ -318,11 +327,13 @@ For a pet project, Option 1 is fine.
 If you want `insightstream.com` instead of `vercel.app`:
 
 ### Vercel
+
 1. Vercel → Settings → Domains
 2. Add your domain
 3. Update DNS records as instructed
 
 ### Railway API
+
 1. Railway → Deployment → Custom Domain
 2. Add your domain for API (e.g., `api.insightstream.com`)
 3. Update DNS records as instructed

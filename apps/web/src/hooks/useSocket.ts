@@ -1,9 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useEffect, useRef } from "react";
+import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export function useSocket(userId: string | undefined, onFeedbackUpdated: () => void) {
+export function useSocket(
+  userId: string | undefined,
+  onFeedbackUpdated: () => void,
+) {
   const socketRef = useRef<Socket | null>(null);
   const callbackRef = useRef(onFeedbackUpdated);
 
@@ -14,16 +17,16 @@ export function useSocket(userId: string | undefined, onFeedbackUpdated: () => v
   useEffect(() => {
     if (!userId) return;
 
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem("access_token");
     if (!token) return;
 
     const socket = io(SOCKET_URL, {
-      transports: ['websocket'],
+      transports: ["websocket"],
       auth: { token },
     });
     socketRef.current = socket;
 
-    socket.on('feedbackUpdated', () => {
+    socket.on("feedbackUpdated", () => {
       callbackRef.current();
     });
 
@@ -31,5 +34,4 @@ export function useSocket(userId: string | undefined, onFeedbackUpdated: () => v
       socket.disconnect();
     };
   }, [userId]);
-
 }

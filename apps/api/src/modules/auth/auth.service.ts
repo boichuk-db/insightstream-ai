@@ -32,7 +32,11 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
-    if (user && user.passwordHash && (await bcrypt.compare(pass, user.passwordHash))) {
+    if (
+      user &&
+      user.passwordHash &&
+      (await bcrypt.compare(pass, user.passwordHash))
+    ) {
       const { passwordHash, ...result } = user;
       return result;
     }
@@ -40,10 +44,20 @@ export class AuthService {
   }
 
   login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role, plan: user.plan };
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+      plan: user.plan,
+    };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, email: user.email, role: user.role, plan: user.plan },
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        plan: user.plan,
+      },
     };
   }
 
@@ -70,7 +84,11 @@ export class AuthService {
     await this.usersService.save(user);
   }
 
-  async oauthLogin(profile: { email: string; googleId?: string; githubId?: string }) {
+  async oauthLogin(profile: {
+    email: string;
+    googleId?: string;
+    githubId?: string;
+  }) {
     const { email, googleId, githubId } = profile;
 
     // 1. Find by provider ID (returning user)

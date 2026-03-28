@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { X, Send, Trash2 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { X, Send, Trash2 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CommentsPanelProps {
   feedbackId: string | null;
@@ -13,12 +13,16 @@ interface CommentsPanelProps {
   currentUserId?: string;
 }
 
-export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPanelProps) {
+export function CommentsPanel({
+  feedbackId,
+  onClose,
+  currentUserId,
+}: CommentsPanelProps) {
   const queryClient = useQueryClient();
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
 
   const { data: comments, isLoading } = useQuery({
-    queryKey: ['comments', feedbackId],
+    queryKey: ["comments", feedbackId],
     queryFn: async () => {
       const { data } = await api.get(`/feedbacks/${feedbackId}/comments`);
       return data;
@@ -28,12 +32,14 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
 
   const addMutation = useMutation({
     mutationFn: async (content: string) => {
-      const { data } = await api.post(`/feedbacks/${feedbackId}/comments`, { content });
+      const { data } = await api.post(`/feedbacks/${feedbackId}/comments`, {
+        content,
+      });
       return data;
     },
     onSuccess: () => {
-      setNewComment('');
-      queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
+      setNewComment("");
+      queryClient.invalidateQueries({ queryKey: ["comments", feedbackId] });
     },
   });
 
@@ -42,7 +48,7 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
       await api.delete(`/comments/${commentId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
+      queryClient.invalidateQueries({ queryKey: ["comments", feedbackId] });
     },
   });
 
@@ -58,16 +64,19 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
           <motion.div
-            initial={{ x: '100%' }}
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed right-0 top-0 h-full w-full max-w-md bg-brand-surface border-l border-brand-border z-50 flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-zinc-800">
               <h3 className="text-lg font-bold text-white">Comments</h3>
-              <button onClick={onClose} className="p-1.5 text-zinc-400 hover:text-white transition-colors">
+              <button
+                onClick={onClose}
+                className="p-1.5 text-zinc-400 hover:text-white transition-colors"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -76,8 +85,11 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {isLoading ? (
                 <div className="space-y-3">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-20 bg-zinc-800/40 rounded-xl animate-pulse" />
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="h-20 bg-zinc-800/40 rounded-xl animate-pulse"
+                    />
                   ))}
                 </div>
               ) : comments?.length === 0 ? (
@@ -87,12 +99,19 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
                 </div>
               ) : (
                 comments?.map((comment: any) => (
-                  <div key={comment.id} className="bg-brand-bg/50 border border-brand-border/50 rounded-xl p-3 group">
+                  <div
+                    key={comment.id}
+                    className="bg-brand-bg/50 border border-brand-border/50 rounded-xl p-3 group"
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <span className="text-sm font-medium text-zinc-200">{comment.userEmail}</span>
+                        <span className="text-sm font-medium text-zinc-200">
+                          {comment.userEmail}
+                        </span>
                         <span className="text-[10px] text-brand-muted ml-2">
-                          {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(comment.createdAt), {
+                            addSuffix: true,
+                          })}
                         </span>
                       </div>
                       {comment.userId === currentUserId && (
@@ -104,7 +123,9 @@ export function CommentsPanel({ feedbackId, onClose, currentUserId }: CommentsPa
                         </button>
                       )}
                     </div>
-                    <p className="text-sm text-zinc-300 leading-relaxed">{comment.content}</p>
+                    <p className="text-sm text-zinc-300 leading-relaxed">
+                      {comment.content}
+                    </p>
                   </div>
                 ))
               )}

@@ -15,35 +15,39 @@
 ## File Map
 
 ### New files
-| File | Responsibility |
-|------|---------------|
-| `apps/api/src/modules/auth/google.strategy.ts` | Passport Google OAuth2 strategy |
-| `apps/api/src/modules/auth/github.strategy.ts` | Passport GitHub OAuth2 strategy |
-| `apps/web/src/app/auth/forgot-password/page.tsx` | Email input form → send reset link |
-| `apps/web/src/app/auth/reset-password/page.tsx` | New password form → consumes reset token |
-| `apps/web/src/app/auth/oauth/callback/page.tsx` | Extracts JWT from URL, stores, redirects |
+
+| File                                             | Responsibility                           |
+| ------------------------------------------------ | ---------------------------------------- |
+| `apps/api/src/modules/auth/google.strategy.ts`   | Passport Google OAuth2 strategy          |
+| `apps/api/src/modules/auth/github.strategy.ts`   | Passport GitHub OAuth2 strategy          |
+| `apps/web/src/app/auth/forgot-password/page.tsx` | Email input form → send reset link       |
+| `apps/web/src/app/auth/reset-password/page.tsx`  | New password form → consumes reset token |
+| `apps/web/src/app/auth/oauth/callback/page.tsx`  | Extracts JWT from URL, stores, redirects |
 
 ### Modified files
-| File | What changes |
-|------|-------------|
-| `packages/database/src/entities/user.entity.ts` | 5 new nullable fields |
-| `apps/api/src/modules/users/users.service.ts` | 5 new query/update methods |
-| `apps/api/src/modules/mail/mail.service.ts` | `sendPasswordReset()` method |
-| `apps/api/src/modules/auth/auth.service.ts` | `forgotPassword()`, `resetPassword()`, `oauthLogin()`, fix `validateUser()` |
-| `apps/api/src/modules/auth/auth.controller.ts` | 4 new endpoints |
-| `apps/api/src/modules/auth/auth.module.ts` | Register Google + GitHub strategies |
-| `apps/web/src/app/page.tsx` | OAuth buttons + "Forgot password?" link |
+
+| File                                            | What changes                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------- |
+| `packages/database/src/entities/user.entity.ts` | 5 new nullable fields                                                       |
+| `apps/api/src/modules/users/users.service.ts`   | 5 new query/update methods                                                  |
+| `apps/api/src/modules/mail/mail.service.ts`     | `sendPasswordReset()` method                                                |
+| `apps/api/src/modules/auth/auth.service.ts`     | `forgotPassword()`, `resetPassword()`, `oauthLogin()`, fix `validateUser()` |
+| `apps/api/src/modules/auth/auth.controller.ts`  | 4 new endpoints                                                             |
+| `apps/api/src/modules/auth/auth.module.ts`      | Register Google + GitHub strategies                                         |
+| `apps/web/src/app/page.tsx`                     | OAuth buttons + "Forgot password?" link                                     |
 
 ---
 
 ## Task 1: Install OAuth Dependencies
 
 **Files:**
+
 - Modify: `apps/api/package.json` (via pnpm)
 
 - [ ] **Step 1: Install passport OAuth packages**
 
 Run from repo root:
+
 ```bash
 pnpm add passport-google-oauth20 passport-github2 --filter api
 pnpm add -D @types/passport-google-oauth20 @types/passport-github2 --filter api
@@ -58,6 +62,7 @@ cat apps/api/package.json | grep -E "passport-google|passport-github"
 ```
 
 Expected:
+
 ```
 "passport-github2": "^...",
 "passport-google-oauth20": "^...",
@@ -75,6 +80,7 @@ git commit -m "chore: add passport-google-oauth20 and passport-github2"
 ## Task 2: Extend User Entity
 
 **Files:**
+
 - Modify: `packages/database/src/entities/user.entity.ts`
 
 > In dev, `TYPEORM_SYNCHRONIZE=true` auto-applies entity changes. No migration file needed for development. Production requires a migration — see roadmap task "TypeORM migrations".
@@ -84,48 +90,54 @@ git commit -m "chore: add passport-google-oauth20 and passport-github2"
 Replace the entire file content:
 
 ```typescript
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
-import type { Project } from './project.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from "typeorm";
+import type { Project } from "./project.entity";
 
-@Entity('users')
+@Entity("users")
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: "varchar", unique: true })
   email: string;
 
-  @Column({ type: 'varchar', nullable: true, default: null })
+  @Column({ type: "varchar", nullable: true, default: null })
   passwordHash: string | null;
 
-  @Column({ type: 'varchar', default: 'user' })
+  @Column({ type: "varchar", default: "user" })
   role: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'FREE' })
+  @Column({ type: "varchar", length: 20, default: "FREE" })
   plan: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   planUpdatedAt: Date | null;
 
-  @Column({ type: 'varchar', unique: true, nullable: true, default: null })
+  @Column({ type: "varchar", unique: true, nullable: true, default: null })
   apiKey: string | null;
 
-  @Column({ type: 'varchar', unique: true, nullable: true, default: null })
+  @Column({ type: "varchar", unique: true, nullable: true, default: null })
   googleId: string | null;
 
-  @Column({ type: 'varchar', unique: true, nullable: true, default: null })
+  @Column({ type: "varchar", unique: true, nullable: true, default: null })
   githubId: string | null;
 
-  @Column({ type: 'varchar', nullable: true, default: null })
+  @Column({ type: "varchar", nullable: true, default: null })
   resetPwdToken: string | null;
 
-  @Column({ type: 'timestamp', nullable: true, default: null })
+  @Column({ type: "timestamp", nullable: true, default: null })
   resetPwdExpires: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany('Project', (project: Project) => project.user)
+  @OneToMany("Project", (project: Project) => project.user)
   projects: Project[];
 }
 ```
@@ -150,6 +162,7 @@ git commit -m "feat(db): add OAuth and password reset fields to User entity"
 ## Task 3: Extend UsersService
 
 **Files:**
+
 - Modify: `apps/api/src/modules/users/users.service.ts`
 
 - [ ] **Step 1: Write failing tests**
@@ -157,10 +170,10 @@ git commit -m "feat(db): add OAuth and password reset fields to User entity"
 Create `apps/api/src/modules/users/users.service.spec.ts`:
 
 ```typescript
-import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '@insightstream/database';
-import { UsersService } from './users.service';
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { User } from "@insightstream/database";
+import { UsersService } from "./users.service";
 
 const mockRepo = {
   findOne: jest.fn(),
@@ -168,7 +181,7 @@ const mockRepo = {
   create: jest.fn(),
 };
 
-describe('UsersService — new auth methods', () => {
+describe("UsersService — new auth methods", () => {
   let service: UsersService;
 
   beforeEach(async () => {
@@ -182,36 +195,42 @@ describe('UsersService — new auth methods', () => {
     jest.clearAllMocks();
   });
 
-  it('findByResetToken returns user when token matches', async () => {
-    const user = { id: '1', resetPwdToken: 'abc' } as User;
+  it("findByResetToken returns user when token matches", async () => {
+    const user = { id: "1", resetPwdToken: "abc" } as User;
     mockRepo.findOne.mockResolvedValue(user);
-    const result = await service.findByResetToken('abc');
-    expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { resetPwdToken: 'abc' } });
+    const result = await service.findByResetToken("abc");
+    expect(mockRepo.findOne).toHaveBeenCalledWith({
+      where: { resetPwdToken: "abc" },
+    });
     expect(result).toBe(user);
   });
 
-  it('findByResetToken returns null when no match', async () => {
+  it("findByResetToken returns null when no match", async () => {
     mockRepo.findOne.mockResolvedValue(null);
-    expect(await service.findByResetToken('nope')).toBeNull();
+    expect(await service.findByResetToken("nope")).toBeNull();
   });
 
-  it('findByGoogleId queries by googleId', async () => {
-    const user = { id: '1', googleId: 'g123' } as User;
+  it("findByGoogleId queries by googleId", async () => {
+    const user = { id: "1", googleId: "g123" } as User;
     mockRepo.findOne.mockResolvedValue(user);
-    const result = await service.findByGoogleId('g123');
-    expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { googleId: 'g123' } });
+    const result = await service.findByGoogleId("g123");
+    expect(mockRepo.findOne).toHaveBeenCalledWith({
+      where: { googleId: "g123" },
+    });
     expect(result).toBe(user);
   });
 
-  it('findByGithubId queries by githubId', async () => {
-    const user = { id: '1', githubId: 'gh456' } as User;
+  it("findByGithubId queries by githubId", async () => {
+    const user = { id: "1", githubId: "gh456" } as User;
     mockRepo.findOne.mockResolvedValue(user);
-    await service.findByGithubId('gh456');
-    expect(mockRepo.findOne).toHaveBeenCalledWith({ where: { githubId: 'gh456' } });
+    await service.findByGithubId("gh456");
+    expect(mockRepo.findOne).toHaveBeenCalledWith({
+      where: { githubId: "gh456" },
+    });
   });
 
-  it('save calls repository.save', async () => {
-    const user = { id: '1' } as User;
+  it("save calls repository.save", async () => {
+    const user = { id: "1" } as User;
     mockRepo.save.mockResolvedValue(user);
     await service.save(user);
     expect(mockRepo.save).toHaveBeenCalledWith(user);
@@ -269,6 +288,7 @@ git commit -m "feat(users): add findByResetToken, findByGoogleId, findByGithubId
 ## Task 4: Add `sendPasswordReset` to MailService
 
 **Files:**
+
 - Modify: `apps/api/src/modules/mail/mail.service.ts`
 
 - [ ] **Step 1: Add `sendPasswordReset` method**
@@ -319,6 +339,7 @@ git commit -m "feat(mail): add sendPasswordReset method"
 ## Task 5: AuthService — Password Reset Methods
 
 **Files:**
+
 - Modify: `apps/api/src/modules/auth/auth.service.ts`
 
 - [ ] **Step 1: Write failing tests**
@@ -326,13 +347,13 @@ git commit -m "feat(mail): add sendPasswordReset method"
 Create `apps/api/src/modules/auth/auth.service.spec.ts`:
 
 ```typescript
-import { Test } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, ConflictException } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { TeamsService } from '../teams/teams.service';
-import { MailService } from '../mail/mail.service';
+import { Test } from "@nestjs/testing";
+import { JwtService } from "@nestjs/jwt";
+import { BadRequestException, ConflictException } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { UsersService } from "../users/users.service";
+import { TeamsService } from "../teams/teams.service";
+import { MailService } from "../mail/mail.service";
 
 const mockUsersService = {
   findOneByEmail: jest.fn(),
@@ -341,10 +362,10 @@ const mockUsersService = {
   save: jest.fn(),
 };
 const mockTeamsService = { createPersonalTeam: jest.fn() };
-const mockJwtService = { sign: jest.fn().mockReturnValue('signed-token') };
+const mockJwtService = { sign: jest.fn().mockReturnValue("signed-token") };
 const mockMailService = { sendPasswordReset: jest.fn() };
 
-describe('AuthService — password reset', () => {
+describe("AuthService — password reset", () => {
   let service: AuthService;
 
   beforeEach(async () => {
@@ -361,60 +382,77 @@ describe('AuthService — password reset', () => {
     jest.clearAllMocks();
   });
 
-  describe('forgotPassword', () => {
-    it('sends reset email when user exists', async () => {
-      const user = { id: '1', email: 'a@b.com', passwordHash: 'hash' } as any;
+  describe("forgotPassword", () => {
+    it("sends reset email when user exists", async () => {
+      const user = { id: "1", email: "a@b.com", passwordHash: "hash" } as any;
       mockUsersService.findOneByEmail.mockResolvedValue(user);
       mockUsersService.save.mockResolvedValue(user);
 
-      await service.forgotPassword('a@b.com');
+      await service.forgotPassword("a@b.com");
 
       expect(mockUsersService.save).toHaveBeenCalled();
       expect(mockMailService.sendPasswordReset).toHaveBeenCalledWith(
-        'a@b.com',
+        "a@b.com",
         expect.any(String),
       );
     });
 
-    it('returns silently when user not found (no leak)', async () => {
+    it("returns silently when user not found (no leak)", async () => {
       mockUsersService.findOneByEmail.mockResolvedValue(null);
-      await expect(service.forgotPassword('nope@x.com')).resolves.toBeUndefined();
+      await expect(
+        service.forgotPassword("nope@x.com"),
+      ).resolves.toBeUndefined();
       expect(mockMailService.sendPasswordReset).not.toHaveBeenCalled();
     });
 
-    it('returns silently for OAuth-only user (no passwordHash)', async () => {
-      mockUsersService.findOneByEmail.mockResolvedValue({ id: '1', passwordHash: null });
-      await expect(service.forgotPassword('oauth@x.com')).resolves.toBeUndefined();
+    it("returns silently for OAuth-only user (no passwordHash)", async () => {
+      mockUsersService.findOneByEmail.mockResolvedValue({
+        id: "1",
+        passwordHash: null,
+      });
+      await expect(
+        service.forgotPassword("oauth@x.com"),
+      ).resolves.toBeUndefined();
       expect(mockMailService.sendPasswordReset).not.toHaveBeenCalled();
     });
   });
 
-  describe('resetPassword', () => {
-    it('updates password and clears token when valid', async () => {
+  describe("resetPassword", () => {
+    it("updates password and clears token when valid", async () => {
       const future = new Date(Date.now() + 3600_000);
-      const user = { id: '1', resetPwdToken: 'tok', resetPwdExpires: future, passwordHash: 'old' } as any;
+      const user = {
+        id: "1",
+        resetPwdToken: "tok",
+        resetPwdExpires: future,
+        passwordHash: "old",
+      } as any;
       mockUsersService.findByResetToken.mockResolvedValue(user);
       mockUsersService.save.mockResolvedValue(user);
 
-      await service.resetPassword('tok', 'newPass123');
+      await service.resetPassword("tok", "newPass123");
 
       const savedUser = mockUsersService.save.mock.calls[0][0];
       expect(savedUser.resetPwdToken).toBeNull();
       expect(savedUser.resetPwdExpires).toBeNull();
-      expect(savedUser.passwordHash).not.toBe('old');
+      expect(savedUser.passwordHash).not.toBe("old");
     });
 
-    it('throws BadRequestException when token not found', async () => {
+    it("throws BadRequestException when token not found", async () => {
       mockUsersService.findByResetToken.mockResolvedValue(null);
-      await expect(service.resetPassword('bad', 'pass')).rejects.toThrow(BadRequestException);
+      await expect(service.resetPassword("bad", "pass")).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
-    it('throws BadRequestException when token expired', async () => {
+    it("throws BadRequestException when token expired", async () => {
       const past = new Date(Date.now() - 1000);
       mockUsersService.findByResetToken.mockResolvedValue({
-        resetPwdToken: 'tok', resetPwdExpires: past,
+        resetPwdToken: "tok",
+        resetPwdExpires: past,
       });
-      await expect(service.resetPassword('tok', 'pass')).rejects.toThrow(BadRequestException);
+      await expect(service.resetPassword("tok", "pass")).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 });
@@ -438,13 +476,13 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
-import { UsersService } from '../users/users.service';
-import { TeamsService } from '../teams/teams.service';
-import { MailService } from '../mail/mail.service';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
+import * as crypto from "crypto";
+import { UsersService } from "../users/users.service";
+import { TeamsService } from "../teams/teams.service";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
@@ -458,7 +496,7 @@ export class AuthService {
   async register(email: string, pass: string) {
     const existing = await this.usersService.findOneByEmail(email);
     if (existing) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException("User already exists");
     }
     const passwordHash = await bcrypt.hash(pass, 10);
     const user = await this.usersService.create({ email, passwordHash });
@@ -468,7 +506,11 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
-    if (user && user.passwordHash && (await bcrypt.compare(pass, user.passwordHash))) {
+    if (
+      user &&
+      user.passwordHash &&
+      (await bcrypt.compare(pass, user.passwordHash))
+    ) {
       const { passwordHash, ...result } = user;
       return result;
     }
@@ -476,10 +518,20 @@ export class AuthService {
   }
 
   login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role, plan: user.plan };
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+      plan: user.plan,
+    };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, email: user.email, role: user.role, plan: user.plan },
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        plan: user.plan,
+      },
     };
   }
 
@@ -496,9 +548,9 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
     const user = await this.usersService.findByResetToken(token);
-    if (!user) throw new BadRequestException('Invalid or expired reset token');
+    if (!user) throw new BadRequestException("Invalid or expired reset token");
     if (!user.resetPwdExpires || user.resetPwdExpires < new Date()) {
-      throw new BadRequestException('Reset token has expired');
+      throw new BadRequestException("Reset token has expired");
     }
     user.passwordHash = await bcrypt.hash(newPassword, 10);
     user.resetPwdToken = null;
@@ -506,7 +558,11 @@ export class AuthService {
     await this.usersService.save(user);
   }
 
-  async oauthLogin(profile: { email: string; googleId?: string; githubId?: string }) {
+  async oauthLogin(profile: {
+    email: string;
+    googleId?: string;
+    githubId?: string;
+  }) {
     const { email, googleId, githubId } = profile;
 
     // 1. Find by provider ID (returning user)
@@ -560,24 +616,25 @@ git commit -m "feat(auth): add forgotPassword, resetPassword, oauthLogin methods
 ## Task 6: Create Google Strategy
 
 **Files:**
+
 - Create: `apps/api/src/modules/auth/google.strategy.ts`
 
 - [ ] **Step 1: Create `google.strategy.ts`**
 
 ```typescript
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy, VerifyCallback } from "passport-google-oauth20";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   constructor(config: ConfigService) {
     super({
-      clientID: config.get<string>('GOOGLE_CLIENT_ID') || '',
-      clientSecret: config.get<string>('GOOGLE_CLIENT_SECRET') || '',
-      callbackURL: `${config.get<string>('API_URL') || 'http://localhost:3001'}/auth/google/callback`,
-      scope: ['email', 'profile'],
+      clientID: config.get<string>("GOOGLE_CLIENT_ID") || "",
+      clientSecret: config.get<string>("GOOGLE_CLIENT_SECRET") || "",
+      callbackURL: `${config.get<string>("API_URL") || "http://localhost:3001"}/auth/google/callback`,
+      scope: ["email", "profile"],
     });
   }
 
@@ -589,7 +646,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<void> {
     const email = profile.emails?.[0]?.value;
     if (!email) {
-      done(new Error('No email returned from Google'), undefined);
+      done(new Error("No email returned from Google"), undefined);
       return;
     }
     done(null, { email, googleId: profile.id });
@@ -617,24 +674,25 @@ git commit -m "feat(auth): add Google OAuth2 Passport strategy"
 ## Task 7: Create GitHub Strategy
 
 **Files:**
+
 - Create: `apps/api/src/modules/auth/github.strategy.ts`
 
 - [ ] **Step 1: Create `github.strategy.ts`**
 
 ```typescript
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Profile } from 'passport-github2';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy, Profile } from "passport-github2";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
+export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
   constructor(config: ConfigService) {
     super({
-      clientID: config.get<string>('GITHUB_CLIENT_ID') || '',
-      clientSecret: config.get<string>('GITHUB_CLIENT_SECRET') || '',
-      callbackURL: `${config.get<string>('API_URL') || 'http://localhost:3001'}/auth/github/callback`,
-      scope: ['user:email'],
+      clientID: config.get<string>("GITHUB_CLIENT_ID") || "",
+      clientSecret: config.get<string>("GITHUB_CLIENT_SECRET") || "",
+      callbackURL: `${config.get<string>("API_URL") || "http://localhost:3001"}/auth/github/callback`,
+      scope: ["user:email"],
     });
   }
 
@@ -649,7 +707,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       profile.emails?.[0]?.value;
 
     if (!email) {
-      done(new Error('No email returned from GitHub'), undefined);
+      done(new Error("No email returned from GitHub"), undefined);
       return;
     }
     done(null, { email, githubId: profile.id });
@@ -677,6 +735,7 @@ git commit -m "feat(auth): add GitHub OAuth2 Passport strategy"
 ## Task 8: Update AuthController + AuthModule
 
 **Files:**
+
 - Modify: `apps/api/src/modules/auth/auth.controller.ts`
 - Modify: `apps/api/src/modules/auth/auth.module.ts`
 
@@ -694,72 +753,74 @@ import {
   UnauthorizedException,
   HttpCode,
   HttpStatus,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { ConfigService } from "@nestjs/config";
+import { AuthService } from "./auth.service";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
     private config: ConfigService,
   ) {}
 
-  @Post('register')
+  @Post("register")
   async register(@Body() body: any) {
     return this.authService.register(body.email, body.password);
   }
 
-  @Post('login')
+  @Post("login")
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: any) {
     const user = await this.authService.validateUser(body.email, body.password);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException("Invalid credentials");
     return this.authService.login(user);
   }
 
-  @Post('forgot-password')
+  @Post("forgot-password")
   @HttpCode(HttpStatus.OK)
   async forgotPassword(@Body() body: { email: string }) {
     await this.authService.forgotPassword(body.email);
-    return { message: 'If that email exists, a reset link has been sent.' };
+    return { message: "If that email exists, a reset link has been sent." };
   }
 
-  @Post('reset-password')
+  @Post("reset-password")
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() body: { token: string; newPassword: string }) {
     await this.authService.resetPassword(body.token, body.newPassword);
-    return { message: 'Password updated successfully.' };
+    return { message: "Password updated successfully." };
   }
 
   // ── Google OAuth ──────────────────────────────────────────
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @Get("google")
+  @UseGuards(AuthGuard("google"))
   googleAuth() {
     // Passport redirects to Google — no body needed
   }
 
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @Get("google/callback")
+  @UseGuards(AuthGuard("google"))
   async googleCallback(@Req() req: any, @Res() res: any) {
     const { access_token } = await this.authService.oauthLogin(req.user);
-    const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl =
+      this.config.get<string>("FRONTEND_URL") || "http://localhost:3000";
     res.redirect(`${frontendUrl}/auth/oauth/callback?token=${access_token}`);
   }
 
   // ── GitHub OAuth ──────────────────────────────────────────
-  @Get('github')
-  @UseGuards(AuthGuard('github'))
+  @Get("github")
+  @UseGuards(AuthGuard("github"))
   githubAuth() {
     // Passport redirects to GitHub — no body needed
   }
 
-  @Get('github/callback')
-  @UseGuards(AuthGuard('github'))
+  @Get("github/callback")
+  @UseGuards(AuthGuard("github"))
   async githubCallback(@Req() req: any, @Res() res: any) {
     const { access_token } = await this.authService.oauthLogin(req.user);
-    const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl =
+      this.config.get<string>("FRONTEND_URL") || "http://localhost:3000";
     res.redirect(`${frontendUrl}/auth/oauth/callback?token=${access_token}`);
   }
 }
@@ -768,18 +829,18 @@ export class AuthController {
 - [ ] **Step 2: Replace `auth.module.ts`**
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
-import { TeamsModule } from '../teams/teams.module';
-import { MailModule } from '../mail/mail.module';
-import { JwtStrategy } from './jwt.strategy';
-import { GoogleStrategy } from './google.strategy';
-import { GitHubStrategy } from './github.strategy';
+import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { AuthService } from "./auth.service";
+import { AuthController } from "./auth.controller";
+import { UsersModule } from "../users/users.module";
+import { TeamsModule } from "../teams/teams.module";
+import { MailModule } from "../mail/mail.module";
+import { JwtStrategy } from "./jwt.strategy";
+import { GoogleStrategy } from "./google.strategy";
+import { GitHubStrategy } from "./github.strategy";
 
 @Module({
   imports: [
@@ -791,8 +852,8 @@ import { GitHubStrategy } from './github.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET') || 'super_secret_key',
-        signOptions: { expiresIn: '7d' },
+        secret: configService.get("JWT_SECRET") || "super_secret_key",
+        signOptions: { expiresIn: "7d" },
       }),
     }),
   ],
@@ -810,6 +871,7 @@ grep -n "exports" apps/api/src/modules/mail/mail.module.ts
 ```
 
 If `MailService` is not in `exports`, add it:
+
 ```typescript
 // In mail.module.ts, ensure:
 exports: [MailService],
@@ -835,6 +897,7 @@ git commit -m "feat(auth): wire up OAuth endpoints and password reset in control
 ## Task 9: Add env vars + smoke test backend endpoints
 
 **Files:**
+
 - Modify: `.env` (local, not committed)
 
 - [ ] **Step 1: Add env vars to `.env`**
@@ -859,6 +922,7 @@ pnpm dev --filter api
 ```
 
 In a new terminal:
+
 ```bash
 # Test forgot-password (always returns 200)
 curl -s -X POST http://localhost:3001/auth/forgot-password \
@@ -882,28 +946,29 @@ Expected: `{ "statusCode": 400, "message": "Invalid or expired reset token" }`
 ## Task 10: Frontend — Forgot Password Page
 
 **Files:**
+
 - Create: `apps/web/src/app/auth/forgot-password/page.tsx`
 
 - [ ] **Step 1: Create the directory and page**
 
 ```tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Mail, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Mail, Sparkles } from "lucide-react";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await api.post('/auth/forgot-password', { email });
+      await api.post("/auth/forgot-password", { email });
     },
     onSuccess: () => setSubmitted(true),
   });
@@ -920,9 +985,13 @@ export default function ForgotPasswordPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Check your inbox</h2>
             <p className="text-zinc-400">
-              If an account with <strong>{email}</strong> exists, we&apos;ve sent a reset link. Check your spam folder too.
+              If an account with <strong>{email}</strong> exists, we&apos;ve
+              sent a reset link. Check your spam folder too.
             </p>
-            <Link href="/" className="text-indigo-400 hover:text-indigo-300 text-sm">
+            <Link
+              href="/"
+              className="text-indigo-400 hover:text-indigo-300 text-sm"
+            >
               ← Back to sign in
             </Link>
           </div>
@@ -943,7 +1012,9 @@ export default function ForgotPasswordPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300 ml-1">Email</label>
+                <label className="text-sm font-medium text-zinc-300 ml-1">
+                  Email
+                </label>
                 <div className="relative">
                   <Input
                     type="email"
@@ -1007,38 +1078,39 @@ git commit -m "feat(web): add forgot-password page"
 ## Task 11: Frontend — Reset Password Page
 
 **Files:**
+
 - Create: `apps/web/src/app/auth/reset-password/page.tsx`
 
 - [ ] **Step 1: Create the page**
 
 ```tsx
-'use client';
+"use client";
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Lock, Sparkles } from 'lucide-react';
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Lock, Sparkles } from "lucide-react";
 
 function ResetPasswordForm() {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [clientError, setClientError] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [clientError, setClientError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams.get("token");
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await api.post('/auth/reset-password', { token, newPassword });
+      await api.post("/auth/reset-password", { token, newPassword });
     },
     onSuccess: () => {
       setSuccess(true);
-      setTimeout(() => router.push('/?reset=success'), 2000);
+      setTimeout(() => router.push("/?reset=success"), 2000);
     },
   });
 
@@ -1047,7 +1119,10 @@ function ResetPasswordForm() {
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Invalid link</h2>
         <p className="text-zinc-400">This reset link is missing a token.</p>
-        <Link href="/auth/forgot-password" className="text-indigo-400 hover:text-indigo-300 text-sm">
+        <Link
+          href="/auth/forgot-password"
+          className="text-indigo-400 hover:text-indigo-300 text-sm"
+        >
           Request a new reset link →
         </Link>
       </div>
@@ -1073,13 +1148,13 @@ function ResetPasswordForm() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          setClientError('');
+          setClientError("");
           if (newPassword.length < 8) {
-            setClientError('Password must be at least 8 characters.');
+            setClientError("Password must be at least 8 characters.");
             return;
           }
           if (newPassword !== confirm) {
-            setClientError('Passwords do not match.');
+            setClientError("Passwords do not match.");
             return;
           }
           mutation.mutate();
@@ -1087,7 +1162,9 @@ function ResetPasswordForm() {
         className="space-y-4"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">New password</label>
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            New password
+          </label>
           <div className="relative">
             <Input
               type="password"
@@ -1102,7 +1179,9 @@ function ResetPasswordForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">Confirm password</label>
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            Confirm password
+          </label>
           <div className="relative">
             <Input
               type="password"
@@ -1119,12 +1198,16 @@ function ResetPasswordForm() {
         {(clientError || mutation.isError) && (
           <p className="text-red-400 text-sm">
             {clientError ||
-              ((mutation.error as any)?.response?.data?.message ?? 'This link has expired. Please request a new one.')}
+              ((mutation.error as any)?.response?.data?.message ??
+                "This link has expired. Please request a new one.")}
           </p>
         )}
 
         {mutation.isError && !clientError && (
-          <Link href="/auth/forgot-password" className="text-indigo-400 hover:text-indigo-300 text-sm block">
+          <Link
+            href="/auth/forgot-password"
+            className="text-indigo-400 hover:text-indigo-300 text-sm block"
+          >
             Request a new reset link →
           </Link>
         )}
@@ -1179,30 +1262,31 @@ git commit -m "feat(web): add reset-password page"
 ## Task 12: Frontend — OAuth Callback Page
 
 **Files:**
+
 - Create: `apps/web/src/app/auth/oauth/callback/page.tsx`
 
 - [ ] **Step 1: Create the page**
 
 ```tsx
-'use client';
+"use client";
 
-import { useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function OAuthCallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const error = searchParams.get('error');
+    const token = searchParams.get("token");
+    const error = searchParams.get("error");
 
     if (token) {
-      localStorage.setItem('access_token', token);
-      router.replace('/dashboard');
+      localStorage.setItem("access_token", token);
+      router.replace("/dashboard");
     } else {
       // OAuth failed — redirect with error message
-      router.replace(`/?error=${error ?? 'oauth_failed'}`);
+      router.replace(`/?error=${error ?? "oauth_failed"}`);
     }
   }, [router, searchParams]);
 
@@ -1215,11 +1299,13 @@ function OAuthCallbackHandler() {
 
 export default function OAuthCallbackPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
-        <p className="text-zinc-400">Loading…</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+          <p className="text-zinc-400">Loading…</p>
+        </div>
+      }
+    >
       <OAuthCallbackHandler />
     </Suspense>
   );
@@ -1238,6 +1324,7 @@ git commit -m "feat(web): add OAuth callback page (stores JWT, redirects to dash
 ## Task 13: Update Root Auth Page
 
 **Files:**
+
 - Modify: `apps/web/src/app/page.tsx`
 
 - [ ] **Step 1: Add OAuth buttons and "Forgot password?" link**
@@ -1245,57 +1332,59 @@ git commit -m "feat(web): add OAuth callback page (stores JWT, redirects to dash
 Replace the entire `apps/web/src/app/page.tsx`:
 
 ```tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Lock, Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Suspense } from 'react';
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sparkles, ArrowRight, Lock, Mail } from "lucide-react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Suspense } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Show OAuth error if redirected back from failed OAuth
-  const oauthError = searchParams.get('error');
+  const oauthError = searchParams.get("error");
 
   const authMutation = useMutation({
     mutationFn: async () => {
-      setErrorMsg('');
-      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      setErrorMsg("");
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
       const { data } = await api.post(endpoint, { email, password });
       return data;
     },
     onSuccess: (data) => {
       if (data.access_token) {
-        localStorage.setItem('access_token', data.access_token);
-        router.push('/dashboard');
+        localStorage.setItem("access_token", data.access_token);
+        router.push("/dashboard");
       } else if (!isLogin) {
         setIsLogin(true);
-        setPassword('');
+        setPassword("");
       }
     },
     onError: (error: any) => {
       const serverMsg = error.response?.data?.message;
-      if (typeof serverMsg === 'string') {
+      if (typeof serverMsg === "string") {
         setErrorMsg(serverMsg);
       } else if (Array.isArray(serverMsg)) {
         setErrorMsg(serverMsg[0]);
       } else {
         setErrorMsg(
-          isLogin ? 'Invalid email or password.' : 'Failed to create account. User might already exist.',
+          isLogin
+            ? "Invalid email or password."
+            : "Failed to create account. User might already exist.",
         );
       }
     },
@@ -1305,12 +1394,12 @@ function AuthForm() {
     <div className="w-full max-w-sm mx-auto relative z-10">
       <div className="mb-10 text-center lg:text-left">
         <h2 className="text-3xl font-bold tracking-tight mb-2">
-          {isLogin ? 'Welcome back' : 'Create an account'}
+          {isLogin ? "Welcome back" : "Create an account"}
         </h2>
         <p className="text-zinc-400">
           {isLogin
-            ? 'Enter your credentials to access your dashboard.'
-            : 'Sign up to start analyzing feedback with AI.'}
+            ? "Enter your credentials to access your dashboard."
+            : "Sign up to start analyzing feedback with AI."}
         </p>
       </div>
 
@@ -1321,10 +1410,22 @@ function AuthForm() {
           className="flex items-center justify-center gap-3 w-full px-4 py-2.5 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 transition-colors text-sm font-medium text-zinc-200"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            />
           </svg>
           Continue with Google
         </a>
@@ -1334,7 +1435,7 @@ function AuthForm() {
           className="flex items-center justify-center gap-3 w-full px-4 py-2.5 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 transition-colors text-sm font-medium text-zinc-200"
         >
           <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
           </svg>
           Continue with GitHub
         </a>
@@ -1352,11 +1453,11 @@ function AuthForm() {
 
       {(oauthError || errorMsg) && (
         <div className="mb-4 p-3 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm text-center">
-          {oauthError === 'oauth_failed'
-            ? 'OAuth sign-in failed. Please try again.'
-            : oauthError === 'no_email'
-            ? 'Your OAuth account has no public email. Please use email/password.'
-            : errorMsg}
+          {oauthError === "oauth_failed"
+            ? "OAuth sign-in failed. Please try again."
+            : oauthError === "no_email"
+              ? "Your OAuth account has no public email. Please use email/password."
+              : errorMsg}
         </div>
       )}
 
@@ -1368,7 +1469,9 @@ function AuthForm() {
         className="space-y-4"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">Email</label>
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            Email
+          </label>
           <div className="relative">
             <Input
               type="email"
@@ -1384,7 +1487,9 @@ function AuthForm() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-zinc-300 ml-1">Password</label>
+            <label className="text-sm font-medium text-zinc-300 ml-1">
+              Password
+            </label>
             {isLogin && (
               <Link
                 href="/auth/forgot-password"
@@ -1414,17 +1519,18 @@ function AuthForm() {
           className="w-full mt-6"
           isLoading={authMutation.isPending}
         >
-          {isLogin ? 'Sign In' : 'Sign Up'} <ArrowRight className="ml-2 h-4 w-4" />
+          {isLogin ? "Sign In" : "Sign Up"}{" "}
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </form>
 
       <div className="mt-8 text-center text-sm text-zinc-500">
-        {isLogin ? "Don't have an account? " : 'Already have an account? '}
+        {isLogin ? "Don't have an account? " : "Already have an account? "}
         <button
           onClick={() => setIsLogin(!isLogin)}
           className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors focus:outline-none"
         >
-          {isLogin ? 'Sign up' : 'Sign in'}
+          {isLogin ? "Sign up" : "Sign in"}
         </button>
       </div>
     </div>
@@ -1456,7 +1562,8 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-zinc-400 text-lg sm:text-xl leading-relaxed"
           >
-            A powerful, AI-driven platform for collecting, analyzing, and acting upon user feedback at scale.
+            A powerful, AI-driven platform for collecting, analyzing, and acting
+            upon user feedback at scale.
           </motion.p>
         </div>
         <div className="relative z-10 mt-12 text-sm text-brand-muted">
@@ -1479,6 +1586,7 @@ export default function Home() {
 - [ ] **Step 2: Test locally**
 
 Open `http://localhost:3000` — verify:
+
 - Google and GitHub buttons appear
 - "Forgot password?" link visible in login mode
 - "Forgot password?" hidden in register mode

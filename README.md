@@ -25,15 +25,15 @@ insightstream-ai/
 
 ### Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 16, React 19, TailwindCSS 4, Framer Motion, Recharts |
-| **Backend** | NestJS 11, TypeORM, Passport JWT, Socket.io |
-| **AI Engine** | Google Gemini 2.5 Flash (`@google/generative-ai`) |
-| **Database** | PostgreSQL 15 (Docker) |
-| **Cache** | Redis 7 (Docker, reserved for future use) |
-| **Widget** | Vite, Vanilla TypeScript, PostCSS |
-| **Monorepo** | pnpm workspaces, Turborepo |
+| Layer         | Technology                                                   |
+| ------------- | ------------------------------------------------------------ |
+| **Frontend**  | Next.js 16, React 19, TailwindCSS 4, Framer Motion, Recharts |
+| **Backend**   | NestJS 11, TypeORM, Passport JWT, Socket.io                  |
+| **AI Engine** | Google Gemini 2.5 Flash (`@google/generative-ai`)            |
+| **Database**  | PostgreSQL 15 (Docker)                                       |
+| **Cache**     | Redis 7 (Docker, reserved for future use)                    |
+| **Widget**    | Vite, Vanilla TypeScript, PostCSS                            |
+| **Monorepo**  | pnpm workspaces, Turborepo                                   |
 
 ---
 
@@ -122,10 +122,10 @@ pnpm dev
 
 This starts both services via Turborepo:
 
-| Service | URL |
-|---|---|
+| Service                 | URL                   |
+| ----------------------- | --------------------- |
 | **Dashboard (Next.js)** | http://localhost:3000 |
-| **API (NestJS)** | http://localhost:3001 |
+| **API (NestJS)**        | http://localhost:3001 |
 
 ### 5. First Steps
 
@@ -145,8 +145,8 @@ Add this snippet to any website to start collecting feedback:
 ```html
 <script>
   window.InsightStreamConfig = {
-    apiKey: 'YOUR_PROJECT_API_KEY',
-    serverUrl: 'http://localhost:3001'
+    apiKey: "YOUR_PROJECT_API_KEY",
+    serverUrl: "http://localhost:3001",
   };
 </script>
 <script src="http://localhost:3001/widget.js"></script>
@@ -159,34 +159,39 @@ The widget respects the **domain whitelist** set on your project. Requests from 
 ## API Endpoints
 
 ### Auth
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/auth/register` | Register new user |
-| `POST` | `/auth/login` | Login, returns JWT |
+
+| Method | Path             | Description        |
+| ------ | ---------------- | ------------------ |
+| `POST` | `/auth/register` | Register new user  |
+| `POST` | `/auth/login`    | Login, returns JWT |
 
 ### Projects (🔒 JWT Required)
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/projects` | List user's projects |
-| `POST` | `/projects` | Create new project |
-| `DELETE` | `/projects/:id` | Delete project |
+
+| Method   | Path            | Description          |
+| -------- | --------------- | -------------------- |
+| `GET`    | `/projects`     | List user's projects |
+| `POST`   | `/projects`     | Create new project   |
+| `DELETE` | `/projects/:id` | Delete project       |
 
 ### Feedback (🔒 JWT Required)
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/feedback` | List all user's feedback |
-| `POST` | `/feedback` | Create feedback (internal) |
-| `PATCH` | `/feedback/:id/status` | Update Kanban status |
-| `DELETE` | `/feedback/:id` | Delete feedback |
+
+| Method   | Path                   | Description                |
+| -------- | ---------------------- | -------------------------- |
+| `GET`    | `/feedback`            | List all user's feedback   |
+| `POST`   | `/feedback`            | Create feedback (internal) |
+| `PATCH`  | `/feedback/:id/status` | Update Kanban status       |
+| `DELETE` | `/feedback/:id`        | Delete feedback            |
 
 ### Feedback (Public)
-| Method | Path | Description |
-|---|---|---|
+
+| Method | Path               | Description                      |
+| ------ | ------------------ | -------------------------------- |
 | `POST` | `/feedback/public` | Submit via widget (API Key auth) |
 
 ### WebSocket Events
-| Event | Direction | Description |
-|---|---|---|
+
+| Event                      | Direction       | Description                                          |
+| -------------------------- | --------------- | ---------------------------------------------------- |
 | `feedbackUpdated:{userId}` | Server → Client | Emitted when AI analysis completes or status changes |
 
 ---

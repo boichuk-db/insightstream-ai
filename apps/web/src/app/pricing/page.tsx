@@ -1,57 +1,60 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Check, X, Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
-import { PLAN_CONFIGS, PlanType, formatLimit } from '@/lib/plans';
-import { api } from '@/lib/api';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Check, X, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
+import { PLAN_CONFIGS, PlanType, formatLimit } from "@/lib/plans";
+import { api } from "@/lib/api";
 
 const FEATURES = [
-  { key: 'maxProjects', label: 'Projects' },
-  { key: 'maxFeedbacksPerMonth', label: 'Feedbacks / month' },
-  { key: 'aiAnalysis', label: 'AI Analysis' },
-  { key: 'weeklyDigest', label: 'Weekly AI Digest' },
-  { key: 'widgetCustomization', label: 'Widget Customization' },
-  { key: 'dataExport', label: 'Data Export (CSV)' },
+  { key: "maxProjects", label: "Projects" },
+  { key: "maxFeedbacksPerMonth", label: "Feedbacks / month" },
+  { key: "aiAnalysis", label: "AI Analysis" },
+  { key: "weeklyDigest", label: "Weekly AI Digest" },
+  { key: "widgetCustomization", label: "Widget Customization" },
+  { key: "dataExport", label: "Data Export (CSV)" },
 ] as const;
 
 function formatFeatureValue(key: string, value: any): string | boolean {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'number' || value === null) return formatLimit(value);
-  if (key === 'aiAnalysis') {
-    if (value === 'none') return false;
-    if (value === 'basic') return 'Basic';
-    return 'Full';
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number" || value === null) return formatLimit(value);
+  if (key === "aiAnalysis") {
+    if (value === "none") return false;
+    if (value === "basic") return "Basic";
+    return "Full";
   }
-  if (key === 'widgetCustomization') {
-    if (value === 'basic') return 'Basic';
-    if (value === 'full') return 'Full';
-    return 'Full + Whitelabel';
+  if (key === "widgetCustomization") {
+    if (value === "basic") return "Basic";
+    if (value === "full") return "Full";
+    return "Full + Whitelabel";
   }
   return String(value);
 }
 
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const;
-const CARD_STYLES: Record<PlanType, { border: string; badge: string; glow: string; btn: string }> = {
+const CARD_STYLES: Record<
+  PlanType,
+  { border: string; badge: string; glow: string; btn: string }
+> = {
   [PlanType.FREE]: {
-    border: 'border-brand-border',
-    badge: '',
-    glow: '',
-    btn: 'bg-brand-surface hover:bg-brand-surface-hover text-white',
+    border: "border-brand-border",
+    badge: "",
+    glow: "",
+    btn: "bg-brand-surface hover:bg-brand-surface-hover text-white",
   },
   [PlanType.PRO]: {
-    border: 'border-indigo-500/50',
-    badge: 'bg-indigo-500 text-white',
-    glow: 'shadow-[0_0_40px_rgba(99,102,241,0.15)]',
-    btn: 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]',
+    border: "border-indigo-500/50",
+    badge: "bg-indigo-500 text-white",
+    glow: "shadow-[0_0_40px_rgba(99,102,241,0.15)]",
+    btn: "bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]",
   },
   [PlanType.BUSINESS]: {
-    border: 'border-amber-500/30',
-    badge: 'bg-amber-500 text-black',
-    glow: '',
-    btn: 'bg-amber-500 hover:bg-amber-600 text-black font-bold',
+    border: "border-amber-500/30",
+    badge: "bg-amber-500 text-black",
+    glow: "",
+    btn: "bg-amber-500 hover:bg-amber-600 text-black font-bold",
   },
 };
 
@@ -61,22 +64,25 @@ export default function PricingPage() {
   const [upgrading, setUpgrading] = useState<string | null>(null);
 
   const handleUpgrade = async (plan: PlanType) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
     if (!token) {
-      router.push('/');
+      router.push("/");
       return;
     }
 
     setUpgrading(plan);
     try {
-      await api.patch('/plans/upgrade', { plan });
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['planUsage'] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
-      router.push('/dashboard');
+      await api.patch("/plans/upgrade", { plan });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["planUsage"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+      router.push("/dashboard");
     } catch {
-      alert('Failed to upgrade. Please try again.');
+      alert("Failed to upgrade. Please try again.");
     } finally {
       setUpgrading(null);
     }
@@ -136,23 +142,27 @@ export default function PricingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i + 0.3 }}
-                className={`relative flex flex-col bg-brand-bg/60 border-brand-border/50 ${styles.border} rounded-2xl p-8 ${styles.glow} ${isPopular ? 'md:-mt-4 md:mb-0' : ''}`}
+                className={`relative flex flex-col bg-brand-bg/60 border-brand-border/50 ${styles.border} rounded-2xl p-8 ${styles.glow} ${isPopular ? "md:-mt-4 md:mb-0" : ""}`}
               >
                 {isPopular && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold ${styles.badge}`}>
+                  <div
+                    className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold ${styles.badge}`}
+                  >
                     Most Popular
                   </div>
                 )}
 
                 <div className="mb-8">
                   <h3 className="text-xl font-bold mb-1">{config.name}</h3>
-                  <p className="text-sm text-brand-muted">{config.description}</p>
+                  <p className="text-sm text-brand-muted">
+                    {config.description}
+                  </p>
                 </div>
 
                 <div className="mb-8">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-extrabold">
-                      {config.price === 0 ? 'Free' : `$${config.price}`}
+                      {config.price === 0 ? "Free" : `$${config.price}`}
                     </span>
                     {config.price > 0 && (
                       <span className="text-brand-muted text-sm">/month</span>
@@ -177,8 +187,12 @@ export default function PricingPage() {
                             <X className="h-3 w-3 text-zinc-600" />
                           </div>
                         )}
-                        <span className={`text-sm ${isEnabled ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                          {typeof display === 'string' ? `${label}: ${display}` : label}
+                        <span
+                          className={`text-sm ${isEnabled ? "text-zinc-300" : "text-zinc-600"}`}
+                        >
+                          {typeof display === "string"
+                            ? `${label}: ${display}`
+                            : label}
                         </span>
                       </div>
                     );
@@ -186,7 +200,11 @@ export default function PricingPage() {
                 </div>
 
                 <button
-                  onClick={() => planType === PlanType.FREE ? router.push('/') : handleUpgrade(planType)}
+                  onClick={() =>
+                    planType === PlanType.FREE
+                      ? router.push("/")
+                      : handleUpgrade(planType)
+                  }
                   disabled={upgrading !== null}
                   className={`w-full py-3 px-4 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 ${styles.btn}`}
                 >
@@ -195,7 +213,7 @@ export default function PricingPage() {
                       <Loader2 className="h-4 w-4 animate-spin" /> Upgrading...
                     </span>
                   ) : planType === PlanType.FREE ? (
-                    'Get Started'
+                    "Get Started"
                   ) : (
                     `Upgrade to ${config.name}`
                   )}
@@ -207,7 +225,8 @@ export default function PricingPage() {
 
         {/* Footer */}
         <div className="text-center text-sm text-zinc-600">
-          All plans include SSL encryption, 99.9% uptime SLA, and community support.
+          All plans include SSL encryption, 99.9% uptime SLA, and community
+          support.
         </div>
       </div>
     </div>

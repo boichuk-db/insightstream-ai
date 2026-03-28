@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Lock, Sparkles } from 'lucide-react';
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Lock, Sparkles } from "lucide-react";
 
 function ResetPasswordForm() {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [clientError, setClientError] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [clientError, setClientError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams.get("token");
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await api.post('/auth/reset-password', { token, newPassword });
+      await api.post("/auth/reset-password", { token, newPassword });
     },
     onSuccess: () => {
       setSuccess(true);
-      setTimeout(() => router.replace('/?reset=success'), 2000);
+      setTimeout(() => router.replace("/?reset=success"), 2000);
     },
   });
 
@@ -33,7 +33,10 @@ function ResetPasswordForm() {
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Invalid link</h2>
         <p className="text-zinc-400">This reset link is missing a token.</p>
-        <Link href="/auth/forgot-password" className="text-indigo-400 hover:text-indigo-300 text-sm">
+        <Link
+          href="/auth/forgot-password"
+          className="text-indigo-400 hover:text-indigo-300 text-sm"
+        >
           Request a new reset link →
         </Link>
       </div>
@@ -59,13 +62,13 @@ function ResetPasswordForm() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          setClientError('');
+          setClientError("");
           if (newPassword.length < 8) {
-            setClientError('Password must be at least 8 characters.');
+            setClientError("Password must be at least 8 characters.");
             return;
           }
           if (newPassword !== confirm) {
-            setClientError('Passwords do not match.');
+            setClientError("Passwords do not match.");
             return;
           }
           mutation.mutate();
@@ -73,7 +76,9 @@ function ResetPasswordForm() {
         className="space-y-4"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">New password</label>
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            New password
+          </label>
           <div className="relative">
             <Input
               type="password"
@@ -88,7 +93,9 @@ function ResetPasswordForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">Confirm password</label>
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            Confirm password
+          </label>
           <div className="relative">
             <Input
               type="password"
@@ -105,12 +112,16 @@ function ResetPasswordForm() {
         {(clientError || mutation.isError) && (
           <p className="text-red-400 text-sm">
             {clientError ||
-              ((mutation.error as any)?.response?.data?.message ?? 'This link has expired. Please request a new one.')}
+              ((mutation.error as any)?.response?.data?.message ??
+                "This link has expired. Please request a new one.")}
           </p>
         )}
 
         {mutation.isError && !clientError && (
-          <Link href="/auth/forgot-password" className="text-indigo-400 hover:text-indigo-300 text-sm block">
+          <Link
+            href="/auth/forgot-password"
+            className="text-indigo-400 hover:text-indigo-300 text-sm block"
+          >
             Request a new reset link →
           </Link>
         )}

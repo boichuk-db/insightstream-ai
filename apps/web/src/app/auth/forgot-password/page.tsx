@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Mail, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Mail, Sparkles } from "lucide-react";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await api.post('/auth/forgot-password', { email });
+      await api.post("/auth/forgot-password", { email });
     },
     onSuccess: () => setSubmitted(true),
   });
@@ -31,9 +31,13 @@ export default function ForgotPasswordPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Check your inbox</h2>
             <p className="text-zinc-400">
-              If an account with <strong>{email}</strong> exists, we&apos;ve sent a reset link. Check your spam folder too.
+              If an account with <strong>{email}</strong> exists, we&apos;ve
+              sent a reset link. Check your spam folder too.
             </p>
-            <Link href="/" className="text-indigo-400 hover:text-indigo-300 text-sm">
+            <Link
+              href="/"
+              className="text-indigo-400 hover:text-indigo-300 text-sm"
+            >
               ← Back to sign in
             </Link>
           </div>
@@ -54,7 +58,9 @@ export default function ForgotPasswordPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <label className="text-sm font-medium text-zinc-300 ml-1">Email</label>
+                <label className="text-sm font-medium text-zinc-300 ml-1">
+                  Email
+                </label>
                 <div className="relative">
                   <Input
                     type="email"
