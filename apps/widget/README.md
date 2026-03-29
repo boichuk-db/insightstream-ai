@@ -1,73 +1,44 @@
-# React + TypeScript + Vite
+# InsightStream Widget
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Embeddable feedback widget — Vite + TypeScript, outputs a single `widget.js` IIFE bundle served by the API.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Vite** — IIFE bundle (`widget.js`)
+- **Vanilla TypeScript** — no framework dependencies
+- **PostCSS** — scoped styles injected into shadow DOM
 
-## React Compiler
+## Local Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+pnpm dev    # from apps/widget — runs on http://localhost:8080
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+pnpm run build   # outputs dist/widget.js
 ```
+
+The API serves `dist/widget.js` as a static file at `/widget.js` via `@nestjs/serve-static`.
+
+## Integration
+
+Add to any website:
+
+```html
+<script>
+  window.InsightStreamConfig = {
+    apiKey: "YOUR_PROJECT_API_KEY",
+    serverUrl: "https://your-api.railway.app",
+  };
+</script>
+<script src="https://your-api.railway.app/widget.js"></script>
+```
+
+## Features
+
+- Floating feedback bubble (customizable position & color)
+- Multi-step form (message → category → submit)
+- API key validation + domain whitelisting enforcement
+- Works on any website — no framework required

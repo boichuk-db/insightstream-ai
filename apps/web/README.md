@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InsightStream Web
 
-## Getting Started
+Next.js 16 App Router dashboard — feedback Kanban, analytics, team management.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** App Router + React 19
+- **TailwindCSS 4** — dark theme (`#09090b` base)
+- **TanStack Query 5** — server state + optimistic updates
+- **Recharts** — analytics charts
+- **Socket.io client** — real-time AI result push
+- **Sentry** — error monitoring (client + server + edge)
+
+## Local Development
 
 ```bash
-npm run dev
+pnpm dev          # from monorepo root
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm run dev      # from apps/web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Runs on **http://localhost:3000**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
 
-## Learn More
+# OAuth (must match API config)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
 
-To learn more about Next.js, take a look at the following resources:
+# Sentry (optional)
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+SENTRY_AUTH_TOKEN=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Route Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/app/
+├── page.tsx                  # Landing page
+├── pricing/                  # Pricing page
+├── auth/
+│   ├── forgot-password/      # Password reset request
+│   ├── reset-password/       # Password reset form
+│   └── oauth/callback/       # OAuth redirect handler
+├── dashboard/
+│   ├── page.tsx              # Main Kanban + Analytics
+│   ├── archive/              # Archived feedback
+│   ├── activity/             # Team activity feed
+│   └── embed/                # Widget configuration & install
+├── settings/
+│   ├── page.tsx              # Account & subscription
+│   └── team/                 # Team members & invitations
+└── invite/accept/            # Team invitation acceptance
+```
 
-## Deploy on Vercel
+## Key Components
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `KanbanBoard` — drag-and-drop pipeline (New → In Review → In Progress → Done → Rejected)
+- `KanbanCard` — AI summary, sentiment bar, tags, comments
+- `AnalyticsOverview` — sentiment trend + category distribution charts
+- `DigestModal` — AI digest generation & display
+- `Sidebar` — project switcher, team context, navigation
+- `ActivityFeed` — real-time team actions
+- `WidgetGeneratorModal` — embed code generator
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+
+```bash
+pnpm run build      # Next.js production build
+pnpm run typecheck  # tsc --noEmit
+pnpm run lint       # ESLint
+```
+
+## Deployment
+
+Deployed on **Vercel** via GitHub Actions on push to `main`.
