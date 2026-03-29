@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class AiService {
+  private readonly logger = new Logger(AiService.name);
   private genAI: GoogleGenerativeAI;
   private model: any;
 
@@ -82,14 +83,14 @@ Write the digest now:`;
       // Return as-is (already HTML paragraphs)
       return text || '<p>No summary generated.</p>';
     } catch (err) {
-      console.error('Gemini digest error:', err);
+      this.logger.error('Gemini digest error', err);
       return '<p>AI summary could not be generated this week.</p>';
     }
   }
 
   async analyzeFeedback(content: string) {
     if (!this.model) {
-      console.warn('Gemini API key not found, skipping AI analysis.');
+      this.logger.warn('Gemini API key not found, skipping AI analysis');
       return null;
     }
 
@@ -124,7 +125,7 @@ Write the digest now:`;
 
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        console.error('Gemini returned invalid format:', text);
+        this.logger.error('Gemini returned invalid format', text);
         return null;
       }
 
@@ -147,7 +148,7 @@ Write the digest now:`;
 
       return parsed;
     } catch (error) {
-      console.error('Gemini Analysis Error:', error);
+      this.logger.error('Gemini analysis error', error);
       return null;
     }
   }

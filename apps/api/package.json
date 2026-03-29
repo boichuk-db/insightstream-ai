@@ -20,7 +20,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typeorm": "ts-node -r tsconfig-paths/register -r dotenv/config node_modules/typeorm/cli-ts-node-commonjs.js -d src/data-source.ts",
+    "migration:create": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli-ts-node-commonjs.js migration:create",
+    "migration:generate": "pnpm typeorm migration:generate",
+    "migration:run": "pnpm typeorm migration:run",
+    "migration:revert": "pnpm typeorm migration:revert"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

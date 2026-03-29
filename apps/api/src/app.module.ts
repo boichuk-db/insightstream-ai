@@ -51,9 +51,9 @@ import {
         Comment,
         ActivityEvent,
       ],
-      synchronize:
-        process.env.TYPEORM_SYNCHRONIZE === 'true' ||
-        process.env.NODE_ENV !== 'production',
+      synchronize: process.env.NODE_ENV !== 'production',
+      migrations: [__dirname + '/migrations/**/*.{ts,js}'],
+      migrationsRun: true,
     }),
     UsersModule,
     AuthModule,
