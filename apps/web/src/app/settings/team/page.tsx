@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { userProfileQuery, projectsQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
 import { useTeam } from "@/hooks/useTeam";
 import { Button } from "@/components/ui/button";
@@ -43,21 +44,9 @@ export default function TeamSettingsPage() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("member");
 
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/users/me");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data } = await api.get("/projects");
-      return data;
-    },
-  });
+  const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
