@@ -20,7 +20,7 @@ import { CATEGORY_COLORS } from "@/lib/colors";
 interface Feedback {
   id: string;
   content: string;
-  source: string;
+  source?: string;
   category?: string;
   sentimentScore?: number;
   tags?: string[];

@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface KanbanBoardProps {
   initialFeedbacks: any[];
-  projectId: string;
+  projectId?: string;
 }
 
 const COLUMNS = [

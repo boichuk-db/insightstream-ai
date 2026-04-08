@@ -52,12 +52,11 @@ export default function Dashboard() {
     isError,
   } = useQuery(feedbacksQuery);
 
-  const feedbacks = (
+  const feedbacks =
     allFeedbacks?.filter(
       (fb: any) =>
         fb.projectId === activeProject?.id && fb.status !== "Archived",
-    ) || []
-  ) as any;
+    ) || [];
 
   const {
     data: digestData,
@@ -316,7 +315,7 @@ export default function Dashboard() {
               ) : (
                 <KanbanBoard
                   initialFeedbacks={feedbacks || []}
-                  projectId={activeProject?.id || ""}
+                  projectId={activeProject?.id}
                 />
               )}
             </div>
