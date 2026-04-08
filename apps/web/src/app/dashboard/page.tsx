@@ -58,6 +58,8 @@ export default function Dashboard() {
         fb.projectId === activeProject?.id && fb.status !== "Archived",
     ) || [];
 
+  // Digest is cached for 5 minutes — intentional to avoid re-hitting Gemini on each modal open.
+  // Cache is invalidated when feedbacks are updated via socket.
   const {
     data: digestData,
     isLoading: digestLoading,

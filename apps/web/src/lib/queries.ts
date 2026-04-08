@@ -32,4 +32,5 @@ export const digestPreviewQuery = (projectId: string) =>
     queryFn: () =>
       api.get(`/digest/preview/${projectId}`).then((r) => r.data),
     staleTime: 5 * 60 * 1000,
+    enabled: !!projectId,
   });
