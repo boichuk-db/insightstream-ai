@@ -2,6 +2,8 @@ import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModuleOptions, ThrottlerStorage, ThrottlerException } from '@nestjs/throttler';
 import { Reflector } from '@nestjs/core';
 
+const WIDGET_PROJECT_THROTTLER = 'widget:project';
+
 @Injectable()
 export class WidgetThrottlerGuard extends ThrottlerGuard {
   private readonly logger = new Logger(WidgetThrottlerGuard.name);
@@ -35,7 +37,7 @@ export class WidgetThrottlerGuard extends ThrottlerGuard {
     const req = context.switchToHttp().getRequest();
     const ip: string = (req.ips?.length ? req.ips[0] : req.ip) ?? 'unknown';
 
-    if (name === 'widget:project') {
+    if (name === WIDGET_PROJECT_THROTTLER) {
       const apiKey: string = req.body?.apiKey ?? ip;
       return `widget:project-${apiKey}-${suffix}`;
     }
@@ -43,7 +45,4 @@ export class WidgetThrottlerGuard extends ThrottlerGuard {
     return `widget:ip-${ip}-${suffix}`;
   }
 
-  protected async shouldSkip(_context: ExecutionContext): Promise<boolean> {
-    return false;
-  }
 }

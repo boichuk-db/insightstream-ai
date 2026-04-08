@@ -1,5 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { WidgetThrottlerGuard } from './widget-throttler.guard';
 
 const makeContext = (ip: string, body: Record<string, unknown>): ExecutionContext =>
@@ -19,12 +20,13 @@ const makeContext = (ip: string, body: Record<string, unknown>): ExecutionContex
 describe('WidgetThrottlerGuard', () => {
   let guard: WidgetThrottlerGuard;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     guard = new WidgetThrottlerGuard(
       [{ name: 'widget:ip', ttl: 60000, limit: 100 }, { name: 'widget:project', ttl: 60000, limit: 300 }],
       {} as any,
       {} as Reflector,
     );
+    await guard.onModuleInit();
   });
 
   it('generates ip key from request ip', async () => {
@@ -47,9 +49,9 @@ describe('WidgetThrottlerGuard', () => {
   });
 
   it('returns true (fail open) when storage throws a non-throttler error', async () => {
-    jest.spyOn(guard as any, 'handleRequest').mockRejectedValue(new Error('Redis connection refused'));
+    jest.spyOn(ThrottlerGuard.prototype, 'canActivate').mockRejectedValue(new Error('Redis connection refused'));
     const ctx = makeContext('1.2.3.4', { apiKey: 'key-abc' });
-    const result = await guard.canActivate(ctx).catch(() => false);
+    const result = await guard.canActivate(ctx);
     expect(result).toBe(true);
   });
 
