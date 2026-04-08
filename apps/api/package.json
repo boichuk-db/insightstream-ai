@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "dotenv": "^16.5.0",
     "@insightstream/database": "workspace:*",
+    "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
@@ -44,6 +44,8 @@
     "@nestjs/websockets": "^11.1.17",
     "@sentry/nestjs": "^10.46.0",
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.73.1",
+    "dotenv": "^16.5.0",
     "express": "^5.2.1",
     "nodemailer": "^8.0.4",
     "passport": "^0.7.0",
