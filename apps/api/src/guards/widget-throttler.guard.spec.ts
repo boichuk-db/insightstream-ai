@@ -29,6 +29,8 @@ describe('WidgetThrottlerGuard', () => {
     await guard.onModuleInit();
   });
 
+  afterEach(() => jest.restoreAllMocks());
+
   it('generates ip key from request ip', async () => {
     const ctx = makeContext('1.2.3.4', { apiKey: 'key-abc' });
     // v6 signature: generateKey(context, suffix=tracker, name=throttlerName)
