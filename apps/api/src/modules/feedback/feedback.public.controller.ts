@@ -5,9 +5,12 @@ import {
   UnauthorizedException,
   ForbiddenException,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { FeedbackService } from './feedback.service';
 import { ProjectsService } from '../projects/projects.service';
+import { WidgetThrottlerGuard } from '../../guards/widget-throttler.guard';
 
 @Controller('feedback/public')
 export class FeedbackPublicController {
@@ -17,6 +20,17 @@ export class FeedbackPublicController {
   ) {}
 
   @Post()
+  @UseGuards(WidgetThrottlerGuard)
+  @Throttle({
+    'widget:ip': {
+      ttl: 60000,
+      limit: parseInt(process.env.WIDGET_IP_LIMIT ?? '20', 10),
+    },
+    'widget:project': {
+      ttl: 60000,
+      limit: parseInt(process.env.WIDGET_PROJECT_LIMIT ?? '300', 10),
+    },
+  })
   async createPublic(
     @Body() body: { apiKey: string; content: string; source?: string },
     @Headers('origin') origin?: string,
