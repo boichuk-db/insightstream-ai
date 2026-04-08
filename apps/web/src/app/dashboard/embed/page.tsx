@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
-import { api } from "@/lib/api";
+import { userProfileQuery, projectsQuery } from "@/lib/queries";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
 import { useTeam } from "@/hooks/useTeam";
@@ -59,21 +59,9 @@ export default function EmbedPage() {
 
   const { teams, activeTeam, switchTeam, userRole } = useTeam();
 
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/users/me");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data } = await api.get("/projects");
-      return data;
-    },
-  });
+  const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
