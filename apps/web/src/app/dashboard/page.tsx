@@ -6,6 +6,7 @@ import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, MessageSquare, Sparkles, Menu, Code } from "lucide-react";
@@ -27,53 +28,20 @@ export default function Dashboard() {
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDigestOpen, setIsDigestOpen] = useState(false);
-  const [digestData, setDigestData] = useState<any>(null);
-  const [digestLoading, setDigestLoading] = useState(false);
-  const [digestError, setDigestError] = useState<string | null>(null);
 
   const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
     null,
   );
 
-  const handleOpenDigest = async () => {
-    if (!activeProject?.id) return;
-    setIsDigestOpen(true);
-    setDigestData(null);
-    setDigestError(null);
-    setDigestLoading(true);
-    try {
-      const { data } = await api.get(`/digest/preview/${activeProject.id}`);
-      setDigestData(data);
-    } catch (e: any) {
-      setDigestError(
-        e?.response?.data?.message || "Не вдалося згенерувати digest",
-      );
-    } finally {
-      setDigestLoading(false);
-    }
-  };
-
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/users/me");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
   // Real-time updates via socket — single source of truth for feedbacks invalidation
   useSocket(userProfile?.id, () => {
     queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
   });
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data } = await api.get("/projects");
-      return data;
-    },
-  });
+  const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
@@ -82,19 +50,28 @@ export default function Dashboard() {
     data: allFeedbacks,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["feedbacks"],
-    queryFn: async () => {
-      const { data } = await api.get("/feedback");
-      return data;
-    },
-  });
+  } = useQuery(feedbacksQuery);
 
-  const feedbacks =
+  const feedbacks = (
     allFeedbacks?.filter(
       (fb: any) =>
         fb.projectId === activeProject?.id && fb.status !== "Archived",
-    ) || [];
+    ) || []
+  ) as any;
+
+  const {
+    data: digestData,
+    isLoading: digestLoading,
+    error: digestErrorRaw,
+  } = useQuery({
+    ...digestPreviewQuery(activeProject?.id ?? ""),
+    enabled: isDigestOpen && !!activeProject?.id,
+  });
+
+  const digestError = digestErrorRaw
+    ? ((digestErrorRaw as any)?.response?.data?.message ??
+      "Не вдалося згенерувати digest")
+    : null;
 
   const [seedProgress, setSeedProgress] = useState<string | null>(null);
 
@@ -301,7 +278,7 @@ export default function Dashboard() {
               <Button
                 variant="brand"
                 size="xs"
-                onClick={handleOpenDigest}
+                onClick={() => setIsDigestOpen(true)}
                 disabled={!activeProject?.id}
                 className="bg-indigo-500/10 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/20"
               >
@@ -339,7 +316,7 @@ export default function Dashboard() {
               ) : (
                 <KanbanBoard
                   initialFeedbacks={feedbacks || []}
-                  projectId={activeProject?.id}
+                  projectId={activeProject?.id || ""}
                 />
               )}
             </div>
