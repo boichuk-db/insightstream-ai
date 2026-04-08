@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
@@ -21,11 +22,23 @@ export class AuthController {
     private config: ConfigService,
   ) {}
 
+  @Throttle({
+    default: {
+      ttl: 60000,
+      limit: parseInt(process.env.AUTH_REGISTER_LIMIT ?? '5', 10),
+    },
+  })
   @Post('register')
   async register(@Body() body: any) {
     return this.authService.register(body.email, body.password);
   }
 
+  @Throttle({
+    default: {
+      ttl: 60000,
+      limit: parseInt(process.env.AUTH_LOGIN_LIMIT ?? '10', 10),
+    },
+  })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: any) {
