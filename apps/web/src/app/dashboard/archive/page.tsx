@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { userProfileQuery, projectsQuery, feedbacksQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { KanbanCard } from "@/components/dashboard/KanbanCard";
@@ -25,36 +26,18 @@ export default function ArchivePage() {
 
   const { teams, activeTeam, switchTeam, userRole } = useTeam();
 
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/users/me");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
   useSocket(userProfile?.id, () => {
     queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
   });
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data } = await api.get("/projects");
-      return data;
-    },
-  });
+  const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
 
-  const { data: allFeedbacks, isLoading } = useQuery({
-    queryKey: ["feedbacks"],
-    queryFn: async () => {
-      const { data } = await api.get("/feedback");
-      return data;
-    },
-  });
+  const { data: allFeedbacks, isLoading } = useQuery(feedbacksQuery);
 
   const archivedFeedbacks =
     allFeedbacks?.filter(
