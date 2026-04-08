@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useCallback } from "react";
+import { userProfileQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
 
 export interface TeamMember {
@@ -55,13 +56,7 @@ export function useTeam() {
     enabled: !!activeTeam?.id,
   });
 
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/users/me");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
   const userRole =
     members?.find((m) => m.userId === userProfile?.id)?.role || null;
