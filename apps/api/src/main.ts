@@ -59,6 +59,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
