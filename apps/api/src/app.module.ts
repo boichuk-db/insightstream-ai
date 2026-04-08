@@ -4,6 +4,10 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { APP_GUARD } from '@nestjs/core';
+import { ApiThrottlerGuard } from './guards/api-throttler.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
@@ -38,6 +42,18 @@ import {
       connection: {
         url: process.env.REDIS_URL || 'redis://localhost:6379',
       },
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          name: 'default',
+          ttl: 60000,
+          limit: parseInt(process.env.API_GLOBAL_LIMIT ?? '200', 10),
+        },
+      ],
+      storage: new ThrottlerStorageRedisService(
+        process.env.REDIS_URL ?? 'redis://localhost:6379',
+      ),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -74,6 +90,12 @@ import {
     ActivityModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
