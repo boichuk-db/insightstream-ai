@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { api } from "@/lib/api";
+import { userProfileQuery, projectsQuery } from "@/lib/queries";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { useRouter } from "next/navigation";
 import { Activity, ArrowLeft, Clock, Filter, Search } from "lucide-react";
@@ -16,13 +17,7 @@ export default function ActivityPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
 
-  const { data: userProfile } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const { data } = await api.get("/auth/profile");
-      return data;
-    },
-  });
+  const { data: userProfile } = useQuery(userProfileQuery);
 
   const { data: teams } = useQuery({
     queryKey: ["teams"],
@@ -34,14 +29,7 @@ export default function ActivityPage() {
 
   const activeTeam = teams?.[0];
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects", activeTeam?.id],
-    queryFn: async () => {
-      const { data } = await api.get(`/projects?teamId=${activeTeam?.id}`);
-      return data;
-    },
-    enabled: !!activeTeam?.id,
-  });
+  const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
