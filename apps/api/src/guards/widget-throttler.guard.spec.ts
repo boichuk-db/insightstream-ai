@@ -1,5 +1,4 @@
 import { ExecutionContext } from '@nestjs/common';
-import { ThrottlerStorageService } from '@nestjs/throttler';
 import { Reflector } from '@nestjs/core';
 import { WidgetThrottlerGuard } from './widget-throttler.guard';
 
@@ -22,8 +21,8 @@ describe('WidgetThrottlerGuard', () => {
 
   beforeEach(() => {
     guard = new WidgetThrottlerGuard(
+      [{ name: 'widget:ip', ttl: 60000, limit: 100 }, { name: 'widget:project', ttl: 60000, limit: 300 }],
       {} as any,
-      {} as ThrottlerStorageService,
       {} as Reflector,
     );
   });
@@ -52,5 +51,13 @@ describe('WidgetThrottlerGuard', () => {
     const ctx = makeContext('1.2.3.4', { apiKey: 'key-abc' });
     const result = await guard.canActivate(ctx).catch(() => false);
     expect(result).toBe(true);
+  });
+
+  it('re-throws ThrottlerException (does not fail open)', async () => {
+    const { ThrottlerException, ThrottlerGuard } = await import('@nestjs/throttler');
+    const throttlerErr = new ThrottlerException();
+    jest.spyOn(ThrottlerGuard.prototype, 'canActivate').mockRejectedValue(throttlerErr);
+    const ctx = makeContext('1.2.3.4', { apiKey: 'key-abc' });
+    await expect(guard.canActivate(ctx)).rejects.toBe(throttlerErr);
   });
 });

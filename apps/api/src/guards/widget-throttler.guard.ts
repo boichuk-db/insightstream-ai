@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
-import { ThrottlerGuard, ThrottlerOptions, ThrottlerStorageService } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModuleOptions, ThrottlerStorage, ThrottlerException } from '@nestjs/throttler';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()
@@ -7,11 +7,11 @@ export class WidgetThrottlerGuard extends ThrottlerGuard {
   private readonly logger = new Logger(WidgetThrottlerGuard.name);
 
   constructor(
-    options: ThrottlerOptions[],
-    storageService: ThrottlerStorageService,
+    options: ThrottlerModuleOptions,
+    storageService: ThrottlerStorage,
     reflector: Reflector,
   ) {
-    super(options as any, storageService, reflector);
+    super(options, storageService, reflector);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -19,7 +19,7 @@ export class WidgetThrottlerGuard extends ThrottlerGuard {
       return await super.canActivate(context);
     } catch (err: unknown) {
       // Fail open: if Redis is down, allow the request through
-      if (!(err instanceof Error && err.name === 'ThrottlerException')) {
+      if (!(err instanceof ThrottlerException)) {
         this.logger.error('ThrottlerStorage unavailable, failing open', err);
         return true;
       }
