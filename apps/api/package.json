@@ -30,6 +30,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@insightstream/database": "workspace:*",
+    "@nest-lab/throttler-storage-redis": "^1.2.0",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
@@ -40,6 +41,7 @@
     "@nestjs/platform-socket.io": "^11.1.17",
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/serve-static": "^5.0.4",
+    "@nestjs/throttler": "^6.5.0",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.17",
     "@sentry/nestjs": "^10.47.0",
