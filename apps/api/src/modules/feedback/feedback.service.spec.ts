@@ -4,14 +4,14 @@ import { FeedbackService } from './feedback.service';
 import { Feedback, TeamMember } from '@insightstream/database';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
-import { AiService } from '../ai/ai.service';
+import { AiQueueService } from '../ai/ai-queue.service';
 import { EventsGateway } from '../events/events.gateway';
 
 describe('FeedbackService', () => {
   let service: FeedbackService;
   let repo: any;
-  let aiService: any;
   let eventsGateway: any;
+  let mockAiQueueService: any;
 
   beforeEach(async () => {
     const mockRepo = {
@@ -27,13 +27,8 @@ describe('FeedbackService', () => {
       remove: jest.fn().mockResolvedValue({ success: true }),
     };
 
-    const mockAiService = {
-      analyzeFeedback: jest.fn().mockResolvedValue({
-        sentimentScore: 0.85,
-        category: 'Feature Request',
-        aiSummary: 'User wants more features',
-        tags: ['features', 'growth'],
-      }),
+    mockAiQueueService = {
+      addAnalysisJob: jest.fn().mockResolvedValue(undefined),
     };
 
     const mockEventsGateway = {
@@ -65,8 +60,8 @@ describe('FeedbackService', () => {
           useValue: mockRepo, // Reuse mockRepo for simplicity in types
         },
         {
-          provide: AiService,
-          useValue: mockAiService,
+          provide: AiQueueService,
+          useValue: mockAiQueueService,
         },
         {
           provide: EventsGateway,
@@ -85,7 +80,6 @@ describe('FeedbackService', () => {
 
     service = module.get<FeedbackService>(FeedbackService);
     repo = module.get(getRepositoryToken(Feedback));
-    aiService = module.get(AiService);
     eventsGateway = module.get(EventsGateway);
   });
 
@@ -94,13 +88,16 @@ describe('FeedbackService', () => {
   });
 
   describe('create', () => {
-    it('should create feedback and call AI analysis', async () => {
+    it('should create feedback and enqueue AI analysis job', async () => {
       const content = 'Love the new dark mode!';
       const projectId = 'proj-abc';
 
       const result = await service.create(projectId, content);
 
-      expect(aiService.analyzeFeedback).toHaveBeenCalledWith(content);
+      expect(mockAiQueueService.addAnalysisJob).toHaveBeenCalledWith(
+        expect.objectContaining({ content, projectId, aiLevel: 'full' }),
+        10,
+      );
       expect(repo.create).toHaveBeenCalled();
       expect(repo.save).toHaveBeenCalled();
       expect(result.projectId).toBe(projectId);

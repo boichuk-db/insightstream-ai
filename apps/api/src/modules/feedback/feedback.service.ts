@@ -2,7 +2,7 @@ import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Feedback, TeamMember } from '@insightstream/database';
-import { AiService } from '../ai/ai.service';
+import { AiQueueService } from '../ai/ai-queue.service';
 import { EventsGateway } from '../events/events.gateway';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
@@ -16,7 +16,7 @@ export class FeedbackService {
     private feedbackRepository: Repository<Feedback>,
     @InjectRepository(TeamMember)
     private memberRepo: Repository<TeamMember>,
-    private aiService: AiService,
+    private aiQueueService: AiQueueService,
     private eventsGateway: EventsGateway,
     private projectsService: ProjectsService,
     private planLimitsService: PlanLimitsService,
@@ -74,32 +74,16 @@ export class FeedbackService {
     }
 
     if (aiLevel !== 'none') {
-      // Trigger AI analysis in background
-      this.aiService
-        .analyzeFeedback(content)
-        .then(async (analysis) => {
-          if (analysis) {
-            await this.feedbackRepository.update(savedFeedback.id, {
-              sentimentScore: analysis.sentimentScore,
-              category: analysis.category,
-              aiSummary: aiLevel === 'full' ? analysis.aiSummary : undefined,
-              tags: aiLevel === 'full' ? analysis.tags : undefined,
-            });
-
-            if (userId) {
-              this.eventsGateway.emitFeedbackUpdated(userId);
-            } else {
-              const project =
-                await this.projectsService.findByOnlyId(projectId);
-              if (project?.userId) {
-                this.eventsGateway.emitFeedbackUpdated(project.userId);
-              }
-            }
-          }
-        })
-        .catch((err) =>
-          this.logger.error('Background AI analysis failed', err),
-        );
+      await this.aiQueueService.addAnalysisJob(
+        {
+          feedbackId: savedFeedback.id,
+          content,
+          projectId,
+          ownerId: ownerId ?? '',
+          aiLevel: aiLevel === 'full' ? 'full' : 'basic',
+        },
+        10,
+      );
     }
 
     return savedFeedback;
@@ -185,25 +169,18 @@ export class FeedbackService {
     if (aiLevel === 'none')
       return { success: false, message: 'AI Analysis disabled for your plan' };
 
-    try {
-      const analysis = await this.aiService.analyzeFeedback(feedback.content);
-      if (analysis) {
-        await this.feedbackRepository.update(feedback.id, {
-          sentimentScore: analysis.sentimentScore,
-          category: analysis.category,
-          aiSummary: aiLevel === 'full' ? analysis.aiSummary : undefined,
-          tags: aiLevel === 'full' ? analysis.tags : undefined,
-        });
+    await this.aiQueueService.addAnalysisJob(
+      {
+        feedbackId: feedback.id,
+        content: feedback.content,
+        projectId: feedback.projectId,
+        ownerId,
+        aiLevel: aiLevel === 'full' ? 'full' : 'basic',
+      },
+      1,
+    );
 
-        this.eventsGateway.emitFeedbackUpdated(userId);
-        return { success: true };
-      }
-    } catch (err) {
-      this.logger.error(`Manual AI analysis failed for feedback ${id}`, err);
-      throw new Error('AI Analysis failed. Please try again later.');
-    }
-
-    return { success: false };
+    return { success: true, queued: true };
   }
 
   async bulkArchive(projectId: string, userId: string) {
