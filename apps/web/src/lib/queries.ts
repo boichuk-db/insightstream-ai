@@ -1,15 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
-import type { IUser, IFeedback } from "@insightstream/shared-types";
+import type { IUser, IFeedback, IProject } from "@insightstream/shared-types";
 import { api } from "./api";
-
-interface IProject {
-  id: string;
-  name: string;
-  domain: string;
-  apiKey: string;
-  userId: string;
-  createdAt: string;
-}
 
 export const userProfileQuery = queryOptions({
   queryKey: ["userProfile"],
