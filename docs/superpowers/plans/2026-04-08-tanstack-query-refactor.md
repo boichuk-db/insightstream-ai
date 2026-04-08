@@ -148,12 +148,9 @@ const { data: projects } = useQuery(projectsQuery);
 
 Note: the original filtered by `teamId` but no other page does this, and the backend `/projects` returns the user's projects regardless. The `activeTeam` filter was incorrect — projects come filtered server-side by the authenticated user, not by team.
 
-- [ ] **Step 5: Remove the unused `api` import**
+- [ ] **Step 5: Keep the `api` import**
 
-The file no longer uses `api` directly. Remove:
-```ts
-import { api } from "@/lib/api";
-```
+`api` is still used by the inline `teams` query. Do not remove it.
 
 - [ ] **Step 6: Verify TypeScript**
 
