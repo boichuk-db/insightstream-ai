@@ -124,7 +124,10 @@ function AuthForm() {
       )}
 
       {(oauthError || errorMsg) && (
-        <div className="mb-4 p-3 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm text-center">
+        <div
+          data-testid="auth-error"
+          className="mb-4 p-3 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm text-center"
+        >
           {oauthError === "oauth_failed"
             ? "OAuth sign-in failed. Please try again."
             : oauthError === "no_email"
@@ -147,6 +150,7 @@ function AuthForm() {
           <div className="relative">
             <Input
               type="email"
+              data-testid="email"
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -174,6 +178,7 @@ function AuthForm() {
           <div className="relative">
             <Input
               type="password"
+              data-testid="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -186,6 +191,7 @@ function AuthForm() {
 
         <Button
           type="submit"
+          data-testid="submit"
           variant="primary"
           size="lg"
           className="w-full mt-6"
@@ -200,6 +206,7 @@ function AuthForm() {
         {isLogin ? "Don't have an account? " : "Already have an account? "}
         <button
           onClick={() => setIsLogin(!isLogin)}
+          data-testid="auth-toggle"
           className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors focus:outline-none"
         >
           {isLogin ? "Sign up" : "Sign in"}
