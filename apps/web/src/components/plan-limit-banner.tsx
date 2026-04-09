@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, AlertTriangle } from "lucide-react";
 import { PlanUsageData } from "@/hooks/use-plan-usage";
@@ -17,13 +17,11 @@ function getDismissKey() {
 
 export function PlanLimitBanner({ data, isAtLimit }: PlanLimitBannerProps) {
   const router = useRouter();
-  const [dismissed, setDismissed] = useState<boolean | null>(null);
+  const [dismissed, setDismissed] = useState<boolean>(
+    () => typeof window !== "undefined" && localStorage.getItem(getDismissKey()) === "true",
+  );
 
-  useEffect(() => {
-    setDismissed(localStorage.getItem(getDismissKey()) === "true");
-  }, []);
-
-  if (dismissed === null || dismissed) return null;
+  if (dismissed) return null;
 
   const { current, max } = data.feedbacksThisMonth;
   // max is guaranteed non-null here (caller checks isNearLimit which returns false for null)
