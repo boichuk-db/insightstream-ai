@@ -86,15 +86,20 @@ export const mockActivityItems = [
   {
     id: 'a-1',
     action: 'member_joined',
-    actorName: 'Alex Demo',
-    targetName: null,
+    actorEmail: 'alex@acme.com',
     createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
   },
   {
     id: 'a-2',
-    action: 'feedback_added',
-    actorName: 'System',
-    targetName: 'InsightStream Web',
+    action: 'invitation_sent',
+    actorEmail: 'alex@acme.com',
+    metadata: { email: 'newuser@acme.com' },
     createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+  },
+  {
+    id: 'a-3',
+    action: 'member_removed',
+    actorEmail: 'admin@acme.com',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
   },
 ];
