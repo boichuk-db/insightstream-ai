@@ -5,7 +5,7 @@ export class DashboardPage {
 
   async goto() {
     await this.page.goto('/dashboard')
-    await this.page.waitForSelector('[data-testid="dashboard-root"]', { timeout: 10000 })
+    await expect(this.page.locator('[data-testid="dashboard-root"]')).toBeVisible({ timeout: 10000 })
   }
 
   async submitFeedback(content: string) {
@@ -21,7 +21,7 @@ export class DashboardPage {
 
   async gotoActivity() {
     await this.page.goto('/dashboard/activity')
-    await this.page.waitForSelector('[data-testid="activity-list"]', { timeout: 10000 })
+    await expect(this.page.locator('[data-testid="activity-list"]')).toBeVisible({ timeout: 10000 })
   }
 
   async getActivityItems() {
