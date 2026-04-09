@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { KanbanCard } from './KanbanCard';
 import { mockFeedback, mockFeedback3 } from '@/stories/mocks';

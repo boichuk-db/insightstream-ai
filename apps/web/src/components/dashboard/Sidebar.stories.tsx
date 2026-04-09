@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Sidebar } from './Sidebar';
 import { mockProject, mockProject2, mockUser, mockTeam } from '@/stories/mocks';

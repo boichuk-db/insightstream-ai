@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { DigestModal } from './DigestModal';
 
 const meta: Meta<typeof DigestModal> = {

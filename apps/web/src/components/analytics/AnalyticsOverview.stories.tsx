@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { AnalyticsOverview } from './AnalyticsOverview';
 import { mockFeedback, mockFeedback2, mockFeedback3 } from '@/stories/mocks';
 
