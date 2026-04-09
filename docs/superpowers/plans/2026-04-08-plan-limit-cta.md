@@ -8,6 +8,8 @@
 
 **Tech Stack:** Next.js 16 App Router, React 19, TanStack Query 5, Tailwind CSS 4, `sonner`, TypeScript strict
 
+**Commit strategy:** 2 commits total — one chore for the dependency, one feat for all feature code.
+
 > **Note on testing:** The web app has no test infrastructure (no Jest/Vitest configured). Tests in this plan cover only the pure computed logic via Node.js scripts. Component behaviour is verified manually in the smoke test task.
 
 ---
@@ -38,7 +40,7 @@ Expected: `sonner` added to `apps/web/package.json` dependencies.
 - [ ] **Step 2: Verify**
 
 ```bash
-cd apps/web && node -e "require('sonner'); console.log('OK')"
+node -e "require('d:/Work/fullstack-app/apps/web/node_modules/sonner'); console.log('OK')"
 ```
 
 Expected: `OK`
@@ -46,7 +48,7 @@ Expected: `OK`
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/package.json pnpm-lock.yaml
+cd d:/Work/fullstack-app && git add apps/web/package.json pnpm-lock.yaml
 git commit -m "chore: install sonner toast library"
 ```
 
@@ -57,12 +59,22 @@ git commit -m "chore: install sonner toast library"
 **Files:**
 - Modify: `apps/web/src/app/layout.tsx`
 
-Current file imports:
+Current file content:
 ```tsx
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../components/providers";
+// ... fonts, metadata ...
+export default function RootLayout({ children }) {
+  return (
+    <html ...>
+      <body className="min-h-full flex flex-col font-sans bg-zinc-950 text-zinc-50 selection:bg-indigo-500/30">
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
 ```
 
 - [ ] **Step 1: Add Toaster import and usage**
@@ -82,20 +94,13 @@ Inside `<body>`, after `<Providers>{children}</Providers>`, add `<Toaster />`:
 </body>
 ```
 
-- [ ] **Step 2: Verify build**
+- [ ] **Step 2: Verify TypeScript**
 
 ```bash
-cd d:/Work/fullstack-app/apps/web && pnpm build 2>&1 | tail -10
+cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
 ```
 
-Expected: build succeeds.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/web/src/app/layout.tsx
-git commit -m "feat: add sonner Toaster to root layout"
-```
+Expected: no errors.
 
 ---
 
@@ -166,8 +171,6 @@ export function usePlanUsage() {
 
 - [ ] **Step 2: Verify the computed logic manually**
 
-Run this quick check in Node.js to verify `computeLimitStatus` behaviour:
-
 ```bash
 node -e "
 function computeLimitStatus(current, max) {
@@ -195,13 +198,6 @@ cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
 ```
 
 Expected: no errors.
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/web/src/hooks/use-plan-usage.ts
-git commit -m "feat: add usePlanUsage hook with isNearLimit/isAtLimit computed values"
-```
 
 ---
 
@@ -284,13 +280,6 @@ cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
 ```
 
 Expected: no errors.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/web/src/components/plan-limit-banner.tsx
-git commit -m "feat: add PlanLimitBanner component for 80%+ usage warning"
-```
 
 ---
 
@@ -384,26 +373,14 @@ cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
 
 Expected: no errors.
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/web/src/components/plan-limit-modal.tsx
-git commit -m "feat: add PlanLimitModal component for plan limit upgrade CTA"
-```
-
 ---
 
-## Task 6: Wire everything into the dashboard
+## Task 6: Wire everything into the dashboard + commit all feature code
 
 **Files:**
 - Modify: `apps/web/src/app/dashboard/page.tsx`
 
-This task makes four changes to `dashboard/page.tsx`:
-
-1. Add imports
-2. Add `planLimitError` state
-3. Replace `confirm`/`alert` with toast + modal
-4. Render `PlanLimitBanner` and `PlanLimitModal`
+This task makes four changes to `dashboard/page.tsx`, then commits **all feature code** (Tasks 2–6) in one commit.
 
 - [ ] **Step 1: Add imports**
 
@@ -416,7 +393,7 @@ import { PlanLimitBanner } from "@/components/plan-limit-banner";
 import { PlanLimitModal, PlanLimitErrorData } from "@/components/plan-limit-modal";
 ```
 
-- [ ] **Step 2: Add planLimitError state**
+- [ ] **Step 2: Add planLimitError state and usePlanUsage**
 
 Inside the `Dashboard` component, after the existing `useState` declarations (around line 34), add:
 
@@ -427,10 +404,10 @@ const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
 
 - [ ] **Step 3: Replace onError in createMutation**
 
-Find the `onError` handler in `createMutation` (currently lines ~133-145):
+Find the `onError` handler in `createMutation` (lines ~133–145). Replace:
 
 ```tsx
-// BEFORE — remove this:
+// REMOVE:
 onError: (error: any) => {
   if (error.response?.data?.error === "PlanLimitExceeded") {
     if (
@@ -446,7 +423,7 @@ onError: (error: any) => {
 },
 ```
 
-Replace with:
+With:
 
 ```tsx
 onError: (error: any) => {
@@ -460,16 +437,16 @@ onError: (error: any) => {
 
 - [ ] **Step 4: Replace alert in deleteProjectMutation**
 
-Find the `onError` in `deleteProjectMutation` (currently line ~158):
+Find `onError` in `deleteProjectMutation` (line ~158). Replace:
 
 ```tsx
-// BEFORE — remove this:
+// REMOVE:
 onError: () => {
   alert("Failed to delete project.");
 },
 ```
 
-Replace with:
+With:
 
 ```tsx
 onError: () => {
@@ -477,35 +454,30 @@ onError: () => {
 },
 ```
 
-- [ ] **Step 5: Add PlanLimitBanner and PlanLimitModal to JSX**
+- [ ] **Step 5: Add PlanLimitBanner to JSX**
 
-In the JSX, find the `<main>` content area. Locate the `<div className="flex-1 overflow-y-auto ...">` div. Add `PlanLimitBanner` right before the `{/* Header */}` section comment:
-
-```tsx
-<div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-8 sm:gap-10 max-w-full">
-  {/* Plan limit banner */}
-  {isNearLimit && planUsage && (
-    <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
-  )}
-
-  {/* Header */}
-  <section className="flex flex-col sm:flex-row gap-6 items-start justify-between">
-```
-
-Add `PlanLimitModal` at the end of the JSX, just before the final closing `</div>` of the component:
+Inside the `<div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-8 sm:gap-10 max-w-full">` div, add the banner as the first child (before `{/* Header */}`):
 
 ```tsx
-      <PlanLimitModal
-        open={planLimitError !== null}
-        onClose={() => setPlanLimitError(null)}
-        errorData={planLimitError}
-      />
-    </div>
-  );
-}
+{/* Plan limit banner */}
+{isNearLimit && planUsage && (
+  <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
+)}
 ```
 
-- [ ] **Step 6: Verify TypeScript**
+- [ ] **Step 6: Add PlanLimitModal to JSX**
+
+At the end of the component's returned JSX, just before the final `</div>` that closes the root `flex h-screen` div, add:
+
+```tsx
+<PlanLimitModal
+  open={planLimitError !== null}
+  onClose={() => setPlanLimitError(null)}
+  errorData={planLimitError}
+/>
+```
+
+- [ ] **Step 7: Verify TypeScript**
 
 ```bash
 cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
@@ -513,7 +485,7 @@ cd d:/Work/fullstack-app/apps/web && pnpm typecheck 2>&1 | tail -5
 
 Expected: no errors.
 
-- [ ] **Step 7: Build**
+- [ ] **Step 8: Build**
 
 ```bash
 cd d:/Work/fullstack-app/apps/web && pnpm build 2>&1 | tail -10
@@ -521,11 +493,16 @@ cd d:/Work/fullstack-app/apps/web && pnpm build 2>&1 | tail -10
 
 Expected: build succeeds.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit all feature code in one commit**
 
 ```bash
-git add apps/web/src/app/dashboard/page.tsx
-git commit -m "feat: wire PlanLimitBanner, PlanLimitModal, and sonner toasts into dashboard"
+cd d:/Work/fullstack-app && git add \
+  apps/web/src/app/layout.tsx \
+  apps/web/src/hooks/use-plan-usage.ts \
+  apps/web/src/components/plan-limit-banner.tsx \
+  apps/web/src/components/plan-limit-modal.tsx \
+  apps/web/src/app/dashboard/page.tsx
+git commit -m "feat: add plan limit CTA — banner at 80%, modal at 100%, sonner toasts"
 ```
 
 ---
@@ -540,7 +517,7 @@ cd d:/Work/fullstack-app && docker compose up -d && pnpm dev
 
 - [ ] **Step 2: Verify Toaster renders**
 
-Open `http://localhost:3000/dashboard`. Open DevTools → Elements. Confirm there is a `[data-sonner-toaster]` element in the DOM (sonner injects this).
+Open `http://localhost:3000/dashboard`. Open DevTools → Elements. Confirm there is a `[data-sonner-toaster]` element in the DOM.
 
 - [ ] **Step 3: Verify banner shows at 80%**
 
@@ -551,27 +528,17 @@ Temporarily set the FREE plan feedback limit to `1` in `packages/database/src/pl
 FREE: { maxFeedbacksPerMonth: 1, ... }
 ```
 
-Restart the API. Make sure your account has 1 feedback submitted this month. Reload the dashboard — the amber `PlanLimitBanner` should appear at the top of the content area showing "You've reached your monthly feedback limit (1/1)".
+Restart the API (`pnpm dev` in `apps/api`). Make sure your account has 1 feedback submitted this month. Reload the dashboard — the amber `PlanLimitBanner` should appear at the top of the content area.
 
-**Revert the plan config change before committing.**
+**Revert the plan config change after testing.**
 
 - [ ] **Step 4: Verify modal on limit hit**
 
-With the FREE plan limit set to `1` (from Step 3 testing), submit a second feedback. Expected: `PlanLimitModal` opens with the message from the API, "Upgrade Plan" button, "Maybe later" button.
-
-Click "Upgrade Plan" — should navigate to `/pricing`. Click "Maybe later" — modal closes.
+With the FREE plan limit still at `1`, submit a second feedback from the dashboard. Expected: `PlanLimitModal` opens with the API message, "Upgrade Plan" and "Maybe later" buttons. Click "Upgrade Plan" → navigates to `/pricing`. Click "Maybe later" → modal closes.
 
 - [ ] **Step 5: Verify toast on generic error**
 
-Temporarily break the feedback endpoint (e.g., disconnect DB). Submit feedback. Expected: `toast.error("Failed to send feedback.")` appears bottom-right. No `alert()` dialog.
-
-- [ ] **Step 6: Final commit**
-
-```bash
-git add .
-git status
-# commit only if there are uncommitted changes from testing
-```
+Stop the API (`Ctrl+C`). Try submitting feedback. Expected: `toast.error("Failed to send feedback.")` appears bottom-right. No `alert()` dialog.
 
 ---
 
