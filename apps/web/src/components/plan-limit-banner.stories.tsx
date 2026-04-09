@@ -18,6 +18,9 @@ const meta: Meta<typeof PlanLimitBanner> = {
   component: PlanLimitBanner,
   tags: ['autodocs'],
   decorators: [withCleanLocalStorage],
+  parameters: {
+    nextjs: { appDirectory: true },
+  },
 };
 
 export default meta;

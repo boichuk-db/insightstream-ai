@@ -8,6 +8,7 @@ const meta: Meta<typeof PlanLimitModal> = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
+    nextjs: { appDirectory: true },
   },
 };
 

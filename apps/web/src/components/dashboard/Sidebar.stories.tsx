@@ -6,7 +6,7 @@ import { mockProject, mockProject2, mockUser, mockTeam } from '@/stories/mocks';
 const meta: Meta<typeof Sidebar> = {
   title: 'Dashboard/Sidebar',
   component: Sidebar,
-  parameters: { layout: 'fullscreen' },
+  parameters: { layout: 'fullscreen', nextjs: { appDirectory: true } },
   tags: ['autodocs'],
   decorators: [
     (Story) => (
