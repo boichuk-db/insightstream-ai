@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -19,7 +20,17 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
+  private isEmailAllowed(email: string): boolean {
+    const raw = process.env.ALLOWED_EMAILS;
+    if (!raw) return true;
+    const list = raw.split(',').map((e) => e.trim().toLowerCase());
+    return list.includes(email.toLowerCase());
+  }
+
   async register(email: string, pass: string) {
+    if (!this.isEmailAllowed(email)) {
+      throw new ForbiddenException('Registration is currently invite-only');
+    }
     const existing = await this.usersService.findOneByEmail(email);
     if (existing) {
       throw new ConflictException('User already exists');
@@ -108,6 +119,9 @@ export class AuthService {
 
     // 3. Create new user
     if (!user) {
+      if (!this.isEmailAllowed(email)) {
+        throw new ForbiddenException('Registration is currently invite-only');
+      }
       user = await this.usersService.create({
         email,
         passwordHash: null,
