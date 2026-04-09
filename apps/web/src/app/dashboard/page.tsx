@@ -18,6 +18,10 @@ import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
 import { DigestModal } from "@/components/dashboard/DigestModal";
 import { useSocket } from "@/hooks/useSocket";
 import { useTeam } from "@/hooks/useTeam";
+import { toast } from "sonner";
+import { usePlanUsage } from "@/hooks/use-plan-usage";
+import { PlanLimitBanner } from "@/components/plan-limit-banner";
+import { PlanLimitModal, PlanLimitErrorData } from "@/components/plan-limit-modal";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -28,6 +32,8 @@ export default function Dashboard() {
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDigestOpen, setIsDigestOpen] = useState(false);
+  const [planLimitError, setPlanLimitError] = useState<PlanLimitErrorData | null>(null);
+  const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
 
   const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
@@ -133,15 +139,9 @@ export default function Dashboard() {
     },
     onError: (error: any) => {
       if (error.response?.data?.error === "PlanLimitExceeded") {
-        if (
-          confirm(
-            `${error.response.data.message}\n\nWould you like to upgrade your plan?`,
-          )
-        ) {
-          router.push("/pricing");
-        }
+        setPlanLimitError(error.response.data);
       } else {
-        alert("Failed to send feedback.");
+        toast.error("Failed to send feedback.");
       }
     },
   });
@@ -155,7 +155,7 @@ export default function Dashboard() {
       setSelectedProjectId(null);
     },
     onError: () => {
-      alert("Failed to delete project.");
+      toast.error("Failed to delete project.");
     },
   });
 
@@ -185,6 +185,10 @@ export default function Dashboard() {
 
       <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
         <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-8 sm:gap-10 max-w-full">
+          {/* Plan limit banner */}
+          {isNearLimit && planUsage && (
+            <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
+          )}
           {/* Header */}
           <section className="flex flex-col sm:flex-row gap-6 items-start justify-between">
             <div className="flex items-center gap-4">
@@ -341,6 +345,11 @@ export default function Dashboard() {
         feedbackId={commentsFeedbackId}
         onClose={() => setCommentsFeedbackId(null)}
         currentUserId={userProfile?.id}
+      />
+      <PlanLimitModal
+        open={planLimitError !== null}
+        onClose={() => setPlanLimitError(null)}
+        errorData={planLimitError}
       />
     </div>
   );
