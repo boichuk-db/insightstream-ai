@@ -98,7 +98,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
           No activity yet
         </p>
       ) : (
-        <div className="space-y-1">
+        <div data-testid="activity-list" className="space-y-1">
           {events.map((event: any, i: number) => {
             const config = ACTION_CONFIG[event.action] || {
               icon: Activity,
@@ -110,6 +110,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
             return (
               <motion.div
                 key={event.id}
+                data-testid="activity-item"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}

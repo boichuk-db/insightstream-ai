@@ -165,7 +165,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-brand-bg overflow-hidden">
+    <div data-testid="dashboard-root" className="flex h-screen bg-brand-bg overflow-hidden">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}
@@ -234,6 +234,7 @@ export default function Dashboard() {
               >
                 <div className="w-full sm:flex-1">
                   <Input
+                    data-testid="feedback-input"
                     placeholder="Type a feedback message here..."
                     value={newFeedback}
                     onChange={(e) => setNewFeedback(e.target.value)}
@@ -242,6 +243,7 @@ export default function Dashboard() {
                 </div>
                 <Button
                   type="submit"
+                  data-testid="feedback-submit"
                   isLoading={createMutation.isPending}
                   disabled={!newFeedback.trim()}
                   variant="brand"
