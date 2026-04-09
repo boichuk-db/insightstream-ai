@@ -125,9 +125,8 @@ function AcceptInviteContent() {
             <p className="text-neutral-400">Redirecting to dashboard...</p>
           </div>
         ) : (
-          <div>
+          <div data-testid="invite-info">
             <div
-              data-testid="invite-info"
               className="w-16 h-16 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-6"
             >
               <Users className="h-8 w-8 text-indigo-400" />
