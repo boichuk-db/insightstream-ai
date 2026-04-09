@@ -3,10 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Sidebar } from './Sidebar';
 import { mockProject, mockProject2, mockUser, mockTeam } from '@/stories/mocks';
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-});
-
 const meta: Meta<typeof Sidebar> = {
   title: 'Dashboard/Sidebar',
   component: Sidebar,
@@ -14,7 +10,7 @@ const meta: Meta<typeof Sidebar> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
         <Story />
       </QueryClientProvider>
     ),

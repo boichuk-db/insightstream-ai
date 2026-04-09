@@ -7,10 +7,6 @@ import {
   mockFeedback3,
 } from '@/stories/mocks';
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-});
-
 const meta: Meta<typeof KanbanBoard> = {
   title: 'Dashboard/KanbanBoard',
   component: KanbanBoard,
@@ -18,7 +14,7 @@ const meta: Meta<typeof KanbanBoard> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
         <Story />
       </QueryClientProvider>
     ),
