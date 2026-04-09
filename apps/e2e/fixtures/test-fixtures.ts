@@ -1,3 +1,4 @@
+import * as path from 'path'
 import { test as base, expect } from '@playwright/test'
 import { AuthPage } from '../pages/auth.page'
 import { DashboardPage } from '../pages/dashboard.page'
@@ -36,5 +37,5 @@ export { expect }
  *   test.use(authenticatedContext())
  */
 export function authenticatedContext() {
-  return { storageState: 'apps/e2e/.auth/user.json' }
+  return { storageState: path.resolve(__dirname, '../.auth/user.json') }
 }

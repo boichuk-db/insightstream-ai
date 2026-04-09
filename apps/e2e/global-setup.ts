@@ -1,3 +1,4 @@
+import * as path from 'path'
 import { chromium } from '@playwright/test'
 import axios from 'axios'
 
@@ -46,7 +47,10 @@ export default async function globalSetup() {
   process.env.TEST_USER_EMAIL = TEST_USER_EMAIL
   process.env.TEST_USER_PASSWORD = TEST_USER_PASSWORD
   process.env.TEST_PROJECT_ID = project.id
-  process.env.TEST_PROJECT_API_KEY = project.apiKey ?? ''
+  if (!project.apiKey) {
+    throw new Error(`globalSetup: project "${TEST_PROJECT_NAME}" has no apiKey — check if the API returns it on POST /projects`)
+  }
+  process.env.TEST_PROJECT_API_KEY = project.apiKey
 
   // Save authenticated browser state for reuse in tests
   const browser = await chromium.launch()
@@ -54,7 +58,7 @@ export default async function globalSetup() {
   const page = await context.newPage()
   await page.goto(WEB_URL)
   await page.evaluate((t: string) => localStorage.setItem('access_token', t), token)
-  await context.storageState({ path: 'apps/e2e/.auth/user.json' })
+  await context.storageState({ path: path.resolve(__dirname, '.auth/user.json') })
   await browser.close()
 
   console.log('[globalSetup] Seed complete — project:', project.name, '| id:', project.id)
