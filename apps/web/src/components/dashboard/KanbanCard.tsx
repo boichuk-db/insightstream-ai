@@ -53,6 +53,7 @@ export function KanbanCard({
     >
       {(provided, snapshot) => (
         <div
+          data-testid="kanban-card"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}

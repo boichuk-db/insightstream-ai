@@ -91,7 +91,7 @@ function App() {
             {/* Content Body */}
             <div className="p-6 pt-4 relative z-10">
               {status === "success" ? (
-                <div className="py-12 flex flex-col items-center justify-center text-center gap-5">
+                <div data-testid="widget-success" className="py-12 flex flex-col items-center justify-center text-center gap-5">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
@@ -110,9 +110,10 @@ function App() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <form data-testid="widget-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
                   <div className="relative group">
                     <textarea
+                      data-testid="widget-textarea"
                       autoFocus
                       placeholder="How can we make this better for you?"
                       value={content}
@@ -128,6 +129,7 @@ function App() {
                   </div>
 
                   <button
+                    data-testid="widget-submit"
                     disabled={status === "loading" || !content.trim()}
                     className="w-full py-4 rounded-2xl text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2 disabled:opacity-50 transition-all shadow-[0_15px_30px_-5px_rgba(99,102,241,0.5)] hover:shadow-[0_20px_40px_-5px_rgba(99,102,241,0.6)] active:scale-[0.97]"
                     style={{
@@ -169,6 +171,7 @@ function App() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
+        data-testid="widget-trigger"
         className={buttonClass}
         style={{
           background: `linear-gradient(135deg, ${primaryColor}, #4f46e5)`,

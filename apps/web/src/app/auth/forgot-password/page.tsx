@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {submitted ? (
-          <div className="space-y-4">
+          <div data-testid="success-message" className="space-y-4">
             <h2 className="text-2xl font-bold">Check your inbox</h2>
             <p className="text-zinc-400">
               If an account with <strong>{email}</strong> exists, we&apos;ve
@@ -64,6 +64,7 @@ export default function ForgotPasswordPage() {
                 <div className="relative">
                   <Input
                     type="email"
+                    data-testid="email"
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -82,6 +83,7 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
+                data-testid="submit"
                 variant="primary"
                 size="lg"
                 className="w-full"
