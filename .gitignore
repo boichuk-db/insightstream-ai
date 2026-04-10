@@ -40,6 +40,9 @@ coverage
 tmp
 .temp
 
+# Local documentation (not tracked in git)
+docs/
+
 # Git worktrees
 .worktrees/
 .obsidian/
