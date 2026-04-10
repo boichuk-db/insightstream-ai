@@ -30,4 +30,4 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=builder /app .
 EXPOSE 3001
-CMD ["doppler", "run", "--", "pnpm", "turbo", "run", "start:prod", "--filter=api"]
+CMD sh -c 'doppler run --token "$DOPPLER_TOKEN" -- pnpm turbo run start:prod --filter=api'
