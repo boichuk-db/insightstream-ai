@@ -51,6 +51,9 @@ export default async function globalSetup() {
     const existing = projects.find((p: any) => p.name === TEST_PROJECT_NAME)
     if (existing) {
       project = existing
+    } else if (projects.length > 0) {
+      // Default Project was auto-created by findAllByUser — reuse it
+      project = projects[0]
     } else {
       const { data } = await axios.post(
         `${API_URL}/projects`,
