@@ -6,7 +6,7 @@
     "kill": "kill-port 3000 3001",
     "predev": "pnpm kill",
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "doppler run -- turbo dev",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

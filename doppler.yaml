@@ -1,0 +1,3 @@
+setup:
+  project: insightstream-ai
+  config: dev
