@@ -112,6 +112,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/insightstream_test
       DB_HOST: localhost
@@ -121,6 +130,7 @@ jobs:
       DB_DATABASE: insightstream_test
       JWT_SECRET: test-secret
       GEMINI_API_KEY: test-key
+      REDIS_URL: redis://localhost:6379
       NEXT_PUBLIC_API_URL: http://localhost:3001
       NEXT_PUBLIC_WIDGET_URL: http://localhost:8080/dist/widget.iife.js
     steps:
