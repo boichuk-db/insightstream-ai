@@ -31,6 +31,8 @@ export default defineConfig({
         FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
         ALLOWED_EMAILS: '',
         E2E_BYPASS_PLAN_LIMITS: 'true',
+        AUTH_LOGIN_LIMIT: '1000',
+        AUTH_REGISTER_LIMIT: '1000',
         NODE_ENV: 'test',
       },
     },

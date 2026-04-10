@@ -106,5 +106,23 @@ export default async function globalSetup() {
   await context.storageState({ path: path.resolve(authDir, 'user.json') })
   await browser.close()
 
+  // Seed activity: create an invitation so the activity feed test has data.
+  // The invitation endpoint logs INVITATION_SENT activity for the team.
+  // Mail service no-ops without SMTP config so this is safe in CI.
+  try {
+    const { data: teams } = await axios.get(`${API_URL}/teams`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (teams.length > 0) {
+      await axios.post(
+        `${API_URL}/teams/${teams[0].id}/invitations`,
+        { email: 'e2e-activity-seed@insightstream.test', role: 'member' },
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+    }
+  } catch {
+    // Non-critical: activity test may fail but other tests are unaffected
+  }
+
   console.log('[globalSetup] Seed complete — project:', project.name, '| id:', project.id)
 }
