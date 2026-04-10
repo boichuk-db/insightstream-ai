@@ -6,7 +6,7 @@ export class WidgetPage {
   constructor(private page: Page) {}
 
   async loadEmbed(apiKey = 'test-api-key') {
-    const iifePath = path.resolve(__dirname, '../../../widget/dist/widget.iife.js')
+    const iifePath = path.resolve(__dirname, '../../widget/dist/widget.iife.js')
     if (!fs.existsSync(iifePath)) {
       throw new Error(
         `Widget IIFE not found at ${iifePath}. Run: pnpm build --filter widget`,

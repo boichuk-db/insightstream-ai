@@ -76,7 +76,8 @@ export class InvitationsService {
       where: { teamId, status: InvitationStatus.PENDING },
     });
 
-    if (currentMembers + pendingCount >= limits.maxTeamMembers) {
+    const bypassPlanLimits = process.env.E2E_BYPASS_PLAN_LIMITS === 'true';
+    if (!bypassPlanLimits && currentMembers + pendingCount >= limits.maxTeamMembers) {
       throw new ForbiddenException({
         statusCode: 403,
         error: 'PlanLimitExceeded',

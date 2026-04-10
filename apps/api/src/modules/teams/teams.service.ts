@@ -56,6 +56,13 @@ export class TeamsService {
       this.memberRepo.create({ teamId: team.id, userId, role: TeamRole.OWNER }),
     );
 
+    await this.activityService.log({
+      teamId: team.id,
+      actorId: userId,
+      action: ActivityAction.MEMBER_JOINED,
+      metadata: { role: TeamRole.OWNER },
+    });
+
     return team;
   }
 

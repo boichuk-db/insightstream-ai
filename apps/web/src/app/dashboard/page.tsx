@@ -135,7 +135,7 @@ export default function Dashboard() {
     },
     onSuccess: () => {
       setNewFeedback("");
-      // No manual invalidation — socket event from backend triggers it after AI analysis
+      queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
     },
     onError: (error: any) => {
       if (error.response?.data?.error === "PlanLimitExceeded") {

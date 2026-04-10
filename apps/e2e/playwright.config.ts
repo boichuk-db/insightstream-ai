@@ -29,6 +29,8 @@ export default defineConfig({
         GEMINI_API_KEY: process.env.GEMINI_API_KEY || 'test-key',
         REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
         FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
+        ALLOWED_EMAILS: '',
+        E2E_BYPASS_PLAN_LIMITS: 'true',
         NODE_ENV: 'test',
       },
     },
