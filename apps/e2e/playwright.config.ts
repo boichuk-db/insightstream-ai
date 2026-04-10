@@ -18,7 +18,7 @@ export default defineConfig({
       command: 'pnpm --filter api start',
       url: 'http://localhost:3001/health',
       reuseExistingServer: !process.env.CI,
-      timeout: 60000,
+      timeout: 120000,
       env: {
         DB_HOST: process.env.DB_HOST || 'localhost',
         DB_PORT: process.env.DB_PORT || '5432',
@@ -27,6 +27,9 @@ export default defineConfig({
         DB_DATABASE: process.env.DB_DATABASE || 'insightstream_test',
         JWT_SECRET: process.env.JWT_SECRET || 'test-secret',
         GEMINI_API_KEY: process.env.GEMINI_API_KEY || 'test-key',
+        REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+        FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
+        NODE_ENV: 'test',
       },
     },
     {
