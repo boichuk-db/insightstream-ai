@@ -46,3 +46,6 @@ docs/
 # Git worktrees
 .worktrees/
 .obsidian/
+
+# Visual brainstorm companion sessions
+.superpowers/
