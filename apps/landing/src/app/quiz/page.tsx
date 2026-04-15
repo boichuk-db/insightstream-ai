@@ -27,27 +27,44 @@ function QuizContent() {
     }
   })
 
-  // Fire quiz_started on first step
+  // Fire quiz_started on first step (only if no existing answers — not on back-nav)
   useEffect(() => {
     if (stepParam === '1') {
-      captureEvent('quiz_started')
-    }
-  }, [stepParam])
-
-  // Fire quiz_completed when reaching result screen
-  useEffect(() => {
-    if (stepParam === 'result') {
-      try {
-        const saved = sessionStorage.getItem('insightstream-quiz-answers')
-        const savedAnswers = saved ? JSON.parse(saved) : {}
-        captureEvent('quiz_completed', {
-          recommended_plan: recommendPlan(savedAnswers),
-        })
-      } catch {
-        // sessionStorage unavailable
+      const hasExisting = sessionStorage.getItem(STORAGE_KEY)
+      if (!hasExisting) {
+        captureEvent('quiz_started')
       }
     }
   }, [stepParam])
+
+  // Fire quiz_completed when reaching result screen (deduplication guard)
+  useEffect(() => {
+    if (stepParam === 'result') {
+      const alreadyFired = sessionStorage.getItem('insightstream-quiz-completed')
+      if (!alreadyFired) {
+        sessionStorage.setItem('insightstream-quiz-completed', '1')
+        try {
+          const saved = sessionStorage.getItem(STORAGE_KEY)
+          const savedAnswers = saved ? (JSON.parse(saved) as Record<string, string | string[]>) : {}
+          captureEvent('quiz_completed', {
+            recommended_plan: recommendPlan(savedAnswers),
+          })
+        } catch {
+          // sessionStorage unavailable
+        }
+      }
+    }
+  }, [stepParam])
+
+  // Redirect to step 1 if step param is invalid
+  useEffect(() => {
+    if (stepParam !== 'result') {
+      const stepNum = parseInt(stepParam)
+      if (isNaN(stepNum) || !QUIZ_CONFIG.questions[stepNum - 1]) {
+        router.replace('/quiz?step=1')
+      }
+    }
+  }, [stepParam, router])
 
   const handleAnswer = (questionId: string, answer: string | string[]) => {
     const stepNum = parseInt(stepParam)
@@ -79,16 +96,13 @@ function QuizContent() {
   const stepNum = parseInt(stepParam)
   const question = QUIZ_CONFIG.questions[stepNum - 1]
 
-  if (!question) {
-    router.replace('/quiz?step=1')
-    return null
-  }
+  if (!question) return null
 
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center px-4 py-16">
       <div className="w-full max-w-xl">
         <QuizProgress current={stepNum} total={TOTAL} />
-        <QuizStep question={question} onAnswer={handleAnswer} />
+        <QuizStep key={question.id} question={question} onAnswer={handleAnswer} />
       </div>
     </div>
   )
