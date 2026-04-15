@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-plus-jakarta);
+
+  --color-brand-primary: var(--color-indigo-500);
+  --color-brand-bg: #09090b;
+  --color-brand-surface: #161618;
+  --color-brand-border: #2a2a2d;
+  --color-brand-muted: #71717a;
+  --color-brand-accent: var(--color-indigo-400);
+}
+
+@layer base {
+  *, ::after, ::before {
+    border-width: 0;
+    border-style: solid;
+  }
+}
