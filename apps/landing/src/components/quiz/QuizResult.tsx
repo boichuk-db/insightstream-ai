@@ -1,5 +1,8 @@
+'use client'
+
 import { recommendPlan } from '@/lib/quiz.utils'
 import { PLAN_CONFIGS, PlanType } from '@insightstream/database'
+import { captureEvent } from '@/lib/posthog'
 
 const PLAN_LABEL: Record<'free' | 'pro' | 'business', PlanType> = {
   free: PlanType.FREE,
@@ -52,6 +55,7 @@ export function QuizResult({ answers }: QuizResultProps) {
 
       <a
         href={`${appUrl}/?plan=${recommendation}`}
+        onClick={() => captureEvent('quiz_cta_clicked', { plan: recommendation })}
         className="inline-block w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-colors text-lg"
       >
         {config.price === 0 ? 'Get Started Free →' : 'Start Free Trial →'}

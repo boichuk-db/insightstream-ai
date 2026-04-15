@@ -37,11 +37,17 @@ function QuizContent() {
   // Fire quiz_completed when reaching result screen
   useEffect(() => {
     if (stepParam === 'result') {
-      captureEvent('quiz_completed', {
-        recommended_plan: recommendPlan(answers),
-      })
+      try {
+        const saved = sessionStorage.getItem('insightstream-quiz-answers')
+        const savedAnswers = saved ? JSON.parse(saved) : {}
+        captureEvent('quiz_completed', {
+          recommended_plan: recommendPlan(savedAnswers),
+        })
+      } catch {
+        // sessionStorage unavailable
+      }
     }
-  }, [stepParam]) // only fire once when step changes to result
+  }, [stepParam])
 
   const handleAnswer = (questionId: string, answer: string | string[]) => {
     const stepNum = parseInt(stepParam)
