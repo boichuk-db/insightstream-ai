@@ -1,7 +1,7 @@
 'use client'
 
 import { recommendPlan } from '@/lib/quiz.utils'
-import { PLAN_CONFIGS, PlanType } from '@insightstream/database'
+import { PLAN_CONFIGS, PlanType } from '@/config/plans.config'
 import { captureEvent } from '@/lib/posthog'
 import { APP_URL } from '@/lib/constants'
 

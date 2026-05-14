@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check, X } from 'lucide-react'
-import { PLAN_CONFIGS, PlanType } from '@insightstream/database'
+import { PLAN_CONFIGS, PlanType } from '@/config/plans.config'
 import { APP_URL } from '@/lib/constants'
 
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const
