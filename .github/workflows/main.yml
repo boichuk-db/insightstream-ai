@@ -40,6 +40,9 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3001
           NEXT_PUBLIC_WIDGET_URL: http://localhost:8080/dist/widget.iife.js
+          NEXT_PUBLIC_POSTHOG_KEY: "phc_placeholder_ci"
+          NEXT_PUBLIC_APP_URL: "https://app.insightstream.ai"
+          NEXT_PUBLIC_LANDING_URL: "https://insightstream.ai"
 
       - name: Type Check
         run: pnpm typecheck
@@ -93,6 +96,9 @@ jobs:
 
       - name: Run Tests
         run: pnpm --filter api test
+
+      - name: Test landing
+        run: pnpm --filter landing test
 
   e2e:
     name: E2E Tests
@@ -156,6 +162,9 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3001
           NEXT_PUBLIC_WIDGET_URL: http://localhost:8080/dist/widget.iife.js
+          NEXT_PUBLIC_POSTHOG_KEY: "phc_placeholder_ci"
+          NEXT_PUBLIC_APP_URL: "https://app.insightstream.ai"
+          NEXT_PUBLIC_LANDING_URL: "https://insightstream.ai"
 
       - name: Run database migrations
         run: pnpm --filter api migration:run

@@ -3,6 +3,7 @@
 import { recommendPlan } from '@/lib/quiz.utils'
 import { PLAN_CONFIGS, PlanType } from '@insightstream/database'
 import { captureEvent } from '@/lib/posthog'
+import { APP_URL } from '@/lib/constants'
 
 const PLAN_LABEL: Record<'free' | 'pro' | 'business', PlanType> = {
   free: PlanType.FREE,
@@ -24,7 +25,6 @@ export function QuizResult({ answers }: QuizResultProps) {
   const recommendation = recommendPlan(answers)
   const planType = PLAN_LABEL[recommendation]
   const config = PLAN_CONFIGS[planType]
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.insightstream.ai'
 
   return (
     <div className="w-full max-w-lg mx-auto text-center">
@@ -54,7 +54,7 @@ export function QuizResult({ answers }: QuizResultProps) {
       </div>
 
       <a
-        href={`${appUrl}/?plan=${recommendation}`}
+        href={`${APP_URL}/?plan=${recommendation}`}
         onClick={() => captureEvent('quiz_cta_clicked', { plan: recommendation })}
         className="inline-block w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-colors text-lg"
       >
