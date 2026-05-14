@@ -1,7 +1,5 @@
-import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.insightstream.ai'
+import { APP_URL } from '@/lib/constants'
 
 export function Nav() {
   return (

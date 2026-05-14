@@ -4,8 +4,7 @@ import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.insightstream.ai'
+import { APP_URL } from '@/lib/constants'
 
 const HEADLINES = {
   control: 'Turn every feedback into actionable insights.',
