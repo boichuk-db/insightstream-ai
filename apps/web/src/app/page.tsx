@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { captureEvent } from "@/lib/posthog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, ArrowRight, Lock, Mail } from "lucide-react";
@@ -32,6 +33,9 @@ function AuthForm() {
       return data;
     },
     onSuccess: (data) => {
+      if (!isLogin) {
+        captureEvent('user_signed_up', { method: 'email' })
+      }
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
         router.push("/dashboard");

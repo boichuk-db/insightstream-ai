@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { captureEvent } from "@/lib/posthog";
 import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,10 @@ export default function Dashboard() {
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
     null,
   );
+
+  useEffect(() => {
+    captureEvent('dashboard_viewed')
+  }, [])
 
   const { data: userProfile } = useQuery(userProfileQuery);
 

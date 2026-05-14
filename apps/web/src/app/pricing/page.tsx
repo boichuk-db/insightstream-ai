@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Check, X, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
 import { PLAN_CONFIGS, PlanType, formatLimit } from "@/lib/plans";
 import { api } from "@/lib/api";
+import { captureEvent } from "@/lib/posthog";
 
 const FEATURES = [
   { key: "maxProjects", label: "Projects" },
@@ -73,9 +74,11 @@ export default function PricingPage() {
       return;
     }
 
+    captureEvent('upgrade_clicked', { to_plan: plan })
     setUpgrading(plan);
     try {
       await api.patch("/plans/upgrade", { plan });
+      captureEvent('plan_upgraded', { plan })
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
       queryClient.invalidateQueries({ queryKey: ["planUsage"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
