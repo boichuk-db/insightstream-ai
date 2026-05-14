@@ -5,7 +5,7 @@ import { PostHogProvider as PHProvider } from 'posthog-js/react'
 import { useEffect, Suspense } from 'react'
 import { PostHogPageView } from './PostHogPageView'
 
-export function PostHogProvider({ children }: { children: React.ReactNode }) {
+function PostHogInit() {
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
     if (!key) {
@@ -23,8 +23,19 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  return null
+}
+
+export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
+
+  if (!key) {
+    return <>{children}</>
+  }
+
   return (
     <PHProvider client={posthog}>
+      <PostHogInit />
       <Suspense>
         <PostHogPageView />
       </Suspense>
