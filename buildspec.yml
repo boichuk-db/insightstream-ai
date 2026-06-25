@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+    ECR_REGISTRY: "000946352819.dkr.ecr.eu-north-1.amazonaws.com"
+    ECR_REPO: "insightstream-api"
+    AWS_DEFAULT_REGION: "eu-north-1"
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-8)
+
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t $ECR_REPO:$IMAGE_TAG -f apps/api/Dockerfile .
+      - docker tag $ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      - docker tag $ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:latest
+
+  post_build:
+    commands:
+      - echo Pushing to ECR...
+      - docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      - docker push $ECR_REGISTRY/$ECR_REPO:latest
+      - echo Deploying to EC2...
+      - aws ssm send-command
+          --document-name "AWS-RunShellScript"
+          --targets "Key=tag:Name,Values=insightstream-api"
+          --parameters "commands=['/home/ec2-user/scripts/docker-run.sh']"
+          --region $AWS_DEFAULT_REGION
+      - echo Deploy triggered successfully
+
+artifacts:
+  files:
+    - '**/*'

@@ -28,6 +28,8 @@
     "migration:revert": "pnpm typeorm migration:revert"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1075.0",
+    "@aws-sdk/client-sqs": "^3.1075.0",
     "@google/generative-ai": "^0.24.1",
     "@insightstream/database": "workspace:*",
     "@nest-lab/throttler-storage-redis": "^1.2.0",
