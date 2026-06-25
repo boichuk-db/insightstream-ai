@@ -1,32 +1,39 @@
 #!/bin/bash
 set -e
 
-# Load secrets from SSM Parameter Store
 source /home/ec2-user/scripts/ssm-env.sh
 
 ECR_REGISTRY="000946352819.dkr.ecr.eu-north-1.amazonaws.com"
 ECR_REPO="insightstream-api"
 IMAGE="$ECR_REGISTRY/$ECR_REPO:latest"
 
-# Authenticate Docker to ECR
 aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
-
-# Pull latest image
 docker pull $IMAGE
 
-# Stop old container if running
+docker network create insightstream-net 2>/dev/null || true
+
+if ! docker ps --filter name=redis --format '{{.Names}}' | grep -q redis; then
+  docker run -d \
+    --name redis \
+    --network insightstream-net \
+    --restart unless-stopped \
+    redis:7-alpine
+fi
+
 docker stop insightstream-api 2>/dev/null || true
 docker rm insightstream-api 2>/dev/null || true
 
-# Start new container
 docker run -d \
   --name insightstream-api \
+  --network insightstream-net \
   --restart unless-stopped \
   -p 3001:3001 \
   --log-driver=json-file \
   --log-opt max-size=10m \
   -e NODE_ENV=production \
   -e PORT=3001 \
+  -e REDIS_URL=redis://redis:6379 \
+  -e DB_SSL=true \
   -e DB_HOST="$DB_HOST" \
   -e DB_PORT="$DB_PORT" \
   -e DB_USERNAME="$DB_USERNAME" \

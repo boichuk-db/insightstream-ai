@@ -76,6 +76,7 @@ import {
       synchronize: process.env.NODE_ENV !== 'production',
       migrations: [__dirname + '/migrations/**/*.{ts,js}'],
       migrationsRun: true,
+      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
     UsersModule,
     AuthModule,
