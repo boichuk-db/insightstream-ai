@@ -83,7 +83,7 @@ export default function ArchivePage() {
             subtitle={`View or restore archived feedback for ${activeProject?.name ?? "your project"}.`}
           />
 
-          <Section glow="none" className="p-0 overflow-hidden flex flex-col flex-1 min-h-0">
+          <Section glow="none" padding="none" className="overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="overflow-x-auto flex-1 custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -196,7 +196,7 @@ export default function ArchivePage() {
                       <Button
                         key={size}
                         variant={itemsPerPage === size ? "primary" : "ghost"}
-                        size="xs"
+                        size="sm"
                         onClick={() => {
                           setItemsPerPage(size);
                           setCurrentPage(1);
@@ -217,8 +217,8 @@ export default function ArchivePage() {
 
               <div className="flex items-center gap-2">
                 <Button
-                  variant="brand"
-                  size="xs"
+                  variant="secondary"
+                  size="sm"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((prev) => prev - 1)}
                   className="px-3"
@@ -230,8 +230,8 @@ export default function ArchivePage() {
                     (page) => (
                       <Button
                         key={page}
-                        variant={currentPage === page ? "primary" : "brand"}
-                        size="xs"
+                        variant={currentPage === page ? "primary" : "secondary"}
+                        size="sm"
                         onClick={() => setCurrentPage(page)}
                         className={cn(
                           "w-8 px-0",
@@ -246,8 +246,8 @@ export default function ArchivePage() {
                   )}
                 </div>
                 <Button
-                  variant="brand"
-                  size="xs"
+                  variant="secondary"
+                  size="sm"
                   disabled={currentPage === totalPages || totalPages === 0}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   className="px-3"

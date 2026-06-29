@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
                 type="submit"
                 data-testid="submit"
                 variant="primary"
-                size="lg"
+                size="md"
                 className="w-full"
                 isLoading={mutation.isPending}
               >

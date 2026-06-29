@@ -367,8 +367,8 @@ export function Sidebar({
           </Link>
           <Button
             onClick={onLogout}
-            variant="outline"
-            size="xs"
+            variant="secondary"
+            size="sm"
             className="w-full text-zinc-400 hover:text-white justify-start px-3"
           >
             <LogOut className="h-4 w-4 mr-2 text-indigo-400" /> Sign Out

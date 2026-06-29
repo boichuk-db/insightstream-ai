@@ -389,8 +389,8 @@ function ExportMenu({
     <Dropdown
       trigger={
         <Button
-          variant="brand"
-          size="xs"
+          variant="secondary"
+          size="sm"
           className="bg-brand-surface/50 transition-all px-3"
         >
           <FileDown className="h-3.5 w-3.5 text-indigo-400 group-hover/btn:text-white" />

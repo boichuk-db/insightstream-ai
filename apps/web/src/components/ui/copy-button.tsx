@@ -8,8 +8,8 @@ interface CopyButtonProps {
   text: string;
   label?: string;
   copiedLabel?: string;
-  size?: "xs" | "sm" | "md";
-  variant?: "primary" | "secondary" | "ghost" | "danger" | "outline" | "brand";
+  size?: "sm" | "md";
+  variant?: "primary" | "secondary" | "ghost" | "danger";
   className?: string;
 }
 
@@ -18,7 +18,7 @@ export function CopyButton({
   label = "Copy",
   copiedLabel = "Copied",
   size = "sm",
-  variant = "outline",
+  variant = "secondary",
   className,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);

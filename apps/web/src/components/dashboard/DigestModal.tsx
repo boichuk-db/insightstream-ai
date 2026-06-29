@@ -69,7 +69,7 @@ export function DigestModal({
           <Sparkles className="h-4 w-4 text-indigo-400" />
         </div>
       }
-      size="lg"
+      size="md"
     >
       <div className="space-y-6">
         {/* Loading */}

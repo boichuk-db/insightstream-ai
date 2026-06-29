@@ -138,7 +138,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
       onClose={onClose}
       title="Embed Widget"
       icon={<Code className="text-indigo-400" />}
-      size="lg"
+      size="md"
     >
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

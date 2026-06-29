@@ -252,7 +252,7 @@ export default function Dashboard() {
                   data-testid="feedback-submit"
                   isLoading={createMutation.isPending}
                   disabled={!newFeedback.trim()}
-                  variant="brand"
+                  variant="secondary"
                   size="md"
                   className="w-full sm:min-w-[140px] sm:w-auto shrink-0"
                 >
@@ -260,7 +260,7 @@ export default function Dashboard() {
                 </Button>
                 <Button
                   type="button"
-                  variant="brand"
+                  variant="secondary"
                   size="md"
                   onClick={handleSeedFeedbacks}
                   disabled={!!seedProgress || !activeProject?.id}
@@ -289,8 +289,8 @@ export default function Dashboard() {
                 </h2>
               </div>
               <Button
-                variant="brand"
-                size="xs"
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsDigestOpen(true)}
                 disabled={!activeProject?.id}
                 className="bg-indigo-500/10 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/20"

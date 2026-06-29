@@ -197,7 +197,7 @@ function AuthForm() {
           type="submit"
           data-testid="submit"
           variant="primary"
-          size="lg"
+          size="md"
           className="w-full mt-6"
           isLoading={authMutation.isPending}
         >

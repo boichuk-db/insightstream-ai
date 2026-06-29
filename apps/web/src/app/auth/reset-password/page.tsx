@@ -129,7 +129,7 @@ function ResetPasswordForm() {
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size="md"
           className="w-full"
           isLoading={mutation.isPending}
         >

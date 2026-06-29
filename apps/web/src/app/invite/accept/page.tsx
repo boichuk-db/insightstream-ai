@@ -156,7 +156,7 @@ function AcceptInviteContent() {
               <Button
                 data-testid="invite-accept-btn"
                 variant="primary"
-                size="lg"
+                size="md"
                 onClick={() => acceptMutation.mutate()}
                 isLoading={acceptMutation.isPending}
                 className="w-full"
@@ -172,7 +172,7 @@ function AcceptInviteContent() {
                   href={`/auth?redirect=/invite/accept?token=${token}`}
                   className="block w-full"
                 >
-                  <Button variant="primary" size="lg" className="w-full">
+                  <Button variant="primary" size="md" className="w-full">
                     Sign In to Join
                   </Button>
                 </a>

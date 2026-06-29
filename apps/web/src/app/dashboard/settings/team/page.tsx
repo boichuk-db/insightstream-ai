@@ -197,7 +197,7 @@ export default function TeamSettingsPage() {
                       actions={
                         <Button
                           variant="ghost"
-                          size="xs"
+                          size="sm"
                           onClick={() => cancelInvitationMutation.mutate(inv.id)}
                           className="hover:text-red-400"
                         >
@@ -265,7 +265,7 @@ export default function TeamSettingsPage() {
                           {isAdmin && member.role !== "owner" && (
                             <Button
                               variant="ghost"
-                              size="xs"
+                              size="sm"
                               onClick={() => {
                                 if (
                                   confirm(`Remove ${member.email} from the team?`)
