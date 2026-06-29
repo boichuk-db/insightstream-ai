@@ -44,7 +44,7 @@ export function CreateTeamModal({
             Cancel
           </Button>
           <Button
-            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white border-none shadow-brand-primary/30"
             onClick={handleSubmit}
             isLoading={createTeam.isPending}
             disabled={!name.trim()}

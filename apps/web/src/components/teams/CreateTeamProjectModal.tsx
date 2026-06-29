@@ -59,7 +59,7 @@ export function CreateTeamProjectModal({
             Cancel
           </Button>
           <Button
-            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white border-none shadow-brand-primary/30"
             onClick={() => createMutation.mutate()}
             isLoading={createMutation.isPending}
             disabled={!name.trim() || !domain.trim()}

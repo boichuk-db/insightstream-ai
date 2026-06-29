@@ -330,7 +330,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             {/* Sidebar / Info Column */}
             <div className="xl:col-span-5 space-y-6">
               {/* API Key Box */}
-              <section className="bg-brand-primary border border-brand-primary/80 rounded-2xl p-6 shadow-[0_0_30px_rgba(99,102,241,0.2)] text-white relative overflow-hidden group">
+              <section className="bg-brand-primary border border-brand-primary/80 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <Key className="h-5 w-5" /> Project API Key

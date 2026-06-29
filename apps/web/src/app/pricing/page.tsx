@@ -48,8 +48,8 @@ const CARD_STYLES: Record<
   [PlanType.PRO]: {
     border: "border-brand-primary/50",
     badge: "bg-brand-primary text-white",
-    glow: "shadow-[0_0_40px_rgba(99,102,241,0.15)]",
-    btn: "bg-brand-primary hover:bg-brand-primary/90 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]",
+    glow: "shadow-lg shadow-brand-primary/20",
+    btn: "bg-brand-primary hover:bg-brand-primary/90 text-white shadow-brand-primary/30",
   },
   [PlanType.BUSINESS]: {
     border: "border-amber-500/30",

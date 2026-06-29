@@ -103,8 +103,8 @@ export function exportToPDF(feedbacks: any[], title: string) {
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #111; padding: 24px; }
-  header { margin-bottom: 16px; border-bottom: 2px solid #6366f1; padding-bottom: 10px; }
-  header h1 { font-size: 18px; color: #4f46e5; }
+  header { margin-bottom: 16px; border-bottom: 2px solid #3d8a84; padding-bottom: 10px; }
+  header h1 { font-size: 18px; color: #2d6b66; }
   header p { color: #6b7280; font-size: 10px; margin-top: 3px; }
   table { width: 100%; border-collapse: collapse; margin-top: 8px; }
   thead tr { background: #4f46e5; }
