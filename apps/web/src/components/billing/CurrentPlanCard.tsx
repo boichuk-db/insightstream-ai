@@ -1,10 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { planStatusQuery, PlanStatus } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function statusLabel(status: PlanStatus["planStatus"]) {
   const map: Record<PlanStatus["planStatus"], string> = {
@@ -25,6 +27,8 @@ function statusBadgeClass(status: PlanStatus["planStatus"]) {
 
 export function CurrentPlanCard() {
   const { data, isLoading } = useQuery(planStatusQuery);
+  // eslint-disable-next-line react-hooks/purity
+  const now = useMemo(() => Date.now(), []);
 
   const handleManage = async () => {
     const res = await api.get<{ url: string }>("/plans/portal");
@@ -32,13 +36,13 @@ export function CurrentPlanCard() {
   };
 
   if (isLoading) {
-    return <div className="h-24 animate-pulse bg-brand-surface rounded-xl border border-brand-border" />;
+    return <Skeleton count={1} height="h-24" />;
   }
   if (!data) return null;
 
   const daysLeft =
     data.trialEndsAt && data.planStatus === "trialing"
-      ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - Date.now()) / 86_400_000))
+      ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - now) / 86_400_000))
       : null;
 
   return (

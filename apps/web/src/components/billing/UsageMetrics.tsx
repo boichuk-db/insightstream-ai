@@ -3,6 +3,7 @@
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { UsageMeter } from "@/components/ui/usage-meter";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface UsageSummary {
   plan: string;
@@ -19,7 +20,7 @@ export function UsageMetrics() {
   const { data, isLoading } = useQuery(usageQuery);
 
   if (isLoading) {
-    return <div className="h-28 animate-pulse bg-brand-surface rounded-xl border border-brand-border" />;
+    return <Skeleton count={1} height="h-28" />;
   }
   if (!data) return null;
 

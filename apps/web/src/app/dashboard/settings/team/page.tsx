@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { ListItem } from "@/components/ui/list-item";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ROLE_OPTIONS = ["admin", "member", "viewer"] as const;
 
@@ -223,14 +224,7 @@ export default function TeamSettingsPage() {
               </h2>
 
               {membersLoading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-16 bg-brand-border/40 rounded-xl animate-pulse"
-                    />
-                  ))}
-                </div>
+                <Skeleton count={3} height="h-16" />
               ) : (
                 <div className="space-y-3">
                   {members?.map((member: any) => (
