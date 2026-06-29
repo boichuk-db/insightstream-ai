@@ -43,7 +43,7 @@ const CARD_STYLES: Record<
     border: "border-brand-border",
     badge: "",
     glow: "",
-    btn: "bg-brand-surface hover:bg-brand-surface-hover text-white",
+    btn: "bg-brand-surface hover:bg-brand-surface-hover text-brand-fg",
   },
   [PlanType.PRO]: {
     border: "border-brand-primary/50",
@@ -92,7 +92,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 relative overflow-hidden">
+    <div className="min-h-screen bg-brand-bg relative overflow-hidden">
       {/* Decorative */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -100,7 +100,7 @@ export default function PricingPage() {
         {/* Back */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm text-brand-muted hover:text-zinc-300 transition-colors mb-12"
+          className="flex items-center gap-2 text-sm text-brand-muted hover:text-brand-fg transition-colors mb-12"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
@@ -126,7 +126,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-zinc-400 text-lg max-w-md mx-auto"
+            className="text-brand-muted text-lg max-w-md mx-auto"
           >
             Start free, upgrade when you need more power. No hidden fees.
           </motion.p>
@@ -186,12 +186,12 @@ export default function PricingPage() {
                             <Check className="h-3 w-3 text-emerald-400" />
                           </div>
                         ) : (
-                          <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
-                            <X className="h-3 w-3 text-zinc-600" />
+                          <div className="w-5 h-5 rounded-full bg-brand-surface flex items-center justify-center shrink-0">
+                            <X className="h-3 w-3 text-brand-muted" />
                           </div>
                         )}
                         <span
-                          className={`text-sm ${isEnabled ? "text-zinc-300" : "text-zinc-600"}`}
+                          className={`text-sm ${isEnabled ? "text-brand-fg" : "text-brand-muted"}`}
                         >
                           {typeof display === "string"
                             ? `${label}: ${display}`
@@ -227,7 +227,7 @@ export default function PricingPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-zinc-600">
+        <div className="text-center text-sm text-brand-muted">
           All plans include SSL encryption, 99.9% uptime SLA, and community
           support.
         </div>

@@ -126,7 +126,7 @@ export default function ArchivePage() {
                         className="hover:bg-brand-surface/30 transition-colors group"
                       >
                         <td className="px-6 py-5 max-w-md">
-                          <p className="text-sm text-zinc-200 line-clamp-2 leading-relaxed">
+                          <p className="text-sm text-brand-fg line-clamp-2 leading-relaxed">
                             {fb.content}
                           </p>
                         </td>
@@ -178,11 +178,11 @@ export default function ArchivePage() {
               <div className="flex items-center gap-4">
                 <p className="text-xs text-brand-muted whitespace-nowrap">
                   Showing{" "}
-                  <span className="text-zinc-200 font-bold">
+                  <span className="text-brand-fg font-bold">
                     {Math.min(itemsPerPage, paginatedFeedbacks.length)}
                   </span>{" "}
                   of{" "}
-                  <span className="text-zinc-200 font-bold">
+                  <span className="text-brand-fg font-bold">
                     {archivedFeedbacks.length}
                   </span>{" "}
                   results

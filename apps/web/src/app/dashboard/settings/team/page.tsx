@@ -112,7 +112,7 @@ export default function TeamSettingsPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
-        <div className="relative z-10 brand-page-container text-white">
+        <div className="relative z-10 brand-page-container text-brand-fg">
           <PageHeader
             icon={<Users className="h-8 w-8 text-brand-accent" />}
             title={`${activeTeam?.name || "Team"} Settings`}
@@ -127,7 +127,7 @@ export default function TeamSettingsPage() {
               className="mb-8"
             >
               <Section>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                   <Mail className="h-5 w-5 text-brand-accent" /> Invite Member
                 </h2>
                 <form
@@ -179,7 +179,7 @@ export default function TeamSettingsPage() {
               className="mb-8"
             >
               <Section>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                   <Mail className="h-5 w-5 text-brand-accent" /> Pending
                   Invitations
                 </h2>
@@ -218,7 +218,7 @@ export default function TeamSettingsPage() {
             transition={{ delay: 0.1 }}
           >
             <Section>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                 <Shield className="h-5 w-5 text-brand-accent" /> Members (
                 {members?.length || 0})
               </h2>
