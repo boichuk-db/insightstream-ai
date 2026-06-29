@@ -12,7 +12,6 @@ import {
 } from "@/lib/plans";
 import {
   Sparkles,
-  ArrowLeft,
   User,
   Mail,
   Calendar,
@@ -25,6 +24,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const;
 
@@ -77,26 +77,11 @@ export default function SettingsPage() {
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="relative z-10 brand-page-container text-brand-text">
-          <header className="flex items-center gap-4 mb-10">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
-              title="Back to Dashboard"
-            >
-              <ArrowLeft
-                size={20}
-                className="group-hover:-translate-x-0.5 transition-transform"
-              />
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                <Settings className="h-8 w-8 text-indigo-400" /> Settings
-              </h1>
-              <p className="text-brand-muted text-sm mt-1">
-                Manage your account and subscription plan.
-              </p>
-            </div>
-          </header>
+          <PageHeader
+            icon={<Settings className="h-8 w-8 text-indigo-400" />}
+            title="Settings"
+            subtitle="Manage your account and subscription plan."
+          />
 
           {/* Profile Section */}
           <motion.section

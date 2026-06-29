@@ -7,12 +7,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userProfileQuery, projectsQuery, feedbacksQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
 import { useTeam } from "@/hooks/useTeam";
-import { Sparkles, Archive, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
+import { Sparkles, Archive, Trash2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSocket } from "@/hooks/useSocket";
 import { cn } from "@/lib/utils";
 import { getCategoryColor } from "@/lib/colors";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function ArchivePage() {
   const router = useRouter();
@@ -71,30 +72,13 @@ export default function ArchivePage() {
       mainClassName="flex-1 overflow-hidden flex flex-col bg-brand-bg/20"
       noPadding
     >
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
-        <div className="brand-page-container pt-0 flex flex-col gap-8 h-full">
-          <header className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
-                title="Back to Dashboard"
-              >
-                <ArrowLeft
-                  size={20}
-                  className="group-hover:-translate-x-0.5 transition-transform"
-                />
-              </button>
-              <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                  <Archive className="text-indigo-400 h-8 w-8" /> Archive
-                </h1>
-                <p className="text-brand-muted text-sm mt-1">
-                  View or restore archived feedback for {activeProject?.name}.
-                </p>
-              </div>
-            </div>
-          </header>
+      <div className="flex-1 overflow-y-auto flex flex-col">
+        <div className="brand-page-container py-8 flex flex-col gap-8 flex-1 min-h-0">
+          <PageHeader
+            icon={<Archive className="text-indigo-400 h-8 w-8" />}
+            title="Archive"
+            subtitle={`View or restore archived feedback for ${activeProject?.name ?? "your project"}.`}
+          />
 
           <section className="bg-brand-surface/40 border border-brand-border/50 rounded-2xl overflow-hidden shadow-xl flex flex-col flex-1 min-h-0">
             <div className="overflow-x-auto flex-1 custom-scrollbar">

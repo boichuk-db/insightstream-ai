@@ -15,7 +15,6 @@ import {
   Maximize,
   LayoutTemplate,
   Key,
-  ArrowLeft,
   Menu,
   Globe,
   Settings as SettingsIcon,
@@ -25,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const COLORS = [
   { name: "Indigo", value: "#6366f1" },
@@ -168,29 +168,11 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
     >
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="brand-page-container flex flex-col gap-10 text-brand-text">
-          {/* Header */}
-          <header className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-muted hover:text-white transition-all hover:scale-105 active:scale-95 shadow-lg group"
-                title="Back to Dashboard"
-              >
-                <ArrowLeft
-                  size={20}
-                  className="group-hover:-translate-x-0.5 transition-transform"
-                />
-              </button>
-              <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                  <Code className="text-indigo-400 h-8 w-8" /> Embed Widget
-                </h1>
-                <p className="text-brand-muted text-sm mt-1">
-                  Configure and install the feedback widget on your website.
-                </p>
-              </div>
-            </div>
-          </header>
+          <PageHeader
+            icon={<Code className="text-indigo-400 h-8 w-8" />}
+            title="Embed Widget"
+            subtitle="Configure and install the feedback widget on your website."
+          />
 
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 pb-20">
             {/* Configuration Column */}

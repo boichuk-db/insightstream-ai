@@ -3,10 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Activity, ArrowLeft, Clock, Filter } from "lucide-react";
+import { Activity, Clock, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function ActivityPage() {
   const router = useRouter();
@@ -23,40 +24,17 @@ export default function ActivityPage() {
 
   return (
     <DashboardShell>
-      {/* Header */}
-      <div className="flex flex-col gap-6 mb-8 mt-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
-            >
-              <ArrowLeft
-                size={20}
-                className="group-hover:-translate-x-0.5 transition-transform"
-              />
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                <Activity className="h-8 w-8 text-indigo-400" /> Recent
-                Activity
-              </h1>
-            </div>
-          </div>
-
+      <PageHeader
+        icon={<Activity className="h-8 w-8 text-indigo-400" />}
+        title="Recent Activity"
+        subtitle="Track all changes and interactions across your team and projects."
+        right={
           <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-brand-surface/40 border border-brand-border/50 rounded-2xl backdrop-blur-sm">
             <Clock className="h-4 w-4 text-indigo-400" />
-            <span className="text-xs font-medium text-brand-muted">
-              Real-time updates enabled
-            </span>
+            <span className="text-xs font-medium text-brand-muted">Real-time updates enabled</span>
           </div>
-        </div>
-
-        <p className="text-brand-muted text-sm leading-relaxed max-w-2xl">
-          Track all changes and interactions across your team and projects.
-          This log provides a comprehensive audit trail of system events.
-        </p>
-      </div>
+        }
+      />
 
       {/* Activity Content */}
       <div className="grid grid-cols-1 gap-6">

@@ -13,7 +13,6 @@ import {
   Shield,
   Mail,
   Trash2,
-  ArrowLeft,
   Crown,
   X,
   Menu,
@@ -22,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Select } from "@/components/ui/select";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const ROLE_OPTIONS = ["admin", "member", "viewer"] as const;
 const ROLE_COLORS: Record<string, string> = {
@@ -115,27 +115,11 @@ export default function TeamSettingsPage() {
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="relative z-10 brand-page-container text-white">
-          <header className="flex items-center gap-4 mb-10">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
-              title="Back to Dashboard"
-            >
-              <ArrowLeft
-                size={20}
-                className="group-hover:-translate-x-0.5 transition-transform"
-              />
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                <Users className="h-8 w-8 text-indigo-400" />{" "}
-                {activeTeam?.name || "Team"} Settings
-              </h1>
-              <p className="text-sm text-brand-muted mt-1">
-                Manage members, roles, and invitations
-              </p>
-            </div>
-          </header>
+          <PageHeader
+            icon={<Users className="h-8 w-8 text-indigo-400" />}
+            title={`${activeTeam?.name || "Team"} Settings`}
+            subtitle="Manage members, roles, and invitations."
+          />
 
           {/* Invite Form */}
           {isAdmin && (
