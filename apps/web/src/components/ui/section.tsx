@@ -31,13 +31,16 @@ export function Section({
   return (
     <Tag
       className={cn(
-        "bg-brand-surface/60 border border-brand-border/50 rounded-2xl shadow-xl relative overflow-hidden",
-        PADDING[padding],
+        "bg-brand-surface/60 border border-brand-border/50 rounded-2xl shadow-xl relative",
         className,
       )}
     >
-      {glow !== "none" && <div className={GLOW_CLASSES[glow]} />}
-      <div className="relative z-10">{children}</div>
+      {glow !== "none" && (
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className={GLOW_CLASSES[glow]} />
+        </div>
+      )}
+      <div className={cn("relative z-10", PADDING[padding])}>{children}</div>
     </Tag>
   );
 }
