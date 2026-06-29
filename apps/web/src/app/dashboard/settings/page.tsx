@@ -92,6 +92,7 @@ export default function SettingsPage() {
   const { colorTheme, setColorTheme } = useColorTheme();
 
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   const currentPlan = (userProfile?.plan as PlanType) || PlanType.FREE;
