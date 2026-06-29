@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getPlanConfig, isPaidPlan, PlanType } from "@/lib/plans";
 import { CreateTeamModal } from "@/components/teams/CreateTeamModal";
 import { CreateTeamProjectModal } from "@/components/teams/CreateTeamProjectModal";
+import { Dropdown } from "@/components/ui/dropdown";
 
 export function Sidebar({
   projects,
@@ -56,8 +57,6 @@ export function Sidebar({
   userRole?: string | null;
 }) {
   const pathname = usePathname();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [isCreateTeamProjectOpen, setIsCreateTeamProjectOpen] = useState(false);
 
@@ -98,170 +97,119 @@ export function Sidebar({
 
           {/* Team Switcher */}
           {teams && teams.length > 0 && (
-            <div className="relative">
-              <button
-                onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
-                className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors"
-              >
-                <div className="flex items-center gap-2 px-2">
-                  <div className="flex flex-col items-start">
-                    <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider">
-                      Team
-                    </span>
-                    <span className="text-sm font-semibold text-zinc-200 truncate max-w-[130px]">
-                      {activeTeam?.name || "Select team"}
-                    </span>
+            <Dropdown
+              trigger={
+                <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors">
+                  <div className="flex items-center gap-2 px-2">
+                    <div className="flex flex-col items-start">
+                      <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider">
+                        Team
+                      </span>
+                      <span className="text-sm font-semibold text-zinc-200 truncate max-w-[130px]">
+                        {activeTeam?.name || "Select team"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                {teams.length > 1 && (
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 text-indigo-400/60 transition-transform",
-                      isTeamDropdownOpen && "rotate-180",
-                    )}
-                  />
-                )}
-              </button>
-
-              <AnimatePresence>
-                {isTeamDropdownOpen && teams.length > 1 && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsTeamDropdownOpen(false)}
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: -5, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 w-full mt-2 bg-brand-bg border border-brand-border rounded-xl shadow-2xl z-20 overflow-hidden"
+                  {teams.length > 1 && (
+                    <ChevronDown className="h-4 w-4 text-indigo-400/60" />
+                  )}
+                </button>
+              }
+              className="w-full"
+            >
+              {teams.length > 1 && (
+                <div className="max-h-48 overflow-y-auto">
+                  {teams.map((t: any) => (
+                    <Dropdown.Item
+                      key={t.id}
+                      onClick={() => onSwitchTeam?.(t.id)}
+                      icon={
+                        activeTeam?.id === t.id ? (
+                          <Check className="h-4 w-4 shrink-0" />
+                        ) : undefined
+                      }
                     >
-                      <div className="max-h-48 overflow-y-auto p-1">
-                        {teams.map((t: any) => (
-                          <button
-                            key={t.id}
-                            onClick={() => {
-                              onSwitchTeam?.(t.id);
-                              setIsTeamDropdownOpen(false);
-                            }}
-                            className={cn(
-                              "w-full flex items-center justify-between p-2.5 rounded-xl text-left text-sm transition-colors",
-                              activeTeam?.id === t.id
-                                ? "bg-indigo-500/10 text-indigo-400"
-                                : "text-zinc-300 hover:bg-brand-surface",
-                            )}
-                          >
-                            <span className="truncate pr-2">{t.name}</span>
-                            {activeTeam?.id === t.id && (
-                              <Check className="h-4 w-4 shrink-0" />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="p-1 border-t border-brand-border">
-                        <button
-                          onClick={() => {
-                            setIsTeamDropdownOpen(false);
-                            setIsCreateTeamOpen(true);
-                          }}
-                          className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
-                        >
-                          <Plus className="h-4 w-4" /> Create team
-                        </button>
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
+                      <span
+                        className={cn(
+                          "truncate pr-2",
+                          activeTeam?.id === t.id
+                            ? "text-indigo-400 font-semibold"
+                            : "text-zinc-300",
+                        )}
+                      >
+                        {t.name}
+                      </span>
+                    </Dropdown.Item>
+                  ))}
+                </div>
+              )}
+              <Dropdown.Separator />
+              <Dropdown.Item
+                icon={<Plus className="h-4 w-4" />}
+                onClick={() => setIsCreateTeamOpen(true)}
+              >
+                Create team
+              </Dropdown.Item>
+            </Dropdown>
           )}
 
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors group"
-            >
-              <div className="flex flex-col items-start px-2">
-                <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider mb-0.5">
-                  Active Project
-                </span>
-                <span className="text-sm font-semibold text-zinc-200 truncate max-w-[140px]">
-                  {activeProject?.name || "Loading..."}
-                </span>
-              </div>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 text-indigo-400/60 transition-transform",
-                  isDropdownOpen && "rotate-180",
-                )}
-              />
-            </button>
-
-            <AnimatePresence>
-              {isDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsDropdownOpen(false)}
-                  />
-                  <motion.div
-                    initial={{ opacity: 0, y: -5, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-full mt-2 bg-brand-bg border border-brand-border rounded-xl shadow-2xl z-20 overflow-hidden"
+          <Dropdown
+            trigger={
+              <button className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors group">
+                <div className="flex flex-col items-start px-2">
+                  <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider mb-0.5">
+                    Active Project
+                  </span>
+                  <span className="text-sm font-semibold text-zinc-200 truncate max-w-[140px]">
+                    {activeProject?.name || "Loading..."}
+                  </span>
+                </div>
+                <ChevronDown className="h-4 w-4 text-indigo-400/60" />
+              </button>
+            }
+            className="w-full"
+          >
+            <div className="max-h-60 overflow-y-auto">
+              {projects?.map((p) => (
+                <Dropdown.Item
+                  key={p.id}
+                  onClick={() => onSelectProject(p.id)}
+                  icon={
+                    activeProject?.id === p.id ? (
+                      <Check className="h-4 w-4 shrink-0" />
+                    ) : undefined
+                  }
+                >
+                  <span
+                    className={cn(
+                      "truncate pr-2",
+                      activeProject?.id === p.id
+                        ? "text-indigo-400 font-semibold"
+                        : "text-zinc-300",
+                    )}
                   >
-                    <div className="max-h-60 overflow-y-auto p-1">
-                      {projects?.map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() => {
-                            onSelectProject(p.id);
-                            setIsDropdownOpen(false);
-                          }}
-                          className={cn(
-                            "w-full flex items-center justify-between p-2.5 rounded-lg text-left text-sm transition-colors",
-                            activeProject?.id === p.id
-                              ? "bg-indigo-500/10 text-indigo-400"
-                              : "text-zinc-300 hover:bg-brand-surface",
-                          )}
-                        >
-                          <span className="truncate pr-2">{p.name}</span>
-                          {activeProject?.id === p.id && (
-                            <Check className="h-4 w-4 shrink-0" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="p-1 border-t border-brand-border">
-                      {isAdminOrOwner && activeTeam ? (
-                        <button
-                          onClick={() => {
-                            setIsDropdownOpen(false);
-                            setIsCreateTeamProjectOpen(true);
-                          }}
-                          className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
-                        >
-                          <Plus className="h-4 w-4" /> New project
-                        </button>
-                      ) : !activeTeam ? (
-                        <button
-                          onClick={() => {
-                            setIsDropdownOpen(false);
-                            onCreateProject();
-                          }}
-                          className="w-full flex items-center gap-2 p-2.5 rounded-lg text-left text-sm text-zinc-400 hover:text-white hover:bg-brand-surface transition-colors"
-                        >
-                          <Plus className="h-4 w-4" /> New project
-                        </button>
-                      ) : null}
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
+                    {p.name}
+                  </span>
+                </Dropdown.Item>
+              ))}
+            </div>
+            <Dropdown.Separator />
+            {isAdminOrOwner && activeTeam ? (
+              <Dropdown.Item
+                icon={<Plus className="h-4 w-4" />}
+                onClick={() => setIsCreateTeamProjectOpen(true)}
+              >
+                New project
+              </Dropdown.Item>
+            ) : !activeTeam ? (
+              <Dropdown.Item
+                icon={<Plus className="h-4 w-4" />}
+                onClick={onCreateProject}
+              >
+                New project
+              </Dropdown.Item>
+            ) : null}
+          </Dropdown>
         </div>
 
         {/* Main Navigation */}

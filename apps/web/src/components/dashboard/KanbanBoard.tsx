@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileDown, Printer, ChevronDown, Archive, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { Dropdown } from "../ui/dropdown";
 
 interface KanbanBoardProps {
   initialFeedbacks: any[];
@@ -380,123 +380,89 @@ function ExportMenu({
   displayColumns,
   totalCount,
 }: any) {
-  const [isOpen, setIsOpen] = useState(false);
   const activeTitle =
     scope === "all"
       ? `All columns (${totalCount})`
       : `${scope} (${displayColumns[scope]?.length ?? 0})`;
 
   return (
-    <div className="relative">
-      <Button
-        variant="brand"
-        size="xs"
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "bg-brand-surface/50 transition-all px-3",
-          isOpen && "border-indigo-500/30 bg-indigo-500/5 text-brand",
-        )}
-      >
-        <FileDown className="h-3.5 w-3.5 text-indigo-400 group-hover/btn:text-white" />
-        <span className="mx-1">Export</span>
-        <div className="h-3 w-px bg-brand-border/50 mx-1" />
-        <span className="truncate max-w-[100px] lowercase first-letter:uppercase">
-          {activeTitle}
-        </span>
-        <ChevronDown
-          className={cn(
-            "ml-2 h-3 w-3 text-indigo-400 transition-all",
-            isOpen && "rotate-180",
-          )}
-        />
-      </Button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: 4, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.98 }}
-              className="absolute top-full left-0 mt-2 w-64 bg-brand-surface border border-brand-border rounded-2xl shadow-2xl z-50 overflow-hidden p-3"
+    <Dropdown
+      trigger={
+        <Button
+          variant="brand"
+          size="xs"
+          className="bg-brand-surface/50 transition-all px-3"
+        >
+          <FileDown className="h-3.5 w-3.5 text-indigo-400 group-hover/btn:text-white" />
+          <span className="mx-1">Export</span>
+          <div className="h-3 w-px bg-brand-border/50 mx-1" />
+          <span className="truncate max-w-[100px] lowercase first-letter:uppercase">
+            {activeTitle}
+          </span>
+          <ChevronDown className="ml-2 h-3 w-3 text-indigo-400" />
+        </Button>
+      }
+      className="w-64 p-3"
+    >
+      <div className="space-y-4">
+        {/* Scope Selection */}
+        <div>
+          <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-2 px-1">
+            Select Scope
+          </h4>
+          <div className="grid grid-cols-1 gap-1">
+            <button
+              onClick={() => onScopeChange("all")}
+              className={cn(
+                "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
+                scope === "all"
+                  ? "bg-indigo-500/15 text-indigo-400 font-bold"
+                  : "text-brand-muted hover:bg-brand-bg hover:text-white",
+              )}
             >
-              <div className="space-y-4">
-                {/* Scope Selection */}
-                <div>
-                  <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-2 px-1">
-                    Select Scope
-                  </h4>
-                  <div className="grid grid-cols-1 gap-1">
-                    <button
-                      onClick={() => onScopeChange("all")}
-                      className={cn(
-                        "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
-                        scope === "all"
-                          ? "bg-indigo-500/15 text-indigo-400 font-bold"
-                          : "text-brand-muted hover:bg-brand-bg hover:text-white",
-                      )}
-                    >
-                      All columns ({totalCount})
-                      {scope === "all" && <Check className="h-3 w-3" />}
-                    </button>
-                    {columns.map((c: any) => (
-                      <button
-                        key={c.id}
-                        onClick={() => onScopeChange(c.id)}
-                        className={cn(
-                          "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
-                          scope === c.id
-                            ? "bg-indigo-500/15 text-indigo-400 font-bold"
-                            : "text-brand-muted hover:bg-brand-bg hover:text-white",
-                        )}
-                      >
-                        {c.title} ({displayColumns[c.id]?.length ?? 0})
-                        {scope === c.id && (
-                          <Check className="h-3 w-3 text-indigo-400" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              All columns ({totalCount})
+              {scope === "all" && <Check className="h-3 w-3" />}
+            </button>
+            {columns.map((c: any) => (
+              <button
+                key={c.id}
+                onClick={() => onScopeChange(c.id)}
+                className={cn(
+                  "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
+                  scope === c.id
+                    ? "bg-indigo-500/15 text-indigo-400 font-bold"
+                    : "text-brand-muted hover:bg-brand-bg hover:text-white",
+                )}
+              >
+                {c.title} ({displayColumns[c.id]?.length ?? 0})
+                {scope === c.id && (
+                  <Check className="h-3 w-3 text-indigo-400" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                <div className="h-px bg-brand-border/50" />
+        <div className="h-px bg-brand-border/50" />
 
-                {/* Export Actions */}
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="brand"
-                    size="sm"
-                    onClick={() => {
-                      onExportCSV();
-                      setIsOpen(false);
-                    }}
-                    className="hover:text-emerald-400 hover:border-emerald-500/40"
-                  >
-                    <FileDown className="h-3.5 w-3.5 mr-2" />
-                    CSV
-                  </Button>
-                  <Button
-                    variant="brand"
-                    size="sm"
-                    onClick={() => {
-                      onExportPDF();
-                      setIsOpen(false);
-                    }}
-                    className="hover:text-indigo-400 hover:border-indigo-500/40"
-                  >
-                    <Printer className="h-3.5 w-3.5 mr-2 text-indigo-400" />
-                    PDF
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+        {/* Export Actions */}
+        <div className="grid grid-cols-2 gap-2">
+          <Dropdown.Item
+            icon={<FileDown className="h-3.5 w-3.5" />}
+            onClick={onExportCSV}
+            className="hover:text-emerald-400 hover:border-emerald-500/40"
+          >
+            CSV
+          </Dropdown.Item>
+          <Dropdown.Item
+            icon={<Printer className="h-3.5 w-3.5 text-indigo-400" />}
+            onClick={onExportPDF}
+            className="hover:text-indigo-400 hover:border-indigo-500/40"
+          >
+            PDF
+          </Dropdown.Item>
+        </div>
+      </div>
+    </Dropdown>
   );
 }
