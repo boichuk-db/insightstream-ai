@@ -24,6 +24,10 @@ export class PlanLimitsService {
 
   async getUserPlan(userId: string): Promise<PlanType> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
+    const planStatus = user?.planStatus ?? 'active';
+    if (planStatus === 'past_due' || planStatus === 'canceled') {
+      return PlanType.FREE;
+    }
     return (user?.plan as PlanType) || PlanType.FREE;
   }
 
