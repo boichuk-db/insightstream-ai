@@ -152,7 +152,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
       noPadding
     >
       <div className="flex-1 overflow-y-auto no-scrollbar">
-        <div className="brand-page-container flex flex-col gap-10 text-brand-text">
+        <div className="brand-page-container flex flex-col gap-8 text-brand-text">
           <PageHeader
             icon={<Code className="text-indigo-400 h-8 w-8" />}
             title="Embed Widget"
@@ -285,7 +285,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                 </div>
 
                 <div className="relative group/snippet">
-                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover/snippet:opacity-100 transition-opacity z-10">
+                  <div className="absolute top-3 right-3 flex gap-2 z-10">
                     <CopyButton
                       text={snippet}
                       label="Copy Code"
@@ -366,9 +366,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       1
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-zinc-200">
                         Select Project
-                      </h4>
+                      </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">
                         Make sure you&apos;ve selected the correct project in the
                         sidebar before copying the code.
@@ -381,9 +381,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       2
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-zinc-200">
                         Copy &amp; Paste
-                      </h4>
+                      </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">
                         Copy the generated code snippet and place it in your
                         application&apos;s root component or HTML file.
@@ -396,9 +396,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       3
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-zinc-200">
                         Verify Connection
-                      </h3>
+                      </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">
                         After installation, submit a test feedback. It should
                         appear on your Kanban board instantly.
