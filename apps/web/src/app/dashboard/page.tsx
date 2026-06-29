@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { usePlanUsage } from "@/hooks/use-plan-usage";
 import { PlanLimitBanner } from "@/components/plan-limit-banner";
 import { PlanLimitModal, PlanLimitErrorData } from "@/components/plan-limit-modal";
+import { TrialBanner } from "@/components/billing/TrialBanner";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -170,7 +171,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div data-testid="dashboard-root" className="flex h-screen bg-brand-bg overflow-hidden">
+    <div data-testid="dashboard-root" className="flex flex-col h-screen bg-brand-bg overflow-hidden">
+      <TrialBanner />
+      <div className="flex flex-1 overflow-hidden">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}
@@ -335,6 +338,7 @@ export default function Dashboard() {
           </section>
         </div>
       </main>
+      </div>
 
       <DigestModal
         isOpen={isDigestOpen}
