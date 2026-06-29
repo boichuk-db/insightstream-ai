@@ -15,6 +15,7 @@ import {
   Archive,
   Code,
   Activity,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -322,6 +323,17 @@ export function Sidebar({
             )}
           >
             <Settings className="h-4 w-4 text-indigo-400" /> Settings
+          </Link>
+          <Link
+            href="/dashboard/billing"
+            className={cn(
+              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              isActive("/dashboard/billing")
+                ? "bg-indigo-500/10 text-indigo-400"
+                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+            )}
+          >
+            <CreditCard className="h-4 w-4 text-indigo-400" /> Billing
           </Link>
           {activeTeam && (
             <Link
