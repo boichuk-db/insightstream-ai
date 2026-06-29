@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { ThemeProvider } from "next-themes";
 import { PostHogProvider } from "./providers/PostHogProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }),
   );
 
-  // Handle bfcache restoration — refetch stale queries when page is restored
   useEffect(() => {
     const handler = (event: PageTransitionEvent) => {
       if (event.persisted) {
@@ -30,8 +30,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [queryClient]);
 
   return (
-    <PostHogProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </PostHogProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      storageKey="is-appearance"
+    >
+      <PostHogProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </PostHogProvider>
+    </ThemeProvider>
   );
 }
