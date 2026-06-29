@@ -62,7 +62,7 @@ export function KanbanCard({
           className={cn(
             "w-full overflow-hidden bg-brand-surface border border-brand-border/50 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
             snapshot.isDragging
-              ? "border-indigo-500 shadow-2xl z-50 ring-2 ring-indigo-500/50 opacity-100"
+              ? "border-brand-accent shadow-2xl z-50 ring-2 ring-brand-accent/30 opacity-100"
               : "hover:border-zinc-700 hover:bg-brand-border/50",
             showPicker && "border-zinc-700 bg-brand-border/50",
           )}
@@ -74,7 +74,7 @@ export function KanbanCard({
           {/* Header Row */}
           <div className="flex justify-between items-start mb-3">
             <div className="flex flex-wrap gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded border border-indigo-500/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-brand-accent/10 text-brand-accent rounded border border-brand-accent/20">
                 {feedback.source || "Direct"}
               </span>
               {feedback.category && (
@@ -91,7 +91,7 @@ export function KanbanCard({
                 disabled={isReanalyzing}
                 title="Re-run AI Analysis"
                 className={cn(
-                  "p-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/5 text-indigo-400 hover:bg-indigo-500/15 hover:border-indigo-500/40 transition-all",
+                  "p-1.5 rounded-lg border border-brand-accent/20 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent/15 hover:border-brand-accent/40 transition-all",
                   isReanalyzing &&
                     "animate-pulse cursor-not-allowed opacity-70",
                 )}
@@ -119,7 +119,7 @@ export function KanbanCard({
           </p>
 
           {!feedback.aiSummary && !isReanalyzing && (
-            <div className="mb-3 p-3 bg-indigo-500/5 border border-dashed border-indigo-500/20 rounded-xl flex items-center justify-between group/re">
+            <div className="mb-3 p-3 bg-brand-accent/5 border border-dashed border-brand-accent/20 rounded-xl flex items-center justify-between group/re">
               <span className="text-[11px] text-brand-muted">
                 Not analyzed yet
               </span>
@@ -128,7 +128,7 @@ export function KanbanCard({
                   e.stopPropagation();
                   onReanalyze(feedback.id);
                 }}
-                className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                className="text-[10px] font-bold text-brand-accent hover:text-brand-accent/70 flex items-center gap-1"
               >
                 <Sparkles size={12} /> Analyze
               </button>
@@ -138,7 +138,7 @@ export function KanbanCard({
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-brand-bg/50 rounded border border-brand-border/50">
               <p className="text-[11px] text-zinc-400 italic leading-snug line-clamp-2 wrap-break-word">
-                <Sparkles className="h-3 w-3 inline mr-1 text-indigo-400" />
+                <Sparkles className="h-3 w-3 inline mr-1 text-brand-accent" />
                 {feedback.aiSummary}
               </p>
             </div>
@@ -171,7 +171,7 @@ export function KanbanCard({
                   e.stopPropagation();
                   onOpenComments?.(feedback.id);
                 }}
-                className="flex items-center gap-1 text-[10px] text-brand-muted hover:text-indigo-400 transition-colors"
+                className="flex items-center gap-1 text-[10px] text-brand-muted hover:text-brand-accent transition-colors"
               >
                 <MessageCircle className="h-3 w-3" />
                 {commentCount || 0}
