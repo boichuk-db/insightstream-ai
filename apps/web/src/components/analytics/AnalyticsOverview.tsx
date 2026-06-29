@@ -112,7 +112,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
       <Section glow="top-right">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-indigo-400" /> Sentiment Trend
+            <TrendingUp className="h-5 w-5 text-brand-accent" /> Sentiment Trend
           </h3>
           <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
             Avg Score (%)

@@ -78,7 +78,7 @@ export default function ArchivePage() {
       <div className="flex-1 overflow-y-auto flex flex-col">
         <div className="brand-page-container py-8 flex flex-col gap-8 flex-1 min-h-0">
           <PageHeader
-            icon={<Archive className="text-indigo-400 h-8 w-8" />}
+            icon={<Archive className="text-brand-accent h-8 w-8" />}
             title="Archive"
             subtitle={`View or restore archived feedback for ${activeProject?.name ?? "your project"}.`}
           />
@@ -151,7 +151,7 @@ export default function ArchivePage() {
                               onClick={() => restoreMutation.mutate(fb.id)}
                               disabled={restoreMutation.isPending}
                             >
-                              <RotateCcw className="h-3.5 w-3.5 mr-1.5 text-indigo-400" />{" "}
+                              <RotateCcw className="h-3.5 w-3.5 mr-1.5 text-brand-accent" />{" "}
                               Restore
                             </Button>
                             <Button
@@ -161,7 +161,7 @@ export default function ArchivePage() {
                               onClick={() => deleteMutation.mutate(fb.id)}
                               disabled={deleteMutation.isPending}
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5 text-indigo-400" />{" "}
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5 text-brand-accent" />{" "}
                               Delete
                             </Button>
                           </div>
@@ -204,7 +204,7 @@ export default function ArchivePage() {
                         className={cn(
                           "px-3 h-7 rounded-lg",
                           itemsPerPage === size
-                            ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/30"
+                            ? "bg-brand-accent/20 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/30"
                             : "hover:bg-white/5",
                         )}
                       >
@@ -236,7 +236,7 @@ export default function ArchivePage() {
                         className={cn(
                           "w-8 px-0",
                           currentPage === page
-                            ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+                            ? "bg-brand-accent/20 text-brand-accent border-brand-accent/30"
                             : "bg-transparent border-transparent text-brand-muted hover:border-brand-border",
                         )}
                       >

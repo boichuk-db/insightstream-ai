@@ -82,7 +82,7 @@ export function PricingCards() {
               billing === "annual" ? "bg-brand-surface text-white" : "text-zinc-400 hover:text-zinc-300",
             )}
           >
-            Annual <span className="text-indigo-400">–17%</span>
+            Annual <span className="text-brand-accent">–17%</span>
           </button>
         </div>
       </div>
@@ -114,7 +114,7 @@ export function PricingCards() {
               <ul className="flex flex-col gap-1.5 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="text-xs text-zinc-400 flex items-center gap-1.5">
-                    <span className="text-indigo-400 shrink-0">✓</span> {f}
+                    <span className="text-brand-accent shrink-0">✓</span> {f}
                   </li>
                 ))}
               </ul>
@@ -125,7 +125,7 @@ export function PricingCards() {
                   "w-full py-2 rounded-lg text-sm font-medium transition-colors",
                   isCurrentPlan
                     ? "bg-brand-border text-zinc-500 cursor-default"
-                    : "bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-70",
+                    : "bg-brand-primary hover:bg-brand-primary/90 text-white disabled:opacity-70",
                 )}
               >
                 {isCurrentPlan

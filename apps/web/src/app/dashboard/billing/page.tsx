@@ -24,7 +24,7 @@ export default function BillingPage() {
   return (
     <DashboardShell>
       <PageHeader
-        icon={<CreditCard className="h-8 w-8 text-indigo-400" />}
+        icon={<CreditCard className="h-8 w-8 text-brand-accent" />}
         title="Billing"
         subtitle="Manage your plan, usage, and subscription."
       />

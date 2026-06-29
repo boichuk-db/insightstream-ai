@@ -68,7 +68,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
           <div className="flex flex-col sm:flex-row gap-3 mt-2">
             <button
               onClick={handleUpgrade}
-              className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="flex-1 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary/90 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               Upgrade Plan
             </button>

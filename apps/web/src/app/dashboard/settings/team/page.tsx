@@ -109,12 +109,12 @@ export default function TeamSettingsPage() {
       mainClassName="flex-1 overflow-hidden flex flex-col bg-brand-bg/20"
       noPadding
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="relative z-10 brand-page-container text-white">
           <PageHeader
-            icon={<Users className="h-8 w-8 text-indigo-400" />}
+            icon={<Users className="h-8 w-8 text-brand-accent" />}
             title={`${activeTeam?.name || "Team"} Settings`}
             subtitle="Manage members, roles, and invitations."
           />
@@ -128,7 +128,7 @@ export default function TeamSettingsPage() {
             >
               <Section>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                  <Mail className="h-5 w-5 text-indigo-400" /> Invite Member
+                  <Mail className="h-5 w-5 text-brand-accent" /> Invite Member
                 </h2>
                 <form
                   onSubmit={(e) => {
@@ -147,7 +147,7 @@ export default function TeamSettingsPage() {
                     placeholder="Email address"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    className="flex-1 bg-brand-bg border-brand-border focus:border-indigo-500 h-10"
+                    className="flex-1 bg-brand-bg border-brand-border focus:border-brand-primary h-10"
                   />
                   <Select
                     value={inviteRole}
@@ -180,7 +180,7 @@ export default function TeamSettingsPage() {
             >
               <Section>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                  <Mail className="h-5 w-5 text-indigo-400" /> Pending
+                  <Mail className="h-5 w-5 text-brand-accent" /> Pending
                   Invitations
                 </h2>
                 <div className="space-y-3">
@@ -201,7 +201,7 @@ export default function TeamSettingsPage() {
                           onClick={() => cancelInvitationMutation.mutate(inv.id)}
                           className="hover:text-red-400"
                         >
-                          <X className="h-4 w-4 text-indigo-400" />
+                          <X className="h-4 w-4 text-brand-accent" />
                         </Button>
                       }
                     />
@@ -219,7 +219,7 @@ export default function TeamSettingsPage() {
           >
             <Section>
               <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <Shield className="h-5 w-5 text-indigo-400" /> Members (
+                <Shield className="h-5 w-5 text-brand-accent" /> Members (
                 {members?.length || 0})
               </h2>
 
@@ -234,7 +234,7 @@ export default function TeamSettingsPage() {
                         member.role === "owner" ? (
                           <Crown className="h-4 w-4 text-amber-400" />
                         ) : (
-                          <Users className="h-4 w-4 text-indigo-400" />
+                          <Users className="h-4 w-4 text-brand-accent" />
                         )
                       }
                       primary={
@@ -275,7 +275,7 @@ export default function TeamSettingsPage() {
                               }}
                               className="hover:text-red-400"
                             >
-                              <Trash2 className="h-4 w-4 text-indigo-400" />
+                              <Trash2 className="h-4 w-4 text-brand-accent" />
                             </Button>
                           )}
                         </>

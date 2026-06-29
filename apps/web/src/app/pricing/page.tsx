@@ -46,10 +46,10 @@ const CARD_STYLES: Record<
     btn: "bg-brand-surface hover:bg-brand-surface-hover text-white",
   },
   [PlanType.PRO]: {
-    border: "border-indigo-500/50",
-    badge: "bg-indigo-500 text-white",
+    border: "border-brand-primary/50",
+    badge: "bg-brand-primary text-white",
     glow: "shadow-[0_0_40px_rgba(99,102,241,0.15)]",
-    btn: "bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]",
+    btn: "bg-brand-primary hover:bg-brand-primary/90 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]",
   },
   [PlanType.BUSINESS]: {
     border: "border-amber-500/30",
@@ -94,7 +94,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-zinc-950 relative overflow-hidden">
       {/* Decorative */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
         {/* Back */}
@@ -110,7 +110,7 @@ export default function PricingPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-semibold mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-accent/10 border border-brand-accent/20 rounded-full text-brand-accent text-xs font-semibold mb-6"
           >
             <Sparkles className="h-3.5 w-3.5" /> Simple, transparent pricing
           </motion.div>

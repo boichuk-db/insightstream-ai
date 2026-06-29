@@ -20,7 +20,7 @@ function statusLabel(status: PlanStatus["planStatus"]) {
 }
 
 function statusBadgeClass(status: PlanStatus["planStatus"]) {
-  if (status === "trialing") return "bg-indigo-500/20 text-indigo-400";
+  if (status === "trialing") return "bg-brand-accent/20 text-brand-accent";
   if (status === "past_due") return "bg-red-500/20 text-red-400";
   if (status === "canceled") return "bg-zinc-500/20 text-zinc-400";
   return "bg-green-500/20 text-green-400";

@@ -27,9 +27,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${plusJakartaSans.variable} ${geistMono.variable} antialiased h-full`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-zinc-950 text-zinc-50 selection:bg-indigo-500/30">
+      <body className="min-h-full flex flex-col font-sans bg-brand-bg text-brand-fg selection:bg-brand-primary/30">
         <Providers>{children}</Providers>
         <Toaster position="bottom-right" richColors />
       </body>

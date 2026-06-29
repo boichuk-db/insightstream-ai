@@ -9,6 +9,7 @@ import { FileDown, Printer, ChevronDown, Archive, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Dropdown } from "../ui/dropdown";
+import { STATUS_COLORS } from "@/lib/colors";
 
 interface KanbanBoardProps {
   initialFeedbacks: any[];
@@ -16,11 +17,11 @@ interface KanbanBoardProps {
 }
 
 const COLUMNS = [
-  { id: "New", title: "New", color: "bg-indigo-500" },
-  { id: "In Review", title: "In Review", color: "bg-amber-500" },
-  { id: "In Progress", title: "In Progress", color: "bg-blue-500" },
-  { id: "Done", title: "Done", color: "bg-emerald-500" },
-  { id: "Rejected", title: "Rejected", color: "bg-red-500" },
+  { id: "New", title: "New", color: STATUS_COLORS["New"] },
+  { id: "In Review", title: "In Review", color: STATUS_COLORS["In Review"] },
+  { id: "In Progress", title: "In Progress", color: STATUS_COLORS["In Progress"] },
+  { id: "Done", title: "Done", color: STATUS_COLORS["Done"] },
+  { id: "Rejected", title: "Rejected", color: STATUS_COLORS["Rejected"] },
 ];
 
 function applyFilters(
@@ -297,7 +298,7 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
     <div className="flex flex-col gap-6 w-full">
       {/* Board Header / Action Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-brand-surface border border-brand-border rounded-2xl shadow-lg relative group z-30">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
         <div className="flex items-center gap-4 flex-wrap relative z-20">
           <FilterBar
@@ -393,13 +394,13 @@ function ExportMenu({
           size="sm"
           className="bg-brand-surface/50 transition-all px-3"
         >
-          <FileDown className="h-3.5 w-3.5 text-indigo-400 group-hover/btn:text-white" />
+          <FileDown className="h-3.5 w-3.5 text-brand-accent group-hover/btn:text-white" />
           <span className="mx-1">Export</span>
           <div className="h-3 w-px bg-brand-border/50 mx-1" />
           <span className="truncate max-w-[100px] lowercase first-letter:uppercase">
             {activeTitle}
           </span>
-          <ChevronDown className="ml-2 h-3 w-3 text-indigo-400" />
+          <ChevronDown className="ml-2 h-3 w-3 text-brand-accent" />
         </Button>
       }
       className="w-64 p-3"
@@ -416,7 +417,7 @@ function ExportMenu({
               className={cn(
                 "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
                 scope === "all"
-                  ? "bg-indigo-500/15 text-indigo-400 font-bold"
+                  ? "bg-brand-accent/15 text-brand-accent font-bold"
                   : "text-brand-muted hover:bg-brand-bg hover:text-white",
               )}
             >
@@ -430,13 +431,13 @@ function ExportMenu({
                 className={cn(
                   "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
                   scope === c.id
-                    ? "bg-indigo-500/15 text-indigo-400 font-bold"
+                    ? "bg-brand-accent/15 text-brand-accent font-bold"
                     : "text-brand-muted hover:bg-brand-bg hover:text-white",
                 )}
               >
                 {c.title} ({displayColumns[c.id]?.length ?? 0})
                 {scope === c.id && (
-                  <Check className="h-3 w-3 text-indigo-400" />
+                  <Check className="h-3 w-3 text-brand-accent" />
                 )}
               </button>
             ))}
@@ -455,9 +456,9 @@ function ExportMenu({
             CSV
           </Dropdown.Item>
           <Dropdown.Item
-            icon={<Printer className="h-3.5 w-3.5 text-indigo-400" />}
+            icon={<Printer className="h-3.5 w-3.5 text-brand-accent" />}
             onClick={onExportPDF}
-            className="hover:text-indigo-400 hover:border-indigo-500/40"
+            className="hover:text-brand-accent hover:border-brand-accent/40"
           >
             PDF
           </Dropdown.Item>

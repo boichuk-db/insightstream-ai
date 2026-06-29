@@ -29,7 +29,7 @@ export function EmptyState({
     >
       <Icon
         className={cn(
-          "text-indigo-400 opacity-40",
+          "text-brand-accent opacity-40",
           size === "sm" ? "h-8 w-8" : "h-12 w-12",
         )}
       />

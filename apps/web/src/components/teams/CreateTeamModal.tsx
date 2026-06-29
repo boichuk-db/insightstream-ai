@@ -33,7 +33,7 @@ export function CreateTeamModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Create New Team"
-      icon={<Users className="h-5 w-5 text-indigo-400" />}
+      icon={<Users className="h-5 w-5 text-brand-accent" />}
       footer={
         <div className="flex gap-3 w-full">
           <Button
@@ -44,7 +44,7 @@ export function CreateTeamModal({
             Cancel
           </Button>
           <Button
-            className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+            className="flex-1 bg-brand-primary hover:bg-brand-primary/90 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
             onClick={handleSubmit}
             isLoading={createTeam.isPending}
             disabled={!name.trim()}

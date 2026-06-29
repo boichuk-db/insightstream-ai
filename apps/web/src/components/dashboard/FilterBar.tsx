@@ -37,20 +37,20 @@ export function FilterBar({
               className={cn(
                 "h-8 rounded-xl border border-brand-border/50 bg-brand-surface/50 px-3 flex items-center gap-2 transition-all hover:bg-brand-surface group",
                 hasActiveFilters &&
-                  "border-indigo-500/30 bg-indigo-500/5 text-indigo-400 font-bold",
+                  "border-brand-accent/30 bg-brand-accent/5 text-brand-accent font-bold",
               )}
             >
               <Filter
                 className={cn(
                   "h-3.5 w-3.5",
                   hasActiveFilters
-                    ? "text-indigo-400"
+                    ? "text-brand-accent"
                     : "text-brand-muted group-hover:text-white",
                 )}
               />
               <span className="text-[11px] uppercase tracking-wider">Filter</span>
               {selectedTags.length > 0 && (
-                <span className="flex items-center justify-center bg-indigo-500 text-white text-[9px] w-4 h-4 rounded-full ml-0.5">
+                <span className="flex items-center justify-center bg-brand-primary text-white text-[9px] w-4 h-4 rounded-full ml-0.5">
                   {selectedTags.length}
                 </span>
               )}
@@ -61,7 +61,7 @@ export function FilterBar({
         >
           <div className="flex items-center justify-between mb-4 border-b border-brand-border/50 pb-3">
             <h4 className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
-              <Filter className="h-3 w-3 text-indigo-400" /> Refine View
+              <Filter className="h-3 w-3 text-brand-accent" /> Refine View
             </h4>
             <p className="text-[10px] text-brand-muted font-mono">
               {filteredCount}/{totalCount}
@@ -77,7 +77,7 @@ export function FilterBar({
               {selectedTags.length > 0 && (
                 <button
                   onClick={() => onClearFilters()}
-                  className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300"
+                  className="text-[10px] font-bold text-brand-accent hover:text-brand-accent/80"
                 >
                   Reset
                 </button>
@@ -93,7 +93,7 @@ export function FilterBar({
                     className={cn(
                       "px-2.5 py-1.5 rounded-xl text-[11px] font-medium border transition-all flex items-center gap-1.5",
                       selectedTags.includes(tag)
-                        ? "bg-indigo-500/20 border-indigo-500/50 text-indigo-400"
+                        ? "bg-brand-accent/20 border-brand-accent/50 text-brand-accent"
                         : "bg-brand-bg border-brand-border text-brand-muted hover:border-zinc-700 hover:text-white",
                     )}
                   >

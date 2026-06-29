@@ -57,3 +57,11 @@ export const getCategoryColor = (category: string | undefined | null) => {
     CATEGORY_COLORS[category as string] || CATEGORY_COLORS["Uncategorized"]
   );
 };
+
+export const STATUS_COLORS: Record<string, string> = {
+  New: "bg-brand-accent",
+  "In Review": "bg-amber-500",
+  "In Progress": "bg-blue-500",
+  Done: "bg-emerald-500",
+  Rejected: "bg-red-500",
+};
