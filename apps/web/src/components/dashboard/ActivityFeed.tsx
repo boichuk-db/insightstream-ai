@@ -91,7 +91,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
           {events.map((event: any, i: number) => {
             const config = ACTION_CONFIG[event.action] || {
               icon: Activity,
-              color: "text-zinc-400",
+              color: "text-brand-muted",
               label: event.action,
             };
             const Icon = config.icon;
@@ -109,8 +109,8 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-zinc-300 leading-relaxed">
-                    <span className="font-medium text-zinc-200">
+                  <p className="text-xs text-brand-fg leading-relaxed">
+                    <span className="font-medium text-brand-fg">
                       {event.actorEmail}
                     </span>{" "}
                     {config.label}
@@ -127,7 +127,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
                       </span>
                     )}
                   </p>
-                  <p className="text-[10px] text-zinc-600 mt-0.5">
+                  <p className="text-[10px] text-brand-muted mt-0.5">
                     {formatDistanceToNow(new Date(event.createdAt), {
                       addSuffix: true,
                     })}
