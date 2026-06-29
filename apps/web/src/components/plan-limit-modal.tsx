@@ -42,12 +42,12 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md mx-4 bg-zinc-900 border border-zinc-700 rounded-2xl p-6 shadow-2xl"
+        className="relative w-full max-w-md mx-4 bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="absolute top-4 right-4 p-1 text-brand-muted hover:text-brand-fg transition-colors"
           aria-label="Close"
         >
           <X className="h-5 w-5" />
@@ -58,10 +58,10 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
             <div className="p-2 bg-amber-500/10 rounded-xl">
               <Zap className="h-6 w-6 text-amber-400" />
             </div>
-            <h2 className="text-lg font-bold text-white">Plan Limit Reached</h2>
+            <h2 className="text-lg font-bold text-brand-fg">Plan Limit Reached</h2>
           </div>
 
-          <p className="text-zinc-300 text-sm leading-relaxed">
+          <p className="text-brand-muted text-sm leading-relaxed">
             {errorData.message}
           </p>
 
@@ -74,7 +74,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
             </button>
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium rounded-xl transition-colors"
+              className="flex-1 px-4 py-2.5 bg-brand-surface hover:bg-brand-surface-hover text-brand-muted text-sm font-medium rounded-xl transition-colors"
             >
               Maybe later
             </button>

@@ -52,7 +52,7 @@ export function CreateTeamProjectModal({
       footer={
         <div className="flex gap-3 w-full">
           <Button
-            className="flex-1 bg-transparent border border-zinc-700 hover:bg-zinc-800 text-zinc-300"
+            className="flex-1 bg-transparent border border-brand-border hover:bg-brand-surface-hover text-brand-muted"
             onClick={onClose}
             disabled={createMutation.isPending}
           >
@@ -71,7 +71,7 @@ export function CreateTeamProjectModal({
     >
       <div className="space-y-5">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">
+          <label className="text-sm font-medium text-brand-muted ml-1">
             Project Name <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -88,7 +88,7 @@ export function CreateTeamProjectModal({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-300 ml-1">
+          <label className="text-sm font-medium text-brand-muted ml-1">
             Domain <span className="text-red-400">*</span>
           </label>
           <div className="relative">

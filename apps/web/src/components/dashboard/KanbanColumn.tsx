@@ -32,7 +32,7 @@ export function KanbanColumn({
   return (
     <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-brand-surface/40 border border-brand-border/40 rounded-2xl shadow-xl group/column">
       <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/4">
-        <h3 className="font-bold text-white text-sm flex items-center gap-2">
+        <h3 className="font-bold text-brand-fg text-sm flex items-center gap-2">
           <span
             className={cn(
               "w-2.5 h-2.5 rounded-full",
@@ -42,7 +42,7 @@ export function KanbanColumn({
           />
           {title}
         </h3>
-        <span className="text-[10px] font-mono font-bold text-brand-muted px-2 py-0.5 bg-zinc-800 rounded-md border border-zinc-700">
+        <span className="text-[10px] font-mono font-bold text-brand-muted px-2 py-0.5 bg-brand-surface rounded-md border border-brand-border">
           {feedbacks.length}
         </span>
       </div>
@@ -58,7 +58,7 @@ export function KanbanColumn({
             )}
           >
             {feedbacks.length === 0 && !snapshot.isDraggingOver && (
-              <div className="h-full min-h-[150px] flex items-center justify-center m-2 border-2 border-dashed border-zinc-800/60 rounded-xl bg-zinc-900/20">
+              <div className="h-full min-h-[150px] flex items-center justify-center m-2 border-2 border-dashed border-brand-border/60 rounded-xl bg-brand-surface/20">
                 <EmptyState icon={Search} title="Empty" size="sm" />
               </div>
             )}

@@ -36,7 +36,7 @@ function CustomTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-brand-surface border border-brand-border rounded-lg shadow-xl p-3">
-        <p className="text-zinc-300 font-medium mb-1">{label}</p>
+        <p className="text-brand-muted font-medium mb-1">{label}</p>
         <div className="flex items-center gap-2">
           <div
             className="w-2 h-2 rounded-full"
@@ -44,7 +44,7 @@ function CustomTooltip({ active, payload, label }: any) {
               backgroundColor: payload[0].payload.fill || payload[0].color,
             }}
           />
-          <p className="text-white font-bold">
+          <p className="text-brand-fg font-bold">
             {payload[0].value} {payload[0].name === "score" ? "%" : "items"}
           </p>
         </div>
@@ -111,7 +111,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
       {/* Sentiment Trend Chart */}
       <Section glow="top-right">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <h3 className="text-lg font-bold text-brand-fg flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-brand-accent" /> Sentiment Trend
           </h3>
           <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
@@ -173,7 +173,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
       {/* Category Distribution Chart */}
       <Section glow="bottom-left">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <h3 className="text-lg font-bold text-brand-fg flex items-center gap-2">
             <PieChart className="h-5 w-5 text-emerald-400" /> Category
             Distribution
           </h3>
@@ -233,7 +233,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500 text-sm gap-2">
+            <div className="flex items-center justify-center h-full text-brand-muted text-sm gap-2">
               <Info size={16} /> No categories found.
             </div>
           )}

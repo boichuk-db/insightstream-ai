@@ -22,7 +22,7 @@ function statusLabel(status: PlanStatus["planStatus"]) {
 function statusBadgeClass(status: PlanStatus["planStatus"]) {
   if (status === "trialing") return "bg-brand-accent/20 text-brand-accent";
   if (status === "past_due") return "bg-red-500/20 text-red-400";
-  if (status === "canceled") return "bg-zinc-500/20 text-zinc-400";
+  if (status === "canceled") return "bg-zinc-500/20 text-brand-muted";
   return "bg-green-500/20 text-green-400";
 }
 
@@ -61,7 +61,7 @@ export function CurrentPlanCard() {
           </span>
         </div>
         {daysLeft !== null && (
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-brand-muted">
             Trial ends in {daysLeft} day{daysLeft !== 1 ? "s" : ""}
           </p>
         )}

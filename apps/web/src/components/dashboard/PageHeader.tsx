@@ -25,7 +25,7 @@ export function PageHeader({ icon, title, subtitle, right, onBack }: PageHeaderP
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
           </button>
-          <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-brand-fg tracking-tight flex items-center gap-3">
             {icon} {title}
           </h1>
         </div>

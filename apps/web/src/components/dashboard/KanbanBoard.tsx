@@ -394,7 +394,7 @@ function ExportMenu({
           size="sm"
           className="bg-brand-surface/50 transition-all px-3"
         >
-          <FileDown className="h-3.5 w-3.5 text-brand-accent group-hover/btn:text-white" />
+          <FileDown className="h-3.5 w-3.5 text-brand-accent group-hover/btn:text-brand-fg" />
           <span className="mx-1">Export</span>
           <div className="h-3 w-px bg-brand-border/50 mx-1" />
           <span className="truncate max-w-[100px] lowercase first-letter:uppercase">
@@ -418,7 +418,7 @@ function ExportMenu({
                 "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
                 scope === "all"
                   ? "bg-brand-accent/15 text-brand-accent font-bold"
-                  : "text-brand-muted hover:bg-brand-bg hover:text-white",
+                  : "text-brand-muted hover:bg-brand-bg hover:text-brand-fg",
               )}
             >
               All columns ({totalCount})
@@ -432,7 +432,7 @@ function ExportMenu({
                   "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
                   scope === c.id
                     ? "bg-brand-accent/15 text-brand-accent font-bold"
-                    : "text-brand-muted hover:bg-brand-bg hover:text-white",
+                    : "text-brand-muted hover:bg-brand-bg hover:text-brand-fg",
                 )}
               >
                 {c.title} ({displayColumns[c.id]?.length ?? 0})

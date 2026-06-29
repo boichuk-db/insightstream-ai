@@ -63,8 +63,8 @@ export function KanbanCard({
             "w-full overflow-hidden bg-brand-surface border border-brand-border/50 rounded-2xl p-4 flex flex-col group relative select-none transition-colors duration-200",
             snapshot.isDragging
               ? "border-brand-accent shadow-2xl z-50 ring-2 ring-brand-accent/30 opacity-100"
-              : "hover:border-zinc-700 hover:bg-brand-border/50",
-            showPicker && "border-zinc-700 bg-brand-border/50",
+              : "hover:border-brand-border hover:bg-brand-border/50",
+            showPicker && "border-brand-border bg-brand-border/50",
           )}
           style={{
             ...provided.draggableProps.style,
@@ -114,7 +114,7 @@ export function KanbanCard({
             </div>
           </div>
 
-          <p className="text-zinc-200 text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
+          <p className="text-brand-fg text-sm leading-relaxed mb-3 line-clamp-4 wrap-break-word">
             {feedback.content}
           </p>
 
@@ -137,7 +137,7 @@ export function KanbanCard({
 
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-brand-bg/50 rounded border border-brand-border/50">
-              <p className="text-[11px] text-zinc-400 italic leading-snug line-clamp-2 wrap-break-word">
+              <p className="text-[11px] text-brand-muted italic leading-snug line-clamp-2 wrap-break-word">
                 <Sparkles className="h-3 w-3 inline mr-1 text-brand-accent" />
                 {feedback.aiSummary}
               </p>
@@ -189,7 +189,7 @@ export function KanbanCard({
           {showPicker && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="mt-3 pt-3 border-t border-zinc-700 flex flex-col gap-1"
+              className="mt-3 pt-3 border-t border-brand-border flex flex-col gap-1"
             >
               <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
                 Move to
@@ -206,8 +206,8 @@ export function KanbanCard({
                     className={cn(
                       "flex items-center gap-2 w-full px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left",
                       s.id === feedback.status
-                        ? "bg-zinc-700 text-white cursor-default"
-                        : "text-zinc-400 hover:bg-brand-border hover:text-white",
+                        ? "bg-brand-border text-brand-fg cursor-default"
+                        : "text-brand-muted hover:bg-brand-surface-hover hover:text-brand-fg",
                     )}
                   >
                     <span
@@ -227,7 +227,7 @@ export function KanbanCard({
 
           {/* Tap hint for mobile — visible only when picker is closed */}
           {!showPicker && (
-            <div className="absolute bottom-3 right-3 flex items-center gap-0.5 text-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute bottom-3 right-3 flex items-center gap-0.5 text-brand-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               <ChevronDown className="h-3 w-3" />
             </div>
           )}
