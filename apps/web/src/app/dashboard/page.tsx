@@ -23,7 +23,6 @@ import { toast } from "sonner";
 import { usePlanUsage } from "@/hooks/use-plan-usage";
 import { PlanLimitBanner } from "@/components/plan-limit-banner";
 import { PlanLimitModal, PlanLimitErrorData } from "@/components/plan-limit-modal";
-import { TrialBanner } from "@/components/billing/TrialBanner";
 
 export default function Dashboard() {
   const router = useRouter();

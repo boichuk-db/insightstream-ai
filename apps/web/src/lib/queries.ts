@@ -36,4 +36,5 @@ export interface PlanStatus {
 export const planStatusQuery = queryOptions({
   queryKey: ['planStatus'],
   queryFn: () => api.get<PlanStatus>('/plans/status').then((r) => r.data),
+  staleTime: 60_000,
 });

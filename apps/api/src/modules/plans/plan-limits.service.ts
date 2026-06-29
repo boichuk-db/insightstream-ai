@@ -107,7 +107,7 @@ export class PlanLimitsService {
     });
     if (!team) return { allowed: false, current: 0, max: 0 };
 
-    const ownerPlan = (team.owner?.plan as PlanType) || PlanType.FREE;
+    const ownerPlan = await this.getUserPlan(team.owner.id);
     const limits = this.getLimits(ownerPlan);
     const current = await this.memberRepo.count({ where: { teamId } });
     return {

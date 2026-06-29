@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Patch,
-  Body,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -54,19 +52,4 @@ export class PlansController {
     };
   }
 
-  @Patch('upgrade')
-  @UseGuards(JwtAuthGuard)
-  async upgradePlan(@Request() req: any, @Body() body: { plan: string }) {
-    const newPlan = body.plan as PlanType;
-    if (!PLAN_CONFIGS[newPlan]) {
-      throw new ForbiddenException('Invalid plan type');
-    }
-
-    await this.userRepo.update(req.user.id, {
-      plan: newPlan,
-      planUpdatedAt: new Date(),
-    });
-
-    return { success: true, plan: newPlan };
-  }
 }
