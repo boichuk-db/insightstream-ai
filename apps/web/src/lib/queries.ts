@@ -24,3 +24,16 @@ export const digestPreviewQuery = (projectId: string) =>
       api.get(`/digest/preview/${projectId}`).then((r) => r.data),
     staleTime: 5 * 60 * 1000,
   });
+
+export interface PlanStatus {
+  plan: string;
+  planStatus: 'active' | 'trialing' | 'past_due' | 'canceled';
+  trialEndsAt: string | null;
+  stripePriceId: string | null;
+  stripeSubscriptionId: string | null;
+}
+
+export const planStatusQuery = queryOptions({
+  queryKey: ['planStatus'],
+  queryFn: () => api.get<PlanStatus>('/plans/status').then((r) => r.data),
+});
