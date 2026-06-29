@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { X, Send, Trash2 } from "lucide-react";
+import { X, Send, Trash2, MessageCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDistanceToNow } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -84,19 +86,14 @@ export function CommentsPanel({
             {/* Comments List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {isLoading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-20 bg-zinc-800/40 rounded-xl animate-pulse"
-                    />
-                  ))}
-                </div>
+                <Skeleton count={3} height="h-20" />
               ) : comments?.length === 0 ? (
-                <div className="text-center py-12 text-brand-muted">
-                  <p className="text-sm">No comments yet</p>
-                  <p className="text-xs mt-1">Be the first to comment</p>
-                </div>
+                <EmptyState
+                  icon={MessageCircle}
+                  title="No comments yet"
+                  description="Be the first to comment"
+                  size="sm"
+                />
               ) : (
                 comments?.map((comment: any) => (
                   <div

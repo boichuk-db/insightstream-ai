@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { getCategoryColor } from "@/lib/colors";
+import { Badge } from "@/components/ui/badge";
+import { SentimentBar } from "@/components/ui/sentiment-bar";
 
 const STATUSES = [
   { id: "In Review", color: "bg-amber-500" },
@@ -77,16 +78,7 @@ export function KanbanCard({
                 {feedback.source || "Direct"}
               </span>
               {feedback.category && (
-                <span
-                  className={cn(
-                    "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border",
-                    getCategoryColor(feedback.category).bg,
-                    getCategoryColor(feedback.category).text,
-                    getCategoryColor(feedback.category).border,
-                  )}
-                >
-                  {feedback.category}
-                </span>
+                <Badge variant="category" value={feedback.category} size="sm" />
               )}
             </div>
 
@@ -168,24 +160,7 @@ export function KanbanCard({
           <div className="mt-auto pt-3 border-t border-brand-border/50 flex items-center justify-between">
             {feedback.sentimentScore !== null &&
             feedback.sentimentScore !== undefined ? (
-              <div className="flex items-center gap-1.5">
-                <div className="w-10 h-1 bg-brand-border rounded-full overflow-hidden">
-                  <div
-                    className={cn(
-                      "h-full transition-all",
-                      feedback.sentimentScore > 0.6
-                        ? "bg-emerald-500"
-                        : feedback.sentimentScore < 0.4
-                          ? "bg-red-500"
-                          : "bg-amber-500",
-                    )}
-                    style={{ width: `${feedback.sentimentScore * 100}%` }}
-                  />
-                </div>
-                <span className="text-[10px] text-brand-muted font-medium font-mono">
-                  {Math.round(feedback.sentimentScore * 100)}%
-                </span>
-              </div>
+              <SentimentBar score={feedback.sentimentScore} />
             ) : (
               <div />
             )}

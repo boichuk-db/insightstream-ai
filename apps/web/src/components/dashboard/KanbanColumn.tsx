@@ -2,6 +2,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import { KanbanCard } from "./KanbanCard";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface KanbanColumnProps {
   id: string;
@@ -57,9 +58,8 @@ export function KanbanColumn({
             )}
           >
             {feedbacks.length === 0 && !snapshot.isDraggingOver && (
-              <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-zinc-600 border-2 border-dashed border-zinc-800/60 rounded-xl m-2 bg-zinc-900/20">
-                <Search className="h-6 w-6 mb-2 opacity-30" />
-                <span className="text-xs font-medium opacity-50">Empty</span>
+              <div className="h-full min-h-[150px] flex items-center justify-center m-2 border-2 border-dashed border-zinc-800/60 rounded-xl bg-zinc-900/20">
+                <EmptyState icon={Search} title="Empty" size="sm" />
               </div>
             )}
 

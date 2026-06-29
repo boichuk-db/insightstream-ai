@@ -14,6 +14,8 @@ import {
   Activity,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const ACTION_CONFIG: Record<
   string,
@@ -85,18 +87,9 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
       </h3>
 
       {isLoading ? (
-        <div className="space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="h-10 bg-brand-border/40 rounded-lg animate-pulse"
-            />
-          ))}
-        </div>
+        <Skeleton count={4} height="h-10" />
       ) : !events?.length ? (
-        <p className="text-sm text-brand-muted text-center py-4">
-          No activity yet
-        </p>
+        <EmptyState icon={Activity} title="No activity yet" size="sm" />
       ) : (
         <div data-testid="activity-list" className="space-y-1">
           {events.map((event: any, i: number) => {
