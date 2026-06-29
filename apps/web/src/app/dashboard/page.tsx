@@ -171,7 +171,6 @@ export default function Dashboard() {
 
   return (
     <div data-testid="dashboard-root" className="flex flex-col h-screen bg-brand-bg overflow-hidden">
-      <TrialBanner />
       <div className="flex flex-1 overflow-hidden">
       <Sidebar
         projects={projects || []}
