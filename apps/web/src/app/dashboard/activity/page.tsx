@@ -47,7 +47,7 @@ export default function ActivityPage() {
                   <Activity className="h-4 w-4 text-indigo-400" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                  <h2 className="text-lg font-bold text-white">
                     Activity Feed
                   </h2>
                   <p className="text-[10px] text-brand-muted mt-0.5">
@@ -64,7 +64,7 @@ export default function ActivityPage() {
               </div>
             </div>
 
-            <div className="p-2 min-h-[500px]">
+            <div className="p-2">
               <ActivityFeed teamId={activeTeam?.id} />
             </div>
           </div>

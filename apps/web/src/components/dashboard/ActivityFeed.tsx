@@ -81,11 +81,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
   if (!teamId) return null;
 
   return (
-    <div className="bg-brand-surface/60 border-brand-border/50 rounded-2xl p-5">
-      <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-        <Activity className="h-4 w-4 text-indigo-400" /> Recent Activity
-      </h3>
-
+    <div>
       {isLoading ? (
         <Skeleton count={4} height="h-10" />
       ) : !events?.length ? (

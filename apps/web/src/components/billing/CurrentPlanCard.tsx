@@ -7,6 +7,7 @@ import { planStatusQuery, PlanStatus } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 function statusLabel(status: PlanStatus["planStatus"]) {
   const map: Record<PlanStatus["planStatus"], string> = {
@@ -71,12 +72,14 @@ export function CurrentPlanCard() {
         )}
       </div>
       {data.stripeSubscriptionId && (
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleManage}
-          className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors whitespace-nowrap shrink-0"
+          className="whitespace-nowrap shrink-0"
         >
           Manage subscription →
-        </button>
+        </Button>
       )}
     </div>
   );
