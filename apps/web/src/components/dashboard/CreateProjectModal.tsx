@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Globe, Type } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Modal } from "@/components/ui/modal";
+import { Globe, Type } from "lucide-react";
 
 export function CreateProjectModal({
   isOpen,
@@ -40,97 +40,76 @@ export function CreateProjectModal({
     },
   });
 
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-brand-bg border-brand-border rounded-2xl w-full max-w-md overflow-hidden relative"
-        >
-          {/* Header */}
-          <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              Create New Project
-            </h3>
-            <button
-              onClick={onClose}
-              className="text-zinc-400 hover:text-white transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create New Project"
+      footer={
+        <div className="flex gap-3 w-full">
+          <Button
+            className="flex-1 bg-transparent border border-zinc-700 hover:bg-zinc-800 text-zinc-300"
+            onClick={onClose}
+            disabled={createMutation.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+            onClick={() => {
+              if (!name.trim()) return alert("Project name is required");
+              if (!domain.trim())
+                return alert("Project domain is required for security");
+              createMutation.mutate();
+            }}
+            isLoading={createMutation.isPending}
+            disabled={!name.trim() || !domain.trim()}
+          >
+            🚀 Create Project
+          </Button>
+        </div>
+      }
+    >
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            Project Name <span className="text-red-400">*</span>
+          </label>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="e.g. My Awesome Startup"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="pl-10"
+              required
+            />
+            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
           </div>
+        </div>
 
-          {/* Body */}
-          <div className="p-6 space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">
-                Project Name <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="e.g. My Awesome Startup"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-                <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">
-                Domain <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="e.g. my-startup.com"
-                  value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
-              </div>
-            </div>
-
-            <p className="text-xs text-brand-muted pt-2 leading-relaxed">
-              A unique API Key will be automatically generated. You can use this
-              key to identify feedback from your website.
-            </p>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-zinc-300 ml-1">
+            Domain <span className="text-red-400">*</span>
+          </label>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="e.g. my-startup.com"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              className="pl-10"
+              required
+            />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
           </div>
+        </div>
 
-          {/* Footer */}
-          <div className="p-6 pt-0 flex gap-3">
-            <Button
-              className="flex-1 bg-transparent border border-zinc-700 hover:bg-zinc-800 text-zinc-300"
-              onClick={onClose}
-              disabled={createMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-              onClick={() => {
-                if (!name.trim()) return alert("Project name is required");
-                if (!domain.trim())
-                  return alert("Project domain is required for security");
-                createMutation.mutate();
-              }}
-              isLoading={createMutation.isPending}
-              disabled={!name.trim() || !domain.trim()}
-            >
-              🚀 Create Project
-            </Button>
-          </div>
-        </motion.div>
+        <p className="text-xs text-brand-muted pt-2 leading-relaxed">
+          A unique API Key will be automatically generated. You can use this
+          key to identify feedback from your website.
+        </p>
       </div>
-    </AnimatePresence>
+    </Modal>
   );
 }
