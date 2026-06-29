@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userProfileQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
@@ -8,7 +7,6 @@ import {
   PLAN_CONFIGS,
   PlanType,
   formatLimit,
-  getPlanConfig,
 } from "@/lib/plans";
 import {
   Sparkles,
@@ -23,13 +21,15 @@ import {
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Section } from "@/components/ui/section";
+import { UsageMeter } from "@/components/ui/usage-meter";
+import { ListItem } from "@/components/ui/list-item";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const PLAN_ORDER = [PlanType.FREE, PlanType.PRO, PlanType.BUSINESS] as const;
 
 export default function SettingsPage() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: userProfile, isLoading: profileLoading } = useQuery(userProfileQuery);
@@ -84,86 +84,80 @@ export default function SettingsPage() {
           />
 
           {/* Profile Section */}
-          <motion.section
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6 mb-8"
+            className="mb-8"
           >
-            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-              <User className="h-5 w-5 text-indigo-400" /> Profile
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-                <Mail className="h-4 w-4 text-indigo-400" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold">
-                    Email
-                  </p>
-                  <p className="text-sm text-zinc-200">
-                    {userProfile?.email}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-                <Calendar className="h-4 w-4 text-indigo-400" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold">
-                    Member since
-                  </p>
-                  <p className="text-sm text-zinc-200">
-                    {userProfile?.createdAt
+            <Section>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <User className="h-5 w-5 text-indigo-400" /> Profile
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ListItem
+                  icon={<Mail className="h-4 w-4 text-indigo-400" />}
+                  primary={userProfile?.email}
+                  secondary="Email"
+                />
+                <ListItem
+                  icon={<Calendar className="h-4 w-4 text-indigo-400" />}
+                  primary={
+                    userProfile?.createdAt
                       ? new Date(userProfile.createdAt).toLocaleDateString(
                           "en-US",
                           { year: "numeric", month: "long", day: "numeric" },
                         )
-                      : "—"}
-                  </p>
-                </div>
+                      : "—"
+                  }
+                  secondary="Member since"
+                />
               </div>
-            </div>
-          </motion.section>
+            </Section>
+          </motion.div>
 
           {/* Usage Section */}
           {usage && (
-            <motion.section
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6 mb-8"
+              className="mb-8"
             >
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <Shield className="h-5 w-5 text-indigo-400" /> Current Usage
-              </h2>
-              <div className="grid sm:grid-cols-3 gap-4">
-                <UsageMeter
-                  label="Projects"
-                  current={usage.projects.current}
-                  max={usage.projects.max}
-                />
-                <UsageMeter
-                  label="Feedbacks this month"
-                  current={usage.feedbacksThisMonth.current}
-                  max={usage.feedbacksThisMonth.max}
-                />
-                <div className="p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-                  <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
-                    AI Analysis
-                  </p>
-                  <p className="text-lg font-bold text-white capitalize">
-                    {usage.features.aiAnalysis}
-                  </p>
+              <Section>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <Shield className="h-5 w-5 text-indigo-400" /> Current Usage
+                </h2>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  <UsageMeter
+                    label="Projects"
+                    current={usage.projects.current}
+                    max={usage.projects.max}
+                  />
+                  <UsageMeter
+                    label="Feedbacks this month"
+                    current={usage.feedbacksThisMonth.current}
+                    max={usage.feedbacksThisMonth.max}
+                  />
+                  <div className="p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
+                    <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
+                      AI Analysis
+                    </p>
+                    <p className="text-lg font-bold text-white capitalize">
+                      {usage.features.aiAnalysis}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </motion.section>
+              </Section>
+            </motion.div>
           )}
 
           {/* Plan Selection */}
-          <motion.section
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-zinc-900/60 border border-zinc-800/50 rounded-2xl p-6"
           >
+          <Section>
             <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
               <Sparkles className="h-5 w-5 text-indigo-400" /> Subscription
               Plan
@@ -256,49 +250,11 @@ export default function SettingsPage() {
                 );
               })}
             </div>
-          </motion.section>
+          </Section>
+          </motion.div>
         </div>
       </div>
     </DashboardShell>
   );
 }
 
-function UsageMeter({
-  label,
-  current,
-  max,
-}: {
-  label: string;
-  current: number;
-  max: number | null;
-}) {
-  const pct = max ? Math.min(100, (current / max) * 100) : 0;
-  return (
-    <div className="p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50">
-      <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1">
-        {label}
-      </p>
-      <p className="text-lg font-bold text-white">
-        {current}{" "}
-        <span className="text-zinc-500 text-sm font-normal">
-          / {max ?? "∞"}
-        </span>
-      </p>
-      {max && (
-        <div className="mt-2 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-          <div
-            className={cn(
-              "h-full rounded-full transition-all",
-              pct > 90
-                ? "bg-red-500"
-                : pct > 70
-                  ? "bg-amber-500"
-                  : "bg-indigo-500",
-            )}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      )}
-    </div>
-  );
-}

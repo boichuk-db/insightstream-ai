@@ -20,16 +20,13 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Select } from "@/components/ui/select";
+import { Section } from "@/components/ui/section";
+import { Badge } from "@/components/ui/badge";
+import { ListItem } from "@/components/ui/list-item";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 const ROLE_OPTIONS = ["admin", "member", "viewer"] as const;
-const ROLE_COLORS: Record<string, string> = {
-  owner: "bg-amber-500/20 text-amber-400",
-  admin: "bg-indigo-500/20 text-indigo-400",
-  member: "bg-emerald-500/20 text-emerald-400",
-  viewer: "bg-zinc-700/50 text-zinc-400",
-};
 
 export default function TeamSettingsPage() {
   const router = useRouter();
@@ -123,196 +120,178 @@ export default function TeamSettingsPage() {
 
           {/* Invite Form */}
           {isAdmin && (
-            <motion.section
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 mb-8"
+              className="mb-8"
             >
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <Mail className="h-5 w-5 text-indigo-400" /> Invite Member
-              </h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (inviteEmail.trim()) {
-                    inviteMutation.mutate({
-                      email: inviteEmail,
-                      role: inviteRole,
-                    });
-                  }
-                }}
-                className="flex flex-col sm:flex-row gap-3"
-              >
-                <Input
-                  type="email"
-                  placeholder="Email address"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  className="flex-1 bg-brand-bg border-brand-border focus:border-indigo-500 h-10"
-                />
-                <Select
-                  value={inviteRole}
-                  onChange={setInviteRole}
-                  options={ROLE_OPTIONS}
-                  className="w-full sm:w-[130px]"
-                />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="md"
-                  isLoading={inviteMutation.isPending}
-                  disabled={!inviteEmail.trim()}
-                  className="px-6"
+              <Section>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <Mail className="h-5 w-5 text-indigo-400" /> Invite Member
+                </h2>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (inviteEmail.trim()) {
+                      inviteMutation.mutate({
+                        email: inviteEmail,
+                        role: inviteRole,
+                      });
+                    }
+                  }}
+                  className="flex flex-col sm:flex-row gap-3"
                 >
-                  Send Invite
-                </Button>
-              </form>
-            </motion.section>
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    className="flex-1 bg-brand-bg border-brand-border focus:border-indigo-500 h-10"
+                  />
+                  <Select
+                    value={inviteRole}
+                    onChange={setInviteRole}
+                    options={ROLE_OPTIONS}
+                    className="w-full sm:w-[130px]"
+                  />
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    isLoading={inviteMutation.isPending}
+                    disabled={!inviteEmail.trim()}
+                    className="px-6"
+                  >
+                    Send Invite
+                  </Button>
+                </form>
+              </Section>
+            </motion.div>
           )}
 
           {/* Pending Invitations */}
           {isAdmin && pendingInvitations?.length > 0 && (
-            <motion.section
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 mb-8"
+              className="mb-8"
             >
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <Mail className="h-5 w-5 text-indigo-400" /> Pending
-                Invitations
-              </h2>
-              <div className="space-y-3">
-                {pendingInvitations.map((inv: any) => (
-                  <div
-                    key={inv.id}
-                    className="flex items-center justify-between p-3 bg-brand-bg/50 rounded-xl border border-brand-border/50"
-                  >
-                    <div>
-                      <span className="text-sm font-medium text-zinc-200">
-                        {inv.email}
-                      </span>
-                      <span
-                        className={cn(
-                          "ml-2 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded",
-                          ROLE_COLORS[inv.role],
-                        )}
-                      >
-                        {inv.role}
-                      </span>
-                      <p className="text-xs text-brand-muted mt-0.5">
-                        Invited by {inv.invitedByEmail} · Expires{" "}
-                        {new Date(inv.expiresAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      onClick={() => cancelInvitationMutation.mutate(inv.id)}
-                      className="hover:text-red-400"
-                    >
-                      <X className="h-4 w-4 text-indigo-400" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </motion.section>
-          )}
-
-          {/* Members List */}
-          <motion.section
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6"
-          >
-            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-              <Shield className="h-5 w-5 text-indigo-400" /> Members (
-              {members?.length || 0})
-            </h2>
-
-            {membersLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-brand-border/40 rounded-xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {members?.map((member: any) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between p-3 bg-brand-bg/50 rounded-xl border border-brand-border/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-brand-border flex items-center justify-center border border-zinc-700 text-zinc-400">
-                        {member.role === "owner" ? (
-                          <Crown className="h-4 w-4 text-amber-400" />
-                        ) : (
-                          <Users className="h-4 w-4 text-indigo-400" />
-                        )}
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-zinc-200">
-                          {member.email}
+              <Section>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <Mail className="h-5 w-5 text-indigo-400" /> Pending
+                  Invitations
+                </h2>
+                <div className="space-y-3">
+                  {pendingInvitations.map((inv: any) => (
+                    <ListItem
+                      key={inv.id}
+                      primary={
+                        <span className="flex items-center gap-2">
+                          {inv.email}
+                          <Badge variant="role" value={inv.role} />
                         </span>
-                        <span
-                          className={cn(
-                            "ml-2 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded",
-                            ROLE_COLORS[member.role],
-                          )}
-                        >
-                          {member.role}
-                        </span>
-                        <p className="text-xs text-brand-muted mt-0.5">
-                          Joined{" "}
-                          {new Date(member.joinedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Role change (Owner only, can't change owner) */}
-                      {userRole === "owner" && member.role !== "owner" && (
-                        <Select
-                          value={member.role}
-                          onChange={(role) =>
-                            changeRoleMutation.mutate({
-                              userId: member.userId,
-                              role,
-                            })
-                          }
-                          options={ROLE_OPTIONS}
-                          className="w-[110px]"
-                        />
-                      )}
-
-                      {/* Remove (Admin+, can't remove owner) */}
-                      {isAdmin && member.role !== "owner" && (
+                      }
+                      secondary={`Invited by ${inv.invitedByEmail} · Expires ${new Date(inv.expiresAt).toLocaleDateString()}`}
+                      actions={
                         <Button
                           variant="ghost"
                           size="xs"
-                          onClick={() => {
-                            if (
-                              confirm(`Remove ${member.email} from the team?`)
-                            ) {
-                              removeMemberMutation.mutate(member.userId);
-                            }
-                          }}
+                          onClick={() => cancelInvitationMutation.mutate(inv.id)}
                           className="hover:text-red-400"
                         >
-                          <Trash2 className="h-4 w-4 text-indigo-400" />
+                          <X className="h-4 w-4 text-indigo-400" />
                         </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.section>
+                      }
+                    />
+                  ))}
+                </div>
+              </Section>
+            </motion.div>
+          )}
+
+          {/* Members List */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Section>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                <Shield className="h-5 w-5 text-indigo-400" /> Members (
+                {members?.length || 0})
+              </h2>
+
+              {membersLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-brand-border/40 rounded-xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {members?.map((member: any) => (
+                    <ListItem
+                      key={member.id}
+                      icon={
+                        member.role === "owner" ? (
+                          <Crown className="h-4 w-4 text-amber-400" />
+                        ) : (
+                          <Users className="h-4 w-4 text-indigo-400" />
+                        )
+                      }
+                      primary={
+                        <span className="flex items-center gap-2">
+                          {member.email}
+                          <Badge variant="role" value={member.role} />
+                        </span>
+                      }
+                      secondary={`Joined ${new Date(member.joinedAt).toLocaleDateString()}`}
+                      actions={
+                        <>
+                          {/* Role change (Owner only, can't change owner) */}
+                          {userRole === "owner" && member.role !== "owner" && (
+                            <Select
+                              value={member.role}
+                              onChange={(role) =>
+                                changeRoleMutation.mutate({
+                                  userId: member.userId,
+                                  role,
+                                })
+                              }
+                              options={ROLE_OPTIONS}
+                              className="w-[110px]"
+                            />
+                          )}
+
+                          {/* Remove (Admin+, can't remove owner) */}
+                          {isAdmin && member.role !== "owner" && (
+                            <Button
+                              variant="ghost"
+                              size="xs"
+                              onClick={() => {
+                                if (
+                                  confirm(`Remove ${member.email} from the team?`)
+                                ) {
+                                  removeMemberMutation.mutate(member.userId);
+                                }
+                              }}
+                              className="hover:text-red-400"
+                            >
+                              <Trash2 className="h-4 w-4 text-indigo-400" />
+                            </Button>
+                          )}
+                        </>
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+            </Section>
+          </motion.div>
         </div>
       </div>
     </DashboardShell>

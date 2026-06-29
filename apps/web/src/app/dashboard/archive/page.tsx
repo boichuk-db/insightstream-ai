@@ -11,7 +11,10 @@ import { Sparkles, Archive, Trash2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSocket } from "@/hooks/useSocket";
 import { cn } from "@/lib/utils";
-import { getCategoryColor } from "@/lib/colors";
+import { Section } from "@/components/ui/section";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
@@ -80,7 +83,7 @@ export default function ArchivePage() {
             subtitle={`View or restore archived feedback for ${activeProject?.name ?? "your project"}.`}
           />
 
-          <section className="bg-brand-surface/40 border border-brand-border/50 rounded-2xl overflow-hidden shadow-xl flex flex-col flex-1 min-h-0">
+          <Section glow="none" className="p-0 overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="overflow-x-auto flex-1 custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -101,31 +104,19 @@ export default function ArchivePage() {
                 </thead>
                 <tbody className="divide-y divide-brand-border/30">
                   {isLoading ? (
-                    [1, 2, 3, 4, 5].map((i) => (
-                      <tr key={i} className="animate-pulse">
-                        <td className="px-6 py-6">
-                          <div className="h-4 bg-brand-border/50 rounded w-full" />
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="h-6 bg-brand-border/50 rounded-full w-20" />
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="h-4 bg-brand-border/50 rounded w-24" />
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="h-8 bg-brand-border/50 rounded-xl w-32 ml-auto" />
-                        </td>
-                      </tr>
-                    ))
+                    <tr>
+                      <td colSpan={4} className="px-6 py-4">
+                        <Skeleton count={5} height="h-10" />
+                      </td>
+                    </tr>
                   ) : paginatedFeedbacks.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-20 text-center">
-                        <div className="flex flex-col items-center justify-center opacity-40">
-                          <Archive className="h-12 w-12 mb-4 text-indigo-400" />
-                          <p className="text-sm font-medium">
-                            No archived feedback items found.
-                          </p>
-                        </div>
+                      <td colSpan={4}>
+                        <EmptyState
+                          icon={Archive}
+                          title="Nothing archived yet"
+                          description="Resolved feedback will appear here."
+                        />
                       </td>
                     </tr>
                   ) : (
@@ -140,16 +131,11 @@ export default function ArchivePage() {
                           </p>
                         </td>
                         <td className="px-6 py-5">
-                          <span
-                            className={cn(
-                              "px-2.5 py-1 rounded-full text-[10px] font-bold border",
-                              getCategoryColor(fb.category).bg,
-                              getCategoryColor(fb.category).text,
-                              getCategoryColor(fb.category).border,
-                            )}
-                          >
-                            {fb.category || "Feedback"}
-                          </span>
+                          <Badge
+                            variant="category"
+                            value={fb.category || "Feedback"}
+                            size="sm"
+                          />
                         </td>
                         <td className="px-6 py-5">
                           <span className="text-xs text-brand-muted font-medium">
@@ -270,7 +256,7 @@ export default function ArchivePage() {
                 </Button>
               </div>
             </div>
-          </section>
+          </Section>
         </div>
       </div>
     </DashboardShell>
