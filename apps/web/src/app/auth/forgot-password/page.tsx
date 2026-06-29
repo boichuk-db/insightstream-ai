@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex items-center gap-2 text-white font-medium">
-          <Sparkles className="text-indigo-400" />
+          <Sparkles className="text-brand-accent" />
           <span>InsightStream AI</span>
         </div>
 
@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
             </p>
             <Link
               href="/"
-              className="text-indigo-400 hover:text-indigo-300 text-sm"
+              className="text-brand-accent hover:text-brand-accent/80 text-sm"
             >
               ← Back to sign in
             </Link>
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
             </form>
 
             <div className="mt-6 text-center text-sm text-zinc-500">
-              <Link href="/" className="text-indigo-400 hover:text-indigo-300">
+              <Link href="/" className="text-brand-accent hover:text-brand-accent/80">
                 ← Back to sign in
               </Link>
             </div>

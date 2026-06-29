@@ -173,7 +173,7 @@ function AuthForm() {
             {isLogin && (
               <Link
                 href="/auth/forgot-password"
-                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                className="text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
               >
                 Forgot password?
               </Link>
@@ -211,7 +211,7 @@ function AuthForm() {
         <button
           onClick={() => setIsLogin(!isLogin)}
           data-testid="auth-toggle"
-          className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors focus:outline-none"
+          className="text-brand-accent hover:text-brand-accent/80 font-medium transition-colors focus:outline-none"
         >
           {isLogin ? "Sign up" : "Sign in"}
         </button>
@@ -225,10 +225,10 @@ export default function Home() {
     <div className="flex min-h-screen">
       {/* Left side - Product showcase */}
       <div className="hidden lg:flex flex-1 flex-col justify-between bg-zinc-900 p-12 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-accent/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[100px] mix-blend-screen -translate-x-1/4 translate-y-1/4 pointer-events-none" />
         <div className="relative z-10 text-white font-medium flex items-center gap-2 text-xl">
-          <Sparkles className="text-indigo-400" /> InsightStream AI
+          <Sparkles className="text-brand-accent" /> InsightStream AI
         </div>
         <div className="relative z-10 max-w-lg mt-auto">
           <motion.h1
@@ -256,7 +256,7 @@ export default function Home() {
 
       {/* Right side - Auth Form */}
       <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 relative bg-zinc-950">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none lg:hidden" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-primary/10 rounded-full blur-[120px] mix-blend-screen translate-x-1/2 -translate-y-1/4 pointer-events-none lg:hidden" />
         <Suspense fallback={null}>
           <AuthForm />
         </Suspense>

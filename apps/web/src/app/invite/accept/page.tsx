@@ -67,7 +67,7 @@ function AcceptInviteContent() {
       >
         {isLoading ? (
           <div className="py-8">
-            <div className="w-12 h-12 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-zinc-400">Loading invitation...</p>
           </div>
         ) : isError ? (
@@ -81,7 +81,7 @@ function AcceptInviteContent() {
             </p>
             <Link
               href="/"
-              className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
+              className="text-brand-accent hover:text-brand-accent/80 text-sm font-medium"
             >
               Go to homepage
             </Link>
@@ -127,9 +127,9 @@ function AcceptInviteContent() {
         ) : (
           <div data-testid="invite-info">
             <div
-              className="w-16 h-16 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-6"
+              className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mx-auto mb-6"
             >
-              <Users className="h-8 w-8 text-indigo-400" />
+              <Users className="h-8 w-8 text-brand-accent" />
             </div>
             <h1 className="text-xl font-bold text-white mb-2">
               Team Invitation
@@ -146,7 +146,7 @@ function AcceptInviteContent() {
             {info?.role && (
               <p className="text-sm text-neutral-400 mb-6">
                 as{" "}
-                <span className="font-semibold text-indigo-400 capitalize">
+                <span className="font-semibold text-brand-accent capitalize">
                   {info.role}
                 </span>
               </p>
@@ -190,7 +190,7 @@ export default function AcceptInvitePage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-          <div className="w-12 h-12 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

@@ -154,7 +154,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="brand-page-container flex flex-col gap-8 text-brand-text">
           <PageHeader
-            icon={<Code className="text-indigo-400 h-8 w-8" />}
+            icon={<Code className="text-brand-accent h-8 w-8" />}
             title="Embed Widget"
             subtitle="Configure and install the feedback widget on your website."
           />
@@ -165,7 +165,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* Visual Config */}
               <Section>
                 <h2 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
-                  <SettingsIcon className="h-5 w-5 text-indigo-400" /> Visual
+                  <SettingsIcon className="h-5 w-5 text-brand-accent" /> Visual
                   Configuration
                 </h2>
 
@@ -181,7 +181,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                             className={cn(
                               "w-10 h-10 rounded-full transition-all flex items-center justify-center relative",
                               selectedColor.value === color.value
-                                ? "ring-2 ring-indigo-500 ring-offset-4 ring-offset-brand-surface bg-opacity-100 scale-110"
+                                ? "ring-2 ring-brand-accent ring-offset-4 ring-offset-brand-surface bg-opacity-100 scale-110"
                                 : "opacity-60 hover:opacity-100 hover:scale-105",
                             )}
                             style={{ backgroundColor: color.value }}
@@ -201,9 +201,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                           </button>
                         ))}
                       </div>
-                      <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/5 border border-indigo-500/10 ml-2">
-                        <Info className="h-3.5 w-3.5 text-indigo-400" />
-                        <span className="text-[10px] text-indigo-300 font-semibold uppercase tracking-tight">
+                      <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-accent/5 border border-brand-accent/10 ml-2">
+                        <Info className="h-3.5 w-3.5 text-brand-accent" />
+                        <span className="text-[10px] text-brand-accent font-semibold uppercase tracking-tight">
                           Launcher & Primary Accents
                         </span>
                       </div>
@@ -224,7 +224,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                               className={cn(
                                 "min-w-[80px] px-3 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                                 selectedShape === shape
-                                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
+                                  ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
                                   : "text-brand-muted hover:text-zinc-300 border border-transparent",
                               )}
                             >
@@ -245,7 +245,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                               className={cn(
                                 "min-w-[100px] px-4 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                                 selectedPosition === pos
-                                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
+                                  ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
                                   : "text-brand-muted hover:text-zinc-300 border border-transparent",
                               )}
                             >
@@ -263,7 +263,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               <Section>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <LayoutTemplate className="h-5 w-5 text-indigo-400" />{" "}
+                    <LayoutTemplate className="h-5 w-5 text-brand-accent" />{" "}
                     Implementation Code
                   </h2>
                   <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit">
@@ -274,7 +274,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                         className={cn(
                           "min-w-[70px] px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all",
                           selectedFramework === fw
-                            ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
+                            ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
                             : "text-brand-muted hover:text-zinc-300 border border-transparent",
                         )}
                       >
@@ -293,13 +293,13 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       className="h-8 px-3 text-[10px] bg-brand-surface border-brand-border hover:bg-zinc-800"
                     />
                   </div>
-                  <pre className="bg-brand-bg border border-brand-border p-5 rounded-xl overflow-x-auto text-sm text-indigo-200/80 font-mono leading-relaxed max-h-[400px] custom-scrollbar focus:ring-1 focus:ring-indigo-500/50 outline-none">
+                  <pre className="bg-brand-bg border border-brand-border p-5 rounded-xl overflow-x-auto text-sm text-brand-accent/80 font-mono leading-relaxed max-h-[400px] custom-scrollbar focus:ring-1 focus:ring-brand-accent/30 outline-none">
                     <code>{snippet}</code>
                   </pre>
                 </div>
 
                 <div className="mt-4 flex items-start gap-3 p-4 bg-brand-bg/50 rounded-xl border border-brand-border/50">
-                  <Globe className="h-4 w-4 text-indigo-400 mt-0.5 shrink-0" />
+                  <Globe className="h-4 w-4 text-brand-accent mt-0.5 shrink-0" />
                   <p className="text-xs text-brand-muted leading-relaxed">
                     {selectedFramework === "html" && (
                       <>
@@ -330,7 +330,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             {/* Sidebar / Info Column */}
             <div className="xl:col-span-5 space-y-6">
               {/* API Key Box */}
-              <section className="bg-indigo-500 border border-indigo-400 rounded-2xl p-6 shadow-[0_0_30px_rgba(99,102,241,0.2)] text-white relative overflow-hidden group">
+              <section className="bg-brand-primary border border-brand-primary/80 rounded-2xl p-6 shadow-[0_0_30px_rgba(99,102,241,0.2)] text-white relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <Key className="h-5 w-5" /> Project API Key
@@ -347,7 +347,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     className="shrink-0 p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/20 transition-all active:scale-95"
                   />
                 </div>
-                <p className="text-xs text-indigo-100 leading-relaxed italic opacity-80">
+                <p className="text-xs text-white/80 leading-relaxed italic opacity-80">
                   * Keeping your API Key secure is important. Do not expose it
                   in public repositories.
                 </p>
@@ -356,13 +356,13 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* Instructions / Best Practices */}
               <Section className="space-y-5">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-indigo-400" /> Quick
+                  <Sparkles className="h-5 w-5 text-brand-accent" /> Quick
                   Installation Guide
                 </h2>
 
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-brand-accent border border-brand-border shrink-0">
                       1
                     </div>
                     <div>
@@ -377,7 +377,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-brand-accent border border-brand-border shrink-0">
                       2
                     </div>
                     <div>
@@ -392,7 +392,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-indigo-400 border border-brand-border shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-brand-accent border border-brand-border shrink-0">
                       3
                     </div>
                     <div>

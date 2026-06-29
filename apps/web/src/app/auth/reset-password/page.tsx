@@ -35,7 +35,7 @@ function ResetPasswordForm() {
         <p className="text-zinc-400">This reset link is missing a token.</p>
         <Link
           href="/auth/forgot-password"
-          className="text-indigo-400 hover:text-indigo-300 text-sm"
+          className="text-brand-accent hover:text-brand-accent/80 text-sm"
         >
           Request a new reset link →
         </Link>
@@ -120,7 +120,7 @@ function ResetPasswordForm() {
         {mutation.isError && !clientError && (
           <Link
             href="/auth/forgot-password"
-            className="text-indigo-400 hover:text-indigo-300 text-sm block"
+            className="text-brand-accent hover:text-brand-accent/80 text-sm block"
           >
             Request a new reset link →
           </Link>
@@ -145,7 +145,7 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex items-center gap-2 text-white font-medium">
-          <Sparkles className="text-indigo-400" />
+          <Sparkles className="text-brand-accent" />
           <span>InsightStream AI</span>
         </div>
         <Suspense fallback={<p className="text-zinc-400">Loading…</p>}>
