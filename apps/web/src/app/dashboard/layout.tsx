@@ -6,9 +6,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen overflow-hidden bg-brand-bg">
       <TrialBanner />
-      {children}
+      <div className="flex-1 overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }

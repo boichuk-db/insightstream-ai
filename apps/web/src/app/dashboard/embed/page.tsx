@@ -173,7 +173,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
   };
 
   return (
-    <div className="flex h-screen bg-brand-bg overflow-hidden text-brand-text">
+    <div className="flex h-full bg-brand-bg overflow-hidden text-brand-text">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}

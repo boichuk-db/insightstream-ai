@@ -75,7 +75,7 @@ export default function ArchivePage() {
   };
 
   return (
-    <div className="flex h-screen bg-brand-bg overflow-hidden">
+    <div className="flex h-full bg-brand-bg overflow-hidden">
       <Sidebar
         projects={projects || []}
         activeProject={activeProject}

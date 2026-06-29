@@ -170,7 +170,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div data-testid="dashboard-root" className="flex flex-col h-screen bg-brand-bg overflow-hidden">
+    <div data-testid="dashboard-root" className="flex flex-col h-full bg-brand-bg overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
       <Sidebar
         projects={projects || []}
