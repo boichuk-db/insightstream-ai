@@ -86,12 +86,12 @@ export function Sidebar({
         )}
       >
         {/* Decorative Glow */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute top-0 left-0 w-48 h-48 bg-brand-accent/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
         {/* Brand & Team/Project Switcher */}
         <div className="p-5 flex flex-col gap-6 border-b border-brand-border/50">
           <div className="flex items-center gap-2 font-bold text-lg text-white">
-            <Sparkles className="h-5 w-5 text-indigo-400" />
+            <Sparkles className="h-5 w-5 text-brand-accent" />
             InsightStream
           </div>
 
@@ -102,7 +102,7 @@ export function Sidebar({
                 <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors">
                   <div className="flex items-center gap-2 px-2">
                     <div className="flex flex-col items-start">
-                      <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider">
+                      <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider">
                         Team
                       </span>
                       <span className="text-sm font-semibold text-zinc-200 truncate max-w-[130px]">
@@ -111,7 +111,7 @@ export function Sidebar({
                     </div>
                   </div>
                   {teams.length > 1 && (
-                    <ChevronDown className="h-4 w-4 text-indigo-400/60" />
+                    <ChevronDown className="h-4 w-4 text-brand-accent/60" />
                   )}
                 </button>
               }
@@ -133,7 +133,7 @@ export function Sidebar({
                         className={cn(
                           "truncate pr-2",
                           activeTeam?.id === t.id
-                            ? "text-indigo-400 font-semibold"
+                            ? "text-brand-accent font-semibold"
                             : "text-zinc-300",
                         )}
                       >
@@ -157,14 +157,14 @@ export function Sidebar({
             trigger={
               <button className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors group">
                 <div className="flex flex-col items-start px-2">
-                  <span className="text-[10px] text-indigo-400/80 font-medium uppercase tracking-wider mb-0.5">
+                  <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider mb-0.5">
                     Active Project
                   </span>
                   <span className="text-sm font-semibold text-zinc-200 truncate max-w-[140px]">
                     {activeProject?.name || "Loading..."}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-indigo-400/60" />
+                <ChevronDown className="h-4 w-4 text-brand-accent/60" />
               </button>
             }
             className="w-full"
@@ -184,7 +184,7 @@ export function Sidebar({
                     className={cn(
                       "truncate pr-2",
                       activeProject?.id === p.id
-                        ? "text-indigo-400 font-semibold"
+                        ? "text-brand-accent font-semibold"
                         : "text-zinc-300",
                     )}
                   >
@@ -219,44 +219,44 @@ export function Sidebar({
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <LayoutDashboard className="h-4 w-4 text-indigo-400" /> Dashboard
+            <LayoutDashboard className="h-4 w-4 text-brand-accent" /> Dashboard
           </Link>
           <Link
             href="/dashboard/archive"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/archive")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <Archive className="h-4 w-4 text-indigo-400" /> Archive
+            <Archive className="h-4 w-4 text-brand-accent" /> Archive
           </Link>
           <Link
             href="/dashboard/activity"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/activity")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <Activity className="h-4 w-4 text-indigo-400" /> Activity Log
+            <Activity className="h-4 w-4 text-brand-accent" /> Activity Log
           </Link>
           <Link
             href="/dashboard/embed"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/embed")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <Code className="h-4 w-4 text-indigo-400" /> Embed Widget
+            <Code className="h-4 w-4 text-brand-accent" /> Embed Widget
           </Link>
 
           <div className="my-1 h-px bg-brand-border/30 mx-2" />
@@ -266,22 +266,22 @@ export function Sidebar({
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/settings")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <Settings className="h-4 w-4 text-indigo-400" /> Settings
+            <Settings className="h-4 w-4 text-brand-accent" /> Settings
           </Link>
           <Link
             href="/dashboard/billing"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/billing")
-                ? "bg-indigo-500/10 text-indigo-400"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
           >
-            <CreditCard className="h-4 w-4 text-indigo-400" /> Billing
+            <CreditCard className="h-4 w-4 text-brand-accent" /> Billing
           </Link>
           {activeTeam && (
             <Link
@@ -289,11 +289,11 @@ export function Sidebar({
               className={cn(
                 "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
                 isActive("/dashboard/settings/team")
-                  ? "bg-indigo-500/10 text-indigo-400"
+                  ? "bg-brand-accent/10 text-brand-accent"
                   : "text-zinc-400 hover:text-white hover:bg-brand-border",
               )}
             >
-              <Users className="h-4 w-4 text-indigo-400" /> Team Settings
+              <Users className="h-4 w-4 text-brand-accent" /> Team Settings
             </Link>
           )}
 
@@ -321,7 +321,7 @@ export function Sidebar({
             }
             className="flex items-center gap-3 w-full p-2.5 rounded-lg text-brand-muted hover:text-red-400 hover:bg-red-500/10 font-medium text-sm transition-colors disabled:opacity-50 disabled:hover:text-brand-muted disabled:hover:bg-transparent disabled:cursor-not-allowed group"
           >
-            <Trash2 className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />{" "}
+            <Trash2 className="h-4 w-4 text-brand-accent group-hover:scale-110 transition-transform" />{" "}
             Delete Project
           </button>
         </div>
@@ -346,19 +346,19 @@ export function Sidebar({
                     userProfile?.plan === PlanType.BUSINESS
                       ? "bg-amber-500/20 text-amber-400"
                       : userProfile?.plan === PlanType.PRO
-                        ? "bg-indigo-500/20 text-indigo-400"
+                        ? "bg-brand-accent/20 text-brand-accent"
                         : "bg-brand-border text-brand-muted",
                   )}
                 >
                   {getPlanConfig(userProfile?.plan || "FREE").name}
                 </span>
                 {userRole && (
-                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400">
+                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand-accent/20 text-brand-accent">
                     {userRole}
                   </span>
                 )}
                 {!isPaidPlan(userProfile?.plan || "FREE") && (
-                  <span className="text-[10px] text-indigo-400 font-medium">
+                  <span className="text-[10px] text-brand-accent font-medium">
                     Upgrade
                   </span>
                 )}
@@ -371,7 +371,7 @@ export function Sidebar({
             size="sm"
             className="w-full text-zinc-400 hover:text-white justify-start px-3"
           >
-            <LogOut className="h-4 w-4 mr-2 text-indigo-400" /> Sign Out
+            <LogOut className="h-4 w-4 mr-2 text-brand-accent" /> Sign Out
           </Button>
         </div>
       </div>
