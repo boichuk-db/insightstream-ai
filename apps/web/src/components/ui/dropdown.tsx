@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, isValidElement, cloneElement, Children } from "react";
+import { useState, useRef, useEffect, cloneElement, Children } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -73,14 +73,23 @@ function Dropdown({ trigger, children, align = "left", className }: DropdownProp
   const close = () => setIsOpen(false);
 
   const injectClose = (node: React.ReactNode): React.ReactNode => {
-    if (!isValidElement(node)) return node;
-    if (node.type === DropdownItem) {
-      return cloneElement(node as React.ReactElement<DropdownItemProps>, { onClose: close });
+    if (!node || typeof node !== "object") return node;
+    const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+    if (element.type === DropdownItem) {
+      return cloneElement(
+        element as React.ReactElement<DropdownItemProps>,
+        { onClose: close },
+      );
+    }
+    if (element.props?.children) {
+      return cloneElement(element, {
+        children: Children.map(element.props.children, injectClose),
+      });
     }
     return node;
   };
 
-  const childrenWithClose = Children.map(children, (child) => injectClose(child));
+  const childrenWithClose = Children.map(children, injectClose);
 
   return (
     <div ref={ref} className="relative">
