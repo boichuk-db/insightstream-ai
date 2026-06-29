@@ -24,6 +24,10 @@ export class PlanLimitsService {
 
   async getUserPlan(userId: string): Promise<PlanType> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
+    const planStatus = user?.planStatus ?? 'active';
+    if (planStatus === 'past_due' || planStatus === 'canceled') {
+      return PlanType.FREE;
+    }
     return (user?.plan as PlanType) || PlanType.FREE;
   }
 
@@ -103,7 +107,7 @@ export class PlanLimitsService {
     });
     if (!team) return { allowed: false, current: 0, max: 0 };
 
-    const ownerPlan = (team.owner?.plan as PlanType) || PlanType.FREE;
+    const ownerPlan = await this.getUserPlan(team.owner.id);
     const limits = this.getLimits(ownerPlan);
     const current = await this.memberRepo.count({ where: { teamId } });
     return {

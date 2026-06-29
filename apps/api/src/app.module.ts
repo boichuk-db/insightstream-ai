@@ -21,6 +21,7 @@ import { TeamsModule } from './modules/teams/teams.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { ActivityModule } from './modules/activity/activity.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 import {
   User,
   Feedback,
@@ -89,6 +90,7 @@ import {
     InvitationsModule,
     CommentsModule,
     ActivityModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [

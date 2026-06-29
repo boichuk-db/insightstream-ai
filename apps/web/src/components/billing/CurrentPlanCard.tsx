@@ -1,0 +1,78 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { planStatusQuery, PlanStatus } from "@/lib/queries";
+import { cn } from "@/lib/utils";
+
+function statusLabel(status: PlanStatus["planStatus"]) {
+  const map: Record<PlanStatus["planStatus"], string> = {
+    active: "Active",
+    trialing: "Trial",
+    past_due: "Payment Failed",
+    canceled: "Canceled",
+  };
+  return map[status];
+}
+
+function statusBadgeClass(status: PlanStatus["planStatus"]) {
+  if (status === "trialing") return "bg-indigo-500/20 text-indigo-400";
+  if (status === "past_due") return "bg-red-500/20 text-red-400";
+  if (status === "canceled") return "bg-zinc-500/20 text-zinc-400";
+  return "bg-green-500/20 text-green-400";
+}
+
+export function CurrentPlanCard() {
+  const { data, isLoading } = useQuery(planStatusQuery);
+
+  const handleManage = async () => {
+    const res = await api.get<{ url: string }>("/plans/portal");
+    window.location.href = res.data.url;
+  };
+
+  if (isLoading) {
+    return <div className="h-24 animate-pulse bg-brand-surface rounded-xl border border-brand-border" />;
+  }
+  if (!data) return null;
+
+  const daysLeft =
+    data.trialEndsAt && data.planStatus === "trialing"
+      ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - Date.now()) / 86_400_000))
+      : null;
+
+  return (
+    <div className="p-5 bg-brand-surface border border-brand-border rounded-xl flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold text-white">{data.plan}</span>
+          <span
+            className={cn(
+              "text-xs font-semibold px-2 py-0.5 rounded-full",
+              statusBadgeClass(data.planStatus),
+            )}
+          >
+            {statusLabel(data.planStatus)}
+          </span>
+        </div>
+        {daysLeft !== null && (
+          <p className="text-sm text-zinc-400">
+            Trial ends in {daysLeft} day{daysLeft !== 1 ? "s" : ""}
+          </p>
+        )}
+        {data.planStatus === "past_due" && (
+          <p className="text-sm text-red-400">
+            Payment failed — update your payment method to avoid downgrade to Free
+          </p>
+        )}
+      </div>
+      {data.stripeSubscriptionId && (
+        <button
+          onClick={handleManage}
+          className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors whitespace-nowrap shrink-0"
+        >
+          Manage subscription →
+        </button>
+      )}
+    </div>
+  );
+}
