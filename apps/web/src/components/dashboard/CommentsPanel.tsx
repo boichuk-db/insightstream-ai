@@ -140,12 +140,12 @@ export function CommentsPanel({
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
-                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:border-indigo-500 outline-none"
+                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:border-brand-primary outline-none"
               />
               <button
                 type="submit"
                 disabled={!newComment.trim() || addMutation.isPending}
-                className="p-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg disabled:opacity-50 transition-colors"
+                className="p-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg disabled:opacity-50 transition-colors"
               >
                 <Send className="h-4 w-4" />
               </button>

@@ -65,8 +65,8 @@ export function DigestModal({
       onClose={onClose}
       title="AI Weekly Digest"
       icon={
-        <div className="p-2 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-          <Sparkles className="h-4 w-4 text-indigo-400" />
+        <div className="p-2 bg-brand-accent/10 border border-brand-accent/20 rounded-xl">
+          <Sparkles className="h-4 w-4 text-brand-accent" />
         </div>
       }
       size="md"
@@ -75,7 +75,7 @@ export function DigestModal({
         {/* Loading */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
-            <Loader2 className="h-8 w-8 text-indigo-400 animate-spin" />
+            <Loader2 className="h-8 w-8 text-brand-accent animate-spin" />
             <p className="text-sm text-zinc-400">Gemini аналізує тренди...</p>
           </div>
         )}
@@ -97,7 +97,7 @@ export function DigestModal({
             {/* KPI row */}
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                <p className="text-2xl font-black text-indigo-400">
+                <p className="text-2xl font-black text-brand-accent">
                   {data.totalCount}
                 </p>
                 <p className="text-[10px] text-brand-muted uppercase tracking-wider mt-1 flex items-center justify-center gap-1">
@@ -123,9 +123,9 @@ export function DigestModal({
             </div>
 
             {/* AI Summary */}
-            <LabeledSection icon={Sparkles} label="Gemini Аналіз" iconColor="text-indigo-400">
+            <LabeledSection icon={Sparkles} label="Gemini Аналіз" iconColor="text-brand-accent">
               <div
-                className="text-sm text-zinc-300 leading-relaxed bg-indigo-500/5 border border-indigo-500/10 rounded-xl px-4 py-3 space-y-2 [&_p]:mb-2 [&_p:last-child]:mb-0"
+                className="text-sm text-zinc-300 leading-relaxed bg-brand-accent/5 border border-brand-accent/10 rounded-xl px-4 py-3 space-y-2 [&_p]:mb-2 [&_p:last-child]:mb-0"
                 dangerouslySetInnerHTML={{ __html: data.aiSummary }}
               />
             </LabeledSection>

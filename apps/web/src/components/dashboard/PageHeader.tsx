@@ -21,7 +21,7 @@ export function PageHeader({ icon, title, subtitle, right, onBack }: PageHeaderP
         <div className="flex items-center gap-4">
           <button
             onClick={handleBack}
-            className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:scale-105 active:scale-95 shadow-lg group"
+            className="p-2.5 bg-brand-surface border border-brand-border rounded-xl text-brand-accent hover:text-brand-accent/80 transition-all hover:scale-105 active:scale-95 shadow-lg group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
           </button>

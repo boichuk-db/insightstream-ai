@@ -43,7 +43,7 @@ const ACTION_CONFIG: Record<
   },
   comment_added: {
     icon: MessageCircle,
-    color: "text-indigo-400",
+    color: "text-brand-accent",
     label: "added a comment",
   },
   project_created: {
@@ -58,7 +58,7 @@ const ACTION_CONFIG: Record<
   },
   invitation_sent: {
     icon: Mail,
-    color: "text-indigo-400",
+    color: "text-brand-accent",
     label: "sent an invitation",
   },
 };
