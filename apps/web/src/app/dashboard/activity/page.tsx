@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { Section } from "@/components/ui/section";
 
 export default function ActivityPage() {
   const router = useRouter();
@@ -38,10 +39,8 @@ export default function ActivityPage() {
 
       {/* Activity Content */}
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-brand-surface border border-brand-border rounded-2xl shadow-xl overflow-hidden relative group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-          <div className="relative z-10">
+        <Section glow="top-right" padding="sm" className="overflow-hidden">
+          <div>
             <div className="p-6 border-b border-brand-border/50 bg-brand-surface/50 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
@@ -69,7 +68,7 @@ export default function ActivityPage() {
               <ActivityFeed teamId={activeTeam?.id} />
             </div>
           </div>
-        </div>
+        </Section>
       </div>
     </DashboardShell>
   );

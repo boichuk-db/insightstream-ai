@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { planStatusQuery, PlanStatus } from "@/lib/queries";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 function statusLabel(status: PlanStatus["planStatus"]) {
   const map: Record<PlanStatus["planStatus"], string> = {
@@ -44,7 +45,7 @@ export function CurrentPlanCard() {
     <div className="p-5 bg-brand-surface border border-brand-border rounded-xl flex items-start justify-between gap-4">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-white">{data.plan}</span>
+          <Badge variant="plan" value={data.plan} />
           <span
             className={cn(
               "text-xs font-semibold px-2 py-0.5 rounded-full",

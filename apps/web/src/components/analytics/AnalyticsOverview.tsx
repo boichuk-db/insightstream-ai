@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { TrendingUp, PieChart, Info } from "lucide-react";
 import { CATEGORY_COLORS } from "@/lib/colors";
+import { Section } from "@/components/ui/section";
 
 interface Feedback {
   id: string;
@@ -108,9 +109,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 w-full">
       {/* Sentiment Trend Chart */}
-      <div className="bg-brand-surface border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
-
+      <Section glow="top-right">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-indigo-400" /> Sentiment Trend
@@ -169,12 +168,10 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
             </div>
           )}
         </div>
-      </div>
+      </Section>
 
       {/* Category Distribution Chart */}
-      <div className="bg-brand-surface border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
-
+      <Section glow="bottom-left">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <PieChart className="h-5 w-5 text-emerald-400" /> Category
@@ -241,7 +238,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
             </div>
           )}
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

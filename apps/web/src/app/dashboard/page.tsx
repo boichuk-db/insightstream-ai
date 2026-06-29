@@ -11,6 +11,8 @@ import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, MessageSquare, Sparkles, Menu, Code } from "lucide-react";
+import { Section } from "@/components/ui/section";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
@@ -216,10 +218,8 @@ export default function Dashboard() {
           </section>
 
           {/* Manual Input */}
-          <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 relative group transition-all duration-300 hover:bg-brand-surface/80 shadow-2xl shrink-0">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-            <div className="flex flex-col gap-6 relative z-10">
+          <Section className="transition-all duration-300 hover:bg-brand-surface/80 shadow-2xl shrink-0">
+            <div className="flex flex-col gap-6">
               <div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                   <Plus className="h-5 w-5 text-indigo-400" /> Manual Input
@@ -270,7 +270,7 @@ export default function Dashboard() {
                 </Button>
               </form>
             </div>
-          </section>
+          </Section>
 
           {/* Analytics */}
           {!isLoading && !isError && feedbacks?.length > 0 && (
@@ -302,22 +302,7 @@ export default function Dashboard() {
 
             <div className="flex-1 w-full max-w-full">
               {isLoading ? (
-                <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-[600px] bg-brand-surface/50 rounded-2xl border border-brand-border/50 p-4 space-y-4 animate-pulse"
-                    >
-                      <div className="h-6 w-1/3 bg-brand-border rounded mb-2" />
-                      {[1, 2, 3].map((j) => (
-                        <div
-                          key={j}
-                          className="h-32 w-full bg-brand-border/40 rounded-xl border border-brand-border/40"
-                        />
-                      ))}
-                    </div>
-                  ))}
-                </div>
+                <Skeleton count={5} height="h-[600px]" layout="grid" cols={4} />
               ) : isError ? (
                 <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
                   <span className="block text-lg font-bold mb-1">

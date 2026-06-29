@@ -5,12 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { projectsQuery } from "@/lib/queries";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
-import { useRouter } from "next/navigation";
 import {
   Code,
   Sparkles,
   Check,
-  Copy,
   Type,
   Maximize,
   LayoutTemplate,
@@ -20,11 +18,13 @@ import {
   Settings as SettingsIcon,
   Info,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { Section } from "@/components/ui/section";
+import { CopyButton } from "@/components/ui/copy-button";
+import { LabeledSection } from "@/components/ui/labeled-section";
 
 const COLORS = [
   { name: "Indigo", value: "#6366f1" },
@@ -40,7 +40,6 @@ const POSITIONS = ["bottom-right", "bottom-left"] as const;
 const FRAMEWORKS = ["html", "react", "angular"] as const;
 
 export default function EmbedPage() {
-  const router = useRouter();
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] =
     useState(false);
@@ -52,20 +51,12 @@ export default function EmbedPage() {
     useState<(typeof POSITIONS)[number]>("bottom-right");
   const [selectedFramework, setSelectedFramework] =
     useState<(typeof FRAMEWORKS)[number]>("html");
-  const [copied, setCopied] = useState(false);
-  const [copiedKey, setCopiedKey] = useState(false);
 
   const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
   const apiKey = activeProject?.apiKey || "LOADING...";
-
-  const handleCopyKey = () => {
-    navigator.clipboard.writeText(apiKey);
-    setCopiedKey(true);
-    setTimeout(() => setCopiedKey(false), 2000);
-  };
 
   const getSnippet = () => {
     const scriptUrl =
@@ -155,12 +146,6 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 
   const snippet = getSnippet();
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(snippet);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <DashboardShell
       mainClassName="flex-1 overflow-hidden flex flex-col bg-brand-bg/20"
@@ -178,8 +163,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             {/* Configuration Column */}
             <div className="xl:col-span-7 space-y-6">
               {/* Visual Config */}
-              <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
+              <Section>
                 <h2 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
                   <SettingsIcon className="h-5 w-5 text-indigo-400" /> Visual
                   Configuration
@@ -187,10 +171,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 
                 <div className="flex flex-col gap-12">
                   {/* Row 1: Colors (Full Width) */}
-                  <div>
-                    <h3 className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] mb-4">
-                      Brand Color
-                    </h3>
+                  <LabeledSection icon={Type} label="Brand Color">
                     <div className="flex gap-4 flex-wrap items-center">
                       <div className="flex gap-3 flex-wrap">
                         {COLORS.map((color) => (
@@ -227,61 +208,59 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </LabeledSection>
 
                   <div className="h-px bg-brand-border/20 w-full" />
 
                   {/* Row 2: Shape & Position (Side by side with more gap) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="min-w-0">
-                      <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">
-                        Button Shape
-                      </h4>
-                      <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit max-w-full overflow-x-auto no-scrollbar">
-                        {SHAPES.map((shape) => (
-                          <button
-                            key={shape}
-                            onClick={() => setSelectedShape(shape)}
-                            className={cn(
-                              "min-w-[80px] px-3 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
-                              selectedShape === shape
-                                ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
-                                : "text-brand-muted hover:text-zinc-300 border border-transparent",
-                            )}
-                          >
-                            {shape}
-                          </button>
-                        ))}
-                      </div>
+                      <LabeledSection icon={Maximize} label="Button Shape">
+                        <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit max-w-full overflow-x-auto no-scrollbar">
+                          {SHAPES.map((shape) => (
+                            <button
+                              key={shape}
+                              onClick={() => setSelectedShape(shape)}
+                              className={cn(
+                                "min-w-[80px] px-3 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
+                                selectedShape === shape
+                                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
+                                  : "text-brand-muted hover:text-zinc-300 border border-transparent",
+                              )}
+                            >
+                              {shape}
+                            </button>
+                          ))}
+                        </div>
+                      </LabeledSection>
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] mb-4">
-                        Screen Position
-                      </h3>
-                      <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit max-w-full overflow-x-auto no-scrollbar">
-                        {POSITIONS.map((pos) => (
-                          <button
-                            key={pos}
-                            onClick={() => setSelectedPosition(pos)}
-                            className={cn(
-                              "min-w-[100px] px-4 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
-                              selectedPosition === pos
-                                ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
-                                : "text-brand-muted hover:text-zinc-300 border border-transparent",
-                            )}
-                          >
-                            {pos.replace("-", " ")}
-                          </button>
-                        ))}
-                      </div>
+                      <LabeledSection icon={Menu} label="Screen Position">
+                        <div className="flex bg-brand-bg rounded-xl p-1 border border-brand-border w-fit max-w-full overflow-x-auto no-scrollbar">
+                          {POSITIONS.map((pos) => (
+                            <button
+                              key={pos}
+                              onClick={() => setSelectedPosition(pos)}
+                              className={cn(
+                                "min-w-[100px] px-4 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
+                                selectedPosition === pos
+                                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-sm"
+                                  : "text-brand-muted hover:text-zinc-300 border border-transparent",
+                              )}
+                            >
+                              {pos.replace("-", " ")}
+                            </button>
+                          ))}
+                        </div>
+                      </LabeledSection>
                     </div>
                   </div>
                 </div>
-              </section>
+              </Section>
 
               {/* Implementation Snippet */}
-              <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+              <Section>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <LayoutTemplate className="h-5 w-5 text-indigo-400" />{" "}
@@ -307,17 +286,12 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 
                 <div className="relative group/snippet">
                   <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover/snippet:opacity-100 transition-opacity z-10">
-                    <Button
-                      onClick={handleCopy}
+                    <CopyButton
+                      text={snippet}
+                      label="Copy Code"
+                      size="sm"
                       className="h-8 px-3 text-[10px] bg-brand-surface border-brand-border hover:bg-zinc-800"
-                    >
-                      {copied ? (
-                        <Check size={12} className="mr-1" />
-                      ) : (
-                        <Copy size={12} className="mr-1" />
-                      )}
-                      {copied ? "Copied" : "Copy Code"}
-                    </Button>
+                    />
                   </div>
                   <pre className="bg-brand-bg border border-brand-border p-5 rounded-xl overflow-x-auto text-sm text-indigo-200/80 font-mono leading-relaxed max-h-[400px] custom-scrollbar focus:ring-1 focus:ring-indigo-500/50 outline-none">
                     <code>{snippet}</code>
@@ -350,7 +324,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     )}
                   </p>
                 </div>
-              </section>
+              </Section>
             </div>
 
             {/* Sidebar / Info Column */}
@@ -365,12 +339,13 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   <code className="flex-1 bg-black/20 border border-white/20 rounded-xl px-4 py-3 text-sm font-mono truncate">
                     {apiKey}
                   </code>
-                  <button
-                    onClick={handleCopyKey}
+                  <CopyButton
+                    text={apiKey}
+                    label=""
+                    copiedLabel=""
+                    size="sm"
                     className="shrink-0 p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/20 transition-all active:scale-95"
-                  >
-                    {copiedKey ? <Check size={18} /> : <Copy size={18} />}
-                  </button>
+                  />
                 </div>
                 <p className="text-xs text-indigo-100 leading-relaxed italic opacity-80">
                   * Keeping your API Key secure is important. Do not expose it
@@ -379,7 +354,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               </section>
 
               {/* Instructions / Best Practices */}
-              <section className="bg-brand-surface/60 border border-brand-border/50 rounded-2xl p-6 shadow-xl space-y-5">
+              <Section className="space-y-5">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-indigo-400" /> Quick
                   Installation Guide
@@ -431,7 +406,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     </div>
                   </div>
                 </div>
-              </section>
+              </Section>
             </div>
           </div>
         </div>
