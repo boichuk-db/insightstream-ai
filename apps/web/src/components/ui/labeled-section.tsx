@@ -12,7 +12,7 @@ interface LabeledSectionProps {
 export function LabeledSection({
   icon: Icon,
   label,
-  iconColor = "text-indigo-400",
+  iconColor = "text-brand-accent",
   children,
   className,
 }: LabeledSectionProps) {

@@ -10,7 +10,7 @@ interface UsageMeterProps {
 export function UsageMeter({ label, current, max, className }: UsageMeterProps) {
   const pct = max ? Math.min((current / max) * 100, 100) : 0;
   const colorClass =
-    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : "bg-indigo-500";
+    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : "bg-brand-primary";
 
   return (
     <div className={cn("p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50", className)}>

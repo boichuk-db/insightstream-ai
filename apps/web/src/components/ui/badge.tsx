@@ -4,19 +4,19 @@ import { getCategoryColor } from "@/lib/colors";
 type BadgeVariant = "role" | "plan" | "category" | "status";
 
 const ROLE_COLORS: Record<string, string> = {
-  owner: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+  owner: "bg-brand-accent/15 text-brand-accent border-brand-accent/30",
   admin: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   member: "bg-zinc-500/15 text-zinc-300 border-zinc-500/30",
 };
 
 const PLAN_COLORS: Record<string, string> = {
   free: "bg-zinc-500/15 text-zinc-300 border-zinc-500/30",
-  pro: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+  pro: "bg-brand-accent/15 text-brand-accent border-brand-accent/30",
   enterprise: "bg-amber-500/15 text-amber-300 border-amber-500/30",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  new: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+  new: "bg-brand-accent/15 text-brand-accent border-brand-accent/30",
   in_review: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   "In Review": "bg-amber-500/15 text-amber-300 border-amber-500/30",
   "In Progress": "bg-blue-500/15 text-blue-300 border-blue-500/30",

@@ -18,7 +18,7 @@ export function ListItem({ icon, primary, secondary, actions, className }: ListI
     >
       <div className="flex items-center gap-3 min-w-0">
         {icon && (
-          <div className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+          <div className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20">
             {icon}
           </div>
         )}

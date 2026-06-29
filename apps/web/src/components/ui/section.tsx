@@ -9,9 +9,9 @@ const PADDING = {
 
 const GLOW_CLASSES = {
   "top-right":
-    "absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none",
+    "absolute top-0 right-0 w-48 h-48 bg-brand-accent/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none",
   "bottom-left":
-    "absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none",
+    "absolute bottom-0 left-0 w-48 h-48 bg-brand-accent/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none",
 };
 
 interface SectionProps {

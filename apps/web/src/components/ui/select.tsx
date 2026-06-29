@@ -44,8 +44,8 @@ export function Select({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-sm text-zinc-200 ring-offset-brand-bg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
-          isOpen && "border-indigo-500/50 ring-2 ring-indigo-500/20",
+          "flex h-10 w-full items-center justify-between rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-sm text-zinc-200 ring-offset-brand-bg focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent/30 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
+          isOpen && "border-brand-accent/30 ring-2 ring-brand-accent/30",
         )}
       >
         <span className="capitalize">{selectedOption}</span>
@@ -78,7 +78,7 @@ export function Select({
                   className={cn(
                     "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors",
                     value === option
-                      ? "bg-indigo-500/10 text-indigo-400 font-medium"
+                      ? "bg-brand-accent/10 text-brand-accent font-medium"
                       : "text-brand-muted hover:bg-brand-surface hover:text-zinc-200",
                   )}
                 >
