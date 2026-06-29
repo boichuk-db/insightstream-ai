@@ -42,7 +42,9 @@ tmp
 .temp
 
 # Local documentation (not tracked in git)
-docs/
+docs/**
+!docs/superpowers/
+!docs/superpowers/**
 
 # AWS local config (contains resource IDs, never commit)
 infra/aws-ids.txt
