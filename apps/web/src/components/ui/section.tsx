@@ -41,7 +41,7 @@ export function Section({
           <div className={GLOW_CLASSES[glow]} />
         </div>
       )}
-      <div className={cn("relative z-10", PADDING[padding] ?? PADDING.md)}>{children}</div>
+      <div className={cn("relative", PADDING[padding] ?? PADDING.md)}>{children}</div>
     </Tag>
   );
 }
