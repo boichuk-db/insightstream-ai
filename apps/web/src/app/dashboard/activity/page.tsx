@@ -2,17 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { Activity, Clock, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Activity, Clock } from "lucide-react";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Section } from "@/components/ui/section";
 
 export default function ActivityPage() {
-  const router = useRouter();
-
   const { data: teams } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
@@ -37,39 +33,9 @@ export default function ActivityPage() {
         }
       />
 
-      {/* Activity Content */}
-      <div className="grid grid-cols-1 gap-6">
-        <Section glow="top-right" padding="sm" className="overflow-hidden">
-          <div>
-            <div className="p-6 border-b border-brand-border/50 bg-brand-surface/50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                  <Activity className="h-4 w-4 text-indigo-400" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white">
-                    Activity Feed
-                  </h2>
-                  <p className="text-[10px] text-brand-muted mt-0.5">
-                    Showing last 30 events for {activeTeam?.name}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button variant="brand" size="xs" className="px-3">
-                  <Filter className="h-3 w-3 mr-2 text-indigo-400" /> All
-                  Events
-                </Button>
-              </div>
-            </div>
-
-            <div className="p-2">
-              <ActivityFeed teamId={activeTeam?.id} />
-            </div>
-          </div>
-        </Section>
-      </div>
+      <Section glow="top-right">
+        <ActivityFeed teamId={activeTeam?.id} />
+      </Section>
     </DashboardShell>
   );
 }
