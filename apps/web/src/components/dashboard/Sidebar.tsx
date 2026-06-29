@@ -82,7 +82,7 @@ export function Sidebar({
 
       <div
         className={cn(
-          "fixed inset-y-0 left-0 w-64 h-screen bg-brand-surface border-r border-brand-border shrink-0 z-50 flex flex-col transition-transform duration-300 lg:relative lg:translate-x-0",
+          "fixed inset-y-0 left-0 w-64 h-screen bg-brand-surface border-r border-brand-border shrink-0 z-50 flex flex-col transition-transform duration-300 lg:relative lg:translate-x-0 lg:h-full",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -314,10 +314,10 @@ export function Sidebar({
           <div className="my-1 h-px bg-brand-border/30 mx-2" />
 
           <Link
-            href="/settings"
+            href="/dashboard/settings"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-              isActive("/settings")
+              isActive("/dashboard/settings")
                 ? "bg-indigo-500/10 text-indigo-400"
                 : "text-zinc-400 hover:text-white hover:bg-brand-border",
             )}
@@ -337,10 +337,10 @@ export function Sidebar({
           </Link>
           {activeTeam && (
             <Link
-              href="/settings/team"
+              href="/dashboard/settings/team"
               className={cn(
                 "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-                isActive("/settings/team")
+                isActive("/dashboard/settings/team")
                   ? "bg-indigo-500/10 text-indigo-400"
                   : "text-zinc-400 hover:text-white hover:bg-brand-border",
               )}
@@ -381,7 +381,7 @@ export function Sidebar({
         {/* User Footer */}
         <div className="p-4 border-t bg-brand-surface/50 border-brand-border/50 mt-auto">
           <Link
-            href="/settings"
+            href="/dashboard/settings"
             className="flex items-center gap-3 mb-4 group cursor-pointer rounded-xl p-1.5 -m-1.5 hover:bg-brand-border/50 transition-colors"
           >
             <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-zinc-700 overflow-hidden text-zinc-400 group-hover:border-zinc-600 transition-colors">
