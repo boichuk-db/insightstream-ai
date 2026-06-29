@@ -64,21 +64,21 @@ export function Modal({
               className,
             )}
           >
-            <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <div className="p-6 border-b border-brand-border flex justify-between items-center bg-brand-surface/50">
+              <h3 className="text-xl font-bold text-brand-fg flex items-center gap-2">
                 {icon}
                 {title}
               </h3>
               <button
                 onClick={onClose}
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-brand-muted hover:text-brand-fg transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-6 overflow-y-auto max-h-[70vh]">{children}</div>
             {footer && (
-              <div className="p-4 border-t border-zinc-800 flex justify-end gap-3">
+              <div className="p-4 border-t border-brand-border flex justify-end gap-3">
                 {footer}
               </div>
             )}

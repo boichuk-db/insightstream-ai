@@ -34,7 +34,7 @@ function DropdownItem({
         "flex w-full items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left",
         destructive
           ? "text-red-400 hover:bg-red-500/10"
-          : "text-zinc-300 hover:bg-white/5 hover:text-white",
+          : "text-brand-muted hover:bg-white/5 hover:text-brand-fg",
         disabled && "opacity-40 pointer-events-none",
         className,
       )}
@@ -46,7 +46,7 @@ function DropdownItem({
 }
 
 function DropdownSeparator() {
-  return <div className="my-1 h-px bg-zinc-800" />;
+  return <div className="my-1 h-px bg-brand-border" />;
 }
 
 interface DropdownProps {
@@ -102,7 +102,7 @@ function Dropdown({ trigger, children, align = "left", className }: DropdownProp
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.12 }}
             className={cn(
-              "absolute top-full mt-2 z-50 min-w-[160px] rounded-xl border border-zinc-800 bg-zinc-900 shadow-2xl p-1",
+              "absolute top-full mt-2 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface shadow-2xl p-1",
               align === "right" ? "right-0" : "left-0",
               className,
             )}

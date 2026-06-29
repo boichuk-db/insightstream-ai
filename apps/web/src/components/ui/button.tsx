@@ -27,9 +27,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary:
         "bg-brand-primary text-white hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/20 border-transparent",
       secondary:
-        "bg-brand-surface border border-brand-border text-zinc-300 hover:text-white hover:bg-brand-surface-hover hover:border-brand-border-hover shadow-sm",
+        "bg-brand-surface border border-brand-border text-brand-muted hover:text-brand-fg hover:bg-brand-surface-hover hover:border-brand-border-hover shadow-sm",
       ghost:
-        "bg-transparent text-brand-muted hover:text-zinc-200 hover:bg-white/5 border-transparent",
+        "bg-transparent text-brand-muted hover:text-brand-fg hover:bg-white/5 border-transparent",
       danger:
         "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20 shadow-sm shadow-red-950/20",
     };

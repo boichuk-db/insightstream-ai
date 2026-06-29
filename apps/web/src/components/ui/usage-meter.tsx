@@ -13,16 +13,16 @@ export function UsageMeter({ label, current, max, className }: UsageMeterProps) 
     pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : "bg-brand-primary";
 
   return (
-    <div className={cn("p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50", className)}>
+    <div className={cn("p-4 bg-brand-surface rounded-xl border border-brand-border", className)}>
       <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
         {label}
       </p>
-      <p className="text-lg font-bold text-white">
+      <p className="text-lg font-bold text-brand-fg">
         {current}{" "}
-        <span className="text-zinc-500 text-sm font-normal">/ {max === null ? "∞" : max}</span>
+        <span className="text-brand-muted text-sm font-normal">/ {max === null ? "∞" : max}</span>
       </p>
       {max !== null && (
-        <div className="mt-2 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="mt-2 h-1.5 bg-brand-border rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all", colorClass)}
             style={{ width: `${pct}%` }}

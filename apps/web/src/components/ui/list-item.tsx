@@ -12,7 +12,7 @@ export function ListItem({ icon, primary, secondary, actions, className }: ListI
   return (
     <div
       className={cn(
-        "group flex items-center justify-between p-3 bg-zinc-950/50 rounded-xl border border-zinc-800/50",
+        "group flex items-center justify-between p-3 bg-brand-surface rounded-xl border border-brand-border",
         className,
       )}
     >
@@ -23,7 +23,7 @@ export function ListItem({ icon, primary, secondary, actions, className }: ListI
           </div>
         )}
         <div className="min-w-0">
-          <div className="text-sm font-medium text-zinc-200 truncate">{primary}</div>
+          <div className="text-sm font-medium text-brand-fg truncate">{primary}</div>
           {secondary && (
             <div className="text-[10px] text-brand-muted mt-0.5">{secondary}</div>
           )}
