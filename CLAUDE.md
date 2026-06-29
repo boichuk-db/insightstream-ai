@@ -70,3 +70,14 @@ docker compose up -d  # start local PostgreSQL + Redis
 - **Email**: SMTP Nodemailer (`SMTP_*` env vars)
 - **Sentry**: DSN у env vars (API + Web окремо)
 - **CORS**: Dynamic domain validation, whitelist per project in DB
+
+## Engineering Rules
+
+**Learning Loop:**
+After any correction from the user: determine if it represents a reusable project rule. If yes — immediately update `CLAUDE.md` or write a memory file at `C:\Users\Denys\.claude\projects\d--Work-insight-stream\memory\`. The same mistake must not require correction twice.
+
+**Verification Mandate:**
+Never write "done", "ready", or "OK" without running `pnpm typecheck && pnpm lint` and showing actual output. If tests exist for the affected module — run `pnpm test` too. Confidence is not evidence. If commands cannot run — state explicitly why.
+
+**Context Management:**
+For tasks with 3+ steps — break into milestones at the start of the conversation. When the conversation becomes long (many code edits, many turns) — summarize completed work and suggest starting a new chat with that summary as context.
