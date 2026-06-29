@@ -49,9 +49,9 @@ function AcceptInviteContent() {
   if (!token) {
     return (
       <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-        <div className="text-zinc-400 text-center">
+        <div className="text-brand-muted text-center">
           <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
-          <h1 className="text-xl font-bold text-white mb-2">Invalid Link</h1>
+          <h1 className="text-xl font-bold text-brand-fg mb-2">Invalid Link</h1>
           <p>No invitation token found.</p>
         </div>
       </div>
@@ -68,15 +68,15 @@ function AcceptInviteContent() {
         {isLoading ? (
           <div className="py-8">
             <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-zinc-400">Loading invitation...</p>
+            <p className="text-brand-muted">Loading invitation...</p>
           </div>
         ) : isError ? (
           <div>
             <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
-            <h1 className="text-xl font-bold text-white mb-2">
+            <h1 className="text-xl font-bold text-brand-fg mb-2">
               Invitation Not Found
             </h1>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-brand-muted mb-6">
               This invitation link may be invalid or expired.
             </p>
             <Link
@@ -89,24 +89,24 @@ function AcceptInviteContent() {
         ) : info?.status === "expired" ? (
           <div>
             <Clock className="h-12 w-12 mx-auto mb-4 text-amber-400" />
-            <h1 className="text-xl font-bold text-white mb-2">
+            <h1 className="text-xl font-bold text-brand-fg mb-2">
               Invitation Expired
             </h1>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-brand-muted mb-6">
               This invitation to{" "}
-              <strong className="text-white">{info.teamName}</strong> has
+              <strong className="text-brand-fg">{info.teamName}</strong> has
               expired. Ask the team admin to send a new one.
             </p>
           </div>
         ) : info?.status === "accepted" ? (
           <div>
             <CheckCircle className="h-12 w-12 mx-auto mb-4 text-emerald-400" />
-            <h1 className="text-xl font-bold text-white mb-2">
+            <h1 className="text-xl font-bold text-brand-fg mb-2">
               Already Accepted
             </h1>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-brand-muted mb-6">
               You've already joined{" "}
-              <strong className="text-white">{info.teamName}</strong>.
+              <strong className="text-brand-fg">{info.teamName}</strong>.
             </p>
             <Button
               variant="primary"
@@ -119,7 +119,7 @@ function AcceptInviteContent() {
         ) : acceptMutation.isSuccess ? (
           <div>
             <CheckCircle className="h-12 w-12 mx-auto mb-4 text-emerald-400" />
-            <h1 className="text-xl font-bold text-white mb-2">
+            <h1 className="text-xl font-bold text-brand-fg mb-2">
               Welcome to the team!
             </h1>
             <p className="text-neutral-400">Redirecting to dashboard...</p>
@@ -131,11 +131,11 @@ function AcceptInviteContent() {
             >
               <Users className="h-8 w-8 text-brand-accent" />
             </div>
-            <h1 className="text-xl font-bold text-white mb-2">
+            <h1 className="text-xl font-bold text-brand-fg mb-2">
               Team Invitation
             </h1>
             <p className="text-neutral-400 mb-1">You've been invited to join</p>
-            <p className="text-lg font-bold text-white mb-1">
+            <p className="text-lg font-bold text-brand-fg mb-1">
               {info?.teamName}
             </p>
             {info?.inviterEmail && (
@@ -189,7 +189,7 @@ export default function AcceptInvitePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="min-h-screen bg-brand-bg flex items-center justify-center">
           <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }

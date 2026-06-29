@@ -73,11 +73,11 @@ export function CommentsPanel({
             className="fixed right-0 top-0 h-full w-full max-w-md bg-brand-surface border-l border-brand-border z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-              <h3 className="text-lg font-bold text-white">Comments</h3>
+            <div className="flex items-center justify-between p-4 border-b border-brand-border">
+              <h3 className="text-lg font-bold text-brand-fg">Comments</h3>
               <button
                 onClick={onClose}
-                className="p-1.5 text-zinc-400 hover:text-white transition-colors"
+                className="p-1.5 text-brand-muted hover:text-brand-fg transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -102,7 +102,7 @@ export function CommentsPanel({
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <span className="text-sm font-medium text-zinc-200">
+                        <span className="text-sm font-medium text-brand-fg">
                           {comment.userEmail}
                         </span>
                         <span className="text-[10px] text-brand-muted ml-2">
@@ -114,13 +114,13 @@ export function CommentsPanel({
                       {comment.userId === currentUserId && (
                         <button
                           onClick={() => deleteMutation.mutate(comment.id)}
-                          className="p-1 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                          className="p-1 text-brand-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
-                    <p className="text-sm text-zinc-300 leading-relaxed">
+                    <p className="text-sm text-brand-fg leading-relaxed">
                       {comment.content}
                     </p>
                   </div>
@@ -134,13 +134,13 @@ export function CommentsPanel({
                 e.preventDefault();
                 if (newComment.trim()) addMutation.mutate(newComment);
               }}
-              className="p-4 border-t border-zinc-800 flex gap-2"
+              className="p-4 border-t border-brand-border flex gap-2"
             >
               <input
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
-                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:border-brand-primary outline-none"
+                className="flex-1 bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-fg placeholder-brand-muted focus:border-brand-primary outline-none"
               />
               <button
                 type="submit"

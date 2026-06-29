@@ -164,7 +164,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             <div className="xl:col-span-7 space-y-6">
               {/* Visual Config */}
               <Section>
-                <h2 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-brand-fg mb-8 flex items-center gap-2">
                   <SettingsIcon className="h-5 w-5 text-brand-accent" /> Visual
                   Configuration
                 </h2>
@@ -225,7 +225,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                                 "min-w-[80px] px-3 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                                 selectedShape === shape
                                   ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                                  : "text-brand-muted hover:text-zinc-300 border border-transparent",
+                                  : "text-brand-muted hover:text-brand-fg border border-transparent",
                               )}
                             >
                               {shape}
@@ -246,7 +246,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                                 "min-w-[100px] px-4 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                                 selectedPosition === pos
                                   ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                                  : "text-brand-muted hover:text-zinc-300 border border-transparent",
+                                  : "text-brand-muted hover:text-brand-fg border border-transparent",
                               )}
                             >
                               {pos.replace("-", " ")}
@@ -262,7 +262,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               {/* Implementation Snippet */}
               <Section>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
                     <LayoutTemplate className="h-5 w-5 text-brand-accent" />{" "}
                     Implementation Code
                   </h2>
@@ -275,7 +275,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                           "min-w-[70px] px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all",
                           selectedFramework === fw
                             ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                            : "text-brand-muted hover:text-zinc-300 border border-transparent",
+                            : "text-brand-muted hover:text-brand-fg border border-transparent",
                         )}
                       >
                         {fw === "html" ? "HTML" : fw}
@@ -290,7 +290,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       text={snippet}
                       label="Copy Code"
                       size="sm"
-                      className="h-8 px-3 text-[10px] bg-brand-surface border-brand-border hover:bg-zinc-800"
+                      className="h-8 px-3 text-[10px] bg-brand-surface border-brand-border hover:bg-brand-surface-hover"
                     />
                   </div>
                   <pre className="bg-brand-bg border border-brand-border p-5 rounded-xl overflow-x-auto text-sm text-brand-accent/80 font-mono leading-relaxed max-h-[400px] custom-scrollbar focus:ring-1 focus:ring-brand-accent/30 outline-none">
@@ -366,7 +366,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       1
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-brand-fg">
                         Select Project
                       </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">
@@ -381,7 +381,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       2
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-brand-fg">
                         Copy &amp; Paste
                       </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">
@@ -396,7 +396,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                       3
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-zinc-200">
+                      <p className="text-xs font-bold text-brand-fg">
                         Verify Connection
                       </p>
                       <p className="text-xs text-brand-muted mt-1 leading-relaxed">

@@ -45,7 +45,7 @@ export function FilterBar({
                   "h-3.5 w-3.5",
                   hasActiveFilters
                     ? "text-brand-accent"
-                    : "text-brand-muted group-hover:text-white",
+                    : "text-brand-muted group-hover:text-brand-fg",
                 )}
               />
               <span className="text-[11px] uppercase tracking-wider">Filter</span>
@@ -54,13 +54,13 @@ export function FilterBar({
                   {selectedTags.length}
                 </span>
               )}
-              <ChevronDown className="h-3 w-3 text-brand-muted group-hover:text-white" />
+              <ChevronDown className="h-3 w-3 text-brand-muted group-hover:text-brand-fg" />
             </Button>
           }
           className="w-72 p-4"
         >
           <div className="flex items-center justify-between mb-4 border-b border-brand-border/50 pb-3">
-            <h4 className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+            <h4 className="text-[10px] font-bold text-brand-fg uppercase tracking-widest flex items-center gap-2">
               <Filter className="h-3 w-3 text-brand-accent" /> Refine View
             </h4>
             <p className="text-[10px] text-brand-muted font-mono">
@@ -94,7 +94,7 @@ export function FilterBar({
                       "px-2.5 py-1.5 rounded-xl text-[11px] font-medium border transition-all flex items-center gap-1.5",
                       selectedTags.includes(tag)
                         ? "bg-brand-accent/20 border-brand-accent/50 text-brand-accent"
-                        : "bg-brand-bg border-brand-border text-brand-muted hover:border-zinc-700 hover:text-white",
+                        : "bg-brand-bg border-brand-border text-brand-muted hover:border-brand-border hover:text-brand-fg",
                     )}
                   >
                     {selectedTags.includes(tag) && (

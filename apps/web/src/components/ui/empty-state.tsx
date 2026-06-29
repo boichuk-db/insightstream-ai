@@ -33,7 +33,7 @@ export function EmptyState({
           size === "sm" ? "h-8 w-8" : "h-12 w-12",
         )}
       />
-      <p className={cn("font-medium text-zinc-400", size === "sm" ? "text-xs" : "text-sm")}>
+      <p className={cn("font-medium text-brand-muted", size === "sm" ? "text-xs" : "text-sm")}>
         {title}
       </p>
       {description && (

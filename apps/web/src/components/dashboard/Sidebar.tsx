@@ -90,7 +90,7 @@ export function Sidebar({
 
         {/* Brand & Team/Project Switcher */}
         <div className="p-5 flex flex-col gap-6 border-b border-brand-border/50">
-          <div className="flex items-center gap-2 font-bold text-lg text-white">
+          <div className="flex items-center gap-2 font-bold text-lg text-brand-fg">
             <Sparkles className="h-5 w-5 text-brand-accent" />
             InsightStream
           </div>
@@ -99,13 +99,13 @@ export function Sidebar({
           {teams && teams.length > 0 && (
             <Dropdown
               trigger={
-                <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors">
+                <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-brand-border rounded-xl transition-colors">
                   <div className="flex items-center gap-2 px-2">
                     <div className="flex flex-col items-start">
                       <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider">
                         Team
                       </span>
-                      <span className="text-sm font-semibold text-zinc-200 truncate max-w-[130px]">
+                      <span className="text-sm font-semibold text-brand-fg truncate max-w-[130px]">
                         {activeTeam?.name || "Select team"}
                       </span>
                     </div>
@@ -134,7 +134,7 @@ export function Sidebar({
                           "truncate pr-2",
                           activeTeam?.id === t.id
                             ? "text-brand-accent font-semibold"
-                            : "text-zinc-300",
+                            : "text-brand-muted",
                         )}
                       >
                         {t.name}
@@ -155,12 +155,12 @@ export function Sidebar({
 
           <Dropdown
             trigger={
-              <button className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-zinc-700 rounded-xl transition-colors group">
+              <button className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-brand-border rounded-xl transition-colors group">
                 <div className="flex flex-col items-start px-2">
                   <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider mb-0.5">
                     Active Project
                   </span>
-                  <span className="text-sm font-semibold text-zinc-200 truncate max-w-[140px]">
+                  <span className="text-sm font-semibold text-brand-fg truncate max-w-[140px]">
                     {activeProject?.name || "Loading..."}
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export function Sidebar({
                       "truncate pr-2",
                       activeProject?.id === p.id
                         ? "text-brand-accent font-semibold"
-                        : "text-zinc-300",
+                        : "text-brand-muted",
                     )}
                   >
                     {p.name}
@@ -220,7 +220,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <LayoutDashboard className="h-4 w-4 text-brand-accent" /> Dashboard
@@ -231,7 +231,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/archive")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Archive className="h-4 w-4 text-brand-accent" /> Archive
@@ -242,7 +242,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/activity")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Activity className="h-4 w-4 text-brand-accent" /> Activity Log
@@ -253,7 +253,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/embed")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Code className="h-4 w-4 text-brand-accent" /> Embed Widget
@@ -267,7 +267,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/settings")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Settings className="h-4 w-4 text-brand-accent" /> Settings
@@ -278,7 +278,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/billing")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <CreditCard className="h-4 w-4 text-brand-accent" /> Billing
@@ -290,7 +290,7 @@ export function Sidebar({
                 "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
                 isActive("/dashboard/settings/team")
                   ? "bg-brand-accent/10 text-brand-accent"
-                  : "text-zinc-400 hover:text-white hover:bg-brand-border",
+                  : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
               )}
             >
               <Users className="h-4 w-4 text-brand-accent" /> Team Settings
@@ -332,11 +332,11 @@ export function Sidebar({
             href="/dashboard/settings"
             className="flex items-center gap-3 mb-4 group cursor-pointer rounded-xl p-1.5 -m-1.5 hover:bg-brand-border/50 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-zinc-700 overflow-hidden text-zinc-400 group-hover:border-zinc-600 transition-colors">
+            <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-brand-border overflow-hidden text-brand-muted group-hover:border-brand-muted transition-colors">
               <User size={16} />
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-zinc-200 truncate group-hover:text-white transition-colors">
+              <span className="text-sm font-medium text-brand-fg truncate group-hover:text-brand-fg transition-colors">
                 {userProfile?.email || "User"}
               </span>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -369,7 +369,7 @@ export function Sidebar({
             onClick={onLogout}
             variant="secondary"
             size="sm"
-            className="w-full text-zinc-400 hover:text-white justify-start px-3"
+            className="w-full text-brand-muted hover:text-brand-fg justify-start px-3"
           >
             <LogOut className="h-4 w-4 mr-2 text-brand-accent" /> Sign Out
           </Button>

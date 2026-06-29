@@ -207,7 +207,7 @@ export default function Dashboard() {
                 <Menu size={20} />
               </button>
               <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-brand-fg tracking-tight flex items-center gap-3">
                   <Sparkles className="h-8 w-8 text-brand-accent" /> Dashboard
                 </h1>
                 <p className="hidden xs:block text-brand-muted text-sm mt-1">
@@ -221,7 +221,7 @@ export default function Dashboard() {
           <Section className="transition-all duration-300 hover:bg-brand-surface/80 shadow-2xl shrink-0">
             <div className="flex flex-col gap-6">
               <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
                   <Plus className="h-5 w-5 text-brand-accent" /> Manual Input
                   Testing
                 </h2>
@@ -283,7 +283,7 @@ export default function Dashboard() {
           <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-3">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-brand-accent" /> Feedback
                   Pipelines
                 </h2>

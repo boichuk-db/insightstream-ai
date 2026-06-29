@@ -47,7 +47,7 @@ export function DigestModal({
       : data.avgSentiment < 0.4
         ? "text-red-400"
         : "text-amber-400"
-    : "text-zinc-400";
+    : "text-brand-muted";
 
   const since = data
     ? new Date(data.since).toLocaleDateString("uk-UA", {
@@ -76,7 +76,7 @@ export function DigestModal({
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
             <Loader2 className="h-8 w-8 text-brand-accent animate-spin" />
-            <p className="text-sm text-zinc-400">Gemini аналізує тренди...</p>
+            <p className="text-sm text-brand-muted">Gemini аналізує тренди...</p>
           </div>
         )}
 
@@ -96,7 +96,7 @@ export function DigestModal({
 
             {/* KPI row */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
+              <div className="bg-brand-surface border border-brand-border rounded-xl p-4 text-center">
                 <p className="text-2xl font-black text-brand-accent">
                   {data.totalCount}
                 </p>
@@ -104,7 +104,7 @@ export function DigestModal({
                   <CalendarDays className="h-3 w-3" /> Фідбеків
                 </p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
+              <div className="bg-brand-surface border border-brand-border rounded-xl p-4 text-center">
                 <p className={cn("text-2xl font-black", sentimentColor)}>
                   {sentimentPct}%
                 </p>
@@ -112,8 +112,8 @@ export function DigestModal({
                   Avg Sentiment
                 </p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                <p className="text-lg font-black text-white truncate">
+              <div className="bg-brand-surface border border-brand-border rounded-xl p-4 text-center">
+                <p className="text-lg font-black text-brand-fg truncate">
                   {topCategory?.[0] ?? "—"}
                 </p>
                 <p className="text-[10px] text-brand-muted uppercase tracking-wider mt-1">
@@ -125,14 +125,14 @@ export function DigestModal({
             {/* AI Summary */}
             <LabeledSection icon={Sparkles} label="Gemini Аналіз" iconColor="text-brand-accent">
               <div
-                className="text-sm text-zinc-300 leading-relaxed bg-brand-accent/5 border border-brand-accent/10 rounded-xl px-4 py-3 space-y-2 [&_p]:mb-2 [&_p:last-child]:mb-0"
+                className="text-sm text-brand-fg leading-relaxed bg-brand-accent/5 border border-brand-accent/10 rounded-xl px-4 py-3 space-y-2 [&_p]:mb-2 [&_p:last-child]:mb-0"
                 dangerouslySetInnerHTML={{ __html: data.aiSummary }}
               />
             </LabeledSection>
 
             {/* Category bars */}
             {Object.keys(data.categories).length > 0 && (
-              <LabeledSection icon={BarChart2} label="Розбивка по категоріях" iconColor="text-zinc-400">
+              <LabeledSection icon={BarChart2} label="Розбивка по категоріях" iconColor="text-brand-muted">
                 <div className="space-y-2">
                   {Object.entries(data.categories)
                     .sort((a, b) => b[1] - a[1])
@@ -144,10 +144,10 @@ export function DigestModal({
                       ); // Use full opacity for bars
                       return (
                         <div key={cat} className="flex items-center gap-3">
-                          <span className="text-xs text-zinc-400 w-24 shrink-0">
+                          <span className="text-xs text-brand-muted w-24 shrink-0">
                             {cat}
                           </span>
-                          <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                          <div className="flex-1 h-1.5 bg-brand-border rounded-full overflow-hidden">
                             <div
                               className={cn("h-full rounded-full", barColor)}
                               style={{ width: `${pct}%` }}
@@ -165,12 +165,12 @@ export function DigestModal({
 
             {/* Tags */}
             {data.topTags.length > 0 && (
-              <LabeledSection icon={Tag} label="Топ теги" iconColor="text-zinc-400">
+              <LabeledSection icon={Tag} label="Топ теги" iconColor="text-brand-muted">
                 <div className="flex flex-wrap gap-2">
                   {data.topTags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 text-[10px] font-semibold rounded-lg bg-zinc-900 border border-zinc-800 text-violet-400"
+                      className="px-2 py-1 text-[10px] font-semibold rounded-lg bg-brand-surface border border-brand-border text-violet-400"
                     >
                       #{tag}
                     </span>
@@ -186,13 +186,13 @@ export function DigestModal({
                   {data.mostNegative.map((fb, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 p-3 bg-zinc-900 border border-zinc-800 rounded-xl"
+                      className="flex items-start gap-3 p-3 bg-brand-surface border border-brand-border rounded-xl"
                     >
                       <SentimentBar
                         score={fb.sentimentScore ?? 0.5}
                         className="shrink-0 mt-0.5"
                       />
-                      <p className="text-xs text-zinc-300 leading-relaxed line-clamp-2">
+                      <p className="text-xs text-brand-fg leading-relaxed line-clamp-2">
                         {fb.content}
                       </p>
                     </div>

@@ -99,7 +99,7 @@ export default function SettingsPage() {
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
       </div>
     );
@@ -126,7 +126,7 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Section>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                 <Palette className="h-5 w-5 text-brand-accent" /> Appearance
               </h2>
               {mounted && (
@@ -195,7 +195,7 @@ export default function SettingsPage() {
             transition={{ delay: 0.1 }}
           >
             <Section>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                 <User className="h-5 w-5 text-brand-accent" /> Profile
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -227,14 +227,14 @@ export default function SettingsPage() {
             transition={{ delay: 0.2 }}
           >
             <Section>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
                 <CreditCard className="h-5 w-5 text-brand-accent" /> Billing &amp; Plan
               </h2>
               <div className="flex items-center justify-between">
                 <Badge variant="plan" value={currentPlan} />
                 <Link
                   href="/dashboard/billing"
-                  className="inline-flex items-center h-9 px-3.5 text-[11px] font-bold rounded-xl border border-transparent bg-transparent text-brand-muted hover:text-zinc-200 hover:bg-white/5 transition-all"
+                  className="inline-flex items-center h-9 px-3.5 text-[11px] font-bold rounded-xl border border-transparent bg-transparent text-brand-muted hover:text-brand-fg hover:bg-white/5 transition-all"
                 >
                   Manage billing →
                 </Link>
