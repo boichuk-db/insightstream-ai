@@ -53,6 +53,7 @@ export function PricingCards() {
     setLoadingPriceId(priceId);
     try {
       const res = await api.post<{ url: string }>("/plans/checkout", { priceId });
+      // eslint-disable-next-line react-hooks/immutability
       window.location.href = res.data.url;
     } catch {
       toast.error("Failed to start checkout. Please try again.");

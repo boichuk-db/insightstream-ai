@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
@@ -8,11 +9,13 @@ import { planStatusQuery } from "@/lib/queries";
 export function TrialBanner() {
   const router = useRouter();
   const { data } = useQuery(planStatusQuery);
+  // eslint-disable-next-line react-hooks/purity
+  const now = useMemo(() => Date.now(), []);
 
   if (!data || data.planStatus !== "trialing") return null;
 
   const daysLeft = data.trialEndsAt
-    ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - Date.now()) / 86_400_000))
+    ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - now) / 86_400_000))
     : null;
 
   return (
