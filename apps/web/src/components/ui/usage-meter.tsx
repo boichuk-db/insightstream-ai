@@ -1,0 +1,34 @@
+import { cn } from "@/lib/utils";
+
+interface UsageMeterProps {
+  label: string;
+  current: number;
+  max: number | null;
+  className?: string;
+}
+
+export function UsageMeter({ label, current, max, className }: UsageMeterProps) {
+  const pct = max ? Math.min((current / max) * 100, 100) : 0;
+  const colorClass =
+    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : "bg-indigo-500";
+
+  return (
+    <div className={cn("p-4 bg-zinc-950/50 rounded-xl border border-zinc-800/50", className)}>
+      <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
+        {label}
+      </p>
+      <p className="text-lg font-bold text-white">
+        {current}{" "}
+        <span className="text-zinc-500 text-sm font-normal">/ {max === null ? "∞" : max}</span>
+      </p>
+      {max !== null && (
+        <div className="mt-2 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+          <div
+            className={cn("h-full rounded-full transition-all", colorClass)}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
