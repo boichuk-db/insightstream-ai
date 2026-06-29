@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 
 const PADDING = {
+  none: "",
   sm: "p-4",
   md: "p-6",
   lg: "p-8",
@@ -16,7 +17,7 @@ const GLOW_CLASSES = {
 interface SectionProps {
   children: React.ReactNode;
   glow?: "top-right" | "bottom-left" | "none";
-  padding?: "sm" | "md" | "lg";
+  padding?: "none" | "sm" | "md" | "lg";
   className?: string;
   as?: React.ElementType;
 }
@@ -40,7 +41,7 @@ export function Section({
           <div className={GLOW_CLASSES[glow]} />
         </div>
       )}
-      <div className={cn("relative z-10", PADDING[padding])}>{children}</div>
+      <div className={cn("relative z-10", PADDING[padding] ?? PADDING.md)}>{children}</div>
     </Tag>
   );
 }
