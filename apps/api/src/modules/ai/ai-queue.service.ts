@@ -14,9 +14,7 @@ export interface AnalysisJobData {
 
 @Injectable()
 export class AiQueueService {
-  constructor(
-    @InjectQueue(AI_ANALYSIS_QUEUE) private readonly queue: Queue,
-  ) {}
+  constructor(@InjectQueue(AI_ANALYSIS_QUEUE) private readonly queue: Queue) {}
 
   async addAnalysisJob(
     data: AnalysisJobData,

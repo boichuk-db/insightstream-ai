@@ -54,7 +54,9 @@ describe('StripeWebhookService', () => {
 
       await service.handlePaymentFailed(invoice);
 
-      expect(userRepo.update).toHaveBeenCalledWith('user-1', { planStatus: 'past_due' });
+      expect(userRepo.update).toHaveBeenCalledWith('user-1', {
+        planStatus: 'past_due',
+      });
     });
 
     it('skips update when no user found for customer', async () => {
@@ -84,11 +86,14 @@ describe('StripeWebhookService', () => {
 
       await service.handleSubscriptionUpdated(sub);
 
-      expect(userRepo.update).toHaveBeenCalledWith('user-1', expect.objectContaining({
-        plan: PlanType.PRO,
-        planStatus: 'active',
-        stripePriceId: 'price_pro_monthly',
-      }));
+      expect(userRepo.update).toHaveBeenCalledWith(
+        'user-1',
+        expect.objectContaining({
+          plan: PlanType.PRO,
+          planStatus: 'active',
+          stripePriceId: 'price_pro_monthly',
+        }),
+      );
     });
 
     it('sets plan to BUSINESS and stores trialEndsAt when annual + trialing', async () => {
@@ -102,11 +107,14 @@ describe('StripeWebhookService', () => {
 
       await service.handleSubscriptionUpdated(sub);
 
-      expect(userRepo.update).toHaveBeenCalledWith('user-1', expect.objectContaining({
-        plan: PlanType.BUSINESS,
-        planStatus: 'trialing',
-        trialEndsAt: new Date(1800000000 * 1000),
-      }));
+      expect(userRepo.update).toHaveBeenCalledWith(
+        'user-1',
+        expect.objectContaining({
+          plan: PlanType.BUSINESS,
+          planStatus: 'trialing',
+          trialEndsAt: new Date(1800000000 * 1000),
+        }),
+      );
     });
   });
 

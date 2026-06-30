@@ -5,7 +5,7 @@
 
 ---
 
-## Поточний стан (станом на 2026-03-29)
+## Поточний стан (станом на 2026-06-29)
 
 | Фіча                       | Статус | Деталі |
 |----------------------------|--------|--------|
@@ -13,7 +13,8 @@
 | AI-аналіз фідбеку          | ✅     | Gemini 2.5 Flash: sentiment, category, tags, summary |
 | Kanban board               | ✅     | 5 статусів, drag-and-drop, real-time via Socket.io |
 | Команди та ролі            | ✅     | OWNER/ADMIN/MEMBER/VIEWER, email-invite токени |
-| Тарифні плани              | ✅     | FREE/PRO/BUSINESS в коді, ліміти перевіряються |
+| Тарифні плани              | ✅     | FREE/PRO/BUSINESS — ліміти + Stripe billing повністю підключено |
+| Stripe billing             | ✅     | Checkout, Portal, webhooks, 14-day trial, `/dashboard/billing` |
 | Weekly AI Digest           | ✅     | Cron + Gemini HTML summary, email-delivery |
 | Коментарі та Activity Feed | ✅     | Коментарі до фідбеків, журнал подій команди |
 | CSV/PDF export             | ✅     | Експорт відфільтрованих фідбеків |
@@ -22,13 +23,45 @@
 | GitHub OAuth               | ✅     | Passport GitHub strategy, auto-link by email |
 | Sentry                     | ✅     | `@sentry/nestjs` (api) + `@sentry/nextjs` (web) |
 | JWT Auth                   | ✅     | JWT + bcrypt, API key для widget |
+| Email (SES)                | ✅     | AWS SES замість Nodemailer/SMTP (SESClient з `@aws-sdk/client-ses`) |
 | Деплой                     | ✅     | Railway (API) + Vercel (Web) + Supabase (DB) |
 | TypeORM migrations         | ✅     | synchronize=false в prod, CLI DataSource, baseline migration |
+| Dashboard UI               | ✅     | DashboardShell, PageHeader, уніфіковані лейаути всіх сторінок |
+| AWS інфраструктура         | 🚧     | SQS, SES, Lambda, CodeBuild — чекаємо верифікацію акаунту |
 | Teams Dashboard UI         | 🚧     | Backend ready, UI компоненти частково зроблені |
 
 ---
 
 ## Що зроблено в останніх сесіях
+
+### 2026-06-29 — Stripe Billing + Dashboard UI Refactor
+
+**Stripe billing (повна реалізація):**
+- `packages/database` — User entity: 5 нових полів (`stripeCustomerId`, `stripeSubscriptionId`, `stripePriceId`, `planStatus`, `trialEndsAt`)
+- `apps/api/src/migrations/1774830000000-AddStripeFieldsToUser.ts` — production migration з IF NOT EXISTS guards
+- `apps/api/src/modules/stripe/` — `StripeService`, `StripeWebhookService`, `StripeController`, `StripeWebhookController`, `StripeModule`
+  - `POST /plans/checkout` — Stripe Checkout Session з 14-day trial і metadata.userId
+  - `GET /plans/portal` — Stripe Customer Portal
+  - `GET /plans/status` — поточний стан підписки з БД
+  - `POST /webhooks/stripe` — обробляє 4 webhook events (rawBody: true в main.ts)
+- `apps/api/src/modules/plans/plan-limits.service.ts` — `past_due`/`canceled` → повертає FREE план
+- Видалено дірку безпеки: `PATCH /plans/upgrade` (дозволяв безкоштовно апгрейдити план)
+- `apps/web/src/lib/queries.ts` — `PlanStatus` interface + `planStatusQuery` (staleTime: 60s)
+- `apps/web/src/components/billing/` — `TrialBanner`, `CurrentPlanCard`, `UsageMetrics`, `PricingCards`
+- `apps/web/src/app/dashboard/billing/page.tsx` — білінг сторінка з toast на `?success=true`
+- `apps/web/src/app/dashboard/layout.tsx` — TrialBanner на всіх dashboard сторінках
+- Stripe Price IDs: PRO $9/mo, PRO $90/yr, BUSINESS $29/mo, BUSINESS $290/yr
+
+**Dashboard UI уніфікація:**
+- `apps/web/src/components/dashboard/DashboardShell.tsx` — обгортка з Sidebar для всіх sub-сторінок
+- `apps/web/src/components/dashboard/PageHeader.tsx` — уніфікований header: `←` кнопка + icon + title + subtitle
+- Settings перенесено з `/settings/*` → `/dashboard/settings/*` (отримують TrialBanner і layout)
+- Виправлено sidebar height (`h-screen` → `lg:h-full`), archive подвійний padding
+
+**AWS (в процесі):**
+- SES email вже реалізовано (замінено Nodemailer)
+- SQS publishing, Lambda functions, CodeBuild spec додано в `infra/`
+- Чекаємо верифікацію AWS акаунту перед деплоєм
 
 ### 2026-03-30 — TypeORM Migrations + Debug Logs Cleanup
 - `apps/api/src/modules/ai/ai.service.ts` — замінено 4x `console.error/warn` на NestJS `Logger`
@@ -53,8 +86,10 @@
 
 | Проблема | Ризик | Пріоритет |
 |----------|-------|-----------|
-| Email: Nodemailer без реального провайдера | Запрошення і digest не доставляються | 🔴 Критичний |
+| AWS верифікація не пройдена | SQS/Lambda/CodeBuild не активні | 🔴 Чекаємо |
+| Stripe env vars локально не в .env.example | Новий девелопер не знатиме про них | 🟡 Середній |
 | Redis підключений але не використовується | Немає rate limiting, queue, caching | 🟡 Середній |
+| Settings має старий `PATCH /plans/upgrade` через `upgradeMutation` | Виклик видаленого endpoint — треба прибрати або замінити на Stripe portal | 🟡 Середній |
 
 ---
 
@@ -62,9 +97,10 @@
 
 ### MUST HAVE — launch blockers
 
-- [ ] **Stripe billing** — Checkout + webhooks + plan upgrade flow + `/pricing` page
-- [ ] **Email provider (Resend)** — замінити Nodemailer, шаблони: invite, digest, welcome, reset
-- [x] **TypeORM migrations** — вимкнути `synchronize=true`, налаштувати CLI, перший migration файл
+- [x] **Stripe billing** — Checkout + webhooks + 14-day trial + `/dashboard/billing` ✅
+- [x] **TypeORM migrations** — synchronize=false, CLI DataSource, baseline migration ✅
+- [ ] **AWS верифікація** — чекаємо верифікацію акаунту, після якої активуються SES, SQS, Lambda
+- [ ] **Landing page + `/pricing`** — публічна сторінка з Stripe CTA перед launch
 
 ### SHOULD HAVE — retention
 
@@ -140,9 +176,20 @@ SMTP_FROM=
 # Sentry
 SENTRY_DSN=
 
-# Stripe (TODO)
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
+# Stripe
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_MONTHLY_PRICE_ID=price_...
+STRIPE_PRO_ANNUAL_PRICE_ID=price_...
+STRIPE_BUSINESS_MONTHLY_PRICE_ID=price_...
+STRIPE_BUSINESS_ANNUAL_PRICE_ID=price_...
+
+# AWS (SES, SQS, Lambda — чекаємо верифікацію)
+AWS_REGION=eu-central-1
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+SES_FROM_EMAIL=
+SQS_FEEDBACK_QUEUE_URL=
 ```
 
 ### `apps/web/.env.local`
@@ -151,7 +198,11 @@ STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_WIDGET_URL=http://localhost:8080/dist/widget.iife.js
 SENTRY_DSN=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID=price_...
+NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID=price_...
+NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PRICE_ID=price_...
+NEXT_PUBLIC_STRIPE_BUSINESS_ANNUAL_PRICE_ID=price_...
 ```
 
 ---
@@ -165,6 +216,14 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 | User entity | `packages/database/src/entities/user.entity.ts` |
 | Feedback entity | `packages/database/src/entities/feedback.entity.ts` |
 | AI analysis | `apps/api/src/modules/ai/ai.service.ts` |
+| Stripe service | `apps/api/src/modules/stripe/stripe.service.ts` |
+| Stripe webhooks | `apps/api/src/modules/stripe/stripe-webhook.service.ts` |
+| Plan limits | `apps/api/src/modules/plans/plan-limits.service.ts` |
+| Dashboard layout | `apps/web/src/app/dashboard/layout.tsx` |
+| DashboardShell | `apps/web/src/components/dashboard/DashboardShell.tsx` |
+| PageHeader | `apps/web/src/components/dashboard/PageHeader.tsx` |
+| Billing page | `apps/web/src/app/dashboard/billing/page.tsx` |
 | Login page | `apps/web/src/app/page.tsx` |
 | Dashboard | `apps/web/src/app/dashboard/page.tsx` |
 | Widget entry | `apps/widget/src/main.ts` |
+| AWS infra | `infra/` |

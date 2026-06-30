@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CurrentPlanCard } from "@/components/billing/CurrentPlanCard";
@@ -10,7 +10,7 @@ import { CreditCard } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
-export default function BillingPage() {
+function BillingSuccessToast() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -21,8 +21,16 @@ export default function BillingPage() {
     }
   }, [searchParams, router]);
 
+  return null;
+}
+
+export default function BillingPage() {
   return (
     <DashboardShell>
+      <Suspense fallback={null}>
+        <BillingSuccessToast />
+      </Suspense>
+
       <PageHeader
         icon={<CreditCard className="h-8 w-8 text-brand-accent" />}
         title="Billing"

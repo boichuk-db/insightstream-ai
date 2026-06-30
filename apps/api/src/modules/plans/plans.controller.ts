@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PlanLimitsService } from './plan-limits.service';
 import { PlanType, PlanConfig, PLAN_CONFIGS } from '@insightstream/database';
@@ -51,5 +46,4 @@ export class PlansController {
       },
     };
   }
-
 }

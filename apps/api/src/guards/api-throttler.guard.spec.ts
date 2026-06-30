@@ -44,7 +44,9 @@ describe('ApiThrottlerGuard', () => {
   });
 
   it('returns true (fail open) when storage throws a non-throttler error', async () => {
-    jest.spyOn(ThrottlerGuard.prototype, 'canActivate').mockRejectedValue(new Error('Redis connection refused'));
+    jest
+      .spyOn(ThrottlerGuard.prototype, 'canActivate')
+      .mockRejectedValue(new Error('Redis connection refused'));
     const ctx = makeContext('1.2.3.4', { id: 'user-123' });
     const result = await guard.canActivate(ctx);
     expect(result).toBe(true);
@@ -52,7 +54,9 @@ describe('ApiThrottlerGuard', () => {
 
   it('re-throws ThrottlerException (does not fail open)', async () => {
     const throttlerErr = new ThrottlerException();
-    jest.spyOn(ThrottlerGuard.prototype, 'canActivate').mockRejectedValue(throttlerErr);
+    jest
+      .spyOn(ThrottlerGuard.prototype, 'canActivate')
+      .mockRejectedValue(throttlerErr);
     const ctx = makeContext('1.2.3.4', { id: 'user-123' });
     await expect(guard.canActivate(ctx)).rejects.toBe(throttlerErr);
   });

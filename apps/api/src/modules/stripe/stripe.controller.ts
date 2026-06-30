@@ -26,8 +26,11 @@ export class StripeController {
   @UseGuards(JwtAuthGuard)
   async createCheckout(@Request() req: any, @Body() body: { priceId: string }) {
     if (!body.priceId) throw new BadRequestException('priceId is required');
-    const user = await this.userRepo.findOneOrFail({ where: { id: req.user.id } });
-    const frontendUrl = this.config.get('FRONTEND_URL') || 'http://localhost:3000';
+    const user = await this.userRepo.findOneOrFail({
+      where: { id: req.user.id },
+    });
+    const frontendUrl =
+      this.config.get('FRONTEND_URL') || 'http://localhost:3000';
     const url = await this.stripeService.createCheckoutSession(
       user,
       body.priceId,
@@ -40,11 +43,14 @@ export class StripeController {
   @Get('portal')
   @UseGuards(JwtAuthGuard)
   async createPortal(@Request() req: any) {
-    const user = await this.userRepo.findOneOrFail({ where: { id: req.user.id } });
+    const user = await this.userRepo.findOneOrFail({
+      where: { id: req.user.id },
+    });
     if (!user.stripeCustomerId) {
       throw new BadRequestException('No active subscription');
     }
-    const frontendUrl = this.config.get('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl =
+      this.config.get('FRONTEND_URL') || 'http://localhost:3000';
     const url = await this.stripeService.createPortalSession(
       user.stripeCustomerId,
       `${frontendUrl}/dashboard/billing`,
@@ -55,7 +61,9 @@ export class StripeController {
   @Get('status')
   @UseGuards(JwtAuthGuard)
   async getPlanStatus(@Request() req: any) {
-    const user = await this.userRepo.findOneOrFail({ where: { id: req.user.id } });
+    const user = await this.userRepo.findOneOrFail({
+      where: { id: req.user.id },
+    });
     return {
       plan: user.plan,
       planStatus: user.planStatus ?? 'active',

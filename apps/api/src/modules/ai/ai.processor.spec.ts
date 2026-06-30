@@ -31,7 +31,7 @@ describe('AiProcessor', () => {
   });
 
   const makeJob = (data: AnalysisJobData) =>
-    ({ data, attemptsMade: 0 } as Job<AnalysisJobData>);
+    ({ data, attemptsMade: 0 }) as Job<AnalysisJobData>;
 
   it('updates feedback with full AI analysis and emits event', async () => {
     aiService.analyzeFeedback.mockResolvedValue({
@@ -51,7 +51,9 @@ describe('AiProcessor', () => {
       }),
     );
 
-    expect(aiService.analyzeFeedback).toHaveBeenCalledWith('Please add dark mode');
+    expect(aiService.analyzeFeedback).toHaveBeenCalledWith(
+      'Please add dark mode',
+    );
     expect(feedbackRepo.update).toHaveBeenCalledWith('fb-1', {
       sentimentScore: 0.9,
       category: 'Feature',

@@ -24,7 +24,9 @@ export class StripeService {
       metadata: { userId: user.id },
     });
     await this.userRepo.update(user.id, { stripeCustomerId: customer.id });
-    this.logger.log(`Created Stripe customer ${customer.id} for user ${user.id}`);
+    this.logger.log(
+      `Created Stripe customer ${customer.id} for user ${user.id}`,
+    );
     return customer.id;
   }
 
