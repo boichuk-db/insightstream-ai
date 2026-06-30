@@ -303,7 +303,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 w-full max-w-full">
-              {isLoading ? (
+              {isLoading || !activeProject ? (
                 <Skeleton count={5} height="h-[600px]" layout="grid" cols={5} />
               ) : isError ? (
                 <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
