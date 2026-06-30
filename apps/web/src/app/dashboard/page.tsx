@@ -49,27 +49,29 @@ export default function Dashboard() {
 
   const { data: userProfile } = useQuery(userProfileQuery);
 
-  // Real-time updates via socket — single source of truth for feedbacks invalidation
-  useSocket(userProfile?.id, () => {
-    queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
-  });
-
   const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
 
+  // Real-time updates via socket — single source of truth for feedbacks invalidation
+  useSocket(userProfile?.id, () => {
+    queryClient.invalidateQueries({
+      queryKey: ["feedbacks", activeProject?.id],
+    });
+  });
+
   const {
-    data: allFeedbacks,
+    data: projectFeedbacks,
     isLoading,
     isError,
-  } = useQuery(feedbacksQuery);
+  } = useQuery({
+    ...feedbacksQuery(activeProject?.id ?? ""),
+    enabled: !!activeProject?.id,
+  });
 
   const feedbacks =
-    allFeedbacks?.filter(
-      (fb: any) =>
-        fb.projectId === activeProject?.id && fb.status !== "Archived",
-    ) || [];
+    projectFeedbacks?.filter((fb: any) => fb.status !== "Archived") || [];
 
   // Digest is cached for 5 minutes — intentional to avoid re-hitting Gemini on each modal open.
   // Cache is invalidated when feedbacks are updated via socket.
