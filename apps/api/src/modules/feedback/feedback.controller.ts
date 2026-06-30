@@ -8,6 +8,7 @@ import {
   UseGuards,
   Request,
   Param,
+  Query,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -34,8 +35,11 @@ export class FeedbackController {
   }
 
   @Get()
-  async findAll(@Request() req: any) {
-    return this.feedbackService.findAllByUser(req.user.id);
+  async findAll(@Request() req: any, @Query('projectId') projectId: string) {
+    if (!projectId) {
+      return { statusCode: 400, message: 'projectId is required' };
+    }
+    return this.feedbackService.findByProject(projectId, req.user.id);
   }
 
   @Get(':id')
