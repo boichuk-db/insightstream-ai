@@ -9,6 +9,7 @@ import {
   Request,
   Param,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -24,7 +25,7 @@ export class FeedbackController {
     @Body() body: { content: string; projectId: string; source?: string },
   ) {
     if (!body?.content || !body?.projectId) {
-      return { statusCode: 400, message: 'Content and projectId are required' };
+      throw new BadRequestException('Content and projectId are required');
     }
     return this.feedbackService.create(
       body.projectId,
@@ -37,7 +38,7 @@ export class FeedbackController {
   @Get()
   async findAll(@Request() req: any, @Query('projectId') projectId: string) {
     if (!projectId) {
-      return { statusCode: 400, message: 'projectId is required' };
+      throw new BadRequestException('projectId is required');
     }
     return this.feedbackService.findByProject(projectId, req.user.id);
   }
