@@ -5,9 +5,14 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ProjectsService } from './modules/projects/projects.service';
 import { SentryExceptionFilter } from './filters/sentry-exception.filter';
+import { RedisIoAdapter } from './adapters/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
+
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryExceptionFilter(httpAdapter));
@@ -63,4 +68,7 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3001);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('Fatal error during bootstrap:', err);
+  process.exit(1);
+});
