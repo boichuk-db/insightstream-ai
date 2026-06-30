@@ -139,6 +139,12 @@ jobs:
       REDIS_URL: redis://localhost:6379
       NEXT_PUBLIC_API_URL: http://localhost:3001
       NEXT_PUBLIC_WIDGET_URL: http://localhost:8080/dist/widget.iife.js
+      STRIPE_SECRET_KEY: sk_test_dummy
+      STRIPE_WEBHOOK_SECRET: whsec_dummy
+      STRIPE_PRO_MONTHLY_PRICE_ID: price_pro_monthly_dummy
+      STRIPE_PRO_ANNUAL_PRICE_ID: price_pro_annual_dummy
+      STRIPE_BUSINESS_MONTHLY_PRICE_ID: price_business_monthly_dummy
+      STRIPE_BUSINESS_ANNUAL_PRICE_ID: price_business_annual_dummy
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
