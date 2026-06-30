@@ -12,10 +12,14 @@ export const projectsQuery = queryOptions({
   queryFn: () => api.get<IProject[]>("/projects").then((r) => r.data),
 });
 
-export const feedbacksQuery = queryOptions({
-  queryKey: ["feedbacks"],
-  queryFn: () => api.get<IFeedback[]>("/feedback").then((r) => r.data),
-});
+export const feedbacksQuery = (projectId: string) =>
+  queryOptions({
+    queryKey: ["feedbacks", projectId],
+    queryFn: () =>
+      api
+        .get<IFeedback[]>("/feedback", { params: { projectId } })
+        .then((r) => r.data),
+  });
 
 export const digestPreviewQuery = (projectId: string) =>
   queryOptions({
