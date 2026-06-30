@@ -6,9 +6,11 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from "typeorm";
 import type { Project } from "./project.entity";
 
+@Index(["projectId", "createdAt"])
 @Entity("feedbacks")
 export class Feedback {
   @PrimaryGeneratedColumn("uuid")
