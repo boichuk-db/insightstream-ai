@@ -34,14 +34,16 @@ export class MailService {
       return;
     }
 
-    await this.ses.send(new SendEmailCommand({
-      Source: this.fromEmail,
-      Destination: { ToAddresses: [to] },
-      Message: {
-        Subject: { Data: subject, Charset: 'UTF-8' },
-        Body: { Html: { Data: html, Charset: 'UTF-8' } },
-      },
-    }));
+    await this.ses.send(
+      new SendEmailCommand({
+        Source: this.fromEmail,
+        Destination: { ToAddresses: [to] },
+        Message: {
+          Subject: { Data: subject, Charset: 'UTF-8' },
+          Body: { Html: { Data: html, Charset: 'UTF-8' } },
+        },
+      }),
+    );
 
     this.logger.log(`Sent "${subject}" → ${to}`);
   }
