@@ -29,22 +29,24 @@ export default function ArchivePage() {
 
   const { data: userProfile } = useQuery(userProfileQuery);
 
-  useSocket(userProfile?.id, () => {
-    queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
-  });
-
   const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
     projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
 
-  const { data: allFeedbacks, isLoading } = useQuery(feedbacksQuery);
+  useSocket(userProfile?.id, () => {
+    queryClient.invalidateQueries({
+      queryKey: ["feedbacks", activeProject?.id],
+    });
+  });
+
+  const { data: projectFeedbacks, isLoading } = useQuery({
+    ...feedbacksQuery(activeProject?.id ?? ""),
+    enabled: !!activeProject?.id,
+  });
 
   const archivedFeedbacks =
-    allFeedbacks?.filter(
-      (fb: any) =>
-        fb.projectId === activeProject?.id && fb.status === "Archived",
-    ) || [];
+    projectFeedbacks?.filter((fb: any) => fb.status === "Archived") || [];
 
   const totalPages = Math.ceil(archivedFeedbacks.length / itemsPerPage);
   const paginatedFeedbacks = archivedFeedbacks.slice(
@@ -103,7 +105,7 @@ export default function ArchivePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-brand-border/30">
-                  {isLoading ? (
+                  {isLoading || !activeProject ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-4">
                         <Skeleton count={5} height="h-10" />
