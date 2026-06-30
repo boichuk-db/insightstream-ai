@@ -112,6 +112,7 @@ export class FeedbackService {
   }
 
   async findByProject(projectId: string, userId: string): Promise<Feedback[]> {
+    // Verify caller has access to this project
     await this.projectsService.findOne(projectId, userId);
 
     return this.feedbackRepository.find({
