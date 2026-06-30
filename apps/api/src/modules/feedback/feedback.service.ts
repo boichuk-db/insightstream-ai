@@ -111,11 +111,13 @@ export class FeedbackService {
     return savedFeedback;
   }
 
-  async findAllByUser(userId: string) {
+  async findByProject(projectId: string, userId: string): Promise<Feedback[]> {
+    await this.projectsService.findOne(projectId, userId);
+
     return this.feedbackRepository.find({
-      where: { project: { userId } },
-      relations: ['project'],
+      where: { projectId },
       order: { createdAt: 'DESC' },
+      take: 500,
     });
   }
 

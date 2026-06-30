@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { Feedback, TeamMember } from '@insightstream/database';
 import { ProjectsService } from '../projects/projects.service';
@@ -107,6 +108,41 @@ describe('FeedbackService', () => {
       await expect(service.create('user-1', '')).rejects.toThrow(
         'Content is required',
       );
+    });
+  });
+
+  describe('findByProject', () => {
+    it('should return feedback for the project, newest first, capped at 500', async () => {
+      const projectId = 'proj-abc';
+      const userId = 'user-abc';
+      const mockFeedbacks = [{ id: 'fb-2' }, { id: 'fb-1' }];
+      repo.find.mockResolvedValue(mockFeedbacks);
+
+      const result = await service.findByProject(projectId, userId);
+
+      const mockProjectsService = (service as any).projectsService;
+      expect(mockProjectsService.findOne).toHaveBeenCalledWith(
+        projectId,
+        userId,
+      );
+      expect(repo.find).toHaveBeenCalledWith({
+        where: { projectId },
+        order: { createdAt: 'DESC' },
+        take: 500,
+      });
+      expect(result).toBe(mockFeedbacks);
+    });
+
+    it('should propagate access-denied error and not query feedback', async () => {
+      const mockProjectsService = (service as any).projectsService;
+      mockProjectsService.findOne.mockRejectedValueOnce(
+        new NotFoundException('Project not found'),
+      );
+
+      await expect(service.findByProject('proj-x', 'user-y')).rejects.toThrow(
+        'Project not found',
+      );
+      expect(repo.find).not.toHaveBeenCalled();
     });
   });
 
