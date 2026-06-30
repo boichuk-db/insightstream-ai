@@ -17,6 +17,9 @@ export class RedisIoAdapter extends IoAdapter {
     const pubClient = new Redis(redisUrl);
     const subClient = pubClient.duplicate();
 
+    // .once('error', ...) here only gates startup. ioredis routes post-connect
+    // errors through silentEmit (logs + internal reconnect) when no listener
+    // remains, so it won't crash the process once these one-time listeners fire.
     await Promise.all([
       new Promise<void>((resolve, reject) => {
         pubClient.once('ready', resolve);
