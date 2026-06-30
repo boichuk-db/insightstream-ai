@@ -1,0 +1,70 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0, "y": 0, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/EC2", "CPUUtilization", "InstanceId", "i-068078edf7f8356d4"]],
+        "period": 300,
+        "stat": "Average",
+        "region": "eu-north-1",
+        "title": "EC2 CPU Utilization"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12, "y": 0, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "insightstream-db"]],
+        "period": 300,
+        "stat": "Average",
+        "region": "eu-north-1",
+        "title": "RDS Free Storage"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0, "y": 6, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "insightstream-db"]],
+        "period": 300,
+        "stat": "Average",
+        "region": "eu-north-1",
+        "title": "RDS Connections"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12, "y": 6, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "insightstream-feedback"]],
+        "period": 300,
+        "stat": "Average",
+        "region": "eu-north-1",
+        "title": "SQS Queue Depth"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0, "y": 12, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/Lambda", "Invocations", "FunctionName", "insightstream-feedback-processor"], ["AWS/Lambda", "Errors", "FunctionName", "insightstream-feedback-processor"]],
+        "period": 300,
+        "stat": "Sum",
+        "region": "eu-north-1",
+        "title": "Feedback Processor Lambda"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12, "y": 12, "width": 12, "height": 6,
+      "properties": {
+        "metrics": [["AWS/Lambda", "Invocations", "FunctionName", "insightstream-digest-trigger"], ["AWS/Lambda", "Errors", "FunctionName", "insightstream-digest-trigger"]],
+        "period": 300,
+        "stat": "Sum",
+        "region": "eu-north-1",
+        "title": "Digest Trigger Lambda"
+      }
+    }
+  ]
+}

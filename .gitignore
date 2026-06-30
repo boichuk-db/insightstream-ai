@@ -41,6 +41,9 @@ coverage
 tmp
 .temp
 
+# Lambda build artifacts
+lambda/*/function.zip
+
 # Local documentation (not tracked in git)
 docs/**
 !docs/superpowers/
