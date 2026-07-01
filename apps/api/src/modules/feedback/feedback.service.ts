@@ -1,7 +1,11 @@
 import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Feedback, TeamMember, UserProjectLastSeen } from '@insightstream/database';
+import {
+  Feedback,
+  TeamMember,
+  UserProjectLastSeen,
+} from '@insightstream/database';
 import { AiQueueService } from '../ai/ai-queue.service';
 import { EventsGateway } from '../events/events.gateway';
 import { ProjectsService } from '../projects/projects.service';

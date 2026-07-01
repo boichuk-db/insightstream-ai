@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
-import { Feedback, TeamMember, UserProjectLastSeen } from '@insightstream/database';
+import {
+  Feedback,
+  TeamMember,
+  UserProjectLastSeen,
+} from '@insightstream/database';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
 import { AiQueueService } from '../ai/ai-queue.service';
@@ -186,7 +190,9 @@ describe('FeedbackService', () => {
 
   describe('markSeen', () => {
     it('upserts last-seen record for user + project', async () => {
-      const upsertSpy = jest.spyOn(lastSeenRepo, 'upsert').mockResolvedValue({} as any);
+      const upsertSpy = jest
+        .spyOn(lastSeenRepo, 'upsert')
+        .mockResolvedValue({} as any);
       await service.markSeen('user-1', 'proj-1');
       expect(upsertSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userId: 'user-1', projectId: 'proj-1' }),
@@ -198,7 +204,9 @@ describe('FeedbackService', () => {
   describe('getLastSeen', () => {
     it('returns seenAt date when record exists', async () => {
       const date = new Date('2026-01-01');
-      jest.spyOn(lastSeenRepo, 'findOne').mockResolvedValue({ userId: 'u', projectId: 'p', seenAt: date });
+      jest
+        .spyOn(lastSeenRepo, 'findOne')
+        .mockResolvedValue({ userId: 'u', projectId: 'p', seenAt: date });
       const result = await service.getLastSeen('u', 'p');
       expect(result).toEqual(date);
     });
@@ -212,7 +220,9 @@ describe('FeedbackService', () => {
 
   describe('getTrends', () => {
     it('returns categories grouped by count descending', async () => {
-      jest.spyOn(mockProjectsService, 'findOne').mockResolvedValue({ userId: 'u' } as any);
+      jest
+        .spyOn(mockProjectsService, 'findOne')
+        .mockResolvedValue({ userId: 'u' } as any);
       const rawResults = [
         { name: 'Bug', count: '9' },
         { name: 'UX', count: '14' },
@@ -231,7 +241,7 @@ describe('FeedbackService', () => {
       const result = await service.getTrends('proj-1', 'user-1');
       expect(result[0].count).toBe(9);
       expect(result[0].name).toBe('Bug');
-      expect(result.every(r => typeof r.emoji === 'string')).toBe(true);
+      expect(result.every((r) => typeof r.emoji === 'string')).toBe(true);
     });
   });
 });

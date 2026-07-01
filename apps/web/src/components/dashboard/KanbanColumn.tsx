@@ -31,7 +31,7 @@ export function KanbanColumn({
 }: KanbanColumnProps) {
   return (
     <div className="flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] lg:min-w-0 h-full bg-brand-surface/40 border border-brand-border/40 rounded-2xl shadow-xl group/column">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/4">
+      <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <h3 className="font-bold text-brand-fg text-sm flex items-center gap-2">
           <span
             className={cn(

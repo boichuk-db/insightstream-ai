@@ -56,7 +56,9 @@ describe('StripeWebhookService', () => {
 
       await service.handleCheckoutCompleted(session);
 
-      expect(stripeService.retrieveSubscription).toHaveBeenCalledWith('sub_new');
+      expect(stripeService.retrieveSubscription).toHaveBeenCalledWith(
+        'sub_new',
+      );
       expect(userRepo.update).toHaveBeenCalledWith('user-1', {
         plan: PlanType.PRO,
         stripeSubscriptionId: 'sub_new',
@@ -183,10 +185,7 @@ describe('StripeWebhookService', () => {
     });
 
     it('defaults to FREE and warns on unrecognized priceId', async () => {
-      const warnSpy = jest.spyOn(
-        (service as any).logger,
-        'warn',
-      );
+      const warnSpy = jest.spyOn((service as any).logger, 'warn');
       const sub = {
         id: 'sub_1',
         metadata: { userId: 'user-1' },

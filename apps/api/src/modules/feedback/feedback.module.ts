@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Feedback, TeamMember, UserProjectLastSeen } from '@insightstream/database';
+import {
+  Feedback,
+  TeamMember,
+  UserProjectLastSeen,
+} from '@insightstream/database';
 import { FeedbackService } from './feedback.service';
 import { FeedbackController } from './feedback.controller';
 import { FeedbackPublicController } from './feedback.public.controller';
