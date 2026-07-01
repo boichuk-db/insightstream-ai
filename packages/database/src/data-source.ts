@@ -8,6 +8,7 @@ import { TeamMember } from "./entities/team-member.entity";
 import { Invitation } from "./entities/invitation.entity";
 import { Comment } from "./entities/comment.entity";
 import { ActivityEvent } from "./entities/activity-event.entity";
+import { UserProjectLastSeen } from "./entities/user-project-last-seen.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_DATABASE || "insightstream_dev",
   synchronize: process.env.NODE_ENV !== "production",
   logging: process.env.NODE_ENV !== "production",
-  entities: [User, Feedback, Project, AuditLog, Team, TeamMember, Invitation, Comment, ActivityEvent],
+  entities: [User, Feedback, Project, AuditLog, Team, TeamMember, Invitation, Comment, ActivityEvent, UserProjectLastSeen],
   migrations: [],
   subscribers: [],
 });
