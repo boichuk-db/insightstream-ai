@@ -41,9 +41,12 @@ export function Testimonials() {
               transition={{ delay: i * 0.1 }}
               className="bg-zinc-900 border border-brand-border rounded-2xl p-6"
             >
+              <div className="flex gap-1 mb-3">
+                {'★'.repeat(5).split('').map((s, i) => <span key={i} className="text-yellow-400">{s}</span>)}
+              </div>
               <p className="text-zinc-300 text-sm leading-relaxed mb-6">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">
+                <div className="w-9 h-9 rounded-full bg-brand-primary/20 border border-brand-primary/30 flex items-center justify-center text-xs font-bold text-brand-accent">
                   {t.avatar}
                 </div>
                 <div>
@@ -54,6 +57,7 @@ export function Testimonials() {
             </motion.div>
           ))}
         </div>
+        <p className="text-center text-xs text-zinc-600 mt-8">Based on feedback from early access users.</p>
       </div>
     </section>
   )
