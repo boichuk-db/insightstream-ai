@@ -39,10 +39,15 @@ export function Problem() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-zinc-900 border border-brand-border rounded-2xl p-6"
+              transition={{ delay: i * 0.12 }}
+              className="group bg-zinc-900 border border-brand-border rounded-2xl p-6"
             >
-              <pain.icon className="h-6 w-6 text-brand-accent mb-4" />
+              <motion.div
+                whileHover={{ scale: 1.12 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+              >
+                <pain.icon className="h-6 w-6 text-brand-accent mb-4 group-hover:drop-shadow-[0_0_8px_#6eb5af] transition-all" />
+              </motion.div>
               <h3 className="font-bold text-lg mb-2">{pain.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{pain.description}</p>
             </motion.div>
