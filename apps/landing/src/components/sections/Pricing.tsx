@@ -92,7 +92,7 @@ export function Pricing() {
                       : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100'
                   }`}
                 >
-                  {config.price === 0 ? 'Get Started Free' : 'Start 14-day Trial'}
+                  {config.price === 0 ? 'Get started free →' : 'Start free trial →'}
                 </a>
               </div>
             )
