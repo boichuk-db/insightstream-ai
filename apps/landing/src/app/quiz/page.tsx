@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ChevronLeft } from 'lucide-react'
 import { QUIZ_CONFIG } from '@/config/quiz.config'
 import { QuizProgress } from '@/components/quiz/QuizProgress'
 import { QuizStep } from '@/components/quiz/QuizStep'
@@ -102,6 +103,14 @@ function QuizContent() {
     <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center px-4 py-16">
       <div className="w-full max-w-xl">
         <QuizProgress current={stepNum} total={TOTAL} />
+        {stepNum > 1 && (
+          <button
+            onClick={() => router.push(`/quiz?step=${stepNum - 1}`)}
+            className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300 transition-colors mb-6"
+          >
+            <ChevronLeft className="h-4 w-4" /> Back
+          </button>
+        )}
         <QuizStep key={question.id} question={question} onAnswer={handleAnswer} />
       </div>
     </div>
