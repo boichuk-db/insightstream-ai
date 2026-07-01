@@ -43,6 +43,34 @@ export class FeedbackController {
     return this.feedbackService.findByProject(projectId, req.user.id);
   }
 
+  @Post('mark-seen')
+  async markSeen(
+    @Request() req: any,
+    @Body('projectId') projectId: string,
+  ): Promise<void> {
+    if (!projectId) throw new BadRequestException('projectId is required');
+    await this.feedbackService.markSeen(req.user.id, projectId);
+  }
+
+  @Get('last-seen')
+  async getLastSeen(
+    @Request() req: any,
+    @Query('projectId') projectId: string,
+  ): Promise<{ seenAt: string | null }> {
+    if (!projectId) throw new BadRequestException('projectId is required');
+    const date = await this.feedbackService.getLastSeen(req.user.id, projectId);
+    return { seenAt: date ? date.toISOString() : null };
+  }
+
+  @Get('trends')
+  async getTrends(
+    @Request() req: any,
+    @Query('projectId') projectId: string,
+  ): Promise<{ name: string; emoji: string; count: number }[]> {
+    if (!projectId) throw new BadRequestException('projectId is required');
+    return this.feedbackService.getTrends(projectId, req.user.id);
+  }
+
   @Get(':id')
   async findOne(@Request() req: any, @Param('id') id: string) {
     return this.feedbackService.findOne(id, req.user.id);
