@@ -1,22 +1,23 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Inbox, Clock, HelpCircle } from 'lucide-react'
 
 const PAINS = [
   {
-    icon: '📦',
+    icon: Inbox,
     title: 'Feedback scattered everywhere',
     description:
       'Emails, Slack messages, support tickets, surveys — feedback lives in silos with no central place to see the big picture.',
   },
   {
-    icon: '🕐',
+    icon: Clock,
     title: 'Manual analysis takes hours',
     description:
       'Reading through hundreds of responses, tagging them manually, trying to spot patterns — a full-time job that never ends.',
   },
   {
-    icon: '❓',
+    icon: HelpCircle,
     title: "You don't know what to build next",
     description:
       "Without structured insights, every roadmap decision is a guess. You build features users didn't ask for and miss what they actually need.",
@@ -41,7 +42,7 @@ export function Problem() {
               transition={{ delay: i * 0.1 }}
               className="bg-zinc-900 border border-brand-border rounded-2xl p-6"
             >
-              <div className="text-3xl mb-4">{pain.icon}</div>
+              <pain.icon className="h-6 w-6 text-brand-accent mb-4" />
               <h3 className="font-bold text-lg mb-2">{pain.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{pain.description}</p>
             </motion.div>
