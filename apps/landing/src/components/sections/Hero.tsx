@@ -96,7 +96,7 @@ export function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
-            href={`${APP_URL}/auth/register`}
+            href={`${APP_URL}/`}
             className="px-8 py-4 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold rounded-xl transition-colors text-lg flex items-center gap-2"
           >
             {ctaText} <ArrowRight className="h-5 w-5" />
