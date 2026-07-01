@@ -1,15 +1,25 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Code2, Sparkles, Kanban, Mail, Users, Download } from 'lucide-react'
 
 const FEATURES = [
-  { icon: '🔌', title: 'Embeddable Widget', desc: 'Drop-in feedback widget with customizable themes and branding.' },
-  { icon: '🧠', title: 'AI Analysis', desc: 'Gemini-powered categorization, sentiment detection, and pattern recognition.' },
-  { icon: '📋', title: 'Kanban Board', desc: 'Organize feedback into columns. Drag, filter, and prioritize at a glance.' },
-  { icon: '📧', title: 'Weekly AI Digest', desc: 'Automated email summary of top insights and emerging trends.' },
-  { icon: '👥', title: 'Team Collaboration', desc: 'Invite team members, assign feedback, add comments and context.' },
-  { icon: '📤', title: 'CSV Data Export', desc: 'Export all your feedback data anytime. No lock-in.' },
+  { icon: 'code2', title: 'Embeddable Widget', desc: 'Drop-in feedback widget with customizable themes and branding.' },
+  { icon: 'sparkles', title: 'AI Analysis', desc: 'Gemini-powered categorization, sentiment detection, and pattern recognition.' },
+  { icon: 'kanban', title: 'Kanban Board', desc: 'Organize feedback into columns. Drag, filter, and prioritize at a glance.' },
+  { icon: 'mail', title: 'Weekly AI Digest', desc: 'Automated email summary of top insights and emerging trends.' },
+  { icon: 'users', title: 'Team Collaboration', desc: 'Invite team members, assign feedback, add comments and context.' },
+  { icon: 'download', title: 'CSV Data Export', desc: 'Export all your feedback data anytime. No lock-in.' },
 ]
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  code2: <Code2 className="h-6 w-6 text-brand-accent" />,
+  sparkles: <Sparkles className="h-6 w-6 text-brand-accent" />,
+  kanban: <Kanban className="h-6 w-6 text-brand-accent" />,
+  mail: <Mail className="h-6 w-6 text-brand-accent" />,
+  users: <Users className="h-6 w-6 text-brand-accent" />,
+  download: <Download className="h-6 w-6 text-brand-accent" />,
+}
 
 export function Features() {
   return (
@@ -29,7 +39,7 @@ export function Features() {
               transition={{ delay: i * 0.05 }}
               className="bg-zinc-900 border border-brand-border rounded-xl p-6 hover:border-zinc-600 transition-colors"
             >
-              <div className="text-2xl mb-3">{f.icon}</div>
+              <div className="mb-3">{ICON_MAP[f.icon]}</div>
               <h3 className="font-semibold mb-1">{f.title}</h3>
               <p className="text-zinc-500 text-sm">{f.desc}</p>
             </motion.div>
