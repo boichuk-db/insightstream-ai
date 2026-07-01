@@ -10,6 +10,7 @@ import {
   Feedback,
   Project,
   TeamMember,
+  TeamRole,
   ActivityAction,
 } from '@insightstream/database';
 import { ActivityService } from '../activity/activity.service';
@@ -88,7 +89,10 @@ export class CommentsService {
         const member = await this.memberRepo.findOne({
           where: { teamId: project.teamId, userId },
         });
-        if (!member || (member.role !== 'owner' && member.role !== 'admin')) {
+        if (
+          !member ||
+          (member.role !== TeamRole.OWNER && member.role !== TeamRole.ADMIN)
+        ) {
           throw new ForbiddenException(
             'Only comment author or team admin can delete',
           );
