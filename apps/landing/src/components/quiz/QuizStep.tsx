@@ -35,7 +35,7 @@ export function QuizStep({ question, onAnswer }: QuizStepProps) {
             <button
               key={opt.value}
               onClick={() => handleSelect(opt.value)}
-              className="flex flex-col items-center gap-2 p-5 bg-zinc-900 border border-brand-border rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-center"
+              className="flex flex-col items-center gap-2 p-5 bg-zinc-900 border border-brand-border rounded-xl hover:border-brand-primary hover:bg-zinc-800 transition-all text-center"
             >
               {opt.icon && <span className="text-3xl">{opt.icon}</span>}
               <span className="text-sm font-medium">{opt.label}</span>
@@ -50,7 +50,7 @@ export function QuizStep({ question, onAnswer }: QuizStepProps) {
             <button
               key={opt.value}
               onClick={() => handleSelect(opt.value)}
-              className="flex items-center gap-3 p-4 bg-zinc-900 border border-brand-border rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-left"
+              className="flex items-center gap-3 p-4 bg-zinc-900 border border-brand-border rounded-xl hover:border-brand-primary hover:bg-zinc-800 transition-all text-left"
             >
               <div className="w-4 h-4 rounded-full border-2 border-zinc-600 shrink-0" />
               <span className="text-sm">{opt.label}</span>
@@ -70,13 +70,13 @@ export function QuizStep({ question, onAnswer }: QuizStepProps) {
                   onClick={() => handleSelect(opt.value)}
                   className={`flex items-center gap-3 p-4 border rounded-xl transition-all text-left ${
                     isSelected
-                      ? 'border-indigo-500 bg-indigo-500/10 text-white'
+                      ? 'border-brand-primary bg-brand-primary/10 text-white'
                       : 'border-brand-border bg-zinc-900 text-zinc-400 hover:border-zinc-600'
                   }`}
                 >
                   <div
                     className={`w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center ${
-                      isSelected ? 'border-indigo-500 bg-indigo-500' : 'border-zinc-600'
+                      isSelected ? 'border-brand-primary bg-brand-primary' : 'border-zinc-600'
                     }`}
                   >
                     {isSelected && (
@@ -92,7 +92,7 @@ export function QuizStep({ question, onAnswer }: QuizStepProps) {
           </div>
           <button
             onClick={handleMultiSubmit}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-colors"
+            className="w-full py-3 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-xl transition-colors"
           >
             Continue →
           </button>

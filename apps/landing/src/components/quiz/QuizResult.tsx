@@ -28,11 +28,11 @@ export function QuizResult({ answers }: QuizResultProps) {
 
   return (
     <div className="w-full max-w-lg mx-auto text-center">
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-semibold mb-6">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-primary/10 border border-brand-primary/20 rounded-full text-brand-accent text-xs font-semibold mb-6">
         ✨ Based on your answers
       </div>
       <h2 className="text-3xl font-bold mb-2">
-        <span className="text-indigo-400">{config.name}</span> is perfect for you
+        <span className="text-brand-accent">{config.name}</span> is perfect for you
       </h2>
       <p className="text-zinc-400 mb-8">{config.description}</p>
 
@@ -56,7 +56,7 @@ export function QuizResult({ answers }: QuizResultProps) {
       <a
         href={`${APP_URL}/?plan=${recommendation}`}
         onClick={() => captureEvent('quiz_cta_clicked', { plan: recommendation })}
-        className="inline-block w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-colors text-lg"
+        className="inline-block w-full py-4 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold rounded-xl transition-colors text-lg"
       >
         {config.price === 0 ? 'Get Started Free →' : 'Start Free Trial →'}
       </a>
