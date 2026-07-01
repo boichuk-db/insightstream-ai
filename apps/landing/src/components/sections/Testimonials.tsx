@@ -35,10 +35,11 @@ export function Testimonials() {
           {TESTIMONIALS.map((t, i) => (
             <motion.div
               key={t.author}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -2, transition: { duration: 0.2, delay: 0 } }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.15, duration: 0.4 }}
               className="bg-zinc-900 border border-brand-border rounded-2xl p-6"
             >
               <div className="flex gap-1 mb-3">
