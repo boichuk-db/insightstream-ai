@@ -50,8 +50,8 @@ export function Solution() {
               x1="20%" y1="1" x2="80%" y2="1"
               stroke="#3d8a84"
               strokeWidth="1.5"
-              strokeDasharray="1000"
-              strokeDashoffset={isInView ? 0 : 1000}
+              strokeDasharray="4096"
+              strokeDashoffset={isInView ? 0 : 4096}
               style={{ transition: 'stroke-dashoffset 1.2s ease-out 0.4s' }}
             />
           </svg>
