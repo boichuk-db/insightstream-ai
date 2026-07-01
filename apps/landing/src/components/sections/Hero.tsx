@@ -25,17 +25,6 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-16 px-6 overflow-hidden">
-      <style>{`
-        @keyframes blob-pulse {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.07; }
-          50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.13; }
-        }
-        @keyframes blob-pulse-2 {
-          0%, 100% { transform: scale(1); opacity: 0.04; }
-          50% { transform: scale(1.25); opacity: 0.09; }
-        }
-      `}</style>
-
       {/* Layer 1: dot grid */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -43,6 +32,7 @@ export function Hero() {
           backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.18) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
         }}
+        aria-hidden="true"
       />
 
       {/* Layer 2: SVG noise grain */}
@@ -55,17 +45,20 @@ export function Hero() {
       </svg>
 
       {/* Layer 3: radial fade to hide grid edges */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,#090c0c_100%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,#090c0c_100%)]" aria-hidden="true" />
 
       {/* Layer 4: primary animated blob */}
-      <div
-        className="absolute top-1/3 left-1/2 w-[700px] h-[500px] bg-brand-primary rounded-full blur-[120px] pointer-events-none"
-        style={{ animation: 'blob-pulse 8s ease-in-out infinite' }}
-      />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true">
+        <div
+          className="w-[700px] h-[500px] bg-brand-primary rounded-full blur-[120px]"
+          style={{ animation: 'blob-pulse 8s ease-in-out infinite', willChange: 'transform' }}
+        />
+      </div>
       {/* Layer 5: secondary animated blob */}
       <div
         className="absolute bottom-1/4 left-1/4 w-[400px] h-[300px] bg-brand-accent rounded-full blur-[100px] pointer-events-none"
-        style={{ animation: 'blob-pulse-2 6s ease-in-out infinite' }}
+        style={{ animation: 'blob-pulse-2 6s ease-in-out infinite', willChange: 'transform' }}
+        aria-hidden="true"
       />
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
