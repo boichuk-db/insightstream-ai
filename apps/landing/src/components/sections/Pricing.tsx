@@ -86,10 +86,10 @@ export function Pricing() {
                 </div>
                 <a
                   href={`${APP_URL}/?plan=${planType.toLowerCase()}`}
-                  className={`w-full py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
+                  className={`w-full py-3.5 rounded-xl text-sm font-bold text-center transition-all duration-200 ${
                     isHighlighted
-                      ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
-                      : 'border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10'
+                      ? 'bg-brand-primary hover:bg-brand-primary/85 text-white shadow-[0_4px_20px_rgba(61,138,132,0.4)] hover:shadow-[0_4px_28px_rgba(61,138,132,0.55)]'
+                      : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100'
                   }`}
                 >
                   {config.price === 0 ? 'Get Started Free' : 'Start 14-day Trial'}
