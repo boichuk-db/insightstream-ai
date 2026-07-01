@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 
 export interface ChipOption {
   label: string;
@@ -101,7 +101,7 @@ function DropdownChip({
                 )}
               >
                 {selected.includes(opt.value) && (
-                  <span className="text-brand-bg text-[8px]">✓</span>
+                  <Check className="w-2.5 h-2.5 text-brand-bg" />
                 )}
               </span>
               {opt.label}
@@ -109,7 +109,10 @@ function DropdownChip({
           ))}
           {selected.length > 0 && (
             <button
-              onClick={() => { onChange([]); setOpen(false); }}
+              onClick={() => {
+                onChange([]);
+                setOpen(false);
+              }}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs text-brand-muted hover:text-brand-fg border-t border-brand-border mt-1"
             >
               <X className="w-3 h-3" /> Clear
