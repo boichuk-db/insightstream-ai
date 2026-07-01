@@ -1,5 +1,6 @@
 import { Nav } from '@/components/sections/Nav'
 import { Hero } from '@/components/sections/Hero'
+import { Trust } from '@/components/sections/Trust'
 import { Problem } from '@/components/sections/Problem'
 import { Solution } from '@/components/sections/Solution'
 import { Features } from '@/components/sections/Features'
@@ -34,11 +35,12 @@ export default function LandingPage() {
       <Nav />
       <main>
         <Hero />
+        <Trust />
         <Problem />
         <Solution />
         <Features />
-        <QuizCta />
         <Pricing />
+        <QuizCta />
         <Testimonials />
       </main>
       <Footer />
