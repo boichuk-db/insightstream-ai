@@ -14,6 +14,7 @@ export interface IFeedback {
   category?: string;
   aiSummary?: string;
   status: FeedbackStatus;
+  tags?: string[];
   userId: string;
   createdAt: string;
   updatedAt: string;
