@@ -3,12 +3,12 @@
 @theme inline {
   --font-sans: var(--font-plus-jakarta);
 
-  --color-brand-primary: var(--color-indigo-500);
-  --color-brand-bg: #09090b;
-  --color-brand-surface: #161618;
-  --color-brand-border: #2a2a2d;
-  --color-brand-muted: #71717a;
-  --color-brand-accent: var(--color-indigo-400);
+  --color-brand-primary: #3d8a84;
+  --color-brand-bg: #090c0c;
+  --color-brand-surface: #0e1515;
+  --color-brand-border: #182222;
+  --color-brand-muted: #2e4d4a;
+  --color-brand-accent: #6eb5af;
 }
 
 @layer base {
