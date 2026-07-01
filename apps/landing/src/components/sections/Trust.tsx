@@ -11,7 +11,8 @@ export function Trust() {
   ]
 
   return (
-    <section className="py-8 border-y border-brand-border">
+    <section className="relative py-8 border-y border-brand-border overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="max-w-4xl mx-auto px-6">
         <div className="hidden sm:flex items-center justify-center gap-6 flex-wrap">
           {items.map((item, i) => (

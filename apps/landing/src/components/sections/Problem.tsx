@@ -26,7 +26,8 @@ const PAINS = [
 
 export function Problem() {
   return (
-    <section className="py-24 px-6">
+    <section className="relative py-24 px-6 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">The problem</div>

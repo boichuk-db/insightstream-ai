@@ -33,7 +33,8 @@ export function Solution() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section className="py-24 px-6 border-t border-brand-border">
+    <section className="relative py-24 px-6 border-t border-brand-border overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">The solution</div>
@@ -41,7 +42,7 @@ export function Solution() {
         </div>
         <div ref={ref} className="relative grid md:grid-cols-3 gap-8">
           <svg
-            className="absolute top-[36px] left-0 w-full hidden md:block pointer-events-none"
+            className="absolute top-[36px] left-0 w-full hidden md:block pointer-events-none z-0"
             height="2"
             preserveAspectRatio="none"
             aria-hidden="true"
@@ -62,7 +63,7 @@ export function Solution() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.3 + 0.3 }}
-              className="relative"
+              className="relative z-10"
             >
               <div className="text-6xl font-black text-zinc-800 mb-4">{step.num}</div>
               <step.icon className="h-6 w-6 text-brand-accent mb-3" />

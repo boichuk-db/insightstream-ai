@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Check, X } from 'lucide-react'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { PLAN_CONFIGS, PlanType } from '@/config/plans.config'
@@ -33,36 +32,26 @@ export function Pricing() {
   const highlightedPlan = flagVariant === 'variant-b' ? 'BUSINESS' : 'PRO'
 
   return (
-    <section className="py-24 px-6 border-t border-brand-border">
+    <section className="relative py-24 px-6 border-t border-brand-border overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">Pricing</div>
           <h2 className="text-3xl sm:text-4xl font-bold">Simple, transparent pricing</h2>
           <p className="text-zinc-400 mt-3">Start free, upgrade when you need more power. No hidden fees.</p>
         </div>
-        <motion.div
-          className="grid md:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          {PLAN_ORDER.map((planType, i) => {
+        <div className="grid md:grid-cols-3 gap-6">
+          {PLAN_ORDER.map((planType) => {
             const config = PLAN_CONFIGS[planType]
             const isHighlighted = config.name === highlightedPlan
             return (
-              <motion.div
+              <div
                 key={planType}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={!isHighlighted ? { y: -2, transition: { duration: 0.2, delay: 0 } } : undefined}
                 className={`relative flex flex-col bg-zinc-900 rounded-2xl p-7 border ${
                   isHighlighted
                     ? 'border-brand-primary/50 md:-mt-4'
                     : 'border-brand-border'
                 }`}
-                style={isHighlighted ? { animation: 'pricing-glow 3s ease-in-out infinite' } : undefined}
               >
                 {isHighlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-brand-primary text-white text-xs font-bold rounded-full">
@@ -100,15 +89,15 @@ export function Pricing() {
                   className={`w-full py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
                     isHighlighted
                       ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
-                      : 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                      : 'border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10'
                   }`}
                 >
                   {config.price === 0 ? 'Get Started Free' : 'Start 14-day Trial'}
                 </a>
-              </motion.div>
+              </div>
             )
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

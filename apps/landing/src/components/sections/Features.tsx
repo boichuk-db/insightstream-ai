@@ -23,7 +23,8 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 export function Features() {
   return (
-    <section className="py-24 px-6 border-t border-brand-border">
+    <section className="relative py-24 px-6 border-t border-brand-border overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">Features</div>
@@ -37,7 +38,7 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -4, transition: { duration: 0.2, delay: 0 } }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
+              transition={{ duration: 0.2, delay: i * 0.05 }}
               className="bg-zinc-900 border border-brand-border rounded-xl p-6 hover:border-brand-primary/40 hover:shadow-[0_0_20px_rgba(61,138,132,0.12)] transition-[border-color,box-shadow] duration-300 cursor-default"
             >
               <div className="mb-3">{ICON_MAP[f.icon]}</div>
