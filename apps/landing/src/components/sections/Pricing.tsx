@@ -28,19 +28,32 @@ function formatValue(key: string, value: unknown): string | boolean {
   return String(value)
 }
 
+const PRICING_GLOW_KEYFRAME = `
+  @keyframes pricing-glow {
+    0%, 100% { box-shadow: 0 0 40px rgba(61,138,132,0.08); }
+    50%       { box-shadow: 0 0 60px rgba(61,138,132,0.20); }
+  }
+`
+
 export function Pricing() {
   const flagVariant = useFeatureFlagVariantKey('landing-pricing-highlight')
   const highlightedPlan = flagVariant === 'variant-b' ? 'BUSINESS' : 'PRO'
 
   return (
     <section className="py-24 px-6 border-t border-brand-border">
+      <style>{PRICING_GLOW_KEYFRAME}</style>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">Pricing</div>
           <h2 className="text-3xl sm:text-4xl font-bold">Simple, transparent pricing</h2>
           <p className="text-zinc-400 mt-3">Start free, upgrade when you need more power. No hidden fees.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <motion.div
+          className="grid md:grid-cols-3 gap-6"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           {PLAN_ORDER.map((planType, i) => {
             const config = PLAN_CONFIGS[planType]
             const isHighlighted = config.name === highlightedPlan
@@ -51,11 +64,13 @@ export function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
+                whileHover={!isHighlighted ? { y: -2 } : undefined}
                 className={`relative flex flex-col bg-zinc-900 rounded-2xl p-7 border ${
                   isHighlighted
-                    ? 'border-brand-primary/50 shadow-[0_0_40px_rgba(99,102,241,0.1)] md:-mt-4'
+                    ? 'border-brand-primary/50 md:-mt-4'
                     : 'border-brand-border'
                 }`}
+                style={isHighlighted ? { animation: 'pricing-glow 3s ease-in-out infinite' } : undefined}
               >
                 {isHighlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-brand-primary text-white text-xs font-bold rounded-full">
@@ -101,7 +116,7 @@ export function Pricing() {
               </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
