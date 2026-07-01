@@ -10,7 +10,7 @@ import { captureEvent } from "@/lib/posthog";
 import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, MessageSquare, Sparkles, Menu, List, Columns } from "lucide-react";
+import { Plus, MessageSquare, Sparkles, Menu } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
@@ -18,7 +18,7 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
 import { KanbanBoard } from "@/components/dashboard/KanbanBoard";
 import { FeedbackFeed } from "@/components/dashboard/FeedbackFeed";
-import { cn } from "@/lib/utils";
+import { useFeedbackView } from "@/hooks/useFeedbackView";
 import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
 import { DigestModal } from "@/components/dashboard/DigestModal";
 import { useSocket } from "@/hooks/useSocket";
@@ -44,7 +44,7 @@ export default function Dashboard() {
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
     null,
   );
-  const [feedbackView, setFeedbackView] = useState<"feed" | "kanban">("feed");
+  const { feedbackView } = useFeedbackView();
 
   useEffect(() => {
     captureEvent('dashboard_viewed')
@@ -292,49 +292,24 @@ export default function Dashboard() {
                   <MessageSquare className="h-5 w-5 text-brand-accent" /> Feedback
                 </h2>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 p-1 rounded-lg bg-brand-surface border border-brand-border">
-                  <button
-                    onClick={() => setFeedbackView("feed")}
-                    className={cn(
-                      "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
-                      feedbackView === "feed"
-                        ? "bg-brand-surface-hover text-brand-fg"
-                        : "text-brand-muted hover:text-brand-fg",
-                    )}
-                  >
-                    <List className="w-3.5 h-3.5" />
-                    Feed
-                  </button>
-                  <button
-                    onClick={() => setFeedbackView("kanban")}
-                    className={cn(
-                      "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
-                      feedbackView === "kanban"
-                        ? "bg-brand-surface-hover text-brand-fg"
-                        : "text-brand-muted hover:text-brand-fg",
-                    )}
-                  >
-                    <Columns className="w-3.5 h-3.5" />
-                    Kanban
-                  </button>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsDigestOpen(true)}
-                  disabled={!activeProject?.id}
-                  className="bg-brand-accent/10 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/20"
-                >
-                  <Sparkles className="h-3.5 w-3.5 mr-2" />
-                  AI Digest
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsDigestOpen(true)}
+                disabled={!activeProject?.id}
+                className="bg-brand-accent/10 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/20"
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-2" />
+                AI Digest
+              </Button>
             </div>
 
             <div className="flex-1 w-full max-w-full">
-              {isLoading || !activeProject ? (
-                <Skeleton count={5} height="h-[600px]" layout="grid" cols={5} />
+              {!activeProject && !isLoading ? null : feedbackView === "feed" ? (
+                <FeedbackFeed
+                  projectId={activeProject?.id ?? ""}
+                  currentUserId={userProfile?.id}
+                />
               ) : isError ? (
                 <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
                   <span className="block text-lg font-bold mb-1">
@@ -343,11 +318,8 @@ export default function Dashboard() {
                   Failed to load feedback. Make sure your local API server is
                   running on port 3001.
                 </div>
-              ) : feedbackView === "feed" ? (
-                <FeedbackFeed
-                  projectId={activeProject.id}
-                  currentUserId={userProfile?.id}
-                />
+              ) : isLoading || !activeProject ? (
+                <Skeleton count={5} height="h-[600px]" layout="grid" cols={5} />
               ) : (
                 <KanbanBoard
                   initialFeedbacks={feedbacks || []}

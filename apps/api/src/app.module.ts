@@ -32,6 +32,7 @@ import {
   Invitation,
   Comment,
   ActivityEvent,
+  UserProjectLastSeen,
 } from '@insightstream/database';
 
 @Module({
@@ -73,6 +74,7 @@ import {
         Invitation,
         Comment,
         ActivityEvent,
+        UserProjectLastSeen,
       ],
       synchronize: process.env.NODE_ENV !== 'production',
       migrations: [__dirname + '/migrations/**/*.{ts,js}'],

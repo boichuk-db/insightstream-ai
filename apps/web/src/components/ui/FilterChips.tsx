@@ -21,6 +21,7 @@ interface FilterChipsProps {
   groups: FilterGroup[];
   values: Record<string, string[]>;
   onChange: (key: string, values: string[]) => void;
+  onClearAll?: () => void;
   className?: string;
 }
 
@@ -67,7 +68,7 @@ function DropdownChip({
           "flex items-center gap-1 px-3 py-1 rounded-full text-xs border transition-colors",
           hasActive
             ? "bg-brand-accent/10 border-brand-accent/30 text-brand-accent"
-            : "bg-transparent border-dashed border-brand-border text-brand-muted hover:border-brand-muted hover:text-brand-fg",
+            : "bg-transparent border-dashed border-brand-border/60 text-brand-fg/75 hover:border-brand-border hover:text-brand-fg",
         )}
       >
         {group.label}
@@ -124,7 +125,11 @@ function DropdownChip({
   );
 }
 
-export function FilterChips({ groups, values, onChange, className }: FilterChipsProps) {
+export function FilterChips({ groups, values, onChange, onClearAll, className }: FilterChipsProps) {
+  const hasActiveFilter = onClearAll && Object.entries(values).some(
+    ([key, vals]) => vals.length > 0 && !(key === "source" && vals[0] === "all"),
+  );
+
   return (
     <div
       className={cn(
@@ -149,7 +154,7 @@ export function FilterChips({ groups, values, onChange, className }: FilterChips
                   "px-3 py-1 rounded-full text-xs border transition-colors",
                   values[group.key]?.includes(opt.value)
                     ? "bg-brand-accent/10 border-brand-accent/30 text-brand-accent"
-                    : "bg-brand-surface border-brand-border text-brand-muted hover:border-brand-muted hover:text-brand-fg",
+                    : "bg-brand-surface border-brand-border/60 text-brand-fg/75 hover:border-brand-border hover:text-brand-fg",
                 )}
               >
                 {opt.label}
@@ -164,6 +169,17 @@ export function FilterChips({ groups, values, onChange, className }: FilterChips
           )}
         </div>
       ))}
+      {hasActiveFilter && (
+        <>
+          <div className="w-px h-4 bg-brand-border" />
+          <button
+            onClick={onClearAll}
+            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs border border-dashed border-red-500/30 text-red-400 hover:bg-red-500/5 transition-colors"
+          >
+            <X className="w-3 h-3" /> Clear all
+          </button>
+        </>
+      )}
     </div>
   );
 }

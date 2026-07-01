@@ -14,6 +14,8 @@ import {
   Monitor,
   Sun,
   Moon,
+  LayoutList,
+  LayoutGrid,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
@@ -27,6 +29,7 @@ import { useTheme } from "next-themes";
 import { useColorTheme } from "@/hooks/useColorTheme";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { useFeedbackView } from "@/hooks/useFeedbackView";
 
 function ColorThemeButton({
   label,
@@ -90,6 +93,7 @@ export default function SettingsPage() {
   const { data: userProfile, isLoading: profileLoading } = useQuery(userProfileQuery);
   const { theme, setTheme } = useTheme();
   const { colorTheme, setColorTheme } = useColorTheme();
+  const { feedbackView, setFeedbackView } = useFeedbackView();
 
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -181,6 +185,40 @@ export default function SettingsPage() {
                         active={theme === "dark"}
                         onClick={() => setTheme("dark")}
                       />
+                    </div>
+                  </div>
+
+                  {/* Feedback View */}
+                  <div>
+                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
+                      <LayoutList className="h-4 w-4" />
+                      Feedback View
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedbackView("feed")}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
+                          feedbackView === "feed"
+                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
+                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                        )}
+                      >
+                        <LayoutList className="h-4 w-4 shrink-0" />
+                        Feed
+                      </button>
+                      <button
+                        onClick={() => setFeedbackView("kanban")}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
+                          feedbackView === "kanban"
+                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
+                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                        )}
+                      >
+                        <LayoutGrid className="h-4 w-4 shrink-0" />
+                        Kanban
+                      </button>
                     </div>
                   </div>
                 </div>

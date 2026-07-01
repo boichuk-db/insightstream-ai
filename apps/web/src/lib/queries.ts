@@ -60,6 +60,7 @@ export const lastSeenQuery = (projectId: string) =>
           params: { projectId },
         })
         .then((r) => (r.data.seenAt ? new Date(r.data.seenAt) : null)),
+    staleTime: Infinity, // capture once per page load; never auto-refetch
     enabled: !!projectId,
   });
 

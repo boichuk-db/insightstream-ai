@@ -1,6 +1,7 @@
 // apps/web/src/components/dashboard/FeedbackFeed.tsx
 "use client";
 
+
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -11,7 +12,7 @@ import { AITrendsBar } from "@/components/dashboard/AITrendsBar";
 import { FeedbackFeedItem } from "@/components/dashboard/FeedbackFeedItem";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Download, CheckCheck } from "lucide-react";
 import type { IFeedback } from "@insightstream/shared-types";
 
 const STATUS_TABS = [
@@ -23,35 +24,13 @@ const STATUS_TABS = [
   { label: "Rejected", value: "Rejected" },
 ];
 
-const BASE_FILTER_GROUPS = [
-  {
-    key: "source",
-    options: [
-      { label: "All sources", value: "all" },
-      { label: "Widget", value: "Widget" },
-      { label: "Direct", value: "Direct" },
-    ],
-  },
-  {
-    key: "sentiment",
-    options: [
-      { label: "😊 Positive", value: "positive" },
-      { label: "😞 Negative", value: "negative" },
-    ],
-  },
-  {
-    key: "tags",
-    label: "Tags",
-    multi: true,
-    options: [] as { label: string; value: string }[],
-  },
-  {
-    key: "category",
-    label: "Category",
-    multi: true,
-    options: [] as { label: string; value: string }[],
-  },
-];
+const SENTIMENT_GROUP = {
+  key: "sentiment",
+  options: [
+    { label: "😊 Positive", value: "positive" },
+    { label: "😞 Negative", value: "negative" },
+  ],
+};
 
 interface FeedbackFeedProps {
   projectId: string;
@@ -76,12 +55,20 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
   );
   const { data: lastSeen } = useQuery(lastSeenQuery(projectId));
 
+  // Mark seen on LEAVE (unmount) so that seenAt captures when the user last viewed the feed.
+  // This ensures the NEXT visit correctly highlights items posted since they left.
   useEffect(() => {
     if (!projectId) return;
-    api.post("/feedback/mark-seen", { projectId }).catch(() => {});
+    return () => {
+      api.post("/feedback/mark-seen", { projectId }).catch(() => {});
+    };
   }, [projectId]);
 
   const filterGroups = useMemo(() => {
+    const sources = Array.from(
+      new Set((feedbacks as IFeedback[]).map((f) => f.source).filter(Boolean)),
+    ).map((s) => ({ label: s as string, value: s as string }));
+
     const tags = Array.from(
       new Set((feedbacks as IFeedback[]).flatMap((f) => f.tags ?? [])),
     ).map((t) => ({ label: t, value: t }));
@@ -94,11 +81,15 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
       ),
     ).map((c) => ({ label: c, value: c }));
 
-    return BASE_FILTER_GROUPS.map((g) => {
-      if (g.key === "tags") return { ...g, options: tags };
-      if (g.key === "category") return { ...g, options: categories };
-      return g;
-    });
+    return [
+      {
+        key: "source",
+        options: [{ label: "All sources", value: "all" }, ...sources],
+      },
+      SENTIMENT_GROUP,
+      { key: "tags", label: "Tags", multi: true, options: tags },
+      { key: "category", label: "Category", multi: true, options: categories },
+    ];
   }, [feedbacks]);
 
   const filtered = useMemo(() => {
@@ -147,6 +138,41 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
     setFilterValues((prev) => ({ ...prev, category: [theme] }));
   }
 
+  async function markAllRead() {
+    const now = new Date();
+    await api.post("/feedback/mark-seen", { projectId }).catch(() => {});
+    // Update TQ cache immediately so dots clear without page reload
+    queryClient.setQueryData(lastSeenQuery(projectId).queryKey, now);
+  }
+
+  function clearAllFilters() {
+    setActiveTab("all");
+    setFilterValues({ source: ["all"], sentiment: [], tags: [], category: [] });
+  }
+
+  function exportCSV() {
+    const rows = [
+      ["ID", "Content", "Source", "Category", "Status", "Sentiment", "Created"],
+      ...(filtered as IFeedback[]).map((f) => [
+        f.id,
+        `"${f.content.replace(/"/g, '""')}"`,
+        f.source ?? "",
+        f.category ?? "",
+        f.status,
+        f.sentimentScore !== undefined ? String(Math.round(f.sentimentScore * 100)) + "%" : "",
+        new Date(f.createdAt).toISOString(),
+      ]),
+    ];
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `feedback-${projectId}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function handleStatusChange(id: string, status: string) {
     await api.patch(`/feedback/${id}/status`, { status });
     queryClient.invalidateQueries({ queryKey: ["feedbacks", projectId] });
@@ -187,12 +213,40 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
     <div className="flex flex-col">
       <AITrendsBar projectId={projectId} onThemeFilter={handleThemeFilter} />
 
-      <StatusTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+      <StatusTabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+        rightSlot={
+          <div className="flex items-center gap-2">
+            {lastSeen !== undefined && (feedbacks as IFeedback[]).some(
+              (f) => lastSeen === null || new Date(f.createdAt) > lastSeen,
+            ) && (
+              <button
+                onClick={markAllRead}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface text-xs text-brand-muted hover:text-brand-fg hover:border-brand-muted transition-colors"
+              >
+                <CheckCheck className="w-3.5 h-3.5" />
+                Mark all read
+              </button>
+            )}
+            <button
+              onClick={exportCSV}
+              disabled={filtered.length === 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-accent/30 bg-brand-accent/8 text-xs text-brand-accent hover:bg-brand-accent/15 transition-colors disabled:opacity-40"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Export CSV
+            </button>
+          </div>
+        }
+      />
 
       <FilterChips
         groups={filterGroups}
         values={filterValues}
         onChange={handleFilterChange}
+        onClearAll={clearAllFilters}
       />
 
       {filtered.length === 0 ? (
@@ -208,7 +262,13 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
             <FeedbackFeedItem
               key={feedback.id}
               feedback={feedback}
-              isNew={lastSeen ? new Date(feedback.createdAt) > lastSeen : false}
+              isNew={
+                lastSeen === undefined
+                  ? false
+                  : lastSeen === null
+                    ? true
+                    : new Date(feedback.createdAt) > lastSeen
+              }
               isExpanded={expandedId === feedback.id}
               onToggleExpand={() =>
                 setExpandedId((id) =>

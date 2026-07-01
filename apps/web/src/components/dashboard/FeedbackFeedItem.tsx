@@ -12,7 +12,7 @@ import {
   ChevronRight,
   Send,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, isThisYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SentimentBar } from "@/components/ui/sentiment-bar";
@@ -109,10 +109,13 @@ export function FeedbackFeedItem({
                 className="ml-0.5"
               />
             )}
-            <span className="ml-auto text-[11px] text-brand-muted flex-shrink-0">
-              {formatDistanceToNow(new Date(feedback.createdAt), {
-                addSuffix: true,
-              })}
+            <span
+              className="ml-auto text-[11px] text-brand-muted shrink-0"
+              title={formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
+            >
+              {isThisYear(new Date(feedback.createdAt))
+                ? format(new Date(feedback.createdAt), "MMM d, HH:mm")
+                : format(new Date(feedback.createdAt), "MMM d yyyy")}
             </span>
           </div>
 
@@ -147,11 +150,10 @@ export function FeedbackFeedItem({
       <AnimatePresence>
         {isExpanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
             <div className="px-5 pb-4 space-y-4 border-t border-brand-border">
               {/* AI Summary */}

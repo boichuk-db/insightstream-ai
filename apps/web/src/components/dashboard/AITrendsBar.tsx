@@ -31,24 +31,27 @@ export function AITrendsBar({ projectId, onThemeFilter }: AITrendsBarProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 flex-1 flex-wrap">
-          {trends.map((theme) => (
-            <button
-              key={theme.name}
-              onClick={(e) => {
-                e.stopPropagation();
-                onThemeFilter(theme.name);
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-accent/8 border border-brand-accent/20 text-[11px] text-brand-fg/80 hover:bg-brand-accent/15 hover:text-brand-fg transition-colors"
-            >
-              <span>{theme.emoji}</span>
-              <span>{theme.name}</span>
-              <span className="text-brand-accent font-semibold">
-                {theme.count}
-              </span>
-            </button>
-          ))}
-        </div>
+        {!expanded && (
+          <div className="flex items-center gap-2 flex-1 flex-wrap">
+            {trends.map((theme) => (
+              <button
+                key={theme.name}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onThemeFilter(theme.name);
+                }}
+                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-accent/8 border border-brand-accent/20 text-[11px] text-brand-fg/80 hover:bg-brand-accent/15 hover:text-brand-fg transition-colors"
+              >
+                <span>{theme.emoji}</span>
+                <span>{theme.name}</span>
+                <span className="text-brand-accent font-semibold">
+                  {theme.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+        {expanded && <div className="flex-1" />}
 
         <div className="flex items-center gap-1 text-brand-muted text-[11px] shrink-0">
           {expanded ? (
