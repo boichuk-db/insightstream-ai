@@ -15,14 +15,25 @@ function statusLabel(status: PlanStatus["planStatus"]) {
     trialing: "Trial",
     past_due: "Payment Failed",
     canceled: "Canceled",
+    incomplete: "Incomplete",
+    incomplete_expired: "Expired",
+    unpaid: "Unpaid",
+    paused: "Paused",
   };
-  return map[status];
+  return map[status] ?? status;
 }
 
 function statusBadgeClass(status: PlanStatus["planStatus"]) {
   if (status === "trialing") return "bg-brand-accent/20 text-brand-accent";
-  if (status === "past_due") return "bg-red-500/20 text-red-400";
-  if (status === "canceled") return "bg-zinc-500/20 text-brand-muted";
+  if (status === "past_due" || status === "unpaid")
+    return "bg-red-500/20 text-red-400";
+  if (
+    status === "canceled" ||
+    status === "incomplete_expired" ||
+    status === "paused"
+  )
+    return "bg-zinc-500/20 text-brand-muted";
+  if (status === "incomplete") return "bg-yellow-500/20 text-yellow-400";
   return "bg-green-500/20 text-green-400";
 }
 

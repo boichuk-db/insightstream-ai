@@ -31,7 +31,15 @@ export const digestPreviewQuery = (projectId: string) =>
 
 export interface PlanStatus {
   plan: string;
-  planStatus: 'active' | 'trialing' | 'past_due' | 'canceled';
+  planStatus:
+    | 'active'
+    | 'trialing'
+    | 'past_due'
+    | 'canceled'
+    | 'incomplete'
+    | 'incomplete_expired'
+    | 'unpaid'
+    | 'paused';
   trialEndsAt: string | null;
   stripePriceId: string | null;
   stripeSubscriptionId: string | null;

@@ -1,11 +1,9 @@
 import { Controller, Get, UseGuards, Request } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PlanLimitsService } from './plan-limits.service';
-import { PlanType, PlanConfig, PLAN_CONFIGS } from '@insightstream/database';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '@insightstream/database';
-import { ForbiddenException } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PlanLimitsService } from './plan-limits.service';
+import { User, PlanType, PLAN_CONFIGS } from '@insightstream/database';
 
 @Controller('plans')
 export class PlansController {

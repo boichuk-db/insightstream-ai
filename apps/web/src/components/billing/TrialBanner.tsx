@@ -23,8 +23,8 @@ export function TrialBanner() {
       <div className="flex items-center gap-2 text-sm text-brand-accent">
         <Zap className="h-4 w-4" />
         {daysLeft !== null
-          ? `${daysLeft} day${daysLeft !== 1 ? "s" : ""} left in your PRO trial`
-          : "You are on a PRO trial"}
+          ? `${daysLeft} day${daysLeft !== 1 ? "s" : ""} left in your ${data.plan} trial`
+          : `You are on a ${data.plan} trial`}
       </div>
       <button
         onClick={() => router.push("/dashboard/billing")}

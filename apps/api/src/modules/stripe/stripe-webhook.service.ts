@@ -1,14 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, PlanType } from '@insightstream/database';
 import Stripe from 'stripe';
+import { StripeService } from './stripe.service';
 
 @Injectable()
 export class StripeWebhookService {
   private readonly logger = new Logger(StripeWebhookService.name);
 
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private config: ConfigService,
+    private stripeService: StripeService,
+  ) {}
 
   async handleCheckoutCompleted(
     session: Stripe.Checkout.Session,
@@ -18,9 +24,20 @@ export class StripeWebhookService {
       this.logger.warn('checkout.session.completed: no userId in metadata');
       return;
     }
+
+    const subscription = await this.stripeService.retrieveSubscription(
+      session.subscription as string,
+    );
+    const priceId = subscription.items.data[0]?.price.id;
+
     await this.userRepo.update(userId, {
-      stripeSubscriptionId: session.subscription as string,
+      plan: this.resolvePlan(priceId),
+      stripeSubscriptionId: subscription.id,
+      stripePriceId: priceId ?? null,
       planStatus: 'trialing',
+      trialEndsAt: subscription.trial_end
+        ? new Date(subscription.trial_end * 1000)
+        : null,
     });
   }
 
@@ -80,11 +97,19 @@ export class StripeWebhookService {
   private resolvePlan(priceId: string | undefined): PlanType {
     if (!priceId) return PlanType.FREE;
     const ids: Record<string, PlanType> = {
-      [process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? '']: PlanType.PRO,
-      [process.env.STRIPE_PRO_ANNUAL_PRICE_ID ?? '']: PlanType.PRO,
-      [process.env.STRIPE_BUSINESS_MONTHLY_PRICE_ID ?? '']: PlanType.BUSINESS,
-      [process.env.STRIPE_BUSINESS_ANNUAL_PRICE_ID ?? '']: PlanType.BUSINESS,
+      [this.config.get('STRIPE_PRO_MONTHLY_PRICE_ID') ?? '']: PlanType.PRO,
+      [this.config.get('STRIPE_PRO_ANNUAL_PRICE_ID') ?? '']: PlanType.PRO,
+      [this.config.get('STRIPE_BUSINESS_MONTHLY_PRICE_ID') ?? '']:
+        PlanType.BUSINESS,
+      [this.config.get('STRIPE_BUSINESS_ANNUAL_PRICE_ID') ?? '']:
+        PlanType.BUSINESS,
     };
-    return ids[priceId] ?? PlanType.FREE;
+    const plan = ids[priceId];
+    if (!plan) {
+      this.logger.warn(
+        `resolvePlan: unrecognized priceId "${priceId}", defaulting to FREE`,
+      );
+    }
+    return plan ?? PlanType.FREE;
   }
 }

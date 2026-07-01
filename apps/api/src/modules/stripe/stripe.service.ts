@@ -63,6 +63,12 @@ export class StripeService {
     return session.url;
   }
 
+  async retrieveSubscription(
+    subscriptionId: string,
+  ): Promise<Stripe.Subscription> {
+    return this.stripe.subscriptions.retrieve(subscriptionId);
+  }
+
   constructWebhookEvent(rawBody: Buffer, signature: string): Stripe.Event {
     return this.stripe.webhooks.constructEvent(
       rawBody,
