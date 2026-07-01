@@ -23,8 +23,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 export function Features() {
   return (
-    <section className="relative py-24 px-6 border-t border-brand-border overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.12) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+    <section className="py-24 px-6 border-t border-brand-border">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">Features</div>
