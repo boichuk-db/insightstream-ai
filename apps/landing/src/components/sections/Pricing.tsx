@@ -87,9 +87,9 @@ export function Pricing() {
                 <a
                   href={`${APP_URL}/?plan=${planType.toLowerCase()}`}
                   className={`w-full py-3.5 rounded-xl text-sm font-bold text-center transition-colors ${
-                    isHighlighted
-                      ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
-                      : 'bg-zinc-700 hover:bg-zinc-600 text-white'
+                    config.price === 0
+                      ? 'bg-white hover:bg-white/90 text-brand-bg'
+                      : 'bg-brand-accent hover:bg-brand-accent/90 text-brand-bg'
                   }`}
                 >
                   {config.price === 0 ? 'Get Started Free' : 'Start 14-day Trial'}
