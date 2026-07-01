@@ -24,14 +24,14 @@
 
 ---
 
-### Task 1: Hero — animated teal blobs
+### Task 1: Hero — background (dot grid + noise + animated blobs)
 
 **Files:**
 - Modify: `apps/landing/src/components/sections/Hero.tsx`
 
-The current file has one static glow div at line 28. Replace it with two animated blobs and a scoped `<style>` tag.
+Replace the single static glow div (line 28) with a layered background: dot grid pattern + SVG noise grain + two animated teal blobs. All pure CSS/SVG — zero weight, zero new dependencies.
 
-- [ ] **Step 1: Open the file and replace the static blob div with two animated blobs**
+- [ ] **Step 1: Open the file and replace the static blob div with the full layered background**
 
 Replace lines 27–28 (the `<section>` open tag and the single static glow `<div>`):
 
@@ -40,20 +40,42 @@ Replace lines 27–28 (the `<section>` open tag and the single static glow `<div
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-16 px-6 overflow-hidden">
       <style>{`
         @keyframes blob-pulse {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.06; }
-          50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.11; }
+          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.07; }
+          50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.13; }
         }
         @keyframes blob-pulse-2 {
           0%, 100% { transform: scale(1); opacity: 0.04; }
-          50% { transform: scale(1.25); opacity: 0.08; }
+          50% { transform: scale(1.25); opacity: 0.09; }
         }
       `}</style>
-      {/* Primary blob — centred */}
+
+      {/* Layer 1: dot grid */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(61,138,132,0.18) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+
+      {/* Layer 2: SVG noise grain */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.035]" aria-hidden="true">
+        <filter id="hero-noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#hero-noise)" />
+      </svg>
+
+      {/* Layer 3: radial fade to hide grid edges */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,#090c0c_100%)]" />
+
+      {/* Layer 4: primary animated blob */}
       <div
         className="absolute top-1/3 left-1/2 w-[700px] h-[500px] bg-brand-primary rounded-full blur-[120px] pointer-events-none"
         style={{ animation: 'blob-pulse 8s ease-in-out infinite' }}
       />
-      {/* Secondary blob — offset bottom-left */}
+      {/* Layer 5: secondary animated blob */}
       <div
         className="absolute bottom-1/4 left-1/4 w-[400px] h-[300px] bg-brand-accent rounded-full blur-[100px] pointer-events-none"
         style={{ animation: 'blob-pulse-2 6s ease-in-out infinite' }}
