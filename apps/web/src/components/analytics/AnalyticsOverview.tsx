@@ -128,8 +128,8 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               >
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#3d8a84" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3d8a84" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
@@ -154,7 +154,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
                 <Area
                   type="monotone"
                   dataKey="score"
-                  stroke="#818cf8"
+                  stroke="#6eb5af"
                   strokeWidth={3}
                   fillOpacity={1}
                   fill="url(#colorScore)"

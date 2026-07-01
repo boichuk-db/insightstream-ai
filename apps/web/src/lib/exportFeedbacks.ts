@@ -107,7 +107,7 @@ export function exportToPDF(feedbacks: any[], title: string) {
   header h1 { font-size: 18px; color: #2d6b66; }
   header p { color: #6b7280; font-size: 10px; margin-top: 3px; }
   table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  thead tr { background: #4f46e5; }
+  thead tr { background: #3d8a84; }
   thead th { color: #fff; padding: 7px 8px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
   tbody td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
   tbody tr:nth-child(even) td { background: #f9fafb; }
