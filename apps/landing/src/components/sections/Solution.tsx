@@ -1,25 +1,26 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Code2, Sparkles, LayoutDashboard } from 'lucide-react'
 
 const STEPS = [
   {
     num: '01',
-    icon: '🔌',
+    iconComponent: Code2,
     title: 'Embed the widget',
     description:
       'One script tag. Your users can submit feedback directly inside your app — no context switching, no extra tools.',
   },
   {
     num: '02',
-    icon: '🧠',
+    iconComponent: Sparkles,
     title: 'AI analyzes everything',
     description:
       "Gemini AI reads every piece of feedback, categorizes it, detects sentiment, and surfaces patterns you'd never find manually.",
   },
   {
     num: '03',
-    icon: '📊',
+    iconComponent: LayoutDashboard,
     title: 'Act on clear insights',
     description:
       'A Kanban board, weekly AI digest, and analytics overview give your team everything needed to make confident product decisions.',
@@ -45,7 +46,7 @@ export function Solution() {
               className="relative"
             >
               <div className="text-6xl font-black text-zinc-800 mb-4">{step.num}</div>
-              <div className="text-3xl mb-3">{step.icon}</div>
+              <step.iconComponent className="h-6 w-6 text-brand-accent mb-3" />
               <h3 className="font-bold text-lg mb-2">{step.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{step.description}</p>
             </motion.div>
