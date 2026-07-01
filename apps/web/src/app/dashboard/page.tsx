@@ -10,13 +10,15 @@ import { captureEvent } from "@/lib/posthog";
 import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, MessageSquare, Sparkles, Menu, Code } from "lucide-react";
+import { Plus, MessageSquare, Sparkles, Menu, List, Columns } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
 import { KanbanBoard } from "@/components/dashboard/KanbanBoard";
+import { FeedbackFeed } from "@/components/dashboard/FeedbackFeed";
+import { cn } from "@/lib/utils";
 import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
 import { DigestModal } from "@/components/dashboard/DigestModal";
 import { useSocket } from "@/hooks/useSocket";
@@ -42,6 +44,7 @@ export default function Dashboard() {
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
     null,
   );
+  const [feedbackView, setFeedbackView] = useState<"feed" | "kanban">("feed");
 
   useEffect(() => {
     captureEvent('dashboard_viewed')
@@ -281,25 +284,52 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Kanban Board */}
-          <section className="flex flex-col gap-6 min-h-[600px] pb-20 max-w-full">
+          {/* Feedback — Feed / Kanban */}
+          <section className="flex flex-col gap-4 min-h-[600px] pb-20 max-w-full">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-3">
                 <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
                   <MessageSquare className="h-5 w-5 text-brand-accent" /> Feedback
-                  Pipelines
                 </h2>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsDigestOpen(true)}
-                disabled={!activeProject?.id}
-                className="bg-brand-accent/10 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/20"
-              >
-                <Sparkles className="h-3.5 w-3.5 mr-2" />
-                AI Digest
-              </Button>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 p-1 rounded-lg bg-brand-surface border border-brand-border">
+                  <button
+                    onClick={() => setFeedbackView("feed")}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
+                      feedbackView === "feed"
+                        ? "bg-brand-surface-hover text-brand-fg"
+                        : "text-brand-muted hover:text-brand-fg",
+                    )}
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    Feed
+                  </button>
+                  <button
+                    onClick={() => setFeedbackView("kanban")}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
+                      feedbackView === "kanban"
+                        ? "bg-brand-surface-hover text-brand-fg"
+                        : "text-brand-muted hover:text-brand-fg",
+                    )}
+                  >
+                    <Columns className="w-3.5 h-3.5" />
+                    Kanban
+                  </button>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setIsDigestOpen(true)}
+                  disabled={!activeProject?.id}
+                  className="bg-brand-accent/10 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/20"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-2" />
+                  AI Digest
+                </Button>
+              </div>
             </div>
 
             <div className="flex-1 w-full max-w-full">
@@ -313,6 +343,11 @@ export default function Dashboard() {
                   Failed to load feedback. Make sure your local API server is
                   running on port 3001.
                 </div>
+              ) : feedbackView === "feed" ? (
+                <FeedbackFeed
+                  projectId={activeProject.id}
+                  currentUserId={userProfile?.id}
+                />
               ) : (
                 <KanbanBoard
                   initialFeedbacks={feedbacks || []}

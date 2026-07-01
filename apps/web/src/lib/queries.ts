@@ -50,3 +50,29 @@ export const planStatusQuery = queryOptions({
   queryFn: () => api.get<PlanStatus>('/plans/status').then((r) => r.data),
   staleTime: 60_000,
 });
+
+export const lastSeenQuery = (projectId: string) =>
+  queryOptions({
+    queryKey: ['lastSeen', projectId],
+    queryFn: () =>
+      api
+        .get<{ seenAt: string | null }>('/feedback/last-seen', {
+          params: { projectId },
+        })
+        .then((r) => (r.data.seenAt ? new Date(r.data.seenAt) : null)),
+    enabled: !!projectId,
+  });
+
+export const feedbackTrendsQuery = (projectId: string) =>
+  queryOptions({
+    queryKey: ['feedbackTrends', projectId],
+    queryFn: () =>
+      api
+        .get<{ name: string; emoji: string; count: number }[]>(
+          '/feedback/trends',
+          { params: { projectId } },
+        )
+        .then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!projectId,
+  });

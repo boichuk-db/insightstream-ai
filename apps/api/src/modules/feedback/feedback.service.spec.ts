@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
-import { Feedback, TeamMember } from '@insightstream/database';
+import { Feedback, TeamMember, UserProjectLastSeen } from '@insightstream/database';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
 import { AiQueueService } from '../ai/ai-queue.service';
@@ -11,8 +11,10 @@ import { EventsGateway } from '../events/events.gateway';
 describe('FeedbackService', () => {
   let service: FeedbackService;
   let repo: any;
+  let lastSeenRepo: any;
   let eventsGateway: any;
   let mockAiQueueService: any;
+  let mockProjectsService: any;
 
   beforeEach(async () => {
     const mockRepo = {
@@ -26,6 +28,7 @@ describe('FeedbackService', () => {
       find: jest.fn(),
       findOne: jest.fn(),
       remove: jest.fn().mockResolvedValue({ success: true }),
+      createQueryBuilder: jest.fn(),
     };
 
     mockAiQueueService = {
@@ -36,9 +39,14 @@ describe('FeedbackService', () => {
       emitFeedbackUpdated: jest.fn(),
     };
 
-    const mockProjectsService = {
+    mockProjectsService = {
       findOne: jest.fn().mockResolvedValue({ userId: 'user-abc' }),
       findByOnlyId: jest.fn().mockResolvedValue({ userId: 'user-abc' }),
+    };
+
+    const mockLastSeenRepo = {
+      upsert: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockResolvedValue(null),
     };
 
     const mockPlanLimitsService = {
@@ -61,6 +69,10 @@ describe('FeedbackService', () => {
           useValue: mockRepo, // Reuse mockRepo for simplicity in types
         },
         {
+          provide: getRepositoryToken(UserProjectLastSeen),
+          useValue: mockLastSeenRepo,
+        },
+        {
           provide: AiQueueService,
           useValue: mockAiQueueService,
         },
@@ -81,6 +93,7 @@ describe('FeedbackService', () => {
 
     service = module.get<FeedbackService>(FeedbackService);
     repo = module.get(getRepositoryToken(Feedback));
+    lastSeenRepo = module.get(getRepositoryToken(UserProjectLastSeen));
     eventsGateway = module.get(EventsGateway);
   });
 
@@ -168,6 +181,57 @@ describe('FeedbackService', () => {
       await expect(service.remove('wrong-id', 'user-1')).rejects.toThrow(
         'Feedback not found or access denied',
       );
+    });
+  });
+
+  describe('markSeen', () => {
+    it('upserts last-seen record for user + project', async () => {
+      const upsertSpy = jest.spyOn(lastSeenRepo, 'upsert').mockResolvedValue({} as any);
+      await service.markSeen('user-1', 'proj-1');
+      expect(upsertSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 'user-1', projectId: 'proj-1' }),
+        { conflictPaths: ['userId', 'projectId'] },
+      );
+    });
+  });
+
+  describe('getLastSeen', () => {
+    it('returns seenAt date when record exists', async () => {
+      const date = new Date('2026-01-01');
+      jest.spyOn(lastSeenRepo, 'findOne').mockResolvedValue({ userId: 'u', projectId: 'p', seenAt: date });
+      const result = await service.getLastSeen('u', 'p');
+      expect(result).toEqual(date);
+    });
+
+    it('returns null when no record exists', async () => {
+      jest.spyOn(lastSeenRepo, 'findOne').mockResolvedValue(null);
+      const result = await service.getLastSeen('u', 'p');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getTrends', () => {
+    it('returns categories grouped by count descending', async () => {
+      jest.spyOn(mockProjectsService, 'findOne').mockResolvedValue({ userId: 'u' } as any);
+      const rawResults = [
+        { name: 'Bug', count: '9' },
+        { name: 'UX', count: '14' },
+      ];
+      const qb = {
+        select: jest.fn().mockReturnThis(),
+        addSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        groupBy: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue(rawResults),
+      };
+      jest.spyOn(repo, 'createQueryBuilder').mockReturnValue(qb as any);
+      const result = await service.getTrends('proj-1', 'user-1');
+      expect(result[0].count).toBe(9);
+      expect(result[0].name).toBe('Bug');
+      expect(result.every(r => typeof r.emoji === 'string')).toBe(true);
     });
   });
 });

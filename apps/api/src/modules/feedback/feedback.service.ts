@@ -1,7 +1,7 @@
 import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Feedback, TeamMember } from '@insightstream/database';
+import { Feedback, TeamMember, UserProjectLastSeen } from '@insightstream/database';
 import { AiQueueService } from '../ai/ai-queue.service';
 import { EventsGateway } from '../events/events.gateway';
 import { ProjectsService } from '../projects/projects.service';
@@ -20,6 +20,8 @@ export class FeedbackService {
     private feedbackRepository: Repository<Feedback>,
     @InjectRepository(TeamMember)
     private memberRepo: Repository<TeamMember>,
+    @InjectRepository(UserProjectLastSeen)
+    private lastSeenRepo: Repository<UserProjectLastSeen>,
     private aiQueueService: AiQueueService,
     private eventsGateway: EventsGateway,
     private projectsService: ProjectsService,
@@ -227,5 +229,56 @@ export class FeedbackService {
     this.eventsGateway.emitFeedbackUpdated(userId);
 
     return { success: true, count: result.affected || 0 };
+  }
+
+  private readonly CATEGORY_EMOJI: Record<string, string> = {
+    UX: '🧭',
+    Bug: '🐛',
+    API: '🔌',
+    Performance: '🚀',
+    Feature: '✨',
+    General: '💬',
+    Navigation: '🧭',
+    Auth: '🔐',
+    Billing: '💳',
+    Dashboard: '📊',
+  };
+
+  async markSeen(userId: string, projectId: string): Promise<void> {
+    await this.lastSeenRepo.upsert(
+      { userId, projectId, seenAt: new Date() },
+      { conflictPaths: ['userId', 'projectId'] },
+    );
+  }
+
+  async getLastSeen(userId: string, projectId: string): Promise<Date | null> {
+    const record = await this.lastSeenRepo.findOne({
+      where: { userId, projectId },
+    });
+    return record?.seenAt ?? null;
+  }
+
+  async getTrends(
+    projectId: string,
+    userId: string,
+  ): Promise<{ name: string; emoji: string; count: number }[]> {
+    await this.projectsService.findOne(projectId, userId);
+    const raw = await this.feedbackRepository
+      .createQueryBuilder('f')
+      .select('f.category', 'name')
+      .addSelect('COUNT(*)', 'count')
+      .where('f.projectId = :projectId', { projectId })
+      .andWhere('f.category IS NOT NULL')
+      .andWhere("f.status != 'Rejected'")
+      .groupBy('f.category')
+      .orderBy('count', 'DESC')
+      .limit(6)
+      .getRawMany();
+
+    return raw.map((r) => ({
+      name: r.name,
+      emoji: this.CATEGORY_EMOJI[r.name] ?? '📝',
+      count: parseInt(r.count, 10),
+    }));
   }
 }
