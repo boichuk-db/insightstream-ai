@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
+import { MotionProvider } from '@/components/MotionProvider'
 import './globals.css'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={plusJakartaSans.variable}>
       <body className="bg-brand-bg text-white antialiased">
-        <PostHogProvider>{children}</PostHogProvider>
+        <MotionProvider>
+          <PostHogProvider>{children}</PostHogProvider>
+        </MotionProvider>
       </body>
     </html>
   )
