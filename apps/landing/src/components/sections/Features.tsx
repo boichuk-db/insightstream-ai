@@ -35,9 +35,10 @@ export function Features() {
               key={f.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -4 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-zinc-900 border border-brand-border rounded-xl p-6 hover:border-zinc-600 transition-colors"
+              transition={{ delay: i * 0.08 }}
+              className="bg-zinc-900 border border-brand-border rounded-xl p-6 hover:border-brand-primary/40 hover:shadow-[0_0_20px_rgba(61,138,132,0.12)] transition-all duration-300 cursor-default"
             >
               <div className="mb-3">{ICON_MAP[f.icon]}</div>
               <h3 className="font-semibold mb-1">{f.title}</h3>
