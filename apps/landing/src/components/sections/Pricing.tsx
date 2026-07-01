@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check, X } from 'lucide-react'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { PLAN_CONFIGS, PlanType } from '@/config/plans.config'
 import { APP_URL } from '@/lib/constants'
 
@@ -28,6 +29,9 @@ function formatValue(key: string, value: unknown): string | boolean {
 }
 
 export function Pricing() {
+  const flagVariant = useFeatureFlagVariantKey('landing-pricing-highlight')
+  const highlightedPlan = flagVariant === 'variant-b' ? 'BUSINESS' : 'PRO'
+
   return (
     <section className="py-24 px-6 border-t border-brand-border">
       <div className="max-w-5xl mx-auto">
@@ -39,7 +43,7 @@ export function Pricing() {
         <div className="grid md:grid-cols-3 gap-6">
           {PLAN_ORDER.map((planType, i) => {
             const config = PLAN_CONFIGS[planType]
-            const isPro = planType === PlanType.PRO
+            const isHighlighted = config.name === highlightedPlan
             return (
               <motion.div
                 key={planType}
@@ -48,13 +52,13 @@ export function Pricing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className={`relative flex flex-col bg-zinc-900 rounded-2xl p-7 border ${
-                  isPro
-                    ? 'border-indigo-500/50 shadow-[0_0_40px_rgba(99,102,241,0.1)] md:-mt-4'
+                  isHighlighted
+                    ? 'border-brand-primary/50 shadow-[0_0_40px_rgba(99,102,241,0.1)] md:-mt-4'
                     : 'border-brand-border'
                 }`}
               >
-                {isPro && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-indigo-500 text-white text-xs font-bold rounded-full">
+                {isHighlighted && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-brand-primary text-white text-xs font-bold rounded-full">
                     Most Popular
                   </div>
                 )}
@@ -87,12 +91,12 @@ export function Pricing() {
                 <a
                   href={`${APP_URL}/?plan=${planType.toLowerCase()}`}
                   className={`w-full py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
-                    isPro
-                      ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                    isHighlighted
+                      ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
                       : 'bg-zinc-800 hover:bg-zinc-700 text-white'
                   }`}
                 >
-                  {config.price === 0 ? 'Get Started Free' : `Upgrade to ${config.name}`}
+                  {config.price === 0 ? 'Get Started Free' : 'Start 14-day Trial'}
                 </a>
               </motion.div>
             )
