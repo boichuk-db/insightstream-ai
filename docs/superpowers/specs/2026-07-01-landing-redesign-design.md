@@ -81,8 +81,10 @@ A slim horizontal band between Hero and Problem. No fake logos.
 
 Content:
 ```
-Trusted by growing product teams ·  10,000+ feedbacks analyzed  ·  5 projects avg per team  ·  14-day free trial, no card required
+Built for product teams ·  AI-powered analysis  ·  Embeddable in 5 minutes  ·  14-day free trial, no card required
 ```
+
+Note: no user-count stats since there are no live users yet. Copy focuses on product facts, not social proof numbers.
 
 Layout: centered single row of `·`-separated stat pills on desktop, 2×2 grid on mobile.
 Colors: `text-zinc-500` for the label, `text-zinc-300 font-semibold` for the stats.
