@@ -992,7 +992,7 @@ git commit -m "fix(api): scope CORS - open only for widget endpoint, dashboard-o
 - Modify: `apps/api/src/modules/ai/ai.processor.ts`
 - Modify: `apps/api/src/modules/ai/ai.processor.spec.ts`
 
-- [ ] **Step 1: Write the failing test for EventsService**
+- [x] **Step 1: Write the failing test for EventsService**
 
 Create `apps/api/src/modules/events/events.service.spec.ts`:
 
@@ -1062,12 +1062,12 @@ describe('EventsService', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pnpm --filter api test -- --testPathPattern=events.service`
 Expected: FAIL — `./events.service` not found.
 
-- [ ] **Step 3: Implement EventsService**
+- [x] **Step 3: Implement EventsService**
 
 Create `apps/api/src/modules/events/events.service.ts`:
 
@@ -1136,12 +1136,12 @@ import { EventsService } from './events.service';
 export class EventsModule {}
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `pnpm --filter api test -- --testPathPattern=events.service`
 Expected: PASS (3 tests).
 
-- [ ] **Step 5: Use EventsService in FeedbackService**
+- [x] **Step 5: Use EventsService in FeedbackService**
 
 In `apps/api/src/modules/feedback/feedback.service.ts`:
 
