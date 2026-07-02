@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { projectsQuery } from "@/lib/queries";
 import {
-  Code,
   Sparkles,
   Check,
   Type,
