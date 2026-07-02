@@ -26,8 +26,14 @@ export class CommentsController {
   }
 
   @Get('feedbacks/:feedbackId/comments')
-  async findByFeedback(@Param('feedbackId') feedbackId: string) {
-    const comments = await this.commentsService.findByFeedback(feedbackId);
+  async findByFeedback(
+    @Param('feedbackId') feedbackId: string,
+    @Request() req: any,
+  ) {
+    const comments = await this.commentsService.findByFeedback(
+      feedbackId,
+      req.user.id,
+    );
     return comments.map((c) => ({
       id: c.id,
       content: c.content,

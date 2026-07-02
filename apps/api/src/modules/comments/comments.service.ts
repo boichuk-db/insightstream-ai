@@ -24,12 +24,10 @@ export class CommentsService {
     private activityService: ActivityService,
   ) {}
 
-  async create(
+  private async getFeedbackWithAccess(
     feedbackId: string,
     userId: string,
-    content: string,
-  ): Promise<Comment> {
-    // Verify feedback exists and user has team access
+  ): Promise<Feedback> {
     const feedback = await this.feedbackRepo.findOne({
       where: { id: feedbackId },
       relations: ['project'],
@@ -46,6 +44,17 @@ export class CommentsService {
     } else if (project.userId !== userId) {
       throw new ForbiddenException('Access denied');
     }
+    return feedback;
+  }
+
+  async create(
+    feedbackId: string,
+    userId: string,
+    content: string,
+  ): Promise<Comment> {
+    // Verify feedback exists and user has team access
+    const feedback = await this.getFeedbackWithAccess(feedbackId, userId);
+    const project = feedback.project;
 
     const comment = await this.commentRepo.save(
       this.commentRepo.create({ feedbackId, userId, content }),
@@ -67,7 +76,8 @@ export class CommentsService {
     }) as Promise<Comment>;
   }
 
-  async findByFeedback(feedbackId: string): Promise<Comment[]> {
+  async findByFeedback(feedbackId: string, userId: string): Promise<Comment[]> {
+    await this.getFeedbackWithAccess(feedbackId, userId);
     return this.commentRepo.find({
       where: { feedbackId },
       relations: ['user'],
