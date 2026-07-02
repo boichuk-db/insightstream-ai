@@ -14,6 +14,12 @@ import { Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+} from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +35,7 @@ export class AuthController {
     },
   })
   @Post('register')
-  async register(@Body() body: any) {
+  async register(@Body() body: RegisterDto) {
     return this.authService.register(body.email, body.password);
   }
 
@@ -41,7 +47,7 @@ export class AuthController {
   })
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: any) {
+  async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
     return this.authService.login(user);
@@ -49,14 +55,14 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  async forgotPassword(@Body() body: { email: string }) {
+  async forgotPassword(@Body() body: ForgotPasswordDto) {
     await this.authService.forgotPassword(body.email);
     return { message: 'If that email exists, a reset link has been sent.' };
   }
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body() body: { token: string; newPassword: string }) {
+  async resetPassword(@Body() body: ResetPasswordDto) {
     await this.authService.resetPassword(body.token, body.newPassword);
     return { message: 'Password updated successfully.' };
   }

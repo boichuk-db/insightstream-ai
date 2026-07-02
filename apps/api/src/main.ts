@@ -2,6 +2,7 @@ import './instrument';
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { ProjectsService } from './modules/projects/projects.service';
 import { SentryExceptionFilter } from './filters/sentry-exception.filter';
@@ -9,6 +10,8 @@ import { RedisIoAdapter } from './adapters/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const redisIoAdapter = new RedisIoAdapter(app);
   await redisIoAdapter.connectToRedis();

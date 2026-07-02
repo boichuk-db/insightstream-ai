@@ -13,6 +13,8 @@ import {
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateFeedbackDto } from './dto/create-feedback.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Controller('feedback')
 @UseGuards(JwtAuthGuard)
@@ -20,13 +22,7 @@ export class FeedbackController {
   constructor(private feedbackService: FeedbackService) {}
 
   @Post()
-  async create(
-    @Request() req: any,
-    @Body() body: { content: string; projectId: string; source?: string },
-  ) {
-    if (!body?.content || !body?.projectId) {
-      throw new BadRequestException('Content and projectId are required');
-    }
+  async create(@Request() req: any, @Body() body: CreateFeedbackDto) {
     return this.feedbackService.create(
       body.projectId,
       body.content,
@@ -80,9 +76,9 @@ export class FeedbackController {
   async updateStatus(
     @Request() req: any,
     @Param('id') id: string,
-    @Body('status') status: string,
+    @Body() body: UpdateStatusDto,
   ) {
-    return this.feedbackService.updateStatus(id, status, req.user.id);
+    return this.feedbackService.updateStatus(id, body.status, req.user.id);
   }
 
   @Post(':id/reanalyze')

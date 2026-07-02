@@ -11,6 +11,7 @@ import { Throttle } from '@nestjs/throttler';
 import { FeedbackService } from './feedback.service';
 import { ProjectsService } from '../projects/projects.service';
 import { WidgetThrottlerGuard } from '../../guards/widget-throttler.guard';
+import { CreatePublicFeedbackDto } from './dto/create-public-feedback.dto';
 
 @Controller('feedback/public')
 export class FeedbackPublicController {
@@ -32,13 +33,9 @@ export class FeedbackPublicController {
     },
   })
   async createPublic(
-    @Body() body: { apiKey: string; content: string; source?: string },
+    @Body() body: CreatePublicFeedbackDto,
     @Headers('origin') origin?: string,
   ) {
-    if (!body.apiKey || !body.apiKey.trim()) {
-      throw new UnauthorizedException('API Key is required');
-    }
-
     const project = await this.projectsService.findByApiKey(body.apiKey);
     if (!project) {
       throw new UnauthorizedException('Invalid API Key');
