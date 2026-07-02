@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import type { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
 import { SentryExceptionFilter } from './filters/sentry-exception.filter';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
@@ -24,12 +25,19 @@ async function bootstrap() {
   //   per-project origin enforcement happens inside FeedbackPublicController.
   // - Everything else is dashboard-only → FRONTEND_URL + localhost.
   // Auth is Bearer-token (no cookies), so no Allow-Credentials needed.
+  // Hand-rolled instead of app.enableCors() so the allow-list can branch on
+  // req.path; Nest's CorsOptionsDelegate could do this too, but a plain
+  // middleware keeps the two branches (public route vs. everything else)
+  // easy to read side by side.
   const frontendUrl = process.env.FRONTEND_URL;
-  app.use((req: any, res: any, next: () => void) => {
-    const origin = req.headers.origin as string | undefined;
+  const PUBLIC_FEEDBACK_PATH = '/feedback/public';
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const origin = req.headers.origin;
     if (!origin) return next();
 
-    let allowed = req.path.startsWith('/feedback/public');
+    let allowed =
+      req.path === PUBLIC_FEEDBACK_PATH ||
+      req.path.startsWith(`${PUBLIC_FEEDBACK_PATH}/`);
     if (!allowed) {
       try {
         const { hostname } = new URL(origin);
