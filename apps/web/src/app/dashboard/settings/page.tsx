@@ -14,6 +14,8 @@ import {
   Monitor,
   Sun,
   Moon,
+  LayoutList,
+  LayoutGrid,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
@@ -27,6 +29,8 @@ import { cn } from "@/lib/utils";
 import { BillingTab } from "@/components/settings/BillingTab";
 import { TeamTab } from "@/components/settings/TeamTab";
 import { EmbedTab } from "@/components/settings/EmbedTab";
+import { DevtoolsTab } from "@/components/settings/DevtoolsTab";
+import { useFeedbackView } from "@/hooks/useFeedbackView";
 
 const TABS = [
   { id: "appearance", label: "Appearance" },
@@ -34,6 +38,7 @@ const TABS = [
   { id: "billing", label: "Billing" },
   { id: "team", label: "Team" },
   { id: "embed", label: "Embed" },
+  { id: "devtools", label: "Developer Tools" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -104,6 +109,7 @@ function SettingsContent() {
   const { data: userProfile, isLoading: profileLoading } = useQuery(userProfileQuery);
   const { theme, setTheme } = useTheme();
   const { colorTheme, setColorTheme } = useColorTheme();
+  const { feedbackView, setFeedbackView } = useFeedbackView();
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -214,6 +220,37 @@ function SettingsContent() {
                       />
                     </div>
                   </div>
+                  <div>
+                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
+                      <LayoutList className="h-4 w-4" /> Feedback View
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedbackView("feed")}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
+                          feedbackView === "feed"
+                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
+                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                        )}
+                      >
+                        <LayoutList className="h-4 w-4 shrink-0" />
+                        Feed
+                      </button>
+                      <button
+                        onClick={() => setFeedbackView("kanban")}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
+                          feedbackView === "kanban"
+                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
+                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                        )}
+                      >
+                        <LayoutGrid className="h-4 w-4 shrink-0" />
+                        Kanban
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </Section>
             )}
@@ -252,6 +289,7 @@ function SettingsContent() {
             {activeTab === "billing" && <BillingTab />}
             {activeTab === "team" && <TeamTab />}
             {activeTab === "embed" && <EmbedTab />}
+            {activeTab === "devtools" && <DevtoolsTab />}
           </motion.div>
         </div>
       </div>
