@@ -15,11 +15,8 @@ import {
   Check,
   Trash2,
   Settings,
-  Users,
-  Archive,
-  Code,
   Activity,
-  CreditCard,
+  BarChart2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -257,15 +254,15 @@ export function Sidebar({
             )}
           </Link>
           <Link
-            href="/dashboard/archive"
+            href="/dashboard/analytics"
             className={cn(
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-              isActive("/dashboard/archive")
+              isActive("/dashboard/analytics")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
-            <Archive className="h-4 w-4 text-brand-accent" /> Archive
+            <BarChart2 className="h-4 w-4 text-brand-accent" /> Analytics
           </Link>
           <Link
             href="/dashboard/activity"
@@ -277,17 +274,6 @@ export function Sidebar({
             )}
           >
             <Activity className="h-4 w-4 text-brand-accent" /> Activity Log
-          </Link>
-          <Link
-            href="/dashboard/embed"
-            className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-              isActive("/dashboard/embed")
-                ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
-            )}
-          >
-            <Code className="h-4 w-4 text-brand-accent" /> Embed Widget
           </Link>
 
           <div className="my-1 h-px bg-brand-border/30 mx-2" />
@@ -303,31 +289,6 @@ export function Sidebar({
           >
             <Settings className="h-4 w-4 text-brand-accent" /> Settings
           </Link>
-          <Link
-            href="/dashboard/billing"
-            className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-              isActive("/dashboard/billing")
-                ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
-            )}
-          >
-            <CreditCard className="h-4 w-4 text-brand-accent" /> Billing
-          </Link>
-          {activeTeam && (
-            <Link
-              href="/dashboard/settings/team"
-              className={cn(
-                "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
-                isActive("/dashboard/settings/team")
-                  ? "bg-brand-accent/10 text-brand-accent"
-                  : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
-              )}
-            >
-              <Users className="h-4 w-4 text-brand-accent" /> Team Settings
-            </Link>
-          )}
-
         </div>
 
         {/* User Footer */}
