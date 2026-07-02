@@ -21,13 +21,6 @@ export class DigestController {
     return this.digest.preview(projectId, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('trigger')
-  async trigger() {
-    const result = await this.digest.runDigest();
-    return { message: 'Digest run complete', ...result };
-  }
-
   /** Called by Lambda via EventBridge — secured with INTERNAL_SECRET */
   @Post('internal-trigger')
   async internalTrigger(@Headers('x-internal-secret') secret: string) {
