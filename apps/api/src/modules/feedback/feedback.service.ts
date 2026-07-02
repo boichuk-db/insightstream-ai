@@ -1,4 +1,9 @@
-import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -39,7 +44,7 @@ export class FeedbackService {
     source?: string,
   ) {
     if (!content) {
-      throw new Error('Content is required');
+      throw new BadRequestException('Content is required');
     }
     // Verify the user owns this project if userId is provided
     if (userId) {
