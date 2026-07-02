@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { feedbacksQuery } from "@/lib/queries";
+import { FeedbackStatus } from "@insightstream/shared-types";
+import type { IFeedback } from "@insightstream/shared-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -59,6 +63,15 @@ export function Sidebar({
   const pathname = usePathname();
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [isCreateTeamProjectOpen, setIsCreateTeamProjectOpen] = useState(false);
+  const [isDeleteProjectOpen, setIsDeleteProjectOpen] = useState(false);
+
+  const { data: feedbacks = [] } = useQuery({
+    ...feedbacksQuery(activeProject?.id ?? ""),
+    enabled: !!activeProject?.id,
+  });
+  const newCount = (feedbacks as IFeedback[]).filter(
+    (f) => f.status === FeedbackStatus.NEW,
+  ).length;
 
   const isAdminOrOwner = userRole === "owner" || userRole === "admin";
 
@@ -209,6 +222,17 @@ export function Sidebar({
                 New project
               </Dropdown.Item>
             ) : null}
+            {activeProject && (isAdminOrOwner || !activeTeam) && (
+              <>
+                <Dropdown.Separator />
+                <Dropdown.Item
+                  icon={<Trash2 className="h-4 w-4 text-red-400" />}
+                  onClick={() => setIsDeleteProjectOpen(true)}
+                >
+                  <span className="text-red-400">Delete project…</span>
+                </Dropdown.Item>
+              </>
+            )}
           </Dropdown>
         </div>
 
@@ -217,13 +241,20 @@ export function Sidebar({
           <Link
             href="/dashboard"
             className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              "flex items-center justify-between w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
-            <LayoutDashboard className="h-4 w-4 text-brand-accent" /> Dashboard
+            <span className="flex items-center gap-3">
+              <LayoutDashboard className="h-4 w-4 text-brand-accent" /> Feedback
+            </span>
+            {newCount > 0 && (
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/20">
+                {newCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/dashboard/archive"
@@ -297,33 +328,6 @@ export function Sidebar({
             </Link>
           )}
 
-          <div className="my-2 border-t border-brand-border/50 mx-2" />
-          <div className="px-3 mb-1 text-[10px] uppercase tracking-wider text-brand-muted font-semibold">
-            Project Actions
-          </div>
-
-          <button
-            onClick={() => {
-              if (
-                activeProject &&
-                confirm(
-                  `Delete project "${activeProject.name}" and ALL its feedback? This cannot be undone.`,
-                )
-              ) {
-                onDeleteProject(activeProject.id);
-              }
-            }}
-            disabled={isDeletingProject || projects.length <= 1}
-            title={
-              projects.length <= 1
-                ? "Cannot delete the last remaining project"
-                : "Delete the active project"
-            }
-            className="flex items-center gap-3 w-full p-2.5 rounded-lg text-brand-muted hover:text-red-400 hover:bg-red-500/10 font-medium text-sm transition-colors disabled:opacity-50 disabled:hover:text-brand-muted disabled:hover:bg-transparent disabled:cursor-not-allowed group"
-          >
-            <Trash2 className="h-4 w-4 text-brand-accent group-hover:scale-110 transition-transform" />{" "}
-            Delete Project
-          </button>
         </div>
 
         {/* User Footer */}
@@ -375,6 +379,42 @@ export function Sidebar({
           </Button>
         </div>
       </div>
+      {isDeleteProjectOpen && (
+        <div className="fixed inset-0 z-200 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsDeleteProjectOpen(false)}
+          />
+          <div className="relative z-10 bg-brand-surface border border-brand-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
+            <h3 className="text-base font-bold text-brand-fg mb-2">Delete project?</h3>
+            <p className="text-sm text-brand-muted mb-6">
+              This will permanently delete{" "}
+              <strong className="text-brand-fg">{activeProject?.name}</strong> and all
+              its feedback. This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setIsDeleteProjectOpen(false)}
+                className="px-4 py-2 rounded-xl text-sm font-medium text-brand-muted hover:text-brand-fg border border-brand-border hover:border-brand-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (activeProject) {
+                    onDeleteProject(activeProject.id);
+                    setIsDeleteProjectOpen(false);
+                  }
+                }}
+                disabled={isDeletingProject || projects.length <= 1}
+                className="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isDeletingProject ? "Deleting…" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <CreateTeamModal
         isOpen={isCreateTeamOpen}
         onClose={() => setIsCreateTeamOpen(false)}
