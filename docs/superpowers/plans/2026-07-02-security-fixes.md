@@ -842,7 +842,7 @@ git commit -m "feat(api): global ValidationPipe + DTOs for feedback, auth, comme
 **Files:**
 - Modify: `apps/api/src/modules/feedback/feedback.service.ts:1,41-43`
 
-- [ ] **Step 1: Replace the exception**
+- [x] **Step 1: Replace the exception**
 
 In the imports (line 1):
 
@@ -871,7 +871,7 @@ with:
     }
 ```
 
-- [ ] **Step 2: Verify and commit**
+- [x] **Step 2: Verify and commit**
 
 Run: `pnpm --filter api test -- --testPathPattern=feedback.service && pnpm typecheck && pnpm lint`
 Expected: all pass (existing spec does not assert the error type of empty content; if a test does assert `Error`, update it to `BadRequestException`).
