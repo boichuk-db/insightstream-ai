@@ -4,7 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { ProjectsService } from './modules/projects/projects.service';
 import { SentryExceptionFilter } from './filters/sentry-exception.filter';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
 
@@ -20,51 +19,40 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryExceptionFilter(httpAdapter));
 
-  const projectsService = app.get(ProjectsService);
+  // CORS:
+  // - /feedback/public is called from customer sites → allow any origin here;
+  //   per-project origin enforcement happens inside FeedbackPublicController.
+  // - Everything else is dashboard-only → FRONTEND_URL + localhost.
+  // Auth is Bearer-token (no cookies), so no Allow-Credentials needed.
+  const frontendUrl = process.env.FRONTEND_URL;
+  app.use((req: any, res: any, next: () => void) => {
+    const origin = req.headers.origin as string | undefined;
+    if (!origin) return next();
 
-  // Cached domains to avoid DB hit on every preflight
-  let cachedDomains: string[] = [];
-  let cacheTime = 0;
-
-  app.enableCors({
-    origin: async (origin, callback) => {
-      if (!origin) return callback(null, true);
-
+    let allowed = req.path.startsWith('/feedback/public');
+    if (!allowed) {
       try {
-        const originUrl = new URL(origin);
-        if (
-          originUrl.hostname === 'localhost' ||
-          originUrl.hostname === '127.0.0.1' ||
-          origin === process.env.FRONTEND_URL
-        ) {
-          return callback(null, true);
-        }
-
-        // Simple cache: refresh domains every 1 minute
-        if (Date.now() - cacheTime > 60000) {
-          cachedDomains = await projectsService.getAllDomains();
-          cacheTime = Date.now();
-        }
-
-        const isAllowed = cachedDomains.some(
-          (domain) =>
-            originUrl.hostname === domain ||
-            originUrl.hostname.endsWith(`.${domain}`),
-        );
-
-        if (isAllowed) {
-          return callback(null, true);
-        }
-
-        return callback(
-          new Error(`CORS Error: Origin ${origin} not in whitelist`),
-          false,
-        );
-      } catch (err) {
-        return callback(new Error('Invalid origin'), false);
+        const { hostname } = new URL(origin);
+        allowed =
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          origin === frontendUrl;
+      } catch {
+        allowed = false;
       }
-    },
-    credentials: true,
+    }
+
+    if (allowed) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Vary', 'Origin');
+      res.header(
+        'Access-Control-Allow-Methods',
+        'GET,POST,PATCH,PUT,DELETE,OPTIONS',
+      );
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
   });
 
   app.getHttpAdapter().getInstance().set('trust proxy', 1);

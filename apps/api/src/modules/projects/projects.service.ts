@@ -89,9 +89,4 @@ export class ProjectsService {
     const project = await this.findOne(id, userId);
     await this.projectsRepository.remove(project);
   }
-
-  async getAllDomains(): Promise<string[]> {
-    const projects = await this.projectsRepository.find({ select: ['domain'] });
-    return projects.map((p) => p.domain).filter(Boolean);
-  }
 }
