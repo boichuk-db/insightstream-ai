@@ -35,6 +35,7 @@ function App() {
     try {
       const apiUrl =
         window.InsightStreamConfig?.apiUrl ||
+        import.meta.env.VITE_API_URL ||
         "https://api-production-05c4.up.railway.app";
       await axios.post(`${apiUrl}/feedback/public`, {
         apiKey: config.apiKey,
