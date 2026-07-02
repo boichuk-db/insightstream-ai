@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Job } from 'bullmq';
 import { Feedback } from '@insightstream/database';
 import { AiService } from './ai.service';
-import { EventsGateway } from '../events/events.gateway';
+import { EventsService } from '../events/events.service';
 import { AI_ANALYSIS_QUEUE, AnalysisJobData } from './ai-queue.service';
 
 @Processor(AI_ANALYSIS_QUEUE, { concurrency: 3 })
@@ -17,13 +17,13 @@ export class AiProcessor extends WorkerHost {
     private readonly aiService: AiService,
     @InjectRepository(Feedback)
     private readonly feedbackRepository: Repository<Feedback>,
-    private readonly eventsGateway: EventsGateway,
+    private readonly eventsService: EventsService,
   ) {
     super();
   }
 
   async process(job: Job<AnalysisJobData>): Promise<void> {
-    const { feedbackId, content, ownerId, aiLevel } = job.data;
+    const { feedbackId, content, aiLevel } = job.data;
 
     this.logger.log(
       `Processing AI analysis for feedback ${feedbackId} (attempt ${job.attemptsMade + 1})`,
@@ -41,7 +41,7 @@ export class AiProcessor extends WorkerHost {
       tags: aiLevel === 'full' ? analysis.tags : undefined,
     });
 
-    this.eventsGateway.emitFeedbackUpdated(ownerId);
+    await this.eventsService.emitFeedbackUpdatedForProject(job.data.projectId);
     this.logger.log(`AI analysis completed for feedback ${feedbackId}`);
   }
 }

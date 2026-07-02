@@ -12,7 +12,7 @@ import {
   UserProjectLastSeen,
 } from '@insightstream/database';
 import { AiQueueService } from '../ai/ai-queue.service';
-import { EventsGateway } from '../events/events.gateway';
+import { EventsService } from '../events/events.service';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
@@ -32,7 +32,7 @@ export class FeedbackService {
     @InjectRepository(UserProjectLastSeen)
     private lastSeenRepo: Repository<UserProjectLastSeen>,
     private aiQueueService: AiQueueService,
-    private eventsGateway: EventsGateway,
+    private eventsService: EventsService,
     private projectsService: ProjectsService,
     private planLimitsService: PlanLimitsService,
   ) {}
@@ -76,6 +76,8 @@ export class FeedbackService {
     });
 
     const savedFeedback = await this.feedbackRepository.save(feedback);
+
+    await this.eventsService.emitFeedbackUpdatedForProject(projectId);
 
     // Determine the owner's AI analysis level
     const ownerId =
@@ -181,7 +183,7 @@ export class FeedbackService {
     feedback.status = status;
     const saved = await this.feedbackRepository.save(feedback);
 
-    this.eventsGateway.emitFeedbackUpdated(userId);
+    await this.eventsService.emitFeedbackUpdatedForProject(feedback.projectId);
 
     return saved;
   }
@@ -235,7 +237,7 @@ export class FeedbackService {
       .andWhere('status IN (:...statuses)', { statuses: ['Done', 'Rejected'] })
       .execute();
 
-    this.eventsGateway.emitFeedbackUpdated(userId);
+    await this.eventsService.emitFeedbackUpdatedForProject(projectId);
 
     return { success: true, count: result.affected || 0 };
   }

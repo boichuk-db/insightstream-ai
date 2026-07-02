@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AiProcessor } from './ai.processor';
 import { AiService } from './ai.service';
-import { EventsGateway } from '../events/events.gateway';
+import { EventsService } from '../events/events.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Feedback } from '@insightstream/database';
 import { Job } from 'bullmq';
@@ -11,19 +11,19 @@ describe('AiProcessor', () => {
   let processor: AiProcessor;
   let aiService: { analyzeFeedback: jest.Mock };
   let feedbackRepo: { update: jest.Mock };
-  let eventsGateway: { emitFeedbackUpdated: jest.Mock };
+  let eventsService: { emitFeedbackUpdatedForProject: jest.Mock };
 
   beforeEach(async () => {
     aiService = { analyzeFeedback: jest.fn() };
     feedbackRepo = { update: jest.fn().mockResolvedValue({}) };
-    eventsGateway = { emitFeedbackUpdated: jest.fn() };
+    eventsService = { emitFeedbackUpdatedForProject: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AiProcessor,
         { provide: AiService, useValue: aiService },
         { provide: getRepositoryToken(Feedback), useValue: feedbackRepo },
-        { provide: EventsGateway, useValue: eventsGateway },
+        { provide: EventsService, useValue: eventsService },
       ],
     }).compile();
 
@@ -60,7 +60,9 @@ describe('AiProcessor', () => {
       aiSummary: 'User wants dark mode',
       tags: ['design'],
     });
-    expect(eventsGateway.emitFeedbackUpdated).toHaveBeenCalledWith('user-1');
+    expect(eventsService.emitFeedbackUpdatedForProject).toHaveBeenCalledWith(
+      'proj-1',
+    );
   });
 
   it('omits aiSummary and tags when aiLevel is basic', async () => {

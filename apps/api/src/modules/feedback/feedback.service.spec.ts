@@ -10,13 +10,13 @@ import {
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
 import { AiQueueService } from '../ai/ai-queue.service';
-import { EventsGateway } from '../events/events.gateway';
+import { EventsService } from '../events/events.service';
 
 describe('FeedbackService', () => {
   let service: FeedbackService;
   let repo: any;
   let lastSeenRepo: any;
-  let eventsGateway: any;
+  let eventsService: any;
   let mockAiQueueService: any;
   let mockProjectsService: any;
 
@@ -39,8 +39,8 @@ describe('FeedbackService', () => {
       addAnalysisJob: jest.fn().mockResolvedValue(undefined),
     };
 
-    const mockEventsGateway = {
-      emitFeedbackUpdated: jest.fn(),
+    const mockEventsService = {
+      emitFeedbackUpdatedForProject: jest.fn().mockResolvedValue(undefined),
     };
 
     mockProjectsService = {
@@ -81,8 +81,8 @@ describe('FeedbackService', () => {
           useValue: mockAiQueueService,
         },
         {
-          provide: EventsGateway,
-          useValue: mockEventsGateway,
+          provide: EventsService,
+          useValue: mockEventsService,
         },
         {
           provide: ProjectsService,
@@ -98,7 +98,7 @@ describe('FeedbackService', () => {
     service = module.get<FeedbackService>(FeedbackService);
     repo = module.get(getRepositoryToken(Feedback));
     lastSeenRepo = module.get(getRepositoryToken(UserProjectLastSeen));
-    eventsGateway = module.get(EventsGateway);
+    eventsService = module.get(EventsService);
   });
 
   it('should be defined', () => {
