@@ -891,7 +891,7 @@ Today every customer's registered domain gets CORS access (with `credentials: tr
 - Modify: `apps/api/src/main.ts`
 - Modify: `apps/api/src/modules/projects/projects.service.ts:93-96` (remove now-unused `getAllDomains`)
 
-- [ ] **Step 1: Replace the CORS setup in main.ts**
+- [x] **Step 1: Replace the CORS setup in main.ts**
 
 Replace the whole block from `const projectsService = app.get(ProjectsService);` through the end of `app.enableCors({...});` (lines 20-65) with a single middleware. Also delete the now-unused imports of `ProjectsService`.
 
@@ -938,12 +938,12 @@ Remove the old `app.getHttpAdapter().getInstance().set('trust proxy', 1);` line 
 
 The resulting `main.ts` should keep: instrument import, Redis adapter, Sentry filter, ValidationPipe (from Task 4), then this CORS middleware, then `app.listen`.
 
-- [ ] **Step 2: Remove dead code**
+- [x] **Step 2: Remove dead code**
 
 Run: `grep -rn "getAllDomains" apps/ --include=*.ts | grep -v node_modules`
 Expected: only the definition in `projects.service.ts`. Delete the `getAllDomains` method (lines 93-96).
 
-- [ ] **Step 3: Manual verification**
+- [x] **Step 3: Manual verification**
 
 Start the API (`docker compose up -d` for Postgres/Redis, then `pnpm --filter api dev` — or skip if local infra unavailable and say so). Then:
 
@@ -967,7 +967,7 @@ curl -s -i -X OPTIONS http://localhost:3001/projects \
 # Expected: Access-Control-Allow-Origin: http://localhost:3000
 ```
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint && pnpm --filter api test`
 Expected: all pass.
