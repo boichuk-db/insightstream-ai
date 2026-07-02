@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
 import { DigestModal } from "@/components/dashboard/DigestModal";
 import { Button } from "@/components/ui/button";
+import { FeedbackStatus } from "@insightstream/shared-types";
 
 export default function AnalyticsPage() {
   const { selectedProjectId } = useSelectedProject();
@@ -18,7 +19,7 @@ export default function AnalyticsPage() {
   const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
-    projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
+    projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
 
   const {
     data: projectFeedbacks,
@@ -30,7 +31,7 @@ export default function AnalyticsPage() {
   });
 
   const feedbacks =
-    projectFeedbacks?.filter((fb: any) => fb.status !== "Archived") || [];
+    projectFeedbacks?.filter((fb) => fb.status !== FeedbackStatus.ARCHIVED) || [];
 
   const {
     data: digestData,
