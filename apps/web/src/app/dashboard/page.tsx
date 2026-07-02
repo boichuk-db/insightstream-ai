@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { userProfileQuery, projectsQuery } from "@/lib/queries";
+import { userProfileQuery, projectsQuery, feedbacksQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
 import { Menu, MessageSquare } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
@@ -17,6 +17,9 @@ import { toast } from "sonner";
 import { usePlanUsage } from "@/hooks/use-plan-usage";
 import { PlanLimitBanner } from "@/components/plan-limit-banner";
 import { captureEvent } from "@/lib/posthog";
+import { KanbanBoard } from "@/components/dashboard/KanbanBoard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useFeedbackView } from "@/hooks/useFeedbackView";
 
 export default function FeedbackPage() {
   const router = useRouter();
@@ -28,6 +31,7 @@ export default function FeedbackPage() {
 
   const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
   const { teams, activeTeam, switchTeam, userRole } = useTeam();
+  const { feedbackView } = useFeedbackView();
 
   useEffect(() => {
     captureEvent("dashboard_viewed");
@@ -38,6 +42,18 @@ export default function FeedbackPage() {
 
   const activeProject =
     projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
+
+  const {
+    data: projectFeedbacks,
+    isLoading,
+    isError,
+  } = useQuery({
+    ...feedbacksQuery(activeProject?.id ?? ""),
+    enabled: !!activeProject?.id,
+  });
+
+  const feedbacks =
+    projectFeedbacks?.filter((fb: any) => fb.status !== "Archived") || [];
 
   useSocket(userProfile?.id, () => {
     queryClient.invalidateQueries({ queryKey: ["feedbacks", activeProject?.id] });
@@ -102,12 +118,26 @@ export default function FeedbackPage() {
             </section>
 
             <section className="flex-1 min-h-0 max-w-full">
-              {activeProject ? (
-                <FeedbackFeed
-                  projectId={activeProject.id}
-                  currentUserId={userProfile?.id}
+              {feedbackView === "feed" ? (
+                activeProject ? (
+                  <FeedbackFeed
+                    projectId={activeProject.id}
+                    currentUserId={userProfile?.id}
+                  />
+                ) : null
+              ) : isError ? (
+                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
+                  <span className="block text-lg font-bold mb-1">Service Error</span>
+                  Failed to load feedback. Make sure your local API server is running on port 3001.
+                </div>
+              ) : isLoading || !activeProject ? (
+                <Skeleton count={5} height="h-[600px]" layout="grid" cols={5} />
+              ) : (
+                <KanbanBoard
+                  initialFeedbacks={feedbacks}
+                  projectId={activeProject?.id}
                 />
-              ) : null}
+              )}
             </section>
           </div>
         </main>
