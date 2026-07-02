@@ -1,23 +1,14 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { Activity, Clock } from "lucide-react";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Section } from "@/components/ui/section";
+import { useTeam } from "@/hooks/useTeam";
 
 export default function ActivityPage() {
-  const { data: teams } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const { data } = await api.get("/teams");
-      return data;
-    },
-  });
-
-  const activeTeam = teams?.[0];
+  const { activeTeam } = useTeam();
 
   return (
     <DashboardShell>
@@ -34,7 +25,7 @@ export default function ActivityPage() {
       />
 
       <Section glow="top-right">
-        <ActivityFeed teamId={activeTeam?.id} />
+        <ActivityFeed teamId={activeTeam?.id ?? null} />
       </Section>
     </DashboardShell>
   );

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
-import { api } from "@/lib/api";
 import { userProfileQuery, projectsQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 
 interface DashboardShellProps {
@@ -25,18 +25,10 @@ export function DashboardShell({
 
   const { data: userProfile } = useQuery(userProfileQuery);
   const { data: projects } = useQuery(projectsQuery);
+  const { teams, activeTeam, switchTeam, userRole } = useTeam();
 
-  const { data: teams } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const { data } = await api.get("/teams");
-      return data;
-    },
-  });
-
-  const activeTeam = teams?.[0];
   const activeProject =
-    projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
+    projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -58,6 +50,8 @@ export function DashboardShell({
         onClose={() => setIsSidebarOpen(false)}
         teams={teams}
         activeTeam={activeTeam}
+        onSwitchTeam={switchTeam}
+        userRole={userRole}
       />
       <main className={mainClassName ?? "flex-1 overflow-y-auto scrollbar-hide"}>
         {noPadding ? children : (
