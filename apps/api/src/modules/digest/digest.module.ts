@@ -6,6 +6,7 @@ import { MailModule } from '../mail/mail.module';
 import { DigestService } from './digest.service';
 import { DigestController } from './digest.controller';
 import { PlansModule } from '../plans/plans.module';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { PlansModule } from '../plans/plans.module';
     AiModule,
     MailModule,
     PlansModule,
+    ProjectsModule,
   ],
   providers: [DigestService],
   controllers: [DigestController],

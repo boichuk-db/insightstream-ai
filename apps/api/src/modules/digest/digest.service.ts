@@ -6,6 +6,7 @@ import { Project, Feedback, User } from '@insightstream/database';
 import { AiService } from '../ai/ai.service';
 import { MailService } from '../mail/mail.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class DigestService {
@@ -18,6 +19,7 @@ export class DigestService {
     private ai: AiService,
     private mail: MailService,
     private planLimitsService: PlanLimitsService,
+    private projectsService: ProjectsService,
   ) {}
 
   /** Runs every Monday at 09:00 AM */
@@ -28,7 +30,10 @@ export class DigestService {
   }
 
   /** Generate AI summary for a single project without sending email */
-  async preview(projectId: string): Promise<{
+  async preview(
+    projectId: string,
+    userId: string,
+  ): Promise<{
     projectName: string;
     since: string;
     totalCount: number;
@@ -38,6 +43,9 @@ export class DigestService {
     mostNegative: Array<{ content: string; sentimentScore: number | null }>;
     aiSummary: string;
   }> {
+    // Throws NotFoundException unless caller is owner or team member
+    await this.projectsService.findOne(projectId, userId);
+
     const project = await this.projects.findOne({
       where: { id: projectId },
       relations: ['user'],

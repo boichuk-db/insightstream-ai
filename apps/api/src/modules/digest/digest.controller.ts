@@ -6,6 +6,7 @@ import {
   UseGuards,
   Headers,
   UnauthorizedException,
+  Request,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DigestService } from './digest.service';
@@ -16,8 +17,8 @@ export class DigestController {
 
   @UseGuards(JwtAuthGuard)
   @Get('preview/:projectId')
-  async preview(@Param('projectId') projectId: string) {
-    return this.digest.preview(projectId);
+  async preview(@Param('projectId') projectId: string, @Request() req: any) {
+    return this.digest.preview(projectId, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
