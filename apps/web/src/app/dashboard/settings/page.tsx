@@ -1,35 +1,42 @@
 "use client";
 
+import { useState, useEffect, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams, useRouter } from "next/navigation";
 import { userProfileQuery } from "@/lib/queries";
-import { PlanType } from "@/lib/plans";
 import {
   User,
   Mail,
   Calendar,
   Loader2,
   Settings,
-  CreditCard,
   Palette,
   Monitor,
   Sun,
   Moon,
-  LayoutList,
-  LayoutGrid,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
 import { ListItem } from "@/components/ui/list-item";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useColorTheme } from "@/hooks/useColorTheme";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { useFeedbackView } from "@/hooks/useFeedbackView";
+import { BillingTab } from "@/components/settings/BillingTab";
+import { TeamTab } from "@/components/settings/TeamTab";
+import { EmbedTab } from "@/components/settings/EmbedTab";
+
+const TABS = [
+  { id: "appearance", label: "Appearance" },
+  { id: "profile", label: "Profile" },
+  { id: "billing", label: "Billing" },
+  { id: "team", label: "Team" },
+  { id: "embed", label: "Embed" },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
 
 function ColorThemeButton({
   label,
@@ -89,21 +96,27 @@ function ModeButton({
   );
 }
 
-export default function SettingsPage() {
+function SettingsContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const activeTab = (searchParams.get("tab") ?? "appearance") as TabId;
+
   const { data: userProfile, isLoading: profileLoading } = useQuery(userProfileQuery);
   const { theme, setTheme } = useTheme();
   const { colorTheme, setColorTheme } = useColorTheme();
-  const { feedbackView, setFeedbackView } = useFeedbackView();
-
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
-  const currentPlan = (userProfile?.plan as PlanType) || PlanType.FREE;
+  function setTab(id: TabId) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", id);
+    router.replace(`/dashboard/settings?${params.toString()}`);
+  }
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+      <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
       </div>
     );
@@ -115,31 +128,48 @@ export default function SettingsPage() {
       noPadding
     >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="relative z-10 brand-page-container flex flex-col gap-8 text-brand-text">
           <PageHeader
             icon={<Settings className="h-8 w-8 text-brand-accent" />}
             title="Settings"
-            subtitle="Manage your account and subscription plan."
+            subtitle="Manage your workspace, team, and integrations."
           />
 
-          {/* Appearance Section */}
+          {/* Tab bar */}
+          <div className="flex gap-1 bg-brand-surface border border-brand-border rounded-xl p-1 w-fit flex-wrap">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTab(tab.id)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                  activeTab === tab.id
+                    ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20"
+                    : "text-brand-muted hover:text-brand-fg",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab content */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            key={activeTab}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15 }}
           >
-            <Section>
-              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
-                <Palette className="h-5 w-5 text-brand-accent" /> Appearance
-              </h2>
-              {mounted && (
+            {activeTab === "appearance" && mounted && (
+              <Section>
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-6">
+                  <Palette className="h-5 w-5 text-brand-accent" /> Appearance
+                </h2>
                 <div className="space-y-6">
-                  {/* Color Theme */}
                   <div>
                     <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
-                      <Palette className="h-4 w-4" />
-                      Color Theme
+                      <Palette className="h-4 w-4" /> Color Theme
                     </p>
                     <div className="flex gap-3">
                       <ColorThemeButton
@@ -156,12 +186,9 @@ export default function SettingsPage() {
                       />
                     </div>
                   </div>
-
-                  {/* Appearance Mode */}
                   <div>
                     <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
-                      <Monitor className="h-4 w-4" />
-                      Appearance Mode
+                      <Monitor className="h-4 w-4" /> Appearance Mode
                     </p>
                     <div className="flex gap-1 rounded-xl border border-brand-border bg-brand-surface p-1">
                       <ModeButton
@@ -187,100 +214,61 @@ export default function SettingsPage() {
                       />
                     </div>
                   </div>
-
-                  {/* Feedback View */}
-                  <div>
-                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
-                      <LayoutList className="h-4 w-4" />
-                      Feedback View
-                    </p>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => setFeedbackView("feed")}
-                        className={cn(
-                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
-                          feedbackView === "feed"
-                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
-                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
-                        )}
-                      >
-                        <LayoutList className="h-4 w-4 shrink-0" />
-                        Feed
-                      </button>
-                      <button
-                        onClick={() => setFeedbackView("kanban")}
-                        className={cn(
-                          "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
-                          feedbackView === "kanban"
-                            ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
-                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
-                        )}
-                      >
-                        <LayoutGrid className="h-4 w-4 shrink-0" />
-                        Kanban
-                      </button>
-                    </div>
-                  </div>
                 </div>
-              )}
-            </Section>
-          </motion.div>
+              </Section>
+            )}
 
-          {/* Profile Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Section>
-              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
-                <User className="h-5 w-5 text-brand-accent" /> Profile
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <ListItem
-                  icon={<Mail className="h-4 w-4 text-brand-accent" />}
-                  primary={userProfile?.email}
-                  secondary="Email"
-                />
-                <ListItem
-                  icon={<Calendar className="h-4 w-4 text-brand-accent" />}
-                  primary={
-                    userProfile?.createdAt
-                      ? new Date(userProfile.createdAt).toLocaleDateString(
-                          "en-US",
-                          { year: "numeric", month: "long", day: "numeric" },
-                        )
-                      : "—"
-                  }
-                  secondary="Member since"
-                />
-              </div>
-            </Section>
-          </motion.div>
+            {activeTab === "profile" && (
+              <Section>
+                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
+                  <User className="h-5 w-5 text-brand-accent" /> Profile
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <ListItem
+                    icon={<Mail className="h-4 w-4 text-brand-accent" />}
+                    primary={userProfile?.email}
+                    secondary="Email"
+                  />
+                  <ListItem
+                    icon={<Calendar className="h-4 w-4 text-brand-accent" />}
+                    primary={
+                      userProfile?.createdAt
+                        ? new Date(userProfile.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )
+                        : "—"
+                    }
+                    secondary="Member since"
+                  />
+                </div>
+              </Section>
+            )}
 
-          {/* Billing & Plan Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Section>
-              <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
-                <CreditCard className="h-5 w-5 text-brand-accent" /> Billing &amp; Plan
-              </h2>
-              <div className="flex items-center justify-between">
-                <Badge variant="plan" value={currentPlan} />
-                <Link
-                  href="/dashboard/billing"
-                  className="inline-flex items-center h-9 px-3.5 text-[11px] font-bold rounded-xl border border-transparent bg-transparent text-brand-muted hover:text-brand-fg hover:bg-white/5 transition-all"
-                >
-                  Manage billing →
-                </Link>
-              </div>
-            </Section>
+            {activeTab === "billing" && <BillingTab />}
+            {activeTab === "team" && <TeamTab />}
+            {activeTab === "embed" && <EmbedTab />}
           </motion.div>
         </div>
       </div>
     </DashboardShell>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+        </div>
+      }
+    >
+      <SettingsContent />
+    </Suspense>
   );
 }
