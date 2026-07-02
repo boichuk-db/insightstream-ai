@@ -1265,7 +1265,7 @@ Playwright e2e (`apps/e2e/tests/widget/submit-feedback.spec.ts`) uses CSS locato
 - Modify: `apps/widget/src/App.tsx:36-38`
 - Modify: `apps/widget/package.json` (remove plugin dep)
 
-- [ ] **Step 1: Render into Shadow DOM with inlined CSS**
+- [x] **Step 1: Render into Shadow DOM with inlined CSS**
 
 Replace the full contents of `apps/widget/src/main.tsx`:
 
@@ -1315,7 +1315,7 @@ if (
 
 Check that `apps/widget/src/vite-env.d.ts` exists and contains `/// <reference types="vite/client" />` (it types `*.css?inline` imports and `import.meta.env`). If the file is missing, create it with exactly that line.
 
-- [ ] **Step 2: Remove the CSS-injection plugin**
+- [x] **Step 2: Remove the CSS-injection plugin**
 
 Replace the full contents of `apps/widget/vite.config.ts`:
 
@@ -1346,7 +1346,7 @@ export default defineConfig({
 
 Run: `pnpm --filter widget remove vite-plugin-css-injected-by-js`
 
-- [ ] **Step 3: Env-configurable API URL**
+- [x] **Step 3: Env-configurable API URL**
 
 In `apps/widget/src/App.tsx` replace:
 
@@ -1367,7 +1367,7 @@ with:
 
 (Runtime config still wins; `VITE_API_URL` lets CI bake the AWS URL when the migration lands; the Railway URL stays as the last-resort fallback so existing embeds keep working.)
 
-- [ ] **Step 4: Build and verify isolation manually**
+- [x] **Step 4: Build and verify isolation manually**
 
 Run: `pnpm --filter widget build`
 Expected: build succeeds, `apps/widget/dist/widget.iife.js` produced, and **no** separate `.css` asset that requires manual inclusion (CSS is inside the JS string).
@@ -1379,13 +1379,13 @@ Then verify with the existing `apps/widget/test.html` (read it first; it loads t
 
 If no browser automation is available, state so and verify via DOM inspection that `document.getElementById('insight-stream-widget-root').shadowRoot` contains a `<style>` and the app markup, and `document.head` contains no Tailwind styles from the widget.
 
-- [ ] **Step 5: Run widget e2e if infra available**
+- [x] **Step 5: Run widget e2e if infra available**
 
 If local API + web can run: `pnpm --filter e2e test -- --grep "Widget"` (check exact script name in `apps/e2e/package.json` first).
 Expected: `open → fill → submit → shows success state` passes (open shadow roots are pierced by Playwright CSS locators).
 If infra is unavailable, state that explicitly in the task report.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint`
 Expected: no errors.
