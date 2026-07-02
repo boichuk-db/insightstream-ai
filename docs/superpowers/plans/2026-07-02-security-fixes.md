@@ -28,7 +28,7 @@ Any authenticated user can read comments on any feedback UUID. `CommentsService.
 - Modify: `apps/api/src/modules/comments/comments.controller.ts:28-38`
 - Create: `apps/api/src/modules/comments/comments.service.spec.ts`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `apps/api/src/modules/comments/comments.service.spec.ts`:
 
@@ -132,12 +132,12 @@ describe('CommentsService', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pnpm --filter api test -- --testPathPattern=comments.service`
 Expected: FAIL — `findByFeedback` currently takes 1 argument and does no access check, so Forbidden/NotFound tests fail.
 
-- [ ] **Step 3: Implement access check in the service**
+- [x] **Step 3: Implement access check in the service**
 
 In `apps/api/src/modules/comments/comments.service.ts`, extract the access check that already exists in `create` into a private helper, and use it in both methods. Replace the body of `create` (lines 27-48 region) and `findByFeedback`:
 
@@ -203,7 +203,7 @@ In `apps/api/src/modules/comments/comments.service.ts`, extract the access check
   }
 ```
 
-- [ ] **Step 4: Pass userId from the controller**
+- [x] **Step 4: Pass userId from the controller**
 
 In `apps/api/src/modules/comments/comments.controller.ts`, replace the `findByFeedback` handler:
 
@@ -227,12 +227,12 @@ In `apps/api/src/modules/comments/comments.controller.ts`, replace the `findByFe
   }
 ```
 
-- [ ] **Step 5: Run test to verify it passes**
+- [x] **Step 5: Run test to verify it passes**
 
 Run: `pnpm --filter api test -- --testPathPattern=comments.service`
 Expected: PASS (5 tests).
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint`
 Expected: no errors.
@@ -254,7 +254,7 @@ git commit -m "fix(comments): require project access to read feedback comments (
 - Modify: `apps/api/src/modules/digest/digest.controller.ts:17-21`
 - Create: `apps/api/src/modules/digest/digest.service.spec.ts`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `apps/api/src/modules/digest/digest.service.spec.ts`:
 
@@ -330,12 +330,12 @@ describe('DigestService', () => {
 
 Note: if `MailService` in `digest.service.ts` is injected under a different method surface, the mock above only needs to satisfy DI — an empty object with any methods is fine; adjust the mock shape only if module compilation fails.
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pnpm --filter api test -- --testPathPattern=digest.service`
 Expected: FAIL — `Nest can't resolve dependencies` (no `ProjectsService` in `DigestService`) or signature mismatch (`preview` takes 1 arg).
 
-- [ ] **Step 3: Wire ProjectsModule into DigestModule**
+- [x] **Step 3: Wire ProjectsModule into DigestModule**
 
 In `apps/api/src/modules/digest/digest.module.ts` add the import:
 
@@ -358,7 +358,7 @@ export class DigestModule {}
 
 (`ProjectsModule` already exports `ProjectsService`; no circular dependency — `ProjectsModule` does not import `DigestModule`.)
 
-- [ ] **Step 4: Enforce access in the service**
+- [x] **Step 4: Enforce access in the service**
 
 In `apps/api/src/modules/digest/digest.service.ts`:
 
@@ -407,7 +407,7 @@ Change `preview` signature and add the access check as the first statement:
     // ... rest of the method unchanged (plan gate, stats, aiSummary)
 ```
 
-- [ ] **Step 5: Pass userId from the controller**
+- [x] **Step 5: Pass userId from the controller**
 
 In `apps/api/src/modules/digest/digest.controller.ts`:
 
@@ -421,12 +421,12 @@ In `apps/api/src/modules/digest/digest.controller.ts`:
 
 Add `Request` to the `@nestjs/common` import list.
 
-- [ ] **Step 6: Run test to verify it passes**
+- [x] **Step 6: Run test to verify it passes**
 
 Run: `pnpm --filter api test -- --testPathPattern=digest.service`
 Expected: PASS (2 tests).
 
-- [ ] **Step 7: Verify and commit**
+- [x] **Step 7: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint`
 Expected: no errors.
@@ -445,7 +445,7 @@ Any authenticated user can trigger a digest mail-out to **all** users and burn G
 **Files:**
 - Modify: `apps/api/src/modules/digest/digest.controller.ts:23-28`
 
-- [ ] **Step 1: Delete the endpoint**
+- [x] **Step 1: Delete the endpoint**
 
 Remove this block from `digest.controller.ts`:
 
@@ -460,12 +460,12 @@ Remove this block from `digest.controller.ts`:
 
 Keep `internal-trigger` untouched.
 
-- [ ] **Step 2: Confirm nothing references it**
+- [x] **Step 2: Confirm nothing references it**
 
 Run: `grep -rn "digest/trigger" apps/ --include=*.ts --include=*.tsx | grep -v node_modules | grep -v internal-trigger`
 Expected: no output.
 
-- [ ] **Step 3: Verify and commit**
+- [x] **Step 3: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint && pnpm --filter api test -- --testPathPattern=digest`
 Expected: all pass.
