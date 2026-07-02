@@ -1,161 +1,46 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { userProfileQuery, projectsQuery } from "@/lib/queries";
 import { api } from "@/lib/api";
-import { captureEvent } from "@/lib/posthog";
-import { userProfileQuery, projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, MessageSquare, Sparkles, Menu } from "lucide-react";
-import { Section } from "@/components/ui/section";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
+import { Menu, MessageSquare } from "lucide-react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
-import { KanbanBoard } from "@/components/dashboard/KanbanBoard";
 import { FeedbackFeed } from "@/components/dashboard/FeedbackFeed";
-import { useFeedbackView } from "@/hooks/useFeedbackView";
 import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
-import { DigestModal } from "@/components/dashboard/DigestModal";
 import { useSocket } from "@/hooks/useSocket";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
 import { usePlanUsage } from "@/hooks/use-plan-usage";
 import { PlanLimitBanner } from "@/components/plan-limit-banner";
-import { PlanLimitModal, PlanLimitErrorData } from "@/components/plan-limit-modal";
+import { captureEvent } from "@/lib/posthog";
 
-export default function Dashboard() {
+export default function FeedbackPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [newFeedback, setNewFeedback] = useState("");
-  const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] =
-    useState(false);
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDigestOpen, setIsDigestOpen] = useState(false);
-  const [planLimitError, setPlanLimitError] = useState<PlanLimitErrorData | null>(null);
-  const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
+  const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
+  const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(null);
 
-  const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
-  const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(
-    null,
-  );
-  const { feedbackView } = useFeedbackView();
+  const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
+  const { teams, activeTeam, switchTeam, userRole } = useTeam();
 
   useEffect(() => {
-    captureEvent('dashboard_viewed')
-  }, [])
+    captureEvent("dashboard_viewed");
+  }, []);
 
   const { data: userProfile } = useQuery(userProfileQuery);
-
   const { data: projects } = useQuery(projectsQuery);
 
   const activeProject =
-    projects?.find((p: any) => p.id === selectedProjectId) || projects?.[0];
+    projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
 
-  // Real-time updates via socket — single source of truth for feedbacks invalidation
   useSocket(userProfile?.id, () => {
-    queryClient.invalidateQueries({
-      queryKey: ["feedbacks", activeProject?.id],
-    });
-  });
-
-  const {
-    data: projectFeedbacks,
-    isLoading,
-    isError,
-  } = useQuery({
-    ...feedbacksQuery(activeProject?.id ?? ""),
-    enabled: !!activeProject?.id,
-  });
-
-  const feedbacks =
-    projectFeedbacks?.filter((fb: any) => fb.status !== "Archived") || [];
-
-  // Digest is cached for 5 minutes — intentional to avoid re-hitting Gemini on each modal open.
-  // Cache is invalidated when feedbacks are updated via socket.
-  const {
-    data: digestData,
-    isLoading: digestLoading,
-    error: digestErrorRaw,
-  } = useQuery({
-    ...digestPreviewQuery(activeProject?.id ?? ""),
-    enabled: isDigestOpen && !!activeProject?.id,
-  });
-
-  const digestError = digestErrorRaw
-    ? ((digestErrorRaw as any)?.response?.data?.message ??
-      "Не вдалося згенерувати digest")
-    : null;
-
-  const [seedProgress, setSeedProgress] = useState<string | null>(null);
-
-  const SEED_FEEDBACKS = [
-    "The app crashes every time I try to upload a file larger than 5MB. This is a critical bug!",
-    "Login page keeps throwing a 401 error even with correct credentials. Very frustrating.",
-    "Dashboard is incredibly slow to load — takes over 10 seconds on first open.",
-    "The new dark mode looks amazing! Great work on the UI redesign.",
-    "Would love to see CSV export for the analytics section. Super useful feature request.",
-    "Got charged twice for my subscription this month. Please fix billing ASAP.",
-    "The mobile layout is completely broken on iPhone 14. Buttons overlap the navigation bar.",
-    "API rate limiting is too aggressive — 100 req/min is not enough for our use case.",
-    "Onboarding flow is very smooth and intuitive. New users will have no trouble getting started.",
-    "The real-time notifications are a game changer. Love how instant the updates are!",
-    "Search functionality doesn't work at all — returns no results even for exact matches.",
-    "Integration with Slack is missing. This is a must-have for our team workflow.",
-    "The AI summaries are surprisingly accurate. Saves us hours of manual review every week.",
-    "Password reset email never arrives. Been waiting 30 minutes — checked spam too.",
-    "Kanban board drag and drop is buttery smooth. Really impressive UX!",
-    "Would be great to have team collaboration features — shared projects and comments.",
-    "Widget embed code breaks our website layout on Safari. Works fine on Chrome.",
-    "The pricing page is confusing — not clear what's included in each plan.",
-    "Customer support responded in under 5 minutes. Absolutely stellar service!",
-    "Data export is too slow — generating a 500-row CSV takes over 2 minutes.",
-  ];
-
-  const handleSeedFeedbacks = async () => {
-    if (!activeProject?.id) return;
-    setSeedProgress("Починаємо...");
-    for (let i = 0; i < SEED_FEEDBACKS.length; i++) {
-      setSeedProgress(`Додаємо ${i + 1}/${SEED_FEEDBACKS.length}...`);
-      try {
-        await api.post("/feedback", {
-          content: SEED_FEEDBACKS[i],
-          projectId: activeProject.id,
-          source: "Seed Data",
-        });
-        await new Promise((r) => setTimeout(r, 400));
-      } catch {
-        // continue on error
-      }
-    }
-    setSeedProgress(null);
-  };
-
-  const createMutation = useMutation({
-    mutationFn: async (content: string) => {
-      const { data } = await api.post("/feedback", {
-        content,
-        projectId: activeProject?.id,
-        source: "Web Dashboard",
-      });
-      return data;
-    },
-    onSuccess: () => {
-      setNewFeedback("");
-      queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
-    },
-    onError: (error: any) => {
-      if (error.response?.data?.error === "PlanLimitExceeded") {
-        setPlanLimitError(error.response.data);
-      } else {
-        toast.error("Failed to send feedback.");
-      }
-    },
+    queryClient.invalidateQueries({ queryKey: ["feedbacks", activeProject?.id] });
   });
 
   const deleteProjectMutation = useMutation({
@@ -179,166 +64,55 @@ export default function Dashboard() {
   return (
     <div data-testid="dashboard-root" className="flex flex-col h-full bg-brand-bg overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
-      <Sidebar
-        projects={projects || []}
-        activeProject={activeProject}
-        onSelectProject={setSelectedProjectId}
-        onCreateProject={() => setIsCreateProjectModalOpen(true)}
-        onDeleteProject={(id) => deleteProjectMutation.mutate(id)}
-        isDeletingProject={deleteProjectMutation.isPending}
-        userProfile={userProfile}
-        onLogout={handleLogout}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        teams={teams}
-        activeTeam={activeTeam}
-        onSwitchTeam={switchTeam}
-        userRole={userRole}
-      />
+        <Sidebar
+          projects={projects || []}
+          activeProject={activeProject}
+          onSelectProject={setSelectedProjectId}
+          onCreateProject={() => setIsCreateProjectModalOpen(true)}
+          onDeleteProject={(id) => deleteProjectMutation.mutate(id)}
+          isDeletingProject={deleteProjectMutation.isPending}
+          userProfile={userProfile}
+          onLogout={handleLogout}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          teams={teams}
+          activeTeam={activeTeam}
+          onSwitchTeam={switchTeam}
+          userRole={userRole}
+        />
 
-      <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
-        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-8 sm:gap-10 max-w-full">
-          {/* Plan limit banner */}
-          {isNearLimit && planUsage && (
-            <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
-          )}
-          {/* Header */}
-          <section className="flex flex-col sm:flex-row gap-6 items-start justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-brand-bg rounded-xl border border-brand-border text-brand-accent hover:text-brand-accent/80"
-              >
-                <Menu size={20} />
-              </button>
-              <div className="space-y-1">
-                <h1 className="text-3xl font-bold text-brand-fg tracking-tight flex items-center gap-3">
-                  <Sparkles className="h-8 w-8 text-brand-accent" /> Dashboard
+        <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 max-w-full">
+            {isNearLimit && planUsage && (
+              <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
+            )}
+
+            <section className="flex flex-col sm:flex-row gap-4 items-start justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="lg:hidden p-2 bg-brand-bg rounded-xl border border-brand-border text-brand-accent hover:text-brand-accent/80"
+                >
+                  <Menu size={20} />
+                </button>
+                <h1 className="text-2xl font-bold text-brand-fg tracking-tight flex items-center gap-3">
+                  <MessageSquare className="h-6 w-6 text-brand-accent" /> Feedback
                 </h1>
-                <p className="hidden xs:block text-brand-muted text-sm mt-1">
-                  Manage your project feedback and analysis.
-                </p>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Manual Input */}
-          <Section className="transition-all duration-300 hover:bg-brand-surface/80 shadow-2xl shrink-0">
-            <div className="flex flex-col gap-6">
-              <div>
-                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
-                  <Plus className="h-5 w-5 text-brand-accent" /> Manual Input
-                  Testing
-                </h2>
-                <p className="text-xs text-brand-muted mt-1">
-                  Submit internal feedback to test migrations or AI response
-                  tags.
-                </p>
-              </div>
-
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (newFeedback.trim()) createMutation.mutate(newFeedback);
-                }}
-                className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full"
-              >
-                <div className="w-full sm:flex-1">
-                  <Input
-                    data-testid="feedback-input"
-                    placeholder="Type a feedback message here..."
-                    value={newFeedback}
-                    onChange={(e) => setNewFeedback(e.target.value)}
-                    className="w-full bg-brand-surface/60 border-brand-border/50 focus:border-brand-primary h-11 pl-4 text-sm"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  data-testid="feedback-submit"
-                  isLoading={createMutation.isPending}
-                  disabled={!newFeedback.trim()}
-                  variant="secondary"
-                  size="md"
-                  className="w-full sm:min-w-[140px] sm:w-auto shrink-0"
-                >
-                  Post Internal
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="md"
-                  onClick={handleSeedFeedbacks}
-                  disabled={!!seedProgress || !activeProject?.id}
-                  className="border-amber-500/30 text-amber-500/80 hover:text-amber-400 hover:bg-amber-500/5 w-full sm:w-auto shrink-0 font-bold"
-                >
-                  {seedProgress ?? "🌱 Seed 20 feedbacks"}
-                </Button>
-              </form>
-            </div>
-          </Section>
-
-          {/* Analytics */}
-          {!isLoading && !isError && feedbacks?.length > 0 && (
-            <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
-              <AnalyticsOverview feedbacks={feedbacks} />
-            </div>
-          )}
-
-          {/* Feedback — Feed / Kanban */}
-          <section className="flex flex-col gap-4 min-h-[600px] pb-20 max-w-full">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-brand-accent" /> Feedback
-                </h2>
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsDigestOpen(true)}
-                disabled={!activeProject?.id}
-                className="bg-brand-accent/10 text-brand-accent border-brand-accent/30 hover:bg-brand-accent/20"
-              >
-                <Sparkles className="h-3.5 w-3.5 mr-2" />
-                AI Digest
-              </Button>
-            </div>
-
-            <div className="flex-1 w-full max-w-full">
-              {!activeProject && !isLoading ? null : feedbackView === "feed" ? (
+            <section className="flex-1 min-h-0 max-w-full">
+              {activeProject ? (
                 <FeedbackFeed
-                  projectId={activeProject?.id ?? ""}
+                  projectId={activeProject.id}
                   currentUserId={userProfile?.id}
                 />
-              ) : isError ? (
-                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
-                  <span className="block text-lg font-bold mb-1">
-                    Service Error
-                  </span>
-                  Failed to load feedback. Make sure your local API server is
-                  running on port 3001.
-                </div>
-              ) : isLoading || !activeProject ? (
-                <Skeleton count={5} height="h-[600px]" layout="grid" cols={5} />
-              ) : (
-                <KanbanBoard
-                  initialFeedbacks={feedbacks || []}
-                  projectId={activeProject?.id}
-                />
-              )}
-            </div>
-          </section>
-        </div>
-      </main>
+              ) : null}
+            </section>
+          </div>
+        </main>
       </div>
 
-      <DigestModal
-        isOpen={isDigestOpen}
-        onClose={() => setIsDigestOpen(false)}
-        isLoading={digestLoading}
-        data={digestData}
-        error={digestError}
-      />
       <CreateProjectModal
         isOpen={isCreateProjectModalOpen}
         onClose={() => setIsCreateProjectModalOpen(false)}
@@ -348,11 +122,6 @@ export default function Dashboard() {
         feedbackId={commentsFeedbackId}
         onClose={() => setCommentsFeedbackId(null)}
         currentUserId={userProfile?.id}
-      />
-      <PlanLimitModal
-        open={planLimitError !== null}
-        onClose={() => setPlanLimitError(null)}
-        errorData={planLimitError}
       />
     </div>
   );
