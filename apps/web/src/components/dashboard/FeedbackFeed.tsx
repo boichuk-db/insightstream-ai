@@ -22,6 +22,7 @@ const STATUS_TABS = [
   { label: "In Progress", value: "In Progress" },
   { label: "Done", value: "Done" },
   { label: "Rejected", value: "Rejected" },
+  { label: "Archived", value: "Archived" },
 ];
 
 const SENTIMENT_GROUP = {
@@ -94,6 +95,9 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
 
   const filtered = useMemo(() => {
     return (feedbacks as IFeedback[]).filter((f) => {
+      // Archived items only appear on the Archived tab
+      if (f.status === "Archived" && activeTab !== "Archived") return false;
+
       if (activeTab !== "all" && f.status !== activeTab) return false;
 
       const src = filterValues.source ?? ["all"];
@@ -126,7 +130,7 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
     ...t,
     count:
       t.value === "all"
-        ? (feedbacks as IFeedback[]).length
+        ? (feedbacks as IFeedback[]).filter((f) => f.status !== "Archived").length
         : (feedbacks as IFeedback[]).filter((f) => f.status === t.value).length,
   }));
 

@@ -4,6 +4,7 @@ export enum FeedbackStatus {
   IN_PROGRESS = "In Progress",
   DONE = "Done",
   REJECTED = "Rejected",
+  ARCHIVED = "Archived",
 }
 
 export interface IFeedback {
