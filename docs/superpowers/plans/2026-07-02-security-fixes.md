@@ -1187,7 +1187,7 @@ with:
     await this.eventsService.emitFeedbackUpdatedForProject(projectId);
 ```
 
-- [ ] **Step 6: Use EventsService in AiProcessor**
+- [x] **Step 6: Use EventsService in AiProcessor**
 
 In `apps/api/src/modules/ai/ai.processor.ts` replace the `EventsGateway` import/injection with:
 
@@ -1213,7 +1213,7 @@ with:
 
 The `ownerId` destructuring at the top of `process()` may become unused — if so, remove `ownerId` from the destructuring (keep it in `AnalysisJobData`; queue payloads are unchanged).
 
-- [ ] **Step 7: Update existing specs**
+- [x] **Step 7: Update existing specs**
 
 In `apps/api/src/modules/feedback/feedback.service.spec.ts` (no existing test asserts on the gateway — only the wiring changes):
 - Line 13: replace `import { EventsGateway } from '../events/events.gateway';` with `import { EventsService } from '../events/events.service';`
@@ -1236,12 +1236,12 @@ In `apps/api/src/modules/ai/ai.processor.spec.ts`:
 - Line 26: replace `{ provide: EventsGateway, useValue: eventsGateway }` with `{ provide: EventsService, useValue: eventsService }`
 - Line 63: replace `expect(eventsGateway.emitFeedbackUpdated).toHaveBeenCalledWith('user-1');` with `expect(eventsService.emitFeedbackUpdatedForProject).toHaveBeenCalledWith('proj-1');`
 
-- [ ] **Step 8: Run the full API suite**
+- [x] **Step 8: Run the full API suite**
 
 Run: `pnpm --filter api test`
 Expected: all pass.
 
-- [ ] **Step 9: Verify and commit**
+- [x] **Step 9: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint`
 Expected: no errors.
