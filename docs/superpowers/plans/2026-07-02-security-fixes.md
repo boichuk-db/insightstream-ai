@@ -1399,6 +1399,15 @@ git commit -m "fix(widget): isolate styles in Shadow DOM, stop leaking Tailwind 
 
 ## Final Verification (after all tasks)
 
-- [ ] Run: `pnpm typecheck && pnpm lint && pnpm test && pnpm build`
-- [ ] Expected: everything green. Report actual output, not a summary claim.
+- [x] Run: `pnpm typecheck && pnpm lint && pnpm test && pnpm build`
+- [x] Expected: everything green. Report actual output, not a summary claim.
+  - Verified: `pnpm typecheck` 7/7, `pnpm lint` 0 errors/351 pre-existing warnings, `pnpm --filter api test` 14 suites/73 tests passed, `pnpm build` 6/6 (widget produces a single `dist/widget.iife.js`, no separate CSS asset). Final holistic code review: "Ready to merge."
 - [ ] Manual smoke (if infra available): register → create project → submit widget feedback from `test.html` → see it appear in dashboard feed without refresh (Task 7) → open digest preview for own project (200) and a foreign UUID (404).
+  - Not performed — requires a live signup/login flow against local Postgres/Redis with real cookies/tokens, beyond automated verification in this session. Individual pieces were verified in isolation instead: Task 8's widget Shadow DOM was verified live via headless Playwright against `test.html`; Task 2's digest-preview IDOR fix has a passing unit test asserting NotFoundException for inaccessible projects. Recommend a manual pass before production deploy.
+
+## Follow-ups (not fixed in this branch, deliberately out of scope)
+
+- `apps/web/public/widget.js` is a stale, pre-Shadow-DOM widget build artifact (references `vite-plugin-css-injected-by-js`). Confirmed dead — nothing in `apps/web/src` or CI references it; the real embed snippet points at the deployed widget dist via `NEXT_PUBLIC_WIDGET_URL`. Safe to delete in a follow-up cleanup.
+- 7 endpoints across `invitations.controller.ts`, `projects.controller.ts`, `stripe.controller.ts`, `teams.controller.ts` use inline `@Body() body: { ... }` object-literal types that bypass the new global `ValidationPipe` entirely (zero validation, though also zero whitelist-stripping risk since they aren't classes). Worth a follow-up task converting them to proper DTO classes for consistency with Task 4's rollout.
+- `EventsService.emitFeedbackUpdatedForProject` does its own `Project` lookup on every call; `FeedbackService.create()`'s widget path also separately re-fetches the project for `ownerId`/AI-level resolution — two DB round-trips to the same row on the highest-QPS endpoint in the app. Consider passing an already-loaded project/owner through instead of re-fetching, if this becomes a measured bottleneck.
+- `AnalysisJobData.ownerId` is now an unused field (kept for in-flight BullMQ job payload compatibility across the deploy that lands this branch). Safe to remove after one full deploy cycle with no in-flight jobs from the old shape.
