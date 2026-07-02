@@ -495,12 +495,12 @@ No request body is validated (except `UpdateTeamDto`). Add global `ValidationPip
 - Modify: `apps/api/src/modules/comments/comments.controller.ts`
 - Create: `apps/api/src/modules/feedback/dto/create-public-feedback.dto.spec.ts`
 
-- [ ] **Step 1: Install dependencies**
+- [x] **Step 1: Install dependencies**
 
 Run: `pnpm --filter api add class-validator class-transformer`
 Expected: both added to `apps/api/package.json` dependencies.
 
-- [ ] **Step 2: Write the failing DTO test**
+- [x] **Step 2: Write the failing DTO test**
 
 Create `apps/api/src/modules/feedback/dto/create-public-feedback.dto.spec.ts`:
 
@@ -543,12 +543,12 @@ describe('CreatePublicFeedbackDto', () => {
 });
 ```
 
-- [ ] **Step 3: Run test to verify it fails**
+- [x] **Step 3: Run test to verify it fails**
 
 Run: `pnpm --filter api test -- --testPathPattern=create-public-feedback`
 Expected: FAIL — module `./create-public-feedback.dto` not found.
 
-- [ ] **Step 4: Create the DTOs**
+- [x] **Step 4: Create the DTOs**
 
 Create `apps/api/src/modules/feedback/dto/create-public-feedback.dto.ts`:
 
@@ -680,7 +680,7 @@ export class CreateCommentDto {
 }
 ```
 
-- [ ] **Step 5: Enable the global pipe**
+- [x] **Step 5: Enable the global pipe**
 
 In `apps/api/src/main.ts` add to imports:
 
@@ -698,7 +698,7 @@ and after `NestFactory.create(...)`:
 
 Note: bodies typed as plain interfaces/`any` are skipped by ValidationPipe — existing endpoints without DTOs keep working unchanged.
 
-- [ ] **Step 6: Use DTOs in controllers**
+- [x] **Step 6: Use DTOs in controllers**
 
 `apps/api/src/modules/feedback/feedback.public.controller.ts` — change the `createPublic` signature (keep the origin/domain logic unchanged):
 
@@ -814,14 +814,14 @@ import { CreateCommentDto } from './dto/create-comment.dto';
   }
 ```
 
-- [ ] **Step 7: Run tests to verify they pass**
+- [x] **Step 7: Run tests to verify they pass**
 
 Run: `pnpm --filter api test -- --testPathPattern=create-public-feedback`
 Expected: PASS (5 tests).
 Run: `pnpm --filter api test`
 Expected: full suite passes (auth.service.spec, feedback.service.spec etc. test services, not controllers — unaffected).
 
-- [ ] **Step 8: Verify and commit**
+- [x] **Step 8: Verify and commit**
 
 Run: `pnpm typecheck && pnpm lint`
 Expected: no errors.
