@@ -50,6 +50,11 @@ lambda/*/function.zip
 docs/**
 !docs/superpowers/
 !docs/superpowers/**
+# ...except the architecture living doc + diagram, which are tracked
+!docs/architecture/
+docs/architecture/**
+!docs/architecture/PLAN.md
+!docs/architecture/system-architecture.drawio
 
 # AWS local config (contains resource IDs, never commit)
 infra/aws-ids.txt

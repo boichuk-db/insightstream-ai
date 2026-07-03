@@ -120,3 +120,12 @@ Unit tests for `AiSweepService` with mocked `feedbackRepository`,
 - **Poison-message hard cap via a column** (`aiAttempts`) — rejected now as
   disproportionate (constraint #3); the 24h window bounds cost without schema
   change. Revisit only if abandoned counts become material.
+- **Partial index for the sweep query** — the sweep runs
+  `WHERE sentimentScore IS NULL AND createdAt <window>` (a `find` + a `count`)
+  every 5 min. The existing `feedbacks (projectId, createdAt)` index does not
+  cover it. **Deliberately not added now:** at current scale the scan is over a
+  tiny table and bounded (24h window + `LIMIT 100`), so YAGNI (constraint #3).
+  Trigger to add `CREATE INDEX ... ON feedbacks (createdAt) WHERE sentimentScore
+  IS NULL`: the `feedbacks` table grows large enough that the sweep appears in
+  the slow-query log, or the row count crosses the same threshold that gates the
+  usage-counters work in PLAN 🟡.
