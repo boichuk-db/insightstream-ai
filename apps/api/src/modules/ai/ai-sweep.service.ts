@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, Between, LessThanOrEqual } from 'typeorm';
+import { Repository, IsNull, Between, LessThan } from 'typeorm';
 import { Feedback, PlanType } from '@insightstream/database';
 import { AiQueueService } from './ai-queue.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
@@ -32,7 +32,7 @@ export class AiSweepService {
       const abandoned = await this.feedbackRepository.count({
         where: {
           sentimentScore: IsNull(),
-          createdAt: LessThanOrEqual(windowStart),
+          createdAt: LessThan(windowStart),
         },
       });
       if (abandoned > 0) {
@@ -57,7 +57,12 @@ export class AiSweepService {
       for (const fb of candidates) {
         try {
           const ownerId = fb.project?.userId;
-          if (!ownerId) continue;
+          if (!ownerId) {
+            this.logger.warn(
+              `Feedback ${fb.id} has no owner; skipping sweep re-enqueue`,
+            );
+            continue;
+          }
 
           if (!planCache.has(ownerId)) {
             planCache.set(

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { IsNull, Between, LessThan } from 'typeorm';
 import { Feedback, PlanType } from '@insightstream/database';
 import { AiSweepService } from './ai-sweep.service';
 import { AiQueueService } from './ai-queue.service';
@@ -23,7 +24,10 @@ describe('AiSweepService', () => {
     }) as unknown as Feedback;
 
   beforeEach(async () => {
-    feedbackRepo = { find: jest.fn().mockResolvedValue([]), count: jest.fn().mockResolvedValue(0) };
+    feedbackRepo = {
+      find: jest.fn().mockResolvedValue([]),
+      count: jest.fn().mockResolvedValue(0),
+    };
     aiQueue = { addAnalysisJob: jest.fn().mockResolvedValue(undefined) };
     planLimits = {
       getUserPlan: jest.fn().mockResolvedValue(PlanType.FREE),
@@ -73,7 +77,9 @@ describe('AiSweepService', () => {
 
   it('warns about feedback abandoned beyond the 24h window and does not enqueue it', async () => {
     feedbackRepo.count.mockResolvedValue(3);
-    const warn = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const warn = jest
+      .spyOn(Logger.prototype, 'warn')
+      .mockImplementation(() => undefined);
 
     await service.sweep();
 
@@ -101,5 +107,32 @@ describe('AiSweepService', () => {
 
     expect(planLimits.getUserPlan).toHaveBeenCalledTimes(1);
     expect(aiQueue.addAnalysisJob).toHaveBeenCalledTimes(2);
+  });
+
+  it('scopes find to the (15m, 24h) window and count to strictly older than 24h', async () => {
+    const now = new Date('2026-07-03T12:00:00.000Z').getTime();
+    jest.useFakeTimers().setSystemTime(now);
+
+    await service.sweep();
+
+    const windowStart = new Date(now - 24 * 60 * 60 * 1000);
+    const staleBefore = new Date(now - 15 * 60 * 1000);
+
+    expect(feedbackRepo.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          sentimentScore: IsNull(),
+          createdAt: Between(windowStart, staleBefore),
+        },
+      }),
+    );
+    expect(feedbackRepo.count).toHaveBeenCalledWith({
+      where: {
+        sentimentScore: IsNull(),
+        createdAt: LessThan(windowStart),
+      },
+    });
+
+    jest.useRealTimers();
   });
 });
