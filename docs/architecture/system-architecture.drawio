@@ -1,0 +1,1282 @@
+<mxfile host="app.diagrams.net" agent="claude-code" pages="8">
+  <diagram id="full-arch" name="Full Architecture">
+    <mxGraphModel dx="955" dy="513" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ftitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Full Project Architecture (monorepo + runtime + external services)" vertex="1">
+          <mxGeometry height="30" width="1000" x="20" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="lgBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Legend" vertex="1">
+          <mxGeometry height="260" width="260" x="1720" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" parent="1" style="text;html=1;fontSize=12;align=left;" value="Frontend" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" parent="1" style="text;html=1;fontSize=12;align=left;" value="Backend" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx3" parent="1" style="text;html=1;fontSize=12;align=left;" value="Shared Packages" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx4" parent="1" style="text;html=1;fontSize=12;align=left;" value="Data Layer" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx5" parent="1" style="text;html=1;fontSize=12;align=left;" value="AWS Infrastructure" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx6" parent="1" style="text;html=1;fontSize=12;align=left;" value="External Services" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="298" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx7" parent="1" style="text;html=1;fontSize=12;align=left;" value="Async / Messaging" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerClients" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#999999;dashed=1;" value="Clients" vertex="1">
+          <mxGeometry height="370" width="260" x="20" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="fUser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Dashboard user&#xa;(browser)" vertex="1">
+          <mxGeometry height="70" width="220" x="40" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="fWidgetUser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="End user&#xa;(via widget on customer site)" vertex="1">
+          <mxGeometry height="80" width="220" x="40" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="fVisitor" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Visitor / Prospect&#xa;(via landing page)" vertex="1">
+          <mxGeometry height="60" width="220" x="40" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerFrontend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#6c8ebf;" value="apps/ — Frontend" vertex="1">
+          <mxGeometry height="370" width="260" x="320" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="fWeb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/web — Next.js 16&#xa;Vercel → Amplify (planned)" vertex="1">
+          <mxGeometry height="90" width="220" x="340" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="fWidget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/widget — Vite/IIFE&#xa;S3 → CloudFront (planned)" vertex="1">
+          <mxGeometry height="70" width="220" x="340" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="fLanding" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/landing — Next.js 16&#xa;insightstream.ai · port 3002 · Vercel" vertex="1">
+          <mxGeometry height="80" width="220" x="340" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerBackend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#d79b00;" value="apps/api — NestJS 11 (Railway → EC2+ALB)" vertex="1">
+          <mxGeometry height="620" width="300" x="620" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiAuth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Auth Module" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiFeedback" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Feedback Module" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiBilling" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Billing Module" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiAi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="AI Module&#xa;(BullMQ worker)" vertex="1">
+          <mxGeometry height="70" width="260" x="640" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiDigest" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Digest Module&#xa;(daily)" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiEvents" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Events Gateway&#xa;(Socket.io)" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="555" as="geometry" />
+        </mxCell>
+        <mxCell id="fApiNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="see Request Lifecycle tab for the verified per-feedback flow and Implementation Notes below for details" vertex="1">
+          <mxGeometry height="60" width="260" x="640" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerExternal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#666666;dashed=1;" value="Module dependencies (external + async)" vertex="1">
+          <mxGeometry height="620" width="300" x="960" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="fOauth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Google OAuth / GitHub OAuth" vertex="1">
+          <mxGeometry height="60" width="260" x="980" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="fSqsStub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="SQS → Lambda feedback-processor&#xa;STUB — logs only, not real processing" vertex="1">
+          <mxGeometry height="60" width="260" x="980" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="fStripe" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Stripe" vertex="1">
+          <mxGeometry height="60" width="260" x="980" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="fGemini" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Google Gemini API&#xa;(gemini-2.5-flash)" vertex="1">
+          <mxGeometry height="70" width="260" x="980" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerPackages" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#9673a6;" value="packages/ — compile-time only, no runtime calls" vertex="1">
+          <mxGeometry height="90" width="300" x="620" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="fPkgDb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="@insightstream/database" vertex="1">
+          <mxGeometry height="45" width="125" x="640" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="fPkgTypes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="@insightstream/shared-types" vertex="1">
+          <mxGeometry height="45" width="125" x="775" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="fPkgConfigNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="(+ packages/config — build-time ESLint/TS only)" vertex="1">
+          <mxGeometry height="20" width="600" x="320" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerData" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#b85450;" value="Data" vertex="1">
+          <mxGeometry height="100" width="300" x="620" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="fPostgres" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="PostgreSQL&#xa;Supabase → RDS" vertex="1">
+          <mxGeometry height="55" width="125" x="640" y="885" as="geometry" />
+        </mxCell>
+        <mxCell id="fRedis" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Redis — BullMQ queue&#xa;(ai-analysis, REDIS_URL)" vertex="1">
+          <mxGeometry height="55" width="125" x="775" y="885" as="geometry" />
+        </mxCell>
+        <mxCell id="fLayerCicd" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#666666;dashed=1;" value="Cross-cutting: CI/CD &amp; Monitoring (applies to web+api+widget — no arrows, see notes)" vertex="1">
+          <mxGeometry height="240" width="260" x="20" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="fGithubActions" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="GitHub Actions&#xa;CI: lint, typecheck, test, build" vertex="1">
+          <mxGeometry height="50" width="220" x="40" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="fSentry" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Sentry&#xa;error monitoring (API + Web)" vertex="1">
+          <mxGeometry height="50" width="220" x="40" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="fDeployTargets" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="CD: Railway+Vercel → EC2/ALB+Amplify" vertex="1">
+          <mxGeometry height="20" width="220" x="40" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="implNotes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Implementation notes (trimmed from boxes above — verified against code 2026-06-30)" vertex="1">
+          <mxGeometry height="220" width="940" x="320" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="implNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Auth: JWT + Google/GitHub OAuth.&#xa;• Feedback: public submissions go through throttling + API-key &amp; origin whitelist (validated via CreatePublicFeedbackDto + global ValidationPipe, content ≤5000 chars); saves to Postgres synchronously, then enqueues a BullMQ job (if plan allows AI) and separately fires a fire-and-forget SQS message.&#xa;• Billing: Stripe webhooks at /webhooks/stripe.&#xa;• AI: BullMQ worker (ai-analysis queue) calls Gemini, writes the result back to Postgres, then emits Socket.io feedbackUpdated.&#xa;• Digest: weekly AI digest — scheduled in-process via @Cron (Mon 09:00). The duplicate EventBridge→Lambda→internal-endpoint trigger was removed 2026-07-03.&#xa;• Events Gateway: single event feedbackUpdated (room user-{userId}) — emitted after AI analysis, on status update, and on bulk archive. NOT emitted on initial feedback creation.&#xa;• SQS/Lambda feedback-processor: currently a stub — only console.log&#39;s the event, not wired to real processing yet (comment in code: future Slack/webhook/analytics).&#xa;• Landing (apps/landing, insightstream.ai): pure marketing Next.js 16 app — zero @insightstream/* deps. All CTAs are plain &lt;a href&gt; links to app.insightstream.ai/auth/register. Registration auto-creates a personal team. See Registration &amp; Onboarding Flow tab." vertex="1">
+          <mxGeometry height="170" width="900" x="340" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="archDecisions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Architecture Decisions" vertex="1">
+          <mxGeometry height="450" width="380" x="1300" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="archDecisionsText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Monorepo (pnpm + Turbo) — share types/DB entities across apps without publishing packages.&#xa;• PostgreSQL over MongoDB — relational data (users/projects/teams/feedback) benefits from FK integrity and TypeORM tooling.&#xa;• BullMQ (Redis) for AI analysis — decouples slow Gemini calls from the feedback-submission request/response cycle.&#xa;• SQS + Lambda reserved for future async work — infra provisioned ahead of the AWS migration, not yet load-bearing (currently a stub).&#xa;• Socket.io for realtime dashboard updates — pushes AI results and status changes without polling.&#xa;• Stateless API — no session state on EC2/Railway, safe to scale horizontally or swap ALB target groups.&#xa;• AWS migration in progress, gradual EC2-centric move off Railway/Vercel/Supabase — see Current vs Target panel on the AWS Infrastructure tab." vertex="1">
+          <mxGeometry height="400" width="340" x="1320" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="fe1" edge="1" parent="1" source="fUser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fWeb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe2" edge="1" parent="1" source="fWidgetUser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fWidget">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe4" edge="1" parent="1" source="fWeb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="fApiAuth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe5" edge="1" parent="1" source="fWeb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="fApiEvents">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe6" edge="1" parent="1" source="fWidget" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fApiFeedback">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe14" edge="1" parent="1" source="fApiAuth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fOauth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe18" edge="1" parent="1" source="fApiFeedback" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fSqsStub">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe13" edge="1" parent="1" source="fApiBilling" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fStripe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe12" edge="1" parent="1" source="fApiAi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fGemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feBackendPkg" edge="1" parent="1" source="fLayerBackend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="fLayerPackages" value="uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feWebPkg" edge="1" parent="1" source="fLayerFrontend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;dashed=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" target="fLayerPackages" value="compile-time only">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fePkgData" edge="1" parent="1" source="fLayerPackages" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="fLayerData" value="reads/writes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feVisitorLanding" edge="1" parent="1" source="fVisitor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fLanding">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feLandingWeb" edge="1" parent="1" source="fLanding" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0.5;entryY=1;exitDx=0;exitDy=0;" target="fWeb" value="CTA&amp;nbsp;">
+          <mxGeometry relative="1" x="0.5001" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="570" y="380" />
+              <mxPoint x="570" y="240" />
+              <mxPoint x="450" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="aws-infra" name="AWS Infrastructure">
+    <mxGraphModel dx="2007" dy="1837" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1380" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — AWS Infrastructure (eu-north-1, Stockholm) — as of 2026-06-30" vertex="1">
+          <mxGeometry height="30" width="1000" x="20" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="lgBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Legend" vertex="1">
+          <mxGeometry height="260" width="260" x="1620" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" parent="1" style="text;html=1;fontSize=12;align=left;" value="Frontend" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" parent="1" style="text;html=1;fontSize=12;align=left;" value="Backend / Compute" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="114" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx3" parent="1" style="text;html=1;fontSize=12;align=left;" value="Shared Packages / Ops" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="142" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="174" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx4" parent="1" style="text;html=1;fontSize=12;align=left;" value="Data Layer" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="202" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx5" parent="1" style="text;html=1;fontSize=12;align=left;" value="AWS Network / Static" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx6" parent="1" style="text;html=1;fontSize=12;align=left;" value="External Services" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1640" y="258" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx7" parent="1" style="text;html=1;fontSize=12;align=left;" value="Async / Messaging" vertex="1">
+          <mxGeometry height="20" width="190" x="1674" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="extUser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Browser user" vertex="1">
+          <mxGeometry height="50" width="180" x="20" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="extCustomer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Customer website&#xa;(widget embed)" vertex="1">
+          <mxGeometry height="50" width="180" x="20" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="extGithub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="GitHub&#xa;(webhook source)" vertex="1">
+          <mxGeometry height="50" width="180" x="20" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="extStripe" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Stripe&#xa;(billing webhook)" vertex="1">
+          <mxGeometry height="50" width="180" x="20" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="extGemini" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Google Gemini API&#xa;(called from EC2 process)" vertex="1">
+          <mxGeometry height="50" width="180" x="20" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="internetLabel" parent="1" style="text;html=1;fontSize=13;fontStyle=3;align=center;" value="Internet" vertex="1">
+          <mxGeometry height="20" width="200" x="700" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Internet Gateway" vertex="1">
+          <mxGeometry height="40" width="200" x="700" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#82b366;" value="VPC 10.0.0.0/16" vertex="1">
+          <mxGeometry height="430" width="1360" x="240" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="pubSubnetBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;" value="Public Subnets (2 AZ) — security boundary: SG allows 80/443 from 0.0.0.0/0" vertex="1">
+          <mxGeometry height="190" width="1320" x="260" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="alb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="ALB&#xa;insightstream-api-alb&#xa;HTTP listener live (200 OK)&#xa;HTTPS pending CloudFront" vertex="1">
+          <mxGeometry height="80" width="260" x="290" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="EC2 t3.micro (AZ-a)&#xa;Amazon Linux 2023&#xa;NestJS API in Docker&#xa;--restart unless-stopped" vertex="1">
+          <mxGeometry height="80" width="260" x="600" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="azNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="ALB spans 2 public subnets (AZ-a + AZ-b) for HA; EC2 itself only runs in AZ-a (single instance, no auto-scaling yet)." vertex="1">
+          <mxGeometry height="50" width="650" x="900" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="privSubnetBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;" value="Private Subnet 10.0.2.0/24 — security boundary: SG allows 5432 from EC2 SG only, no internet route" vertex="1">
+          <mxGeometry height="150" width="1320" x="260" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="rds" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="RDS PostgreSQL&#xa;db.t3.micro, SSL required&#xa;Multi-AZ disabled" vertex="1">
+          <mxGeometry height="70" width="260" x="290" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="lambdaVpcNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Lambda feedback-processor (see Async Processing below) runs OUTSIDE this VPC, no NAT Gateway. The weekly digest is scheduled in-process on EC2 via @Cron — no external scheduler." vertex="1">
+          <mxGeometry height="50" width="950" x="600" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="staticBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#82b366;" value="Static Assets" vertex="1">
+          <mxGeometry height="120" width="280" x="260" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="S3 bucket&#xa;insightstream-widget&#xa;widget.js, public HTTPS" vertex="1">
+          <mxGeometry height="70" width="240" x="280" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="buildBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#9673a6;" value="Build Pipeline" vertex="1">
+          <mxGeometry height="160" width="420" x="560" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="ECR repo" vertex="1">
+          <mxGeometry height="50" width="130" x="580" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="codebuild" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CodeBuild — BLOCKED&#xa;0 concurrent-build quota&#xa;(new account)" vertex="1">
+          <mxGeometry height="70" width="230" x="730" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="manualBuild" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;" value="Workaround: local docker build/push to ECR + SSH run docker-run.sh" vertex="1">
+          <mxGeometry height="35" width="380" x="580" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="asyncBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#d6b656;dashed=1;" value="Async Processing (AWS)" vertex="1">
+          <mxGeometry height="220" width="420" x="1000" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="sqs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="SQS&#xa;insightstream-feedback" vertex="1">
+          <mxGeometry height="50" width="180" x="1020" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="lambdaFeedback" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Lambda&#xa;feedback-processor" vertex="1">
+          <mxGeometry height="50" width="180" x="1220" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="stubNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=9;fontStyle=2;align=left;" value="STUB: only console.log&#39;s the event today — not wired to real processing (see Request Lifecycle tab)." vertex="1">
+          <mxGeometry height="45" width="180" x="1220" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="ses" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="SES&#xa;verified identity (single email)" vertex="1">
+          <mxGeometry height="50" width="180" x="1220" y="795" as="geometry" />
+        </mxCell>
+        <mxCell id="opsBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#9673a6;" value="Ops: Secrets &amp; Monitoring" vertex="1">
+          <mxGeometry height="300" width="280" x="1460" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="SSM Parameter Store&#xa;all prod secrets" vertex="1">
+          <mxGeometry height="50" width="240" x="1480" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudwatch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="CloudWatch&#xa;3 alarms + dashboard&#xa;InsightStream-Production" vertex="1">
+          <mxGeometry height="65" width="240" x="1480" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="sns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="SNS topic → boichuk.db@gmail.com" vertex="1">
+          <mxGeometry height="40" width="240" x="1480" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="budgets" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="AWS Budgets&#xa;$5/mo, alerts @ 80%/100%" vertex="1">
+          <mxGeometry height="50" width="240" x="1480" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="pendingBox" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;" value="Pending — blocked by new-account AWS verification gate (open since 2026-06-25)" vertex="1">
+          <mxGeometry height="150" width="1480" x="260" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="cfWidget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of S3 widget" vertex="1">
+          <mxGeometry height="70" width="190" x="280" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="amplify" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Amplify&#xa;deploy apps/web&#xa;(replaces Vercel)" vertex="1">
+          <mxGeometry height="70" width="190" x="500" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Bedrock&#xa;amazon.nova-micro-v1:0&#xa;(retry, remaining credits)" vertex="1">
+          <mxGeometry height="70" width="190" x="720" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="cfApi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of ALB" vertex="1">
+          <mxGeometry height="70" width="190" x="940" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="pendingNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Also blocked: CloudShell, SSM Session Manager. NOT blocked: EC2, RDS, S3, SQS, Lambda, IAM, ALB, CloudWatch, SNS, Budgets, SES." vertex="1">
+          <mxGeometry height="70" width="570" x="1150" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="ctBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#444444;" value="Current (live prod traffic) → Target (this diagram — migration in progress, no cutover yet)" vertex="1">
+          <mxGeometry height="250" width="1480" x="260" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="ctWebCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Vercel (apps/web)" vertex="1">
+          <mxGeometry height="35" width="240" x="280" y="1185" as="geometry" />
+        </mxCell>
+        <mxCell id="ctWebArrow" parent="1" style="text;html=1;fontSize=16;align=center;" value="→" vertex="1">
+          <mxGeometry height="35" width="40" x="530" y="1185" as="geometry" />
+        </mxCell>
+        <mxCell id="ctWebTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;" value="Amplify (planned, blocked)" vertex="1">
+          <mxGeometry height="35" width="280" x="580" y="1185" as="geometry" />
+        </mxCell>
+        <mxCell id="ctApiCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Railway (apps/api)" vertex="1">
+          <mxGeometry height="35" width="240" x="280" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="ctApiArrow" parent="1" style="text;html=1;fontSize=16;align=center;" value="→" vertex="1">
+          <mxGeometry height="35" width="40" x="530" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="ctApiTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="EC2 + ALB (live, not cut over)" vertex="1">
+          <mxGeometry height="35" width="280" x="580" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="ctDbCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Supabase (source DB)" vertex="1">
+          <mxGeometry height="35" width="240" x="280" y="1275" as="geometry" />
+        </mxCell>
+        <mxCell id="ctDbTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="RDS (data migrated, not cut over)" vertex="1">
+          <mxGeometry height="35" width="280" x="580" y="1275" as="geometry" />
+        </mxCell>
+        <mxCell id="3mZjkQ48aVmenKEq-6cS-1" edge="1" parent="1" source="ctCdnTgt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;" target="ctDbTgt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="1293" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3mZjkQ48aVmenKEq-6cS-2" edge="1" parent="1" source="ctCdnTgt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ctCdnTgt2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctCdnTgt" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="(no CDN today)" vertex="1">
+          <mxGeometry height="20" width="240" x="280" y="1295" as="geometry" />
+        </mxCell>
+        <mxCell id="ctCdnTgt2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;" value="CloudFront ×2 (planned, blocked)" vertex="1">
+          <mxGeometry height="35" width="280" x="580" y="1325" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="extUser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="extCustomer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2b" edge="1" parent="1" source="extCustomer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="extStripe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="igw" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pubSubnetBox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="alb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="rds">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="360" />
+              <mxPoint x="420" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.3;" target="extGemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="sqs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="sqs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="lambdaFeedback">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ssm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="cloudwatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="cloudwatch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="sns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="extGithub" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="codebuild">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="265" />
+              <mxPoint x="220" y="620" />
+              <mxPoint x="845" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="codebuild" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="ecr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="ecr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="cfApi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.7;entryY=1;" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="cfWidget" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ses" value="digest + transactional email (@Cron)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="request-lifecycle" name="Request Lifecycle">
+    <mxGraphModel dx="1267" dy="1160" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rtitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Request Lifecycle: feedback submission → AI analysis → realtime dashboard update" vertex="1">
+          <mxGeometry height="30" width="1300" x="20" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="rsubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against code 2026-07-03 (apps/api/src/modules/feedback, ai, events). Steps 1–5 are synchronous HTTP request/response — the widget gets its 200 OK here. Steps 6–10 happen asynchronously, after the response already returned." vertex="1">
+          <mxGeometry height="35" width="1750" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="1. Widget&#xa;end user submits feedback" vertex="1">
+          <mxGeometry height="100" width="160" x="20" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="2. apps/api&#xa;FeedbackPublicController&#xa;throttle + API-key + origin check" vertex="1">
+          <mxGeometry height="100" width="160" x="195" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="3. Validate&#xa;CreatePublicFeedbackDto&#xa;(global ValidationPipe, ≤5000 chars)" vertex="1">
+          <mxGeometry height="100" width="160" x="370" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="4. Save to PostgreSQL&#xa;synchronous TypeORM write" vertex="1">
+          <mxGeometry height="100" width="160" x="550" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="5. Enqueue BullMQ job&#xa;ai-analysis queue (Redis)&#xa;only if plan allows AI" vertex="1">
+          <mxGeometry height="100" width="160" x="800" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="6. AiProcessor&#xa;BullMQ worker picks up job" vertex="1">
+          <mxGeometry height="100" width="160" x="1040" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="7. Call Gemini API&#xa;gemini-2.5-flash" vertex="1">
+          <mxGeometry height="100" width="160" x="1280" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="8. Write AI result&#xa;back to PostgreSQL" vertex="1">
+          <mxGeometry height="100" width="160" x="1520" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="9. Socket.io emit&#xa;feedbackUpdated&#xa;room user-{userId}" vertex="1">
+          <mxGeometry height="100" width="160" x="1760" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="10. Dashboard&#xa;apps/web — realtime update&#xa;via WebSocket" vertex="1">
+          <mxGeometry height="100" width="160" x="2000" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="syncDivider" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#444444;html=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="130" as="sourcePoint" />
+            <mxPoint x="760" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="syncLabel" parent="1" style="text;html=1;fontSize=10;fontStyle=2;align=center;" value="HTTP 200 OK returned to widget around here ↑ — rest is async ↓" vertex="1">
+          <mxGeometry height="30" width="220" x="610" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="se1" edge="1" parent="1" source="s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se2" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se3" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="s4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se4" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s5" value="if AI allowed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se5" edge="1" parent="1" source="s5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s6" value="queued job">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se6" edge="1" parent="1" source="s6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s7" value="API call">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se7" edge="1" parent="1" source="s7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s8" value="AI result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se8" edge="1" parent="1" source="s8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s9" value="triggers emit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se9" edge="1" parent="1" source="s9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s10" value="WebSocket push">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sqsBranchLabel" parent="1" style="text;html=1;fontSize=10;fontStyle=2;align=left;" value="Parallel, fire-and-forget — NOT part of the AI pipeline above" vertex="1">
+          <mxGeometry height="20" width="500" x="720" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="s5b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="5b. SQS message&#xa;insightstream-feedback" vertex="1">
+          <mxGeometry height="60" width="180" x="720" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="s5c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="Lambda feedback-processor&#xa;STUB: console.log only" vertex="1">
+          <mxGeometry height="60" width="220" x="930" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="se10" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="s5b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="se11" edge="1" parent="1" source="s5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="s5c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="digestBranchLabel" parent="1" style="text;html=1;fontSize=10;fontStyle=2;align=left;" value="Separate scheduled trigger — not initiated by end-user feedback submission. Weekly AI digest, scheduled in-process via @Cron (Mon 09:00). The duplicate EventBridge→Lambda trigger was removed 2026-07-03." vertex="1">
+          <mxGeometry height="20" width="820" x="20" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="@Cron (in-process on EC2)&#xa;Mon 09:00" vertex="1">
+          <mxGeometry height="60" width="200" x="20" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Digest Module&#xa;runDigest() → AI summary → SES email" vertex="1">
+          <mxGeometry height="60" width="200" x="270" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="de3" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="d4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="auth-flow" name="Authentication Flow">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="atitle" value="InsightStream AI — Authentication Flow" style="text;html=1;fontSize=18;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="asubtitle" value="Verified against code 2026-06-30 (apps/api/src/modules/auth). Single JWT access token, 7-day expiry. No refresh token, no server-side logout endpoint." style="text;html=1;fontSize=11;fontStyle=2;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="1100" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Legend ===== -->
+        <mxCell id="lgBox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="50" width="260" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="90" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" value="Frontend" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="86" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="118" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" value="Backend" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="114" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="146" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx3" value="Data Layer" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="142" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="174" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx4" value="External Services" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="170" width="190" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Password login path ===== -->
+        <mxCell id="pa1" value="Browser&#xa;login form" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="20" y="100" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pa2" value="POST /auth/login&#xa;validateUser() — bcrypt compare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="220" y="100" width="200" height="70" as="geometry" />
+        </mxCell>
+        <!-- ===== OAuth login path ===== -->
+        <mxCell id="oa1" value="Browser&#xa;&#39;Sign in with Google/GitHub&#39;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="20" y="200" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="oa2" value="GET /auth/google|github&#xa;redirect to provider" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="220" y="200" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="oa3" value="Google OAuth /&#xa;GitHub OAuth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="460" y="200" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="oa4" value="GET .../callback&#xa;Passport strategy validates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="660" y="200" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="oa5" value="oauthLogin()&#xa;find by providerId → auto-link by email → create if new" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="900" y="190" width="240" height="90" as="geometry" />
+        </mxCell>
+        <!-- ===== JWT generation (merge point) ===== -->
+        <mxCell id="jwtgen" value="login(user) — JWT generation&#xa;payload {sub,email,role,plan}&#xa;signed JWT_SECRET, expiresIn 7d" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="140" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="refreshNote" value="Refresh Token — NOT IMPLEMENTED (future)&#xa;single access token only, no rotation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="250" width="220" height="50" as="geometry" />
+        </mxCell>
+        <!-- ===== Response split ===== -->
+        <mxCell id="respPwd" value="Password path:&#xa;JSON { access_token, user }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="respOauth" value="OAuth path: redirect →&#xa;FRONTEND_URL/auth/oauth/callback?token=..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="190" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="browserStore" value="Browser stores access_token&#xa;(client-side)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="270" width="220" height="60" as="geometry" />
+        </mxCell>
+        <!-- ===== Protected request flow ===== -->
+        <mxCell id="pr1" value="Protected API request&#xa;Authorization: Bearer &lt;token&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="20" y="380" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pr2" value="JwtAuthGuard&#xa;(Passport AuthGuard &#39;jwt&#39;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="280" y="380" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3" value="JwtStrategy.validate()&#xa;verify signature + expiry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="540" y="380" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pr4" value="Lookup user by sub&#xa;fresh read from PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="800" y="380" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pr5" value="Current User attached&#xa;(req.user) → handler runs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="350" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pr6" value="401 Unauthorized&#xa;bad signature / expired / user deleted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="430" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="logoutNote" value="Logout = client deletes token locally. No server endpoint exists — JWT is stateless, no blacklist, can&#39;t force-revoke a token before its 7-day expiry." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="480" width="500" height="60" as="geometry" />
+        </mxCell>
+        <!-- ===== Architecture Notes ===== -->
+        <mxCell id="authNotes" value="Architecture Notes — why JWT over server sessions" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="380" width="540" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="authNotesText" value="• Stateless — no session store needed; any EC2 instance can validate any request independently.&#xa;• Simplifies horizontal scaling — no sticky sessions or shared session store required for auth (Redis here is reserved for BullMQ, not sessions).&#xa;• Same JWT works for both password and OAuth users — one unified identity payload (sub/email/role/plan) regardless of login method.&#xa;• Trade-off accepted: can&#39;t force-revoke a token before its 7-day expiry (no blacklist) — acceptable at this low-risk, pre-launch stage; refresh-token rotation is a planned hardening step, not yet built." style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="415" width="500" height="195" as="geometry" />
+        </mxCell>
+        <!-- ===== Edges ===== -->
+        <mxCell id="ae1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pa1" target="pa2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae2" value="(password path)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="pa2" target="jwtgen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa1" target="oa2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa2" target="oa3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa3" target="oa4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa4" target="oa5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae7" value="(oauth path)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="oa5" target="jwtgen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="jwtgen" target="refreshNote">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae9" value="(password)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="jwtgen" target="respPwd">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae10" value="(oauth)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="jwtgen" target="respOauth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="respPwd" target="browserStore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="respOauth" target="browserStore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr1" target="pr2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr2" target="pr3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr3" target="pr4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae16" value="valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.3;" edge="1" parent="1" source="pr4" target="pr5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae17" value="invalid / not found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.7;" edge="1" parent="1" source="pr4" target="pr6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="deploy-pipeline" name="Deployment Pipeline">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dtitle" value="InsightStream AI — Deployment Pipeline" style="text;html=1;fontSize=18;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dsubtitle" value="Verified against code 2026-06-30 (.github/workflows/main.yml, scripts/docker-run.sh). CI is automated; the AWS deploy step is currently MANUAL — CodeBuild automation is provisioned but blocked." style="text;html=1;fontSize=11;fontStyle=2;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="1300" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Legend ===== -->
+        <mxCell id="lgBox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="50" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="90" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" value="Backend / CI step" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="86" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="118" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" value="Build / Registry" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="114" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="146" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx3" value="AWS Infrastructure" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="142" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="174" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx4" value="External (GitHub)" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="170" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="202" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx5" value="Blocked / Planned" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="198" width="190" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== CI (GitHub Actions, automated) ===== -->
+        <mxCell id="ciBox" value="GitHub Actions — &quot;Pipeline&quot; workflow (automated, runs on every push/PR to main)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="20" y="90" width="1480" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="g1" value="GitHub&#xa;push / PR to main" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="190" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="g3" value="ci job:&#xa;Lint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="240" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g4" value="Build (turbo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="400" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g5" value="Typecheck" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="560" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g6" value="test job (parallel):&#xa;Backend Tests (Jest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="240" y="260" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g7" value="Landing Tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="440" y="260" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g8" value="e2e job&#xa;(needs ci + test):&#xa;migrations + Playwright" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="780" y="190" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="g9" value="CI/CD pipeline green ✓&#xa;NOTE: no deploy step exists in this workflow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="190" width="260" height="70" as="geometry" />
+        </mxCell>
+        <!-- ===== Deployment (manual today) ===== -->
+        <mxCell id="manBox" value="Deployment to AWS — MANUAL today (separate from the GitHub Actions workflow above)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20" y="380" width="1680" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" value="Local:&#xa;docker build&#xa;(apps/api/Dockerfile)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="docker push → ECR&#xa;insightstream-api:latest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="240" y="420" width="190" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="SSH to EC2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="460" y="420" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="docker-run.sh:&#xa;source secrets from&#xa;SSM Parameter Store" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="630" y="420" width="190" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m5" value="docker pull image&#xa;from ECR (latest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="420" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m6" value="docker run redis:7-alpine&#xa;+ docker run insightstream-api&#xa;(shared docker network, -p 3001:3001)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="420" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="Application running&#xa;:3001, behind ALB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="420" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="plannedNote" value="Planned: CodeBuild + GitHub webhook (provisioned, BLOCKED — 0 concurrent-build quota on new AWS account). Would replace steps m1–m3 once unblocked; m4–m7 stay the same." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="780" height="60" as="geometry" />
+        </mxCell>
+        <!-- ===== Current vs Target ===== -->
+        <mxCell id="ctBox" value="Current (live prod) → Target (this pipeline produces, not cut over yet)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="900" y="600" width="500" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ctWeb" value="Vercel (apps/web) → Amplify (planned, blocked)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="920" y="635" width="460" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ctApi" value="Railway (apps/api) → EC2 + ALB (live via steps above, not cut over)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="920" y="660" width="460" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Notes ===== -->
+        <mxCell id="deployNotes" value="Notes — why Docker / ECR / EC2 pulls instead of building locally" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="600" width="440" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="deployNotesText" value="• Docker — same image runs in local dev, CI, and EC2; eliminates &quot;works on my machine&quot; drift.&#xa;• ECR — private, region-local registry; EC2 pulls over the AWS network (fast, no public egress) and IAM gates who can push/pull.&#xa;• EC2 pulls a pre-built image rather than building in place — keeps the free-tier t3.micro&#39;s limited CPU/RAM for running the API, not compiling it." style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="635" width="400" height="115" as="geometry" />
+        </mxCell>
+        <!-- ===== Edges ===== -->
+        <mxCell id="de1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g1" target="g3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g3" target="g4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g4" target="g5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g1" target="g6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g6" target="g7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g5" target="g8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g7" target="g8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="g8" target="g9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m1" target="m2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m2" target="m3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m3" target="m4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m4" target="m5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m5" target="m6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="de14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="m6" target="m7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="aws-network" name="AWS Network Diagram">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ntitle" value="InsightStream AI — AWS Network Topology" style="text;html=1;fontSize=18;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="nsubtitle" value="Pure network/security view — for compute, async processing, monitoring and build pipeline see the AWS Infrastructure tab. eu-north-1 (Stockholm)." style="text;html=1;fontSize=11;fontStyle=2;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="1100" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Legend ===== -->
+        <mxCell id="lgBox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="50" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="90" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" value="AWS Network" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="86" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="118" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" value="Compute (public IP)" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="114" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="146" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx3" value="Data (private, no public IP)" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="142" width="190" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="174" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx4" value="External / Internet" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1674" y="170" width="190" height="20" as="geometry" />
+        </mxCell>
+        <!-- ===== Funnel ===== -->
+        <mxCell id="internet" value="Internet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="780" y="90" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="route53" value="Route53&#xa;(planned — no domain registered yet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudfront" value="CloudFront&#xa;(planned — blocked by verification gate)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="230" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="vpcBox" value="VPC 10.0.0.0/16" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="310" width="900" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" value="Internet Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="780" y="340" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rtPublic" value="Route Table (public)&#xa;0.0.0.0/0 → IGW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="410" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pubSubnet" value="Public Subnet 10.0.1.0/24 — has route to IGW" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="400" width="630" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="alb" value="ALB&#xa;public IP&#xa;SG: in 80,443 from 0.0.0.0/0 / out → EC2 SG:3001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="760" y="440" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 t3.micro&#xa;public IP&#xa;SG: in 3001 from ALB SG only / out → RDS SG:5432, 443 (Gemini/SSM/ECR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="440" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rtPrivate" value="Route Table (private)&#xa;no 0.0.0.0/0 route" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="600" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="privSubnet" value="Private Subnet 10.0.2.0/24 — no internet route" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;" vertex="1" parent="1">
+          <mxGeometry x="730" y="590" width="630" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rds" value="RDS PostgreSQL&#xa;NO public IP&#xa;SG: in 5432 from EC2 SG only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="800" y="630" width="280" height="70" as="geometry" />
+        </mxCell>
+        <!-- ===== Inbound/Outbound rules table ===== -->
+        <mxCell id="rulesBox" value="Security Group Rules (by port)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="20" y="310" width="440" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="rulesText" value="Inbound:&#xa;  80, 443 → ALB SG, from 0.0.0.0/0&#xa;  3001 → EC2 SG, from ALB SG only&#xa;  5432 → RDS SG, from EC2 SG only&#xa;&#xa;Outbound:&#xa;  ALB → EC2 SG:3001&#xa;  EC2 → RDS SG:5432, + 443 to internet&#xa;       (Gemini API, SSM, ECR pull)&#xa;  RDS → none (no outbound needed)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;fontFamily=Consolas;" vertex="1" parent="1">
+          <mxGeometry x="40" y="345" width="400" height="210" as="geometry" />
+        </mxCell>
+        <!-- ===== Why notes ===== -->
+        <mxCell id="whyBox" value="Why this shape" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="20" y="590" width="440" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="whyText" value="• EC2 is public — this build skips a NAT Gateway (~$32/mo) to stay in the AWS Free Tier; the API SG still only opens 3001 to the ALB SG, not the world.&#xa;• RDS is private — no reason a database should ever take a direct internet connection; only the EC2 SG may reach 5432.&#xa;• ALB exists — terminates HTTP today (HTTPS pending CloudFront), spans 2 AZs for availability, and decouples the public endpoint from EC2&#39;s IP (which changes on stop/start since there&#39;s no Elastic IP).&#xa;• Security Groups are stateful, layered allow-lists (ALB←internet, EC2←ALB-only, RDS←EC2-only) — a request can&#39;t skip a layer even if it knows the next hop&#39;s address." style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="40" y="625" width="400" height="230" as="geometry" />
+        </mxCell>
+        <!-- ===== Edges ===== -->
+        <mxCell id="ne1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="internet" target="route53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ne2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="route53" target="cloudfront">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ne3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="cloudfront" target="igw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ne3b" value="(today, no CloudFront yet)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=0;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="internet" target="alb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="115" />
+              <mxPoint x="600" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ne4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="igw" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ne5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="alb" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ne6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="ec2" target="rds">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="er-diagram" name="Database ER Diagram">
+    <mxGraphModel dx="1852" dy="1695" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="etitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Data Model (Entity Relationship Diagram)" vertex="1">
+          <mxGeometry height="30" width="900" x="20" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="esubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against packages/database/src/entities 2026-07-03 — 10 real entities. Columns trimmed to PK/FK/key business fields; see source for full list." vertex="1">
+          <mxGeometry height="20" width="1300" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lgBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Legend" vertex="1">
+          <mxGeometry height="120" width="260" x="1730" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="lgSw1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1750" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx1" parent="1" style="text;html=1;fontSize=12;align=left;" value="Entity (table)" vertex="1">
+          <mxGeometry height="20" width="190" x="1784" y="131" as="geometry" />
+        </mxCell>
+        <mxCell id="lgTx2" parent="1" style="text;html=1;fontSize=10;align=left;" value="— ┤ one    —∞ ┤ many&#xa;dashed = soft FK (uuid column,&#xa;no @ManyToOne relation in code)" vertex="1">
+          <mxGeometry height="45" width="220" x="1750" y="163" as="geometry" />
+        </mxCell>
+        <mxCell id="eUser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="User&#xa;—&#xa;id (PK)&#xa;email (unique)&#xa;role, plan, planStatus&#xa;stripeCustomerId / SubscriptionId / PriceId&#xa;lastStripeEventAt (webhook ordering guard)&#xa;googleId, githubId (nullable)&#xa;apiKey (nullable, unique)" vertex="1">
+          <mxGeometry height="190" width="280" x="800" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eTeam" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="Team&#xa;—&#xa;id (PK)&#xa;name&#xa;ownerId (FK → User)" vertex="1">
+          <mxGeometry height="110" width="240" x="420" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eTeamMember" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="TeamMember&#xa;—&#xa;id (PK)&#xa;teamId (FK → Team)&#xa;userId (FK → User)&#xa;role enum (owner/admin/member/viewer)&#xa;unique(teamId, userId)" vertex="1">
+          <mxGeometry height="130" width="240" x="420" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="eProject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="Project&#xa;—&#xa;id (PK)&#xa;name, domain&#xa;apiKey (unique) — widget auth&#xa;userId (FK → User, owner)&#xa;teamId (FK → Team, nullable)" vertex="1">
+          <mxGeometry height="130" width="280" x="800" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="eFeedback" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="Feedback&#xa;—&#xa;id (PK)&#xa;content, source, status&#xa;sentimentScore, category, aiSummary, tags&#xa;(AI analysis = columns, no separate table)&#xa;projectId (FK → Project)" vertex="1">
+          <mxGeometry height="150" width="280" x="800" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="eComment" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="Comment&#xa;—&#xa;id (PK)&#xa;feedbackId (FK → Feedback)&#xa;userId (FK → User)&#xa;content" vertex="1">
+          <mxGeometry height="110" width="240" x="1140" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="eInvitation" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="Invitation&#xa;—&#xa;id (PK)&#xa;teamId (FK → Team)&#xa;email, role enum, token (unique)&#xa;status enum (pending/accepted/expired)&#xa;invitedById (FK → User), expiresAt" vertex="1">
+          <mxGeometry height="140" width="260" x="120" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eActivity" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="ActivityEvent&#xa;—&#xa;id (PK)&#xa;teamId, projectId (soft FK, nullable)&#xa;actorId (FK → User)&#xa;action enum, metadata jsonb" vertex="1">
+          <mxGeometry height="130" width="260" x="1140" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eAudit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="AuditLog&#xa;—&#xa;id (PK)&#xa;userId (soft FK, no relation)&#xa;action, metadata jsonb" vertex="1">
+          <mxGeometry height="100" width="260" x="1460" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="eStripeEvent" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="StripeEvent&#xa;—&#xa;id (PK = Stripe event id) — dedup&#xa;type&#xa;subscriptionId (soft FK, no relation)&#xa;eventCreatedAt, processedAt&#xa;(webhook idempotency + ordering log)" vertex="1">
+          <mxGeometry height="140" width="260" x="1460" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eTeam" value="owns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" edge="1" parent="1" source="eTeam" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eTeamMember" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eTeamMember" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eProject" value="owns">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" edge="1" parent="1" source="eTeam" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERzeroToOne;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eProject" value="(nullable)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" edge="1" parent="1" source="eProject" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eFeedback" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r7" edge="1" parent="1" source="eFeedback" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eComment" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r8" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=0;exitY=0.7;" target="eComment" value="authors">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r9" edge="1" parent="1" source="eTeam" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eInvitation" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r10" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=0.3;exitY=0;" target="eInvitation" value="invites">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r11" edge="1" parent="1" source="eTeam" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;dashed=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eActivity" value="(soft FK)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r12" edge="1" parent="1" source="eProject" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;dashed=1;startArrow=ERzeroToOne;startFill=0;endArrow=ERmany;endFill=0;rounded=0;" target="eActivity" value="(soft FK, nullable)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r13" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=0.7;exitY=0;" target="eActivity" value="acts as">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r14" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;dashed=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=1;exitY=0.3;" target="eAudit" value="(soft FK, no relation)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLastSeen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" value="UserProjectLastSeen&#xa;—&#xa;userId (PK, soft FK → User)&#xa;projectId (PK, soft FK → Project)&#xa;seenAt (timestamptz)" vertex="1">
+          <mxGeometry height="110" width="260" x="1460" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="rLS1" edge="1" parent="1" source="eUser" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;dashed=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=1;exitY=0.7;" target="eLastSeen" value="(soft FK)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rLS2" edge="1" parent="1" source="eProject" style="edgeStyle=entityRelationEdgeStyle;html=1;fontSize=10;dashed=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;rounded=0;exitX=1;exitY=0.3;" target="eLastSeen" value="(soft FK)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="footnoteBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Entities assumed in the original ask but NOT present as separate tables" vertex="1">
+          <mxGeometry height="160" width="1600" x="120" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="footnoteText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Widget — apps/widget is a static Vite/IIFE bundle, not a DB-backed resource. A &quot;widget&quot; is really a Project&#39;s public submission endpoint, identified by Project.apiKey + domain whitelist.&#xa;• FeedbackAnalysis — AI results (sentimentScore, category, aiSummary, tags) are columns directly on Feedback, written by AiProcessor after the Gemini call (see Request Lifecycle tab) — no separate table.&#xa;• Subscription — billing/plan fields (plan, planStatus, stripeCustomerId, stripeSubscriptionId, stripePriceId, trialEndsAt) are columns directly on User. Billing is per-user, not per-project.&#xa;• API Key — two distinct concepts exist as plain columns, not a table: User.apiKey (nullable, unique — user-level) and Project.apiKey (unique, required — used by the widget to authenticate public feedback submissions)." vertex="1">
+          <mxGeometry height="115" width="1560" x="140" y="695" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="reg-onboarding" name="Registration &amp; Onboarding Flow">
+    <mxGraphModel dx="1147" dy="1050" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="regTitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Registration &amp; Onboarding Flow (verified 2026-07-01)" vertex="1">
+          <mxGeometry height="30" width="1350" x="20" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="regPanelLanding" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/landing — insightstream.ai (Vercel, port 3002, zero @insightstream/* deps)" vertex="1">
+          <mxGeometry height="270" width="285" x="20" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="regLandingHome" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="/ — Homepage&#xa;Hero: &quot;Get Started Free&quot; → /auth/register&#xa;Nav: &quot;Get Started&quot; → /auth/register&#xa;Pricing: &quot;Start 14-day Trial&quot;" vertex="1">
+          <mxGeometry height="85" width="245" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="regLandingQuiz" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="/quiz — Interactive Quiz&#xa;Result → APP_URL/?plan={plan}&#xa;(plan param: UI pre-selection only,&#xa;not server-enforced)" vertex="1">
+          <mxGeometry height="85" width="245" x="40" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="regPanelWeb" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/web — app.insightstream.ai (Vercel, port 3000)" vertex="1">
+          <mxGeometry height="270" width="285" x="345" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="regWebRegister" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="/auth/register&#xa;Email + Password form&#xa;OR: &quot;Continue with Google&quot;&#xa;OR: &quot;Continue with GitHub&quot;" vertex="1">
+          <mxGeometry height="90" width="245" x="365" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="regWebDashboard" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="/dashboard&#xa;(redirect after successful&#xa;registration + login)" vertex="1">
+          <mxGeometry height="70" width="245" x="365" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="regPanelApi" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#ffe6cc;strokeColor=#d79b00;" value="apps/api — AuthService.register() flow" vertex="1">
+          <mxGeometry height="560" width="420" x="670" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="① POST /auth/register&#xa;(public endpoint — no auth guard)" vertex="1">
+          <mxGeometry height="50" width="380" x="690" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="② isEmailAllowed(email)&#xa;invite-only guard → 403 ForbiddenException if blocked" vertex="1">
+          <mxGeometry height="55" width="380" x="690" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="③ findOneByEmail(email)&#xa;duplicate check → 409 ConflictException if exists" vertex="1">
+          <mxGeometry height="55" width="380" x="690" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="④ bcrypt.hash(password, 10)" vertex="1">
+          <mxGeometry height="40" width="380" x="690" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑤ usersService.create({email, passwordHash})&#xa;INSERT INTO users (role: user, plan: free)" vertex="1">
+          <mxGeometry height="55" width="380" x="690" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑥ teamsService.createPersonalTeam(userId)&#xa;INSERT INTO teams + INSERT INTO team_members (role: owner)" vertex="1">
+          <mxGeometry height="60" width="380" x="690" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="regStep7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑦ login(user) → jwtService.sign({sub, email, role, plan})&#xa;returns { access_token, user } — expiresIn: 7d" vertex="1">
+          <mxGeometry height="55" width="380" x="690" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="regPanelDb" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#f8cecc;strokeColor=#b85450;" value="PostgreSQL — writes on registration" vertex="1">
+          <mxGeometry height="560" width="240" x="1130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="regDbUsers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="users&#xa;email, passwordHash&#xa;role: user, plan: free" vertex="1">
+          <mxGeometry height="65" width="200" x="1150" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="regDbTeams" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="teams&#xa;name: Personal, ownerId" vertex="1">
+          <mxGeometry height="55" width="200" x="1150" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="regDbTeamMembers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="team_members&#xa;userId, teamId, role: owner" vertex="1">
+          <mxGeometry height="55" width="200" x="1150" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="regOauthPanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#666666;dashed=1;" value="OAuth Registration Path (alternative to password)" vertex="1">
+          <mxGeometry height="195" width="650" x="20" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="regOauthText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="GET /auth/google|github → Passport OAuth strategy → provider callback&#xa;→ findByProviderId(id): if found → login() directly&#xa;→ findByEmail(email): if email matches existing user → auto-link accounts → login()&#xa;→ if new user: usersService.create({email, googleId|githubId}) → login()&#xa;&#xa;⚠ createPersonalTeam() is called only in register(), NOT in oauthLogin()&#xa;   New OAuth users have no personal team — potential gap in the codebase.&#xa;&#xa;Callback redirect: ${FRONTEND_URL}/auth/oauth/callback?token={access_token}" vertex="1">
+          <mxGeometry height="165" width="610" x="40" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="regResponsePanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Response &amp; Token Storage" vertex="1">
+          <mxGeometry height="125" width="1080" x="20" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="regResponseText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="API returns: { access_token: &quot;eyJhbGciOiJIUzI1NiJ9...&quot;, user: { id, email, role, plan } }&#xa;Web app stores Bearer token — sent as Authorization header on all subsequent API requests.&#xa;Redirect to /dashboard. Token expiry: 7 days. No refresh token. No server-side revocation (stateless JWT — same as login path)." vertex="1">
+          <mxGeometry height="90" width="1040" x="40" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="regNotesPanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Implementation Notes" vertex="1">
+          <mxGeometry height="710" width="430" x="1410" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="regNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• isEmailAllowed(): invite-only guard — throws 403 ForbiddenException if email domain or address not in allowlist. Restricts public signups.&#xa;&#xa;• Personal Team auto-creation: every password-registered user auto-gets a personal team (role: owner) at step ⑥, before login(). Cannot be skipped.&#xa;&#xa;• OAuth gap: createPersonalTeam() is in register() only, NOT in oauthLogin(). New Google/GitHub users may have no personal team. Potential bug worth fixing.&#xa;&#xa;• No email verification: registration immediately returns a valid JWT. No pending/unverified user state.&#xa;&#xa;• plan on registration: defaults to &quot;free&quot;. The ?plan= query param from the Quiz is a UI pre-selection only — NOT applied server-side during POST /auth/register.&#xa;&#xa;• apps/landing has zero @insightstream/* package deps. Pure Next.js 16 + TailwindCSS + framer-motion + PostHog. No API calls from landing — all CTAs are plain &lt;a href&gt; links to app.insightstream.ai.&#xa;&#xa;• Landing port 3002 (dev), insightstream.ai (prod). Web port 3000 (dev), app.insightstream.ai (prod). Both deployed to Vercel, independently." vertex="1">
+          <mxGeometry height="650" width="390" x="1430" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="regELandingCta" edge="1" parent="1" source="regLandingHome" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.4;" target="regWebRegister" value="CTA click">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEWebApi" edge="1" parent="1" source="regWebRegister" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="regStep1" value="submit form">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep12" edge="1" parent="1" source="regStep1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep23" edge="1" parent="1" source="regStep2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep34" edge="1" parent="1" source="regStep3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep45" edge="1" parent="1" source="regStep4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep56" edge="1" parent="1" source="regStep5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep67" edge="1" parent="1" source="regStep6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="regStep7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep5Db" edge="1" parent="1" source="regStep5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="regDbUsers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep6DbTeams" edge="1" parent="1" source="regStep6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="regDbTeams">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep6DbTm" edge="1" parent="1" source="regStep6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="regDbTeamMembers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEStep7Response" edge="1" parent="1" source="regStep7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" target="regResponsePanel" value="{ access_token, user }">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="regEResponseDash" edge="1" parent="1" source="regResponsePanel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.3;exitY=0;entryX=0.5;entryY=1;" target="regWebDashboard" value="redirect to /dashboard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
