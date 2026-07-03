@@ -107,6 +107,7 @@ export default function DevtoolsPage() {
         >
           <div className="w-full sm:flex-1">
             <Input
+              data-testid="feedback-input"
               placeholder="Type a feedback message here..."
               value={newFeedback}
               onChange={(e) => setNewFeedback(e.target.value)}
@@ -114,6 +115,7 @@ export default function DevtoolsPage() {
             />
           </div>
           <Button
+            data-testid="feedback-submit"
             type="submit"
             isLoading={createMutation.isPending}
             disabled={!newFeedback.trim()}

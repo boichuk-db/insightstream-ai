@@ -9,8 +9,17 @@ export class DashboardPage {
   }
 
   async submitFeedback(content: string) {
+    // Manual feedback input lives on the devtools page (moved off the main
+    // dashboard in the Feedback-only refactor). Submit there, then return to
+    // the dashboard where the kanban board renders the new card.
+    await this.page.goto('/dashboard/devtools')
     await this.page.fill('[data-testid="feedback-input"]', content)
+    const created = this.page.waitForResponse(
+      (r) => r.url().includes('/feedback') && r.request().method() === 'POST',
+    )
     await this.page.click('[data-testid="feedback-submit"]')
+    await created
+    await this.page.goto('/dashboard')
   }
 
   async waitForFeedbackCard(content: string) {
