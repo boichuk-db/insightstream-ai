@@ -64,15 +64,12 @@ export class AiSweepService {
             continue;
           }
 
-          if (!planCache.has(ownerId)) {
-            planCache.set(
-              ownerId,
-              await this.planLimitsService.getUserPlan(ownerId),
-            );
+          let plan = planCache.get(ownerId);
+          if (plan === undefined) {
+            plan = await this.planLimitsService.getUserPlan(ownerId);
+            planCache.set(ownerId, plan);
           }
-          const aiLevel = this.planLimitsService.getLimits(
-            planCache.get(ownerId)!,
-          ).aiAnalysis;
+          const aiLevel = this.planLimitsService.getLimits(plan).aiAnalysis;
           if (aiLevel === 'none') continue;
 
           await this.aiQueueService.addAnalysisJob(
