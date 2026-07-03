@@ -44,7 +44,7 @@ export class TeamsService {
     return team;
   }
 
-  async createPersonalTeam(userId: string): Promise<Team> {
+  private async createPersonalTeam(userId: string): Promise<Team> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     const teamName = `${user?.email?.split('@')[0] || 'My'}'s Team`;
 

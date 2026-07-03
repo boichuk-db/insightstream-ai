@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
 import { Project, Feedback, User } from '@insightstream/database';
@@ -82,7 +82,7 @@ export class DigestService {
     return { ...stats, since: since.toISOString(), aiSummary };
   }
 
-  /** Called manually via the controller for testing */
+  /** Sends the weekly digest to every eligible project. Triggered only by the @Cron above. */
   async runDigest(): Promise<{ sent: number; skipped: number }> {
     const since = new Date();
     since.setDate(since.getDate() - 7);

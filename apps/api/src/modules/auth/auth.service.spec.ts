@@ -14,7 +14,7 @@ const mockUsersService = {
   create: jest.fn(),
   save: jest.fn(),
 };
-const mockTeamsService = { createPersonalTeam: jest.fn() };
+const mockTeamsService = { ensurePersonalTeam: jest.fn() };
 const mockJwtService = { sign: jest.fn().mockReturnValue('signed-token') };
 const mockMailService = { sendPasswordReset: jest.fn() };
 
@@ -33,6 +33,27 @@ describe('AuthService — password reset', () => {
     }).compile();
     service = module.get(AuthService);
     jest.clearAllMocks();
+  });
+
+  describe('register', () => {
+    it('creates the user and provisions a personal team idempotently', async () => {
+      mockUsersService.findOneByEmail.mockResolvedValue(null);
+      const newUser = {
+        id: '10',
+        email: 'new@x.com',
+        role: 'user',
+        plan: 'FREE',
+      } as any;
+      mockUsersService.create.mockResolvedValue(newUser);
+
+      const result = await service.register('new@x.com', 'password123');
+
+      expect(mockUsersService.create).toHaveBeenCalledWith(
+        expect.objectContaining({ email: 'new@x.com' }),
+      );
+      expect(mockTeamsService.ensurePersonalTeam).toHaveBeenCalledWith('10');
+      expect(result.access_token).toBe('signed-token');
+    });
   });
 
   describe('forgotPassword', () => {
@@ -154,7 +175,7 @@ describe('AuthService — password reset', () => {
       expect(mockUsersService.save).toHaveBeenCalledWith(
         expect.objectContaining({ googleId: 'g2' }),
       );
-      expect(mockTeamsService.createPersonalTeam).not.toHaveBeenCalled();
+      expect(mockTeamsService.ensurePersonalTeam).not.toHaveBeenCalled();
       expect(result.access_token).toBe('signed-token');
     });
 
@@ -182,7 +203,7 @@ describe('AuthService — password reset', () => {
           githubId: 'gh3',
         }),
       );
-      expect(mockTeamsService.createPersonalTeam).toHaveBeenCalledWith('3');
+      expect(mockTeamsService.ensurePersonalTeam).toHaveBeenCalledWith('3');
       expect(result.access_token).toBe('signed-token');
     });
   });

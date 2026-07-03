@@ -54,17 +54,6 @@
         "region": "eu-north-1",
         "title": "Feedback Processor Lambda"
       }
-    },
-    {
-      "type": "metric",
-      "x": 12, "y": 12, "width": 12, "height": 6,
-      "properties": {
-        "metrics": [["AWS/Lambda", "Invocations", "FunctionName", "insightstream-digest-trigger"], ["AWS/Lambda", "Errors", "FunctionName", "insightstream-digest-trigger"]],
-        "period": 300,
-        "stat": "Sum",
-        "region": "eu-north-1",
-        "title": "Digest Trigger Lambda"
-      }
     }
   ]
 }

@@ -71,6 +71,13 @@ docker compose up -d  # start local PostgreSQL + Redis
 - **Sentry**: DSN у env vars (API + Web окремо)
 - **CORS**: Dynamic domain validation, whitelist per project in DB
 
+## Architecture Documentation
+
+- `docs/architecture/system-architecture.drawio` — **diagrams only** (system views, request flows, network topology, ER diagram). No prose roadmaps or text-only pages here.
+- `docs/architecture/PLAN.md` — the living architecture plan: current priorities (🔥 Implement Soon / 🟡 Future / ✅ Keep As-Is / ⛔ Retired), reasoning, and status. This is the source of truth for what to work on next — pull architecture-related tasks from here rather than inventing them ad hoc.
+- **Update rule**: any change that alters the architecture (new module, new infra piece, a completed roadmap item, a reversed decision) updates `PLAN.md` in the same PR and bumps its date. If a diagram becomes stale relative to the code, fix it in the same PR too.
+- Project constraints baked into `PLAN.md` — keep them in mind before recommending anything: infra cost ≈ zero, hands-on learning is a first-class goal (EC2/BullMQ/Socket.io/AWS migration are intentional choices, not gaps), no enterprise complexity before it earns its keep.
+
 ## Engineering Rules
 
 **Learning Loop:**

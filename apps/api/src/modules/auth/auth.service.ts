@@ -37,7 +37,7 @@ export class AuthService {
     }
     const passwordHash = await bcrypt.hash(pass, 10);
     const user = await this.usersService.create({ email, passwordHash });
-    await this.teamsService.createPersonalTeam(user.id);
+    await this.teamsService.ensurePersonalTeam(user.id);
     return this.login(user);
   }
 
@@ -128,7 +128,7 @@ export class AuthService {
         googleId: googleId ?? null,
         githubId: githubId ?? null,
       });
-      await this.teamsService.createPersonalTeam(user.id);
+      await this.teamsService.ensurePersonalTeam(user.id);
     }
 
     return this.login(user);
