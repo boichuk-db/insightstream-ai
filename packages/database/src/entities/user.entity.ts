@@ -44,6 +44,18 @@ export class User {
   @Column({ type: "timestamp", nullable: true, default: null })
   trialEndsAt: Date | null;
 
+  /**
+   * `created` timestamp of the last Stripe subscription event applied to this
+   * user. Guards against out-of-order webhook delivery: an event whose
+   * `created` predates this is ignored (see StripeWebhookService). The DB
+   * default (epoch) means every row is non-null in practice, so the first
+   * event always matches the conditional `WHERE lastStripeEventAt <= :eventCreated`
+   * update. Left nullable (no NOT NULL constraint) so dev `synchronize` can add
+   * it to the already-populated users table without a failing `SET NOT NULL`.
+   */
+  @Column({ type: "timestamp", nullable: true, default: () => "'1970-01-01 00:00:00'" })
+  lastStripeEventAt: Date | null;
+
   @Column({ type: "varchar", unique: true, nullable: true, default: null })
   apiKey: string | null;
 

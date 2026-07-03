@@ -2,9 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, PlanType } from '@insightstream/database';
+import { User, StripeEvent, PlanType } from '@insightstream/database';
 import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
+
+/** Fields a subscription webhook applies to a user, minus the ordering stamp. */
+type UserPlanFields = Partial<
+  Pick<
+    User,
+    | 'plan'
+    | 'planStatus'
+    | 'stripeSubscriptionId'
+    | 'stripePriceId'
+    | 'trialEndsAt'
+  >
+>;
 
 @Injectable()
 export class StripeWebhookService {
@@ -12,12 +24,67 @@ export class StripeWebhookService {
 
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(StripeEvent)
+    private eventRepo: Repository<StripeEvent>,
     private config: ConfigService,
     private stripeService: StripeService,
   ) {}
 
-  async handleCheckoutCompleted(
+  /**
+   * Single entry point for verified webhooks. Idempotent (dedup by event id)
+   * and order-safe (per-user, an event older than the last applied one is
+   * ignored). Records every handled event so retries and reorders are inert.
+   */
+  async handleEvent(event: Stripe.Event): Promise<void> {
+    if (await this.eventRepo.findOne({ where: { id: event.id } })) {
+      this.logger.log(
+        `Duplicate Stripe event ${event.id} (${event.type}) ignored`,
+      );
+      return;
+    }
+
+    const eventCreatedAt = new Date(event.created * 1000);
+    let subscriptionId: string | null = null;
+
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        subscriptionId =
+          typeof session.subscription === 'string'
+            ? session.subscription
+            : null;
+        await this.handleCheckoutCompleted(session, eventCreatedAt);
+        break;
+      }
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
+        subscriptionId = subscription.id;
+        await this.handleSubscriptionUpdated(subscription, eventCreatedAt);
+        break;
+      }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        subscriptionId = subscription.id;
+        await this.handleSubscriptionDeleted(subscription, eventCreatedAt);
+        break;
+      }
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        subscriptionId = this.extractInvoiceSubscription(invoice);
+        await this.handlePaymentFailed(invoice, eventCreatedAt);
+        break;
+      }
+      default:
+        this.logger.debug(`Unhandled Stripe event: ${event.type}`);
+        return;
+    }
+
+    await this.recordEvent(event, subscriptionId, eventCreatedAt);
+  }
+
+  private async handleCheckoutCompleted(
     session: Stripe.Checkout.Session,
+    eventCreatedAt: Date,
   ): Promise<void> {
     const userId = session.metadata?.userId;
     if (!userId) {
@@ -30,7 +97,7 @@ export class StripeWebhookService {
     );
     const priceId = subscription.items.data[0]?.price.id;
 
-    await this.userRepo.update(userId, {
+    await this.applyIfNewer(userId, eventCreatedAt, {
       plan: this.resolvePlan(priceId),
       stripeSubscriptionId: subscription.id,
       stripePriceId: priceId ?? null,
@@ -41,8 +108,9 @@ export class StripeWebhookService {
     });
   }
 
-  async handleSubscriptionUpdated(
+  private async handleSubscriptionUpdated(
     subscription: Stripe.Subscription,
+    eventCreatedAt: Date,
   ): Promise<void> {
     const userId = subscription.metadata?.userId;
     if (!userId) {
@@ -50,28 +118,28 @@ export class StripeWebhookService {
       return;
     }
     const priceId = subscription.items.data[0]?.price.id;
-    const trialEnd = subscription.trial_end
-      ? new Date(subscription.trial_end * 1000)
-      : null;
 
-    await this.userRepo.update(userId, {
+    await this.applyIfNewer(userId, eventCreatedAt, {
       plan: this.resolvePlan(priceId),
       planStatus: subscription.status,
       stripePriceId: priceId ?? null,
       stripeSubscriptionId: subscription.id,
-      trialEndsAt: trialEnd,
+      trialEndsAt: subscription.trial_end
+        ? new Date(subscription.trial_end * 1000)
+        : null,
     });
   }
 
-  async handleSubscriptionDeleted(
+  private async handleSubscriptionDeleted(
     subscription: Stripe.Subscription,
+    eventCreatedAt: Date,
   ): Promise<void> {
     const userId = subscription.metadata?.userId;
     if (!userId) {
       this.logger.warn('customer.subscription.deleted: no userId in metadata');
       return;
     }
-    await this.userRepo.update(userId, {
+    await this.applyIfNewer(userId, eventCreatedAt, {
       plan: PlanType.FREE,
       planStatus: 'canceled',
       stripeSubscriptionId: null,
@@ -80,7 +148,10 @@ export class StripeWebhookService {
     });
   }
 
-  async handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
+  private async handlePaymentFailed(
+    invoice: Stripe.Invoice,
+    eventCreatedAt: Date,
+  ): Promise<void> {
     const customerId = invoice.customer as string;
     const user = await this.userRepo.findOne({
       where: { stripeCustomerId: customerId },
@@ -91,7 +162,65 @@ export class StripeWebhookService {
       );
       return;
     }
-    await this.userRepo.update(user.id, { planStatus: 'past_due' });
+    await this.applyIfNewer(user.id, eventCreatedAt, {
+      planStatus: 'past_due',
+    });
+  }
+
+  /**
+   * Atomic ordering guard: apply the plan fields (and advance the ordering
+   * stamp) only when this event is not older than the last one already
+   * applied. The `IS NULL OR "lastStripeEventAt" <= :eventCreatedAt` predicate
+   * makes the check-and-set a single statement, so concurrent out-of-order
+   * deliveries cannot resurrect a stale state; the `IS NULL` arm lets the very
+   * first event through for rows that never carried a stamp.
+   */
+  private async applyIfNewer(
+    userId: string,
+    eventCreatedAt: Date,
+    fields: UserPlanFields,
+  ): Promise<void> {
+    const result = await this.userRepo
+      .createQueryBuilder()
+      .update(User)
+      .set({ ...fields, lastStripeEventAt: eventCreatedAt })
+      .where(
+        'id = :id AND ("lastStripeEventAt" IS NULL OR "lastStripeEventAt" <= :ts)',
+        { id: userId, ts: eventCreatedAt },
+      )
+      .execute();
+    if (!result.affected) {
+      this.logger.warn(
+        `Stale or missing user for Stripe event at ${eventCreatedAt.toISOString()} (user ${userId}) — skipped`,
+      );
+    }
+  }
+
+  private async recordEvent(
+    event: Stripe.Event,
+    subscriptionId: string | null,
+    eventCreatedAt: Date,
+  ): Promise<void> {
+    try {
+      await this.eventRepo.insert({
+        id: event.id,
+        type: event.type,
+        subscriptionId,
+        eventCreatedAt,
+      });
+    } catch (err: any) {
+      // A concurrent duplicate delivery recorded it first — safe to ignore.
+      this.logger.debug(
+        `Stripe event ${event.id} already recorded: ${err.message}`,
+      );
+    }
+  }
+
+  private extractInvoiceSubscription(invoice: Stripe.Invoice): string | null {
+    const sub = (invoice as { subscription?: string | { id: string } | null })
+      .subscription;
+    if (!sub) return null;
+    return typeof sub === 'string' ? sub : sub.id;
   }
 
   private resolvePlan(priceId: string | undefined): PlanType {

@@ -8,5 +8,6 @@ export * from "./entities/invitation.entity";
 export * from "./entities/comment.entity";
 export * from "./entities/activity-event.entity";
 export * from "./entities/user-project-last-seen.entity";
+export * from "./entities/stripe-event.entity";
 export * from "./data-source";
 export * from "./plans";

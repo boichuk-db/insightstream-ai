@@ -10,6 +10,7 @@ import {
   Invitation,
   Comment,
   ActivityEvent,
+  StripeEvent,
 } from '@insightstream/database';
 import * as dotenv from 'dotenv';
 
@@ -34,6 +35,7 @@ export const AppDataSource = new DataSource({
     Invitation,
     Comment,
     ActivityEvent,
+    StripeEvent,
   ],
   migrations: [__dirname + '/migrations/**/*.{ts,js}'],
 });

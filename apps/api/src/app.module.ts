@@ -33,6 +33,7 @@ import {
   Comment,
   ActivityEvent,
   UserProjectLastSeen,
+  StripeEvent,
 } from '@insightstream/database';
 
 @Module({
@@ -75,6 +76,7 @@ import {
         Comment,
         ActivityEvent,
         UserProjectLastSeen,
+        StripeEvent,
       ],
       synchronize: process.env.NODE_ENV !== 'production',
       migrations: [__dirname + '/migrations/**/*.{ts,js}'],

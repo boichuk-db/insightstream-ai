@@ -36,24 +36,9 @@ export class StripeWebhookController {
       throw new BadRequestException('Invalid webhook signature');
     }
 
-    this.logger.log(`Stripe webhook: ${event.type}`);
+    this.logger.log(`Stripe webhook: ${event.type} (${event.id})`);
 
-    switch (event.type) {
-      case 'checkout.session.completed':
-        await this.webhookService.handleCheckoutCompleted(event.data.object);
-        break;
-      case 'customer.subscription.updated':
-        await this.webhookService.handleSubscriptionUpdated(event.data.object);
-        break;
-      case 'customer.subscription.deleted':
-        await this.webhookService.handleSubscriptionDeleted(event.data.object);
-        break;
-      case 'invoice.payment_failed':
-        await this.webhookService.handlePaymentFailed(event.data.object);
-        break;
-      default:
-        this.logger.debug(`Unhandled Stripe event: ${event.type}`);
-    }
+    await this.webhookService.handleEvent(event);
 
     return { received: true };
   }
