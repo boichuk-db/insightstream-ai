@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { projectsQuery, feedbacksQuery, digestPreviewQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import { BarChart2, Sparkles } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -15,8 +16,9 @@ import { FeedbackStatus } from "@insightstream/shared-types";
 export default function AnalyticsPage() {
   const { selectedProjectId } = useSelectedProject();
   const [isDigestOpen, setIsDigestOpen] = useState(false);
+  const { activeTeamId } = useTeam();
 
-  const { data: projects } = useQuery(projectsQuery);
+  const { data: projects } = useQuery(projectsQuery(activeTeamId ?? ""));
 
   const activeProject =
     projects?.find((p) => p.id === selectedProjectId) || projects?.[0];

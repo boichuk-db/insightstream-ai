@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { planStatusQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -43,7 +44,8 @@ const PLANS = [
 export function PricingCards() {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loadingPriceId, setLoadingPriceId] = useState<string | null>(null);
-  const { data: status } = useQuery(planStatusQuery);
+  const { activeTeamId } = useTeam();
+  const { data: status } = useQuery(planStatusQuery(activeTeamId ?? ""));
 
   const handleUpgrade = async (priceId: string) => {
     if (!priceId) {
@@ -52,7 +54,10 @@ export function PricingCards() {
     }
     setLoadingPriceId(priceId);
     try {
-      const res = await api.post<{ url: string }>("/plans/checkout", { priceId });
+      const res = await api.post<{ url: string }>("/plans/checkout", {
+        priceId,
+        teamId: activeTeamId,
+      });
       // eslint-disable-next-line react-hooks/immutability
       window.location.href = res.data.url;
     } catch {
@@ -94,6 +99,7 @@ export function PricingCards() {
           const isCurrentPlan =
             status?.plan === plan.name &&
             (status.planStatus === "active" || status.planStatus === "trialing");
+          const isNonOwner = !!status && !status.isOwner;
 
           return (
             <div
@@ -120,7 +126,8 @@ export function PricingCards() {
               </ul>
               <button
                 onClick={() => handleUpgrade(priceId)}
-                disabled={isCurrentPlan || loadingPriceId === priceId}
+                disabled={isCurrentPlan || isNonOwner || loadingPriceId === priceId}
+                title={isNonOwner ? "Only the team owner manages billing" : undefined}
                 className={cn(
                   "w-full py-2 rounded-lg text-sm font-medium transition-colors",
                   isCurrentPlan

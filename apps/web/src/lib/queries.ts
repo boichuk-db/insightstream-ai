@@ -7,10 +7,15 @@ export const userProfileQuery = queryOptions({
   queryFn: () => api.get<IUser>("/users/me").then((r) => r.data),
 });
 
-export const projectsQuery = queryOptions({
-  queryKey: ["projects"],
-  queryFn: () => api.get<IProject[]>("/projects").then((r) => r.data),
-});
+export const projectsQuery = (teamId: string) =>
+  queryOptions({
+    queryKey: ["projects", teamId],
+    queryFn: () =>
+      api
+        .get<IProject[]>("/projects", { params: { teamId } })
+        .then((r) => r.data),
+    enabled: !!teamId,
+  });
 
 export const feedbacksQuery = (projectId: string) =>
   queryOptions({
@@ -43,13 +48,19 @@ export interface PlanStatus {
   trialEndsAt: string | null;
   stripePriceId: string | null;
   stripeSubscriptionId: string | null;
+  isOwner: boolean;
 }
 
-export const planStatusQuery = queryOptions({
-  queryKey: ['planStatus'],
-  queryFn: () => api.get<PlanStatus>('/plans/status').then((r) => r.data),
-  staleTime: 60_000,
-});
+export const planStatusQuery = (teamId: string) =>
+  queryOptions({
+    queryKey: ['planStatus', teamId],
+    queryFn: () =>
+      api
+        .get<PlanStatus>('/plans/status', { params: { teamId } })
+        .then((r) => r.data),
+    staleTime: 60_000,
+    enabled: !!teamId,
+  });
 
 export const lastSeenQuery = (projectId: string) =>
   queryOptions({

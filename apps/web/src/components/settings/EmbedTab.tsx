@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { projectsQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import {
   Sparkles,
   Check,
@@ -41,8 +42,9 @@ export function EmbedTab() {
   const [selectedShape, setSelectedShape] = useState<(typeof SHAPES)[number]>("rounded");
   const [selectedPosition, setSelectedPosition] = useState<(typeof POSITIONS)[number]>("bottom-right");
   const [selectedFramework, setSelectedFramework] = useState<(typeof FRAMEWORKS)[number]>("html");
+  const { activeTeamId } = useTeam();
 
-  const { data: projects } = useQuery(projectsQuery);
+  const { data: projects } = useQuery(projectsQuery(activeTeamId ?? ""));
   const activeProject = projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
   const apiKey = activeProject?.apiKey || "LOADING...";
 

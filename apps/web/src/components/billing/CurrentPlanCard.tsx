@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { planStatusQuery, PlanStatus } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,12 +39,15 @@ function statusBadgeClass(status: PlanStatus["planStatus"]) {
 }
 
 export function CurrentPlanCard() {
-  const { data, isLoading } = useQuery(planStatusQuery);
+  const { activeTeamId } = useTeam();
+  const { data, isLoading } = useQuery(planStatusQuery(activeTeamId ?? ""));
   // eslint-disable-next-line react-hooks/purity
   const now = useMemo(() => Date.now(), []);
 
   const handleManage = async () => {
-    const res = await api.get<{ url: string }>("/plans/portal");
+    const res = await api.get<{ url: string }>("/plans/portal", {
+      params: { teamId: activeTeamId },
+    });
     window.location.href = res.data.url;
   };
 
@@ -82,7 +86,7 @@ export function CurrentPlanCard() {
           </p>
         )}
       </div>
-      {data.stripeSubscriptionId && (
+      {data.stripeSubscriptionId && data.isOwner && (
         <Button
           variant="ghost"
           size="sm"

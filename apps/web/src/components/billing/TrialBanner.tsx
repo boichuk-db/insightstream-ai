@@ -5,10 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
 import { planStatusQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 
 export function TrialBanner() {
   const router = useRouter();
-  const { data } = useQuery(planStatusQuery);
+  const { activeTeamId } = useTeam();
+  const { data } = useQuery(planStatusQuery(activeTeamId ?? ""));
   // eslint-disable-next-line react-hooks/purity
   const now = useMemo(() => Date.now(), []);
 

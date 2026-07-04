@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedProject } from "@/hooks/useSelectedProject";
 import { projectsQuery } from "@/lib/queries";
+import { useTeam } from "@/hooks/useTeam";
 import { api } from "@/lib/api";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,9 @@ export function DevtoolsTab() {
   const { selectedProjectId } = useSelectedProject();
   const [newFeedback, setNewFeedback] = useState("");
   const [seedProgress, setSeedProgress] = useState<string | null>(null);
+  const { activeTeamId } = useTeam();
 
-  const { data: projects } = useQuery(projectsQuery);
+  const { data: projects } = useQuery(projectsQuery(activeTeamId ?? ""));
   const activeProject =
     projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
 

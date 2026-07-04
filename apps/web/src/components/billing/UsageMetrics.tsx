@@ -6,6 +6,7 @@ import { UsageMeter } from "@/components/ui/usage-meter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LabeledSection } from "@/components/ui/labeled-section";
 import { BarChart2 } from "lucide-react";
+import { useTeam } from "@/hooks/useTeam";
 
 interface UsageSummary {
   plan: string;
@@ -13,13 +14,19 @@ interface UsageSummary {
   feedbacksThisMonth: { current: number; max: number | null };
 }
 
-const usageQuery = queryOptions({
-  queryKey: ["planUsage"],
-  queryFn: () => api.get<UsageSummary>("/plans/usage").then((r) => r.data),
-});
+const usageQuery = (teamId: string) =>
+  queryOptions({
+    queryKey: ["planUsage", teamId],
+    queryFn: () =>
+      api
+        .get<UsageSummary>("/plans/usage", { params: { teamId } })
+        .then((r) => r.data),
+    enabled: !!teamId,
+  });
 
 export function UsageMetrics() {
-  const { data, isLoading } = useQuery(usageQuery);
+  const { activeTeamId } = useTeam();
+  const { data, isLoading } = useQuery(usageQuery(activeTeamId ?? ""));
 
   if (isLoading) {
     return <Skeleton count={1} height="h-28" />;

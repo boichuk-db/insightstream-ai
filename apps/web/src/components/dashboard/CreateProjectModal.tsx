@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Globe, Type } from "lucide-react";
+import { useTeam } from "@/hooks/useTeam";
 
 export function CreateProjectModal({
   isOpen,
@@ -18,10 +19,15 @@ export function CreateProjectModal({
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("");
   const queryClient = useQueryClient();
+  const { activeTeamId } = useTeam();
 
   const createMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await api.post("/projects", { name, domain });
+      const { data } = await api.post("/projects", {
+        name,
+        domain,
+        teamId: activeTeamId,
+      });
       return data;
     },
     onSuccess: (newProject) => {
@@ -63,7 +69,7 @@ export function CreateProjectModal({
               createMutation.mutate();
             }}
             isLoading={createMutation.isPending}
-            disabled={!name.trim() || !domain.trim()}
+            disabled={!name.trim() || !domain.trim() || !activeTeamId}
           >
             🚀 Create Project
           </Button>

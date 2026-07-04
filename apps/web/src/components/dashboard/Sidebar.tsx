@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { feedbacksQuery } from "@/lib/queries";
+import { feedbacksQuery, planStatusQuery } from "@/lib/queries";
 import { FeedbackStatus } from "@insightstream/shared-types";
 import type { IFeedback } from "@insightstream/shared-types";
 import Link from "next/link";
@@ -66,6 +66,7 @@ export function Sidebar({
     ...feedbacksQuery(activeProject?.id ?? ""),
     enabled: !!activeProject?.id,
   });
+  const { data: planStatus } = useQuery(planStatusQuery(activeTeam?.id ?? ""));
   const newCount = (feedbacks as IFeedback[]).filter(
     (f) => f.status === FeedbackStatus.NEW,
   ).length;
@@ -308,21 +309,21 @@ export function Sidebar({
                 <span
                   className={cn(
                     "text-[10px] font-bold uppercase px-1.5 py-0.5 rounded",
-                    userProfile?.plan === PlanType.BUSINESS
+                    planStatus?.plan === PlanType.BUSINESS
                       ? "bg-amber-500/20 text-amber-400"
-                      : userProfile?.plan === PlanType.PRO
+                      : planStatus?.plan === PlanType.PRO
                         ? "bg-brand-accent/20 text-brand-accent"
                         : "bg-brand-border text-brand-muted",
                   )}
                 >
-                  {getPlanConfig(userProfile?.plan || "FREE").name}
+                  {getPlanConfig(planStatus?.plan || "FREE").name}
                 </span>
                 {userRole && (
                   <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand-accent/20 text-brand-accent">
                     {userRole}
                   </span>
                 )}
-                {!isPaidPlan(userProfile?.plan || "FREE") && (
+                {!isPaidPlan(planStatus?.plan || "FREE") && (
                   <span className="text-[10px] text-brand-accent font-medium">
                     Upgrade
                   </span>

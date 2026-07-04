@@ -17,13 +17,17 @@ function computeLimitStatus(current: number, max: number | null) {
   };
 }
 
-export function usePlanUsage() {
+export function usePlanUsage(teamId: string) {
   const { data, isError, isLoading } = useQuery<PlanUsageData>({
-    queryKey: ["planUsage"],
-    queryFn: () => api.get<PlanUsageData>("/plans/usage").then((r) => r.data),
+    queryKey: ["planUsage", teamId],
+    queryFn: () =>
+      api
+        .get<PlanUsageData>("/plans/usage", { params: { teamId } })
+        .then((r) => r.data),
     staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
+    enabled: !!teamId,
   });
 
   const feedbackStatus = data

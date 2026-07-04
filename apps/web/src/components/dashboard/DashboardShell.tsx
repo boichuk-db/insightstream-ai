@@ -23,9 +23,9 @@ export function DashboardShell({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedProjectId, setSelectedProjectId } = useSelectedProject();
 
+  const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
   const { data: userProfile } = useQuery(userProfileQuery);
-  const { data: projects } = useQuery(projectsQuery);
-  const { teams, activeTeam, switchTeam, userRole } = useTeam();
+  const { data: projects } = useQuery(projectsQuery(activeTeamId ?? ""));
 
   const activeProject =
     projects?.find((p) => p.id === selectedProjectId) || projects?.[0];

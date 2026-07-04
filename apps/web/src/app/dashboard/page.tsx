@@ -29,8 +29,8 @@ export default function FeedbackPage() {
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [commentsFeedbackId, setCommentsFeedbackId] = useState<string | null>(null);
 
-  const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage();
-  const { teams, activeTeam, switchTeam, userRole } = useTeam();
+  const { teams, activeTeam, activeTeamId, switchTeam, userRole } = useTeam();
+  const { data: planUsage, isNearLimit, isAtLimit } = usePlanUsage(activeTeamId ?? "");
   const { feedbackView } = useFeedbackView();
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function FeedbackPage() {
   }, []);
 
   const { data: userProfile } = useQuery(userProfileQuery);
-  const { data: projects } = useQuery(projectsQuery);
+  const { data: projects } = useQuery(projectsQuery(activeTeamId ?? ""));
 
   const activeProject =
     projects?.find((p) => p.id === selectedProjectId) || projects?.[0];
