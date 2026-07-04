@@ -20,14 +20,19 @@ export class PlanLimitsService {
     @InjectRepository(Team) private teamRepo: Repository<Team>,
   ) {}
 
-  /** Effective plan of a team; past_due/canceled degrade to FREE. */
-  async getTeamPlan(teamId: string): Promise<PlanType> {
-    const team = await this.teamRepo.findOne({ where: { id: teamId } });
+  /** Effective plan of a team row; past_due/canceled degrade to FREE. */
+  private resolvePlan(team: Team | null): PlanType {
     const planStatus = team?.planStatus ?? 'active';
     if (planStatus === 'past_due' || planStatus === 'canceled') {
       return PlanType.FREE;
     }
     return (team?.plan as PlanType) || PlanType.FREE;
+  }
+
+  /** Effective plan of a team; past_due/canceled degrade to FREE. */
+  async getTeamPlan(teamId: string): Promise<PlanType> {
+    const team = await this.teamRepo.findOne({ where: { id: teamId } });
+    return this.resolvePlan(team);
   }
 
   getLimits(plan: PlanType): PlanLimits {
@@ -100,7 +105,11 @@ export class PlanLimitsService {
   async canInviteMember(
     teamId: string,
   ): Promise<{ allowed: boolean; current: number; max: number }> {
-    const plan = await this.getTeamPlan(teamId);
+    const team = await this.teamRepo.findOne({ where: { id: teamId } });
+    if (!team) {
+      return { allowed: false, current: 0, max: 0 };
+    }
+    const plan = this.resolvePlan(team);
     const limits = this.getLimits(plan);
     const current = await this.memberRepo.count({ where: { teamId } });
     return {

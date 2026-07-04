@@ -44,9 +44,23 @@ describe('PlanLimitsService (team-keyed)', () => {
       teamRepo.findOne.mockResolvedValue({ plan: 'PRO', planStatus: 'active' });
       expect(await service.getTeamPlan('t1')).toBe(PlanType.PRO);
     });
-    it('degrades past_due/canceled to FREE', async () => {
+    it('degrades past_due to FREE', async () => {
       teamRepo.findOne.mockResolvedValue({ plan: 'PRO', planStatus: 'past_due' });
       expect(await service.getTeamPlan('t1')).toBe(PlanType.FREE);
+    });
+    it('degrades canceled to FREE', async () => {
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'BUSINESS',
+        planStatus: 'canceled',
+      });
+      expect(await service.getTeamPlan('t1')).toBe(PlanType.FREE);
+    });
+    it('keeps the paid plan while trialing', async () => {
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'PRO',
+        planStatus: 'trialing',
+      });
+      expect(await service.getTeamPlan('t1')).toBe(PlanType.PRO);
     });
     it('defaults to FREE for a missing team', async () => {
       teamRepo.findOne.mockResolvedValue(null);
@@ -100,15 +114,31 @@ describe('PlanLimitsService (team-keyed)', () => {
       const res = await service.canInviteMember('t1');
       expect(res.allowed).toBe(false);
     });
+    it('disallows for a missing team', async () => {
+      teamRepo.findOne.mockResolvedValue(null);
+      memberRepo.count.mockResolvedValue(0);
+      const res = await service.canInviteMember('t1');
+      expect(res).toEqual({ allowed: false, current: 0, max: 0 });
+    });
   });
 
   it('assertAllowed throws ForbiddenException with plan payload', () => {
-    expect(() =>
+    let thrown: ForbiddenException | undefined;
+    try {
       service.assertAllowed(
         { allowed: false, current: 1, max: 1 },
         'projects',
         PlanType.FREE,
-      ),
-    ).toThrow(ForbiddenException);
+      );
+    } catch (e) {
+      thrown = e as ForbiddenException;
+    }
+    expect(thrown).toBeInstanceOf(ForbiddenException);
+    expect(thrown!.getResponse()).toMatchObject({
+      error: 'PlanLimitExceeded',
+      currentPlan: PlanType.FREE,
+      limit: 1,
+      current: 1,
+    });
   });
 });
