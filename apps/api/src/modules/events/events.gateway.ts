@@ -30,11 +30,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private memberRepo: Repository<TeamMember>,
   ) {}
 
+  // NOTE: any future @SubscribeMessage handler must guard on client.data.userId —
+  // Socket.io does not gate inbound packets on this handler's promise.
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.auth?.token as string;
       if (!token) {
-        client.disconnect();
+        client.disconnect(true);
         return;
       }
       const payload = this.jwtService.verify(token);
@@ -49,8 +51,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.join(`team-${m.teamId}`);
       }
       this.logger.log(`Client connected: ${client.id} (user: ${payload.sub})`);
-    } catch {
-      client.disconnect();
+    } catch (err) {
+      this.logger.warn(
+        `Connection rejected: ${client.id} — ${err instanceof Error ? err.message : String(err)}`,
+      );
+      client.disconnect(true);
     }
   }
 
