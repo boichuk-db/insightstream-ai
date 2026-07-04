@@ -122,7 +122,12 @@ describe('FeedbackService', () => {
       const result = await service.create(projectId, content);
 
       expect(mockAiQueueService.addAnalysisJob).toHaveBeenCalledWith(
-        expect.objectContaining({ content, projectId, aiLevel: 'full' }),
+        expect.objectContaining({
+          content,
+          projectId,
+          teamId: 'team-abc',
+          aiLevel: 'full',
+        }),
         10,
       );
       expect(repo.create).toHaveBeenCalled();
@@ -156,6 +161,63 @@ describe('FeedbackService', () => {
         't1',
       );
       expect(mockPlanLimitsService.getTeamPlan).toHaveBeenCalledWith('t1');
+    });
+
+    it('throws NotFoundException for a public-widget submission to a nonexistent project', async () => {
+      mockProjectsService.findByOnlyId.mockResolvedValue(null);
+      mockPlanLimitsService.canCreateFeedbackForProject.mockResolvedValue({
+        allowed: false,
+        current: 0,
+        max: 0,
+      });
+
+      await expect(service.create('missing-proj', 'hello')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repo.save).not.toHaveBeenCalled();
+      expect(mockAiQueueService.addAnalysisJob).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('reanalyze', () => {
+    it('enqueues with teamId taken from the feedback project at priority 1', async () => {
+      repo.findOne.mockResolvedValue({
+        id: 'fb-1',
+        content: 'slow dashboard',
+        projectId: 'proj-abc',
+        project: { userId: 'user-abc', teamId: 'team-abc' },
+      });
+
+      const result = await service.reanalyze('fb-1', 'user-abc');
+
+      expect(mockPlanLimitsService.getTeamPlan).toHaveBeenCalledWith(
+        'team-abc',
+      );
+      expect(mockAiQueueService.addAnalysisJob).toHaveBeenCalledWith(
+        {
+          feedbackId: 'fb-1',
+          content: 'slow dashboard',
+          projectId: 'proj-abc',
+          teamId: 'team-abc',
+          aiLevel: 'full',
+        },
+        1,
+      );
+      expect(result).toEqual({ success: true, queued: true });
+    });
+
+    it('throws when the feedback project has no teamId instead of enqueuing', async () => {
+      repo.findOne.mockResolvedValue({
+        id: 'fb-1',
+        content: 'orphaned',
+        projectId: 'proj-abc',
+        project: { userId: 'user-abc' }, // access check passes, but no teamId
+      });
+
+      await expect(service.reanalyze('fb-1', 'user-abc')).rejects.toThrow(
+        'Feedback not found or access denied',
+      );
+      expect(mockAiQueueService.addAnalysisJob).not.toHaveBeenCalled();
     });
   });
 

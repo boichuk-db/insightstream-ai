@@ -3,6 +3,7 @@ import {
   Logger,
   ForbiddenException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -59,15 +60,10 @@ export class FeedbackService {
       const check =
         await this.planLimitsService.canCreateFeedbackForProject(projectId);
       const project = await this.projectsService.findByOnlyId(projectId);
-      teamId = project?.teamId ?? null;
-      if (teamId) {
-        const plan = await this.planLimitsService.getTeamPlan(teamId);
-        this.planLimitsService.assertAllowed(
-          check,
-          'feedbacks this month',
-          plan,
-        );
-      }
+      if (!project) throw new NotFoundException('Project not found');
+      teamId = project.teamId;
+      const plan = await this.planLimitsService.getTeamPlan(teamId);
+      this.planLimitsService.assertAllowed(check, 'feedbacks this month', plan);
     }
 
     const feedback = this.feedbackRepository.create({
@@ -196,13 +192,14 @@ export class FeedbackService {
 
     // Determine the team's AI analysis level
     const teamId = feedback.project?.teamId;
-    let aiLevel: string = 'basic';
-    if (teamId) {
-      const limits = this.planLimitsService.getLimits(
-        await this.planLimitsService.getTeamPlan(teamId),
-      );
-      aiLevel = limits.aiAnalysis;
+    if (!teamId) {
+      throw new ForbiddenException('Feedback not found or access denied');
     }
+
+    const limits = this.planLimitsService.getLimits(
+      await this.planLimitsService.getTeamPlan(teamId),
+    );
+    const aiLevel: string = limits.aiAnalysis;
     if (aiLevel === 'none')
       return { success: false, message: 'AI Analysis disabled for your plan' };
 
@@ -211,7 +208,7 @@ export class FeedbackService {
         feedbackId: feedback.id,
         content: feedback.content,
         projectId: feedback.projectId,
-        teamId: teamId!,
+        teamId,
         aiLevel: aiLevel === 'full' ? 'full' : 'basic',
       },
       1,
