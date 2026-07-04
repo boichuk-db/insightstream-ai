@@ -7,6 +7,9 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TeamMember } from '@insightstream/database';
 
 @WebSocketGateway({
   cors: {
@@ -21,9 +24,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private readonly logger = new Logger(EventsGateway.name);
 
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @InjectRepository(TeamMember)
+    private memberRepo: Repository<TeamMember>,
+  ) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     try {
       const token = client.handshake.auth?.token as string;
       if (!token) {
@@ -33,6 +40,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const payload = this.jwtService.verify(token);
       client.data.userId = payload.sub;
       client.join(`user-${payload.sub}`);
+      // Team rooms: one emit to team-{id} reaches every member's dashboard.
+      // Known limit: membership changes don't rebuild rooms until reconnect.
+      const memberships = await this.memberRepo.find({
+        where: { userId: payload.sub },
+      });
+      for (const m of memberships) {
+        client.join(`team-${m.teamId}`);
+      }
       this.logger.log(`Client connected: ${client.id} (user: ${payload.sub})`);
     } catch {
       client.disconnect();
@@ -43,9 +58,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  emitFeedbackUpdated(userId: string) {
+  emitFeedbackUpdatedToTeam(teamId: string) {
     this.server
-      .to(`user-${userId}`)
+      .to(`team-${teamId}`)
       .emit('feedbackUpdated', { timestamp: new Date() });
   }
 }
