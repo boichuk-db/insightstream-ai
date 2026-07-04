@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
@@ -49,7 +54,9 @@ export class DigestService {
     const project = await this.projects.findOne({
       where: { id: projectId },
     });
-    if (!project) throw new Error(`Project ${projectId} not found`);
+    if (!project) {
+      throw new NotFoundException(`Project ${projectId} not found`);
+    }
 
     // Gate digest preview by team plan
     const hasDigest = await this.planLimitsService.canUseFeature(
@@ -57,7 +64,7 @@ export class DigestService {
       'weeklyDigest',
     );
     if (!hasDigest) {
-      throw new Error(
+      throw new ForbiddenException(
         'Weekly digest is available on Pro and Business plans. Please upgrade.',
       );
     }
@@ -136,14 +143,30 @@ export class DigestService {
         const aiSummary = await this.ai.generateWeeklyDigest(stats);
         const html = this.renderEmail(project.name, stats, aiSummary, since);
 
+        let delivered = 0;
         for (const email of recipients) {
-          await this.mail.send(email, `📊 Weekly Digest: ${project.name}`, html);
+          try {
+            await this.mail.send(
+              email,
+              `📊 Weekly Digest: ${project.name}`,
+              html,
+            );
+            delivered++;
+          } catch (err) {
+            this.logger.error(
+              `Digest delivery failed for "${project.name}" → ${email}`,
+              err as Error,
+            );
+          }
         }
-
-        sent++;
-        this.logger.log(
-          `Digest sent for "${project.name}" → ${recipients.length} member(s) (${weekFeedbacks.length} feedbacks)`,
-        );
+        if (delivered > 0) {
+          sent++;
+          this.logger.log(
+            `Digest sent for "${project.name}" → ${delivered}/${recipients.length} member(s) (${weekFeedbacks.length} feedbacks)`,
+          );
+        } else {
+          skipped++;
+        }
       } catch (err) {
         this.logger.error(`Failed digest for project "${project.name}":`, err);
         skipped++;
