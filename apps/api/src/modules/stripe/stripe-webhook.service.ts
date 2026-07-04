@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, StripeEvent, PlanType } from '@insightstream/database';
+import { Team, StripeEvent, PlanType } from '@insightstream/database';
 import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
 
-/** Fields a subscription webhook applies to a user, minus the ordering stamp. */
-type UserPlanFields = Partial<
+/** Fields a subscription webhook applies to a team, minus the ordering stamp. */
+type TeamPlanFields = Partial<
   Pick<
-    User,
+    Team,
     | 'plan'
     | 'planStatus'
     | 'stripeSubscriptionId'
@@ -23,7 +23,7 @@ export class StripeWebhookService {
   private readonly logger = new Logger(StripeWebhookService.name);
 
   constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Team) private teamRepo: Repository<Team>,
     @InjectRepository(StripeEvent)
     private eventRepo: Repository<StripeEvent>,
     private config: ConfigService,
@@ -32,7 +32,7 @@ export class StripeWebhookService {
 
   /**
    * Single entry point for verified webhooks. Idempotent (dedup by event id)
-   * and order-safe (per-user, an event older than the last applied one is
+   * and order-safe (per-team, an event older than the last applied one is
    * ignored). Records every handled event so retries and reorders are inert.
    */
   async handleEvent(event: Stripe.Event): Promise<void> {
@@ -86,9 +86,9 @@ export class StripeWebhookService {
     session: Stripe.Checkout.Session,
     eventCreatedAt: Date,
   ): Promise<void> {
-    const userId = session.metadata?.userId;
-    if (!userId) {
-      this.logger.warn('checkout.session.completed: no userId in metadata');
+    const teamId = session.metadata?.teamId;
+    if (!teamId) {
+      this.logger.warn('checkout.session.completed: no teamId in metadata');
       return;
     }
 
@@ -97,7 +97,7 @@ export class StripeWebhookService {
     );
     const priceId = subscription.items.data[0]?.price.id;
 
-    await this.applyIfNewer(userId, eventCreatedAt, {
+    await this.applyIfNewer(teamId, eventCreatedAt, {
       plan: this.resolvePlan(priceId),
       stripeSubscriptionId: subscription.id,
       stripePriceId: priceId ?? null,
@@ -112,14 +112,14 @@ export class StripeWebhookService {
     subscription: Stripe.Subscription,
     eventCreatedAt: Date,
   ): Promise<void> {
-    const userId = subscription.metadata?.userId;
-    if (!userId) {
-      this.logger.warn('customer.subscription.updated: no userId in metadata');
+    const teamId = subscription.metadata?.teamId;
+    if (!teamId) {
+      this.logger.warn('customer.subscription.updated: no teamId in metadata');
       return;
     }
     const priceId = subscription.items.data[0]?.price.id;
 
-    await this.applyIfNewer(userId, eventCreatedAt, {
+    await this.applyIfNewer(teamId, eventCreatedAt, {
       plan: this.resolvePlan(priceId),
       planStatus: subscription.status,
       stripePriceId: priceId ?? null,
@@ -134,12 +134,12 @@ export class StripeWebhookService {
     subscription: Stripe.Subscription,
     eventCreatedAt: Date,
   ): Promise<void> {
-    const userId = subscription.metadata?.userId;
-    if (!userId) {
-      this.logger.warn('customer.subscription.deleted: no userId in metadata');
+    const teamId = subscription.metadata?.teamId;
+    if (!teamId) {
+      this.logger.warn('customer.subscription.deleted: no teamId in metadata');
       return;
     }
-    await this.applyIfNewer(userId, eventCreatedAt, {
+    await this.applyIfNewer(teamId, eventCreatedAt, {
       plan: PlanType.FREE,
       planStatus: 'canceled',
       stripeSubscriptionId: null,
@@ -153,16 +153,16 @@ export class StripeWebhookService {
     eventCreatedAt: Date,
   ): Promise<void> {
     const customerId = invoice.customer as string;
-    const user = await this.userRepo.findOne({
+    const team = await this.teamRepo.findOne({
       where: { stripeCustomerId: customerId },
     });
-    if (!user) {
+    if (!team) {
       this.logger.warn(
-        `invoice.payment_failed: no user for Stripe customer ${customerId}`,
+        `invoice.payment_failed: no team for Stripe customer ${customerId}`,
       );
       return;
     }
-    await this.applyIfNewer(user.id, eventCreatedAt, {
+    await this.applyIfNewer(team.id, eventCreatedAt, {
       planStatus: 'past_due',
     });
   }
@@ -176,22 +176,26 @@ export class StripeWebhookService {
    * first event through for rows that never carried a stamp.
    */
   private async applyIfNewer(
-    userId: string,
+    teamId: string,
     eventCreatedAt: Date,
-    fields: UserPlanFields,
+    fields: TeamPlanFields,
   ): Promise<void> {
-    const result = await this.userRepo
+    const result = await this.teamRepo
       .createQueryBuilder()
-      .update(User)
-      .set({ ...fields, lastStripeEventAt: eventCreatedAt })
+      .update(Team)
+      .set({
+        ...fields,
+        planUpdatedAt: eventCreatedAt,
+        lastStripeEventAt: eventCreatedAt,
+      })
       .where(
         'id = :id AND ("lastStripeEventAt" IS NULL OR "lastStripeEventAt" <= :ts)',
-        { id: userId, ts: eventCreatedAt },
+        { id: teamId, ts: eventCreatedAt },
       )
       .execute();
     if (!result.affected) {
       this.logger.warn(
-        `Stale or missing user for Stripe event at ${eventCreatedAt.toISOString()} (user ${userId}) — skipped`,
+        `Stale or missing team for Stripe event at ${eventCreatedAt.toISOString()} (team ${teamId}) — skipped`,
       );
     }
   }

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User, StripeEvent, PlanType } from '@insightstream/database';
+import { Team, StripeEvent, PlanType } from '@insightstream/database';
 import { StripeWebhookService } from './stripe-webhook.service';
 import { StripeService } from './stripe.service';
 
@@ -24,7 +24,7 @@ describe('StripeWebhookService', () => {
     where: jest.Mock;
     execute: jest.Mock;
   };
-  let userRepo: { createQueryBuilder: jest.Mock; findOne: jest.Mock };
+  let teamRepo: { createQueryBuilder: jest.Mock; findOne: jest.Mock };
   let eventRepo: { findOne: jest.Mock; insert: jest.Mock };
   let stripeService: { retrieveSubscription: jest.Mock };
 
@@ -35,7 +35,7 @@ describe('StripeWebhookService', () => {
       where: jest.fn(() => qb),
       execute: jest.fn().mockResolvedValue({ affected: 1 }),
     };
-    userRepo = {
+    teamRepo = {
       createQueryBuilder: jest.fn(() => qb),
       findOne: jest.fn(),
     };
@@ -61,7 +61,7 @@ describe('StripeWebhookService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StripeWebhookService,
-        { provide: getRepositoryToken(User), useValue: userRepo },
+        { provide: getRepositoryToken(Team), useValue: teamRepo },
         { provide: getRepositoryToken(StripeEvent), useValue: eventRepo },
         { provide: StripeService, useValue: stripeService },
         { provide: ConfigService, useValue: configService },
@@ -75,20 +75,20 @@ describe('StripeWebhookService', () => {
       eventRepo.findOne.mockResolvedValue({ id: 'evt_1' });
       const event = makeEvent('customer.subscription.deleted', {
         id: 'sub_1',
-        metadata: { userId: 'user-1' },
+        metadata: { teamId: 't1' },
         items: { data: [] },
       });
 
       await service.handleEvent(event);
 
-      expect(userRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
       expect(eventRepo.insert).not.toHaveBeenCalled();
     });
 
     it('records the event after successful handling', async () => {
       const event = makeEvent(
         'customer.subscription.deleted',
-        { id: 'sub_1', metadata: { userId: 'user-1' }, items: { data: [] } },
+        { id: 'sub_1', metadata: { teamId: 't1' }, items: { data: [] } },
         'evt_del',
         1_700_000_500,
       );
@@ -110,7 +110,7 @@ describe('StripeWebhookService', () => {
         'customer.subscription.updated',
         {
           id: 'sub_1',
-          metadata: { userId: 'user-1' },
+          metadata: { teamId: 't1' },
           status: 'active',
           trial_end: null,
           items: { data: [{ price: { id: 'price_pro_monthly' } }] },
@@ -124,12 +124,13 @@ describe('StripeWebhookService', () => {
       expect(qb.set).toHaveBeenCalledWith(
         expect.objectContaining({
           plan: PlanType.PRO,
+          planUpdatedAt: new Date(1_700_000_000 * 1000),
           lastStripeEventAt: new Date(1_700_000_000 * 1000),
         }),
       );
       expect(qb.where).toHaveBeenCalledWith(
         expect.stringContaining('"lastStripeEventAt" IS NULL'),
-        { id: 'user-1', ts: new Date(1_700_000_000 * 1000) },
+        { id: 't1', ts: new Date(1_700_000_000 * 1000) },
       );
     });
 
@@ -139,7 +140,7 @@ describe('StripeWebhookService', () => {
         'customer.subscription.updated',
         {
           id: 'sub_1',
-          metadata: { userId: 'user-1' },
+          metadata: { teamId: 't1' },
           status: 'active',
           trial_end: null,
           items: { data: [{ price: { id: 'price_pro_monthly' } }] },
@@ -162,7 +163,7 @@ describe('StripeWebhookService', () => {
       });
       const event = makeEvent(
         'checkout.session.completed',
-        { metadata: { userId: 'user-1' }, subscription: 'sub_new' },
+        { metadata: { teamId: 't1' }, subscription: 'sub_new' },
         'evt_co',
         1_700_000_100,
       );
@@ -178,18 +179,19 @@ describe('StripeWebhookService', () => {
         stripePriceId: 'price_pro_monthly',
         planStatus: 'trialing',
         trialEndsAt: new Date(1800000000 * 1000),
+        planUpdatedAt: new Date(1_700_000_100 * 1000),
         lastStripeEventAt: new Date(1_700_000_100 * 1000),
       });
     });
 
-    it('skips when userId missing in metadata', async () => {
+    it('skips when teamId missing in metadata', async () => {
       const event = makeEvent('checkout.session.completed', {
         metadata: {},
         subscription: 'sub_new',
       });
       await service.handleEvent(event);
       expect(stripeService.retrieveSubscription).not.toHaveBeenCalled();
-      expect(userRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
     });
   });
 
@@ -197,7 +199,7 @@ describe('StripeWebhookService', () => {
     it('downgrades to FREE and clears Stripe fields', async () => {
       const event = makeEvent('customer.subscription.deleted', {
         id: 'sub_1',
-        metadata: { userId: 'user-1' },
+        metadata: { teamId: 't1' },
         items: { data: [] },
       });
 
@@ -214,20 +216,23 @@ describe('StripeWebhookService', () => {
       );
     });
 
-    it('skips update when userId missing', async () => {
+    it('skips update when teamId missing', async () => {
       const event = makeEvent('customer.subscription.deleted', {
         id: 'sub_1',
         metadata: {},
         items: { data: [] },
       });
       await service.handleEvent(event);
-      expect(userRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
     });
   });
 
   describe('invoice.payment_failed', () => {
     it('sets planStatus to past_due for the matching customer', async () => {
-      userRepo.findOne.mockResolvedValue({ id: 'user-1' });
+      teamRepo.findOne.mockResolvedValue({
+        id: 't1',
+        stripeCustomerId: 'cus_1',
+      });
       const event = makeEvent('invoice.payment_failed', {
         customer: 'cus_1',
         subscription: 'sub_1',
@@ -235,18 +240,25 @@ describe('StripeWebhookService', () => {
 
       await service.handleEvent(event);
 
+      expect(teamRepo.findOne).toHaveBeenCalledWith({
+        where: { stripeCustomerId: 'cus_1' },
+      });
       expect(qb.set).toHaveBeenCalledWith(
         expect.objectContaining({ planStatus: 'past_due' }),
       );
+      expect(qb.where).toHaveBeenCalledWith(
+        expect.stringContaining('"lastStripeEventAt"'),
+        expect.objectContaining({ id: 't1' }),
+      );
     });
 
-    it('skips update when no user found for customer', async () => {
-      userRepo.findOne.mockResolvedValue(null);
+    it('skips update when no team found for customer', async () => {
+      teamRepo.findOne.mockResolvedValue(null);
       const event = makeEvent('invoice.payment_failed', {
         customer: 'cus_unknown',
       });
       await service.handleEvent(event);
-      expect(userRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
     });
   });
 
@@ -254,7 +266,7 @@ describe('StripeWebhookService', () => {
     it('sets plan to BUSINESS and stores trialEndsAt when annual + trialing', async () => {
       const event = makeEvent('customer.subscription.updated', {
         id: 'sub_1',
-        metadata: { userId: 'user-1' },
+        metadata: { teamId: 't1' },
         status: 'trialing',
         trial_end: 1800000000,
         items: { data: [{ price: { id: 'price_biz_annual' } }] },
@@ -275,7 +287,7 @@ describe('StripeWebhookService', () => {
       const warnSpy = jest.spyOn((service as any).logger, 'warn');
       const event = makeEvent('customer.subscription.updated', {
         id: 'sub_1',
-        metadata: { userId: 'user-1' },
+        metadata: { teamId: 't1' },
         status: 'active',
         trial_end: null,
         items: { data: [{ price: { id: 'price_unknown_xyz' } }] },

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '@insightstream/database';
+import { Team } from '@insightstream/database';
 import Stripe from 'stripe';
 
 @Injectable()
@@ -12,40 +12,41 @@ export class StripeService {
 
   constructor(
     private config: ConfigService,
-    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Team) private teamRepo: Repository<Team>,
   ) {
     this.stripe = new Stripe(this.config.getOrThrow('STRIPE_SECRET_KEY'));
   }
 
-  async createOrGetCustomer(user: User): Promise<string> {
-    if (user.stripeCustomerId) return user.stripeCustomerId;
+  async createOrGetCustomer(team: Team, ownerEmail: string): Promise<string> {
+    if (team.stripeCustomerId) return team.stripeCustomerId;
     const customer = await this.stripe.customers.create({
-      email: user.email,
-      metadata: { userId: user.id },
+      email: ownerEmail,
+      metadata: { teamId: team.id },
     });
-    await this.userRepo.update(user.id, { stripeCustomerId: customer.id });
+    await this.teamRepo.update(team.id, { stripeCustomerId: customer.id });
     this.logger.log(
-      `Created Stripe customer ${customer.id} for user ${user.id}`,
+      `Created Stripe customer ${customer.id} for team ${team.id}`,
     );
     return customer.id;
   }
 
   async createCheckoutSession(
-    user: User,
+    team: Team,
+    ownerEmail: string,
     priceId: string,
     successUrl: string,
     cancelUrl: string,
   ): Promise<string> {
-    const customerId = await this.createOrGetCustomer(user);
+    const customerId = await this.createOrGetCustomer(team, ownerEmail);
     const session = await this.stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
         trial_period_days: 14,
-        metadata: { userId: user.id },
+        metadata: { teamId: team.id },
       },
-      metadata: { userId: user.id },
+      metadata: { teamId: team.id },
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
