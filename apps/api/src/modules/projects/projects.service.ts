@@ -115,6 +115,12 @@ export class ProjectsService {
 
   async remove(id: string, userId: string): Promise<void> {
     const project = await this.findOne(id, userId);
+    const member = await this.memberRepo.findOne({
+      where: { teamId: project.teamId, userId },
+    });
+    if (!member || !hasMinRole(member.role, TeamRole.ADMIN)) {
+      throw new ForbiddenException('Requires admin role in this team');
+    }
     await this.projectsRepository.remove(project);
   }
 }
