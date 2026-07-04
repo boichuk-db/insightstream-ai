@@ -45,7 +45,10 @@ describe('PlanLimitsService (team-keyed)', () => {
       expect(await service.getTeamPlan('t1')).toBe(PlanType.PRO);
     });
     it('degrades past_due to FREE', async () => {
-      teamRepo.findOne.mockResolvedValue({ plan: 'PRO', planStatus: 'past_due' });
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'PRO',
+        planStatus: 'past_due',
+      });
       expect(await service.getTeamPlan('t1')).toBe(PlanType.FREE);
     });
     it('degrades canceled to FREE', async () => {
@@ -70,17 +73,25 @@ describe('PlanLimitsService (team-keyed)', () => {
 
   describe('canCreateProject', () => {
     it('counts projects by teamId against the team plan', async () => {
-      teamRepo.findOne.mockResolvedValue({ plan: 'FREE', planStatus: 'active' });
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'FREE',
+        planStatus: 'active',
+      });
       projectRepo.count.mockResolvedValue(1); // FREE maxProjects === 1
       const res = await service.canCreateProject('t1');
-      expect(projectRepo.count).toHaveBeenCalledWith({ where: { teamId: 't1' } });
+      expect(projectRepo.count).toHaveBeenCalledWith({
+        where: { teamId: 't1' },
+      });
       expect(res.allowed).toBe(false);
     });
   });
 
   describe('canCreateFeedback', () => {
     it('counts this month feedback via project.teamId', async () => {
-      teamRepo.findOne.mockResolvedValue({ plan: 'FREE', planStatus: 'active' });
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'FREE',
+        planStatus: 'active',
+      });
       feedbackRepo.count.mockResolvedValue(0);
       const res = await service.canCreateFeedback('t1');
       expect(feedbackRepo.count).toHaveBeenCalledWith(
@@ -95,7 +106,10 @@ describe('PlanLimitsService (team-keyed)', () => {
   describe('canCreateFeedbackForProject', () => {
     it('resolves project.teamId and delegates', async () => {
       projectRepo.findOne.mockResolvedValue({ id: 'p1', teamId: 't1' });
-      teamRepo.findOne.mockResolvedValue({ plan: 'FREE', planStatus: 'active' });
+      teamRepo.findOne.mockResolvedValue({
+        plan: 'FREE',
+        planStatus: 'active',
+      });
       feedbackRepo.count.mockResolvedValue(0);
       const res = await service.canCreateFeedbackForProject('p1');
       expect(res.allowed).toBe(true);
@@ -109,7 +123,11 @@ describe('PlanLimitsService (team-keyed)', () => {
 
   describe('canInviteMember', () => {
     it('uses the team plan directly (no owner join)', async () => {
-      teamRepo.findOne.mockResolvedValue({ id: 't1', plan: 'FREE', planStatus: 'active' });
+      teamRepo.findOne.mockResolvedValue({
+        id: 't1',
+        plan: 'FREE',
+        planStatus: 'active',
+      });
       memberRepo.count.mockResolvedValue(1); // FREE maxTeamMembers === 1
       const res = await service.canInviteMember('t1');
       expect(res.allowed).toBe(false);

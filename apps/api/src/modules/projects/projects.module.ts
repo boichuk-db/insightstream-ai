@@ -6,10 +6,7 @@ import { ProjectsController } from './projects.controller';
 import { PlansModule } from '../plans/plans.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Project, Team, TeamMember]),
-    PlansModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Project, Team, TeamMember]), PlansModule],
   controllers: [ProjectsController],
   providers: [ProjectsService],
   exports: [ProjectsService],

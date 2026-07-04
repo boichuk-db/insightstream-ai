@@ -53,12 +53,16 @@ describe('FeedbackService', () => {
     };
 
     mockProjectsService = {
-      findOne: jest
-        .fn()
-        .mockResolvedValue({ id: 'proj-abc', teamId: 'team-abc', userId: 'user-abc' }),
-      findByOnlyId: jest
-        .fn()
-        .mockResolvedValue({ id: 'proj-abc', teamId: 'team-abc', userId: 'user-abc' }),
+      findOne: jest.fn().mockResolvedValue({
+        id: 'proj-abc',
+        teamId: 'team-abc',
+        userId: 'user-abc',
+      }),
+      findByOnlyId: jest.fn().mockResolvedValue({
+        id: 'proj-abc',
+        teamId: 'team-abc',
+        userId: 'user-abc',
+      }),
     };
 
     const mockLastSeenRepo = {
