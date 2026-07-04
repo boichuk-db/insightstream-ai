@@ -146,8 +146,7 @@ export class FeedbackService {
     });
     if (!feedback) return null;
 
-    // Check access: direct owner or team member
-    if (feedback.project?.userId === userId) return feedback;
+    // Access = membership in the project's team only
     if (feedback.project?.teamId) {
       const member = await this.memberRepo.findOne({
         where: { teamId: feedback.project.teamId, userId },

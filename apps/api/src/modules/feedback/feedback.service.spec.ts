@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import {
   Feedback,
@@ -15,6 +15,7 @@ import { EventsService } from '../events/events.service';
 describe('FeedbackService', () => {
   let service: FeedbackService;
   let repo: any;
+  let memberRepo: any;
   let lastSeenRepo: any;
   let eventsService: any;
   let mockAiQueueService: any;
@@ -34,6 +35,13 @@ describe('FeedbackService', () => {
       findOne: jest.fn(),
       remove: jest.fn().mockResolvedValue({ success: true }),
       createQueryBuilder: jest.fn(),
+    };
+
+    const mockMemberRepo = {
+      // Default: the caller is a member of the project's team
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ teamId: 'team-abc', userId: 'user-abc' }),
     };
 
     mockAiQueueService = {
@@ -79,7 +87,7 @@ describe('FeedbackService', () => {
         },
         {
           provide: getRepositoryToken(TeamMember),
-          useValue: mockRepo, // Reuse mockRepo for simplicity in types
+          useValue: mockMemberRepo,
         },
         {
           provide: getRepositoryToken(UserProjectLastSeen),
@@ -106,6 +114,7 @@ describe('FeedbackService', () => {
 
     service = module.get<FeedbackService>(FeedbackService);
     repo = module.get(getRepositoryToken(Feedback));
+    memberRepo = module.get(getRepositoryToken(TeamMember));
     lastSeenRepo = module.get(getRepositoryToken(UserProjectLastSeen));
     eventsService = module.get(EventsService);
   });
@@ -176,6 +185,28 @@ describe('FeedbackService', () => {
       );
       expect(repo.save).not.toHaveBeenCalled();
       expect(mockAiQueueService.addAnalysisJob).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne access', () => {
+    it('denies the project creator when they have no team membership', async () => {
+      repo.findOne.mockResolvedValue({
+        id: 'fb-1',
+        content: 'hello',
+        projectId: 'p1',
+        project: { userId: 'creator', teamId: 't1' },
+      });
+      memberRepo.findOne.mockResolvedValue(null); // creator was removed from the team
+
+      const result = await service.findOne('fb-1', 'creator');
+
+      expect(result).toBeNull();
+      expect(memberRepo.findOne).toHaveBeenCalledWith({
+        where: { teamId: 't1', userId: 'creator' },
+      });
+      await expect(
+        service.updateStatus('fb-1', 'Done', 'creator'),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -261,7 +292,10 @@ describe('FeedbackService', () => {
       const fbId = 'uuid-123';
       const userId = 'user-abc';
 
-      repo.findOne.mockResolvedValue({ id: fbId, project: { userId } });
+      repo.findOne.mockResolvedValue({
+        id: fbId,
+        project: { userId, teamId: 'team-abc' },
+      });
 
       const result = await service.remove(fbId, userId);
 
