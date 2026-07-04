@@ -24,6 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         'User no longer exists. Please re-authenticate.',
       );
     }
-    return { id: user.id, email: user.email, role: user.role, plan: user.plan };
+    return { id: user.id, email: user.email, role: user.role };
   }
 }

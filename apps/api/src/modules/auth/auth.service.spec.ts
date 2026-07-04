@@ -42,7 +42,6 @@ describe('AuthService — password reset', () => {
         id: '10',
         email: 'new@x.com',
         role: 'user',
-        plan: 'FREE',
       } as any;
       mockUsersService.create.mockResolvedValue(newUser);
 
@@ -137,7 +136,6 @@ describe('AuthService — password reset', () => {
         email: 'a@b.com',
         googleId: 'g1',
         role: 'user',
-        plan: 'FREE',
       } as any;
       mockUsersService.findByGoogleId.mockResolvedValue(user);
 
@@ -158,7 +156,6 @@ describe('AuthService — password reset', () => {
         email: 'b@b.com',
         googleId: null,
         role: 'user',
-        plan: 'FREE',
       } as any;
       mockUsersService.findByGoogleId.mockResolvedValue(null);
       mockUsersService.findOneByEmail.mockResolvedValue(existingUser);
@@ -187,7 +184,6 @@ describe('AuthService — password reset', () => {
         email: 'c@c.com',
         githubId: 'gh3',
         role: 'user',
-        plan: 'FREE',
       } as any;
       mockUsersService.create.mockResolvedValue(newUser);
 
