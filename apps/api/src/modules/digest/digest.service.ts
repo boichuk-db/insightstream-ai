@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
-import { Project, Feedback, User } from '@insightstream/database';
+import { Project, Feedback, TeamMember } from '@insightstream/database';
 import { AiService } from '../ai/ai.service';
 import { MailService } from '../mail/mail.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
@@ -15,7 +15,7 @@ export class DigestService {
   constructor(
     @InjectRepository(Project) private projects: Repository<Project>,
     @InjectRepository(Feedback) private feedbacks: Repository<Feedback>,
-    @InjectRepository(User) private users: Repository<User>,
+    @InjectRepository(TeamMember) private members: Repository<TeamMember>,
     private ai: AiService,
     private mail: MailService,
     private planLimitsService: PlanLimitsService,
@@ -48,21 +48,18 @@ export class DigestService {
 
     const project = await this.projects.findOne({
       where: { id: projectId },
-      relations: ['user'],
     });
     if (!project) throw new Error(`Project ${projectId} not found`);
 
-    // Gate digest preview by plan
-    if ((project as any).user?.id) {
-      const hasDigest = await this.planLimitsService.canUseFeature(
-        (project as any).user.id,
-        'weeklyDigest',
+    // Gate digest preview by team plan
+    const hasDigest = await this.planLimitsService.canUseFeature(
+      project.teamId,
+      'weeklyDigest',
+    );
+    if (!hasDigest) {
+      throw new Error(
+        'Weekly digest is available on Pro and Business plans. Please upgrade.',
       );
-      if (!hasDigest) {
-        throw new Error(
-          'Weekly digest is available on Pro and Business plans. Please upgrade.',
-        );
-      }
     }
 
     const since = new Date();
@@ -87,26 +84,23 @@ export class DigestService {
     const since = new Date();
     since.setDate(since.getDate() - 7);
 
-    const allProjects = await this.projects.find({ relations: ['user'] });
+    const allProjects = await this.projects.find();
     let sent = 0;
     let skipped = 0;
 
     for (const project of allProjects) {
       try {
-        // Skip digest for users whose plan doesn't include it
-        const ownerId = (project as any).user?.id;
-        if (ownerId) {
-          const hasDigest = await this.planLimitsService.canUseFeature(
-            ownerId,
-            'weeklyDigest',
+        // Skip digest for teams whose plan doesn't include it
+        const hasDigest = await this.planLimitsService.canUseFeature(
+          project.teamId,
+          'weeklyDigest',
+        );
+        if (!hasDigest) {
+          this.logger.debug(
+            `Project "${project.name}" — team plan does not include weekly digest, skipping.`,
           );
-          if (!hasDigest) {
-            this.logger.debug(
-              `Project "${project.name}" — owner plan does not include weekly digest, skipping.`,
-            );
-            skipped++;
-            continue;
-          }
+          skipped++;
+          continue;
         }
 
         const weekFeedbacks = await this.feedbacks.find({
@@ -122,10 +116,17 @@ export class DigestService {
           continue;
         }
 
-        const ownerEmail = (project as any).user?.email;
-        if (!ownerEmail) {
+        const recipients = (
+          await this.members.find({
+            where: { teamId: project.teamId },
+            relations: ['user'],
+          })
+        )
+          .map((m) => m.user?.email)
+          .filter((e): e is string => !!e);
+        if (recipients.length === 0) {
           this.logger.warn(
-            `Project "${project.name}" — owner email not found, skipping.`,
+            `Project "${project.name}" — no team member emails, skipping.`,
           );
           skipped++;
           continue;
@@ -135,15 +136,13 @@ export class DigestService {
         const aiSummary = await this.ai.generateWeeklyDigest(stats);
         const html = this.renderEmail(project.name, stats, aiSummary, since);
 
-        await this.mail.send(
-          ownerEmail,
-          `📊 Weekly Digest: ${project.name}`,
-          html,
-        );
+        for (const email of recipients) {
+          await this.mail.send(email, `📊 Weekly Digest: ${project.name}`, html);
+        }
 
         sent++;
         this.logger.log(
-          `Digest sent for "${project.name}" → ${ownerEmail} (${weekFeedbacks.length} feedbacks)`,
+          `Digest sent for "${project.name}" → ${recipients.length} member(s) (${weekFeedbacks.length} feedbacks)`,
         );
       } catch (err) {
         this.logger.error(`Failed digest for project "${project.name}":`, err);

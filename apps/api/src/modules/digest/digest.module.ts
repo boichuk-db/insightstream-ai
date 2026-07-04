@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Project, Feedback, User } from '@insightstream/database';
+import { Project, Feedback, TeamMember } from '@insightstream/database';
 import { AiModule } from '../ai/ai.module';
 import { MailModule } from '../mail/mail.module';
 import { DigestService } from './digest.service';
@@ -10,7 +10,7 @@ import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Project, Feedback, User]),
+    TypeOrmModule.forFeature([Project, Feedback, TeamMember]),
     AiModule,
     MailModule,
     PlansModule,
