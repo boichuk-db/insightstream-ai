@@ -1163,6 +1163,8 @@ git add apps/api/src/modules/stripe
 git commit -m "feat(tenant): Stripe customer, checkout and webhooks keyed by team"
 ```
 
+Follow-up (2026-07-04 review): webhook handlers fall back to stripeCustomerId when metadata lacks teamId (legacy pre-migration subscriptions); unresolvable events are not recorded so dashboard redelivery stays possible; requireOwnedTeam returns uniform 404.
+
 ---
 
 ### Task 7: Digest — team plan gate, all-member recipients (TDD)

@@ -26,7 +26,10 @@ export class StripeController {
     @InjectRepository(TeamMember) private memberRepo: Repository<TeamMember>,
   ) {}
 
-  /** Owner-only: loads the team and asserts req.user owns it. */
+  /**
+   * Owner-only: loads the team and asserts req.user owns it. Uniform 404 for
+   * both "no such team" and "not the owner" so team existence isn't probeable.
+   */
   private async requireOwnedTeam(
     teamId: string,
     userId: string,
@@ -36,9 +39,8 @@ export class StripeController {
       where: { id: teamId },
       relations: ['owner'],
     });
-    if (!team) throw new NotFoundException('Team not found');
-    if (team.ownerId !== userId) {
-      throw new ForbiddenException('Only the team owner manages billing');
+    if (!team || team.ownerId !== userId) {
+      throw new NotFoundException('Team not found');
     }
     return team;
   }
@@ -88,7 +90,8 @@ export class StripeController {
       where: { teamId, userId: req.user.id },
     });
     if (!member) throw new ForbiddenException('Not a member of this team');
-    const team = await this.teamRepo.findOneOrFail({ where: { id: teamId } });
+    const team = await this.teamRepo.findOne({ where: { id: teamId } });
+    if (!team) throw new NotFoundException('Team not found');
     return {
       plan: team.plan,
       planStatus: team.planStatus ?? 'active',

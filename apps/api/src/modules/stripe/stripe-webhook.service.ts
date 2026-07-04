@@ -33,7 +33,10 @@ export class StripeWebhookService {
   /**
    * Single entry point for verified webhooks. Idempotent (dedup by event id)
    * and order-safe (per-team, an event older than the last applied one is
-   * ignored). Records every handled event so retries and reorders are inert.
+   * ignored). Records every applied event so retries and reorders are inert.
+   * Events whose team cannot be resolved are NOT recorded, so a manual
+   * redelivery from the Stripe dashboard (after a metadata/customer fix) can
+   * still process them.
    */
   async handleEvent(event: Stripe.Event): Promise<void> {
     if (await this.eventRepo.findOne({ where: { id: event.id } })) {
@@ -45,6 +48,7 @@ export class StripeWebhookService {
 
     const eventCreatedAt = new Date(event.created * 1000);
     let subscriptionId: string | null = null;
+    let applied: boolean;
 
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -53,25 +57,31 @@ export class StripeWebhookService {
           typeof session.subscription === 'string'
             ? session.subscription
             : null;
-        await this.handleCheckoutCompleted(session, eventCreatedAt);
+        applied = await this.handleCheckoutCompleted(session, eventCreatedAt);
         break;
       }
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         subscriptionId = subscription.id;
-        await this.handleSubscriptionUpdated(subscription, eventCreatedAt);
+        applied = await this.handleSubscriptionUpdated(
+          subscription,
+          eventCreatedAt,
+        );
         break;
       }
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         subscriptionId = subscription.id;
-        await this.handleSubscriptionDeleted(subscription, eventCreatedAt);
+        applied = await this.handleSubscriptionDeleted(
+          subscription,
+          eventCreatedAt,
+        );
         break;
       }
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
         subscriptionId = this.extractInvoiceSubscription(invoice);
-        await this.handlePaymentFailed(invoice, eventCreatedAt);
+        applied = await this.handlePaymentFailed(invoice, eventCreatedAt);
         break;
       }
       default:
@@ -79,17 +89,39 @@ export class StripeWebhookService {
         return;
     }
 
-    await this.recordEvent(event, subscriptionId, eventCreatedAt);
+    if (applied) {
+      await this.recordEvent(event, subscriptionId, eventCreatedAt);
+    }
+  }
+
+  /**
+   * Resolve the team for a Stripe object: prefer metadata.teamId (post-tenant
+   * objects), fall back to the customer id for legacy subscriptions whose
+   * metadata still carries the pre-migration userId.
+   */
+  private async resolveTeamId(
+    metadata: Stripe.Metadata | null | undefined,
+    customer: string | { id: string } | null | undefined,
+  ): Promise<string | null> {
+    if (metadata?.teamId) return metadata.teamId;
+    const customerId = typeof customer === 'string' ? customer : customer?.id;
+    if (!customerId) return null;
+    const team = await this.teamRepo.findOne({
+      where: { stripeCustomerId: customerId },
+    });
+    return team?.id ?? null;
   }
 
   private async handleCheckoutCompleted(
     session: Stripe.Checkout.Session,
     eventCreatedAt: Date,
-  ): Promise<void> {
-    const teamId = session.metadata?.teamId;
+  ): Promise<boolean> {
+    const teamId = await this.resolveTeamId(session.metadata, session.customer);
     if (!teamId) {
-      this.logger.warn('checkout.session.completed: no teamId in metadata');
-      return;
+      this.logger.warn(
+        'checkout.session.completed: no teamId in metadata and no matching customer',
+      );
+      return false;
     }
 
     const subscription = await this.stripeService.retrieveSubscription(
@@ -106,16 +138,22 @@ export class StripeWebhookService {
         ? new Date(subscription.trial_end * 1000)
         : null,
     });
+    return true;
   }
 
   private async handleSubscriptionUpdated(
     subscription: Stripe.Subscription,
     eventCreatedAt: Date,
-  ): Promise<void> {
-    const teamId = subscription.metadata?.teamId;
+  ): Promise<boolean> {
+    const teamId = await this.resolveTeamId(
+      subscription.metadata,
+      subscription.customer,
+    );
     if (!teamId) {
-      this.logger.warn('customer.subscription.updated: no teamId in metadata');
-      return;
+      this.logger.warn(
+        'customer.subscription.updated: no teamId in metadata and no matching customer',
+      );
+      return false;
     }
     const priceId = subscription.items.data[0]?.price.id;
 
@@ -128,16 +166,22 @@ export class StripeWebhookService {
         ? new Date(subscription.trial_end * 1000)
         : null,
     });
+    return true;
   }
 
   private async handleSubscriptionDeleted(
     subscription: Stripe.Subscription,
     eventCreatedAt: Date,
-  ): Promise<void> {
-    const teamId = subscription.metadata?.teamId;
+  ): Promise<boolean> {
+    const teamId = await this.resolveTeamId(
+      subscription.metadata,
+      subscription.customer,
+    );
     if (!teamId) {
-      this.logger.warn('customer.subscription.deleted: no teamId in metadata');
-      return;
+      this.logger.warn(
+        'customer.subscription.deleted: no teamId in metadata and no matching customer',
+      );
+      return false;
     }
     await this.applyIfNewer(teamId, eventCreatedAt, {
       plan: PlanType.FREE,
@@ -146,12 +190,13 @@ export class StripeWebhookService {
       stripePriceId: null,
       trialEndsAt: null,
     });
+    return true;
   }
 
   private async handlePaymentFailed(
     invoice: Stripe.Invoice,
     eventCreatedAt: Date,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const customerId = invoice.customer as string;
     const team = await this.teamRepo.findOne({
       where: { stripeCustomerId: customerId },
@@ -160,11 +205,12 @@ export class StripeWebhookService {
       this.logger.warn(
         `invoice.payment_failed: no team for Stripe customer ${customerId}`,
       );
-      return;
+      return false;
     }
     await this.applyIfNewer(team.id, eventCreatedAt, {
       planStatus: 'past_due',
     });
+    return true;
   }
 
   /**

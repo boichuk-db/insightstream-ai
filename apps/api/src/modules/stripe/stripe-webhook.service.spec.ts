@@ -192,6 +192,7 @@ describe('StripeWebhookService', () => {
       await service.handleEvent(event);
       expect(stripeService.retrieveSubscription).not.toHaveBeenCalled();
       expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(eventRepo.insert).not.toHaveBeenCalled();
     });
   });
 
@@ -224,6 +225,57 @@ describe('StripeWebhookService', () => {
       });
       await service.handleEvent(event);
       expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(eventRepo.insert).not.toHaveBeenCalled();
+    });
+
+    it('falls back to stripeCustomerId for legacy subscriptions without teamId', async () => {
+      teamRepo.findOne.mockResolvedValue({
+        id: 't1',
+        stripeCustomerId: 'cus_1',
+      });
+      const event = makeEvent(
+        'customer.subscription.deleted',
+        {
+          id: 'sub_1',
+          customer: 'cus_1',
+          metadata: { userId: 'legacy' },
+          items: { data: [] },
+        },
+        'evt_legacy_del',
+        1_700_000_600,
+      );
+
+      await service.handleEvent(event);
+
+      expect(teamRepo.findOne).toHaveBeenCalledWith({
+        where: { stripeCustomerId: 'cus_1' },
+      });
+      expect(qb.set).toHaveBeenCalledWith(
+        expect.objectContaining({
+          plan: PlanType.FREE,
+          planStatus: 'canceled',
+        }),
+      );
+      expect(qb.where).toHaveBeenCalledWith(
+        expect.stringContaining('"lastStripeEventAt"'),
+        expect.objectContaining({ id: 't1' }),
+      );
+      expect(eventRepo.insert).toHaveBeenCalled();
+    });
+
+    it('does not record the event when neither teamId nor a known customer resolves', async () => {
+      teamRepo.findOne.mockResolvedValue(null);
+      const event = makeEvent('customer.subscription.deleted', {
+        id: 'sub_1',
+        customer: 'cus_unknown',
+        metadata: { userId: 'legacy' },
+        items: { data: [] },
+      });
+
+      await service.handleEvent(event);
+
+      expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(eventRepo.insert).not.toHaveBeenCalled();
     });
   });
 
@@ -259,6 +311,7 @@ describe('StripeWebhookService', () => {
       });
       await service.handleEvent(event);
       expect(teamRepo.createQueryBuilder).not.toHaveBeenCalled();
+      expect(eventRepo.insert).not.toHaveBeenCalled();
     });
   });
 
