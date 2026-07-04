@@ -9,7 +9,6 @@ import {
   Team,
   TeamMember,
   TeamRole,
-  Project,
   User,
   ActivityAction,
 } from '@insightstream/database';
@@ -20,7 +19,6 @@ export class TeamsService {
   constructor(
     @InjectRepository(Team) private teamRepo: Repository<Team>,
     @InjectRepository(TeamMember) private memberRepo: Repository<TeamMember>,
-    @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(User) private userRepo: Repository<User>,
     private activityService: ActivityService,
   ) {}
@@ -37,8 +35,8 @@ export class TeamsService {
     await this.activityService.log({
       teamId: team.id,
       actorId: userId,
-      action: ActivityAction.PROJECT_CREATED,
-      metadata: { teamName: data.name },
+      action: ActivityAction.MEMBER_JOINED,
+      metadata: { role: TeamRole.OWNER, teamName: data.name },
     });
 
     return team;
@@ -184,12 +182,21 @@ export class TeamsService {
     if (team.ownerId !== userId) {
       throw new ForbiddenException('Only the team owner can delete the team');
     }
-    const projectCount = await this.projectRepo.count({ where: { teamId } });
-    if (projectCount > 0) {
+    // Atomic guard: the row is deleted only if no project references the team
+    // at execution time — closes the count-then-remove TOCTOU window.
+    const result = await this.teamRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Team)
+      .where(
+        'id = :teamId AND NOT EXISTS (SELECT 1 FROM "projects" p WHERE p."teamId" = :teamId)',
+        { teamId },
+      )
+      .execute();
+    if (!result.affected) {
       throw new ForbiddenException(
         'Delete or move the team projects before deleting the team',
       );
     }
-    await this.teamRepo.remove(team);
   }
 }
