@@ -5,8 +5,10 @@ import {
   Delete,
   Param,
   Body,
+  Query,
   UseGuards,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProjectsService } from './projects.service';
@@ -19,14 +21,15 @@ export class ProjectsController {
   @Post()
   async create(
     @Request() req: any,
-    @Body() body: { name: string; domain?: string },
+    @Body() body: { name: string; domain?: string; teamId: string },
   ) {
     return this.projectsService.create(req.user.id, body);
   }
 
   @Get()
-  async findAll(@Request() req: any) {
-    return this.projectsService.findAllByUser(req.user.id);
+  async findAll(@Request() req: any, @Query('teamId') teamId: string) {
+    if (!teamId) throw new BadRequestException('teamId is required');
+    return this.projectsService.findAllForMember(teamId, req.user.id);
   }
 
   @Get(':id')
