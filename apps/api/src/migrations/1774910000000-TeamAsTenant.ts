@@ -50,7 +50,7 @@ export class TeamAsTenant1774910000000 implements MigrationInterface {
         AND t."id" = (
           SELECT t2."id" FROM "teams" t2
           WHERE t2."ownerId" = u."id"
-          ORDER BY t2."createdAt" ASC LIMIT 1
+          ORDER BY t2."createdAt" ASC, t2."id" ASC LIMIT 1
         )
     `);
 
@@ -59,7 +59,7 @@ export class TeamAsTenant1774910000000 implements MigrationInterface {
       UPDATE "projects" p SET "teamId" = (
         SELECT t."id" FROM "teams" t
         WHERE t."ownerId" = p."userId"
-        ORDER BY t."createdAt" ASC LIMIT 1
+        ORDER BY t."createdAt" ASC, t."id" ASC LIMIT 1
       )
       WHERE p."teamId" IS NULL
     `);
@@ -78,7 +78,9 @@ export class TeamAsTenant1774910000000 implements MigrationInterface {
           ON tc.constraint_name = kcu.constraint_name
         WHERE tc.table_name = 'projects'
           AND tc.constraint_type = 'FOREIGN KEY'
-          AND kcu.column_name = 'teamId';
+          AND kcu.column_name = 'teamId'
+          AND kcu.table_name = tc.table_name
+          AND tc.table_schema = current_schema();
         IF fk IS NOT NULL THEN
           EXECUTE format('ALTER TABLE "projects" DROP CONSTRAINT %I', fk);
         END IF;
@@ -121,6 +123,9 @@ export class TeamAsTenant1774910000000 implements MigrationInterface {
         ADD COLUMN IF NOT EXISTS "trialEndsAt" timestamp,
         ADD COLUMN IF NOT EXISTS "lastStripeEventAt" timestamp DEFAULT '1970-01-01 00:00:00'
     `);
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_ab9126a074980674ba95d4cd35" ON "users" ("stripeCustomerId")`,
+    );
     await queryRunner.query(`
       UPDATE "users" u SET
         "plan" = t."plan", "planUpdatedAt" = t."planUpdatedAt",
@@ -131,7 +136,7 @@ export class TeamAsTenant1774910000000 implements MigrationInterface {
       WHERE t."ownerId" = u."id"
         AND t."id" = (
           SELECT t2."id" FROM "teams" t2
-          WHERE t2."ownerId" = u."id" ORDER BY t2."createdAt" ASC LIMIT 1
+          WHERE t2."ownerId" = u."id" ORDER BY t2."createdAt" ASC, t2."id" ASC LIMIT 1
         )
     `);
     await queryRunner.query(
