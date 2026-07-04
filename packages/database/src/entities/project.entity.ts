@@ -33,17 +33,15 @@ export class Project {
   @JoinColumn({ name: "userId" })
   user: User;
 
+  /** Creator attribution only — access control goes through teamId membership. */
   @Column({ type: "uuid" })
   userId: string;
 
-  @Column({ type: "uuid", nullable: true })
+  @Column({ type: "uuid" })
   @Index()
-  teamId: string | null;
+  teamId: string;
 
-  @ManyToOne("Team", (team: Team) => team.projects, {
-    onDelete: "SET NULL",
-    nullable: true,
-  })
+  @ManyToOne("Team", (team: Team) => team.projects, { onDelete: "CASCADE" })
   @JoinColumn({ name: "teamId" })
   team: Team;
 
