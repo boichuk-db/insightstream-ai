@@ -19,6 +19,7 @@ describe('FeedbackService', () => {
   let eventsService: any;
   let mockAiQueueService: any;
   let mockProjectsService: any;
+  let mockPlanLimitsService: any;
 
   beforeEach(async () => {
     const mockRepo = {
@@ -44,8 +45,12 @@ describe('FeedbackService', () => {
     };
 
     mockProjectsService = {
-      findOne: jest.fn().mockResolvedValue({ userId: 'user-abc' }),
-      findByOnlyId: jest.fn().mockResolvedValue({ userId: 'user-abc' }),
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'proj-abc', teamId: 'team-abc', userId: 'user-abc' }),
+      findByOnlyId: jest
+        .fn()
+        .mockResolvedValue({ id: 'proj-abc', teamId: 'team-abc', userId: 'user-abc' }),
     };
 
     const mockLastSeenRepo = {
@@ -53,10 +58,14 @@ describe('FeedbackService', () => {
       findOne: jest.fn().mockResolvedValue(null),
     };
 
-    const mockPlanLimitsService = {
-      canCreateFeedback: jest.fn().mockResolvedValue(true),
-      canCreateFeedbackForProject: jest.fn().mockResolvedValue(true),
-      getUserPlan: jest.fn().mockResolvedValue('pro'),
+    mockPlanLimitsService = {
+      canCreateFeedback: jest
+        .fn()
+        .mockResolvedValue({ allowed: true, current: 0, max: 100 }),
+      canCreateFeedbackForProject: jest
+        .fn()
+        .mockResolvedValue({ allowed: true, current: 0, max: 100 }),
+      getTeamPlan: jest.fn().mockResolvedValue('pro'),
       assertAllowed: jest.fn(),
       getLimits: jest.fn().mockReturnValue({ aiAnalysis: 'full' }),
     };
@@ -125,6 +134,28 @@ describe('FeedbackService', () => {
       await expect(service.create('user-1', '')).rejects.toThrow(
         'Content is required',
       );
+    });
+
+    it('enforces the feedback limit against the project team, not the creator', async () => {
+      mockProjectsService.findOne.mockResolvedValue({
+        id: 'p1',
+        teamId: 't1',
+        userId: 'creator',
+      });
+      mockPlanLimitsService.canCreateFeedback.mockResolvedValue({
+        allowed: true,
+        current: 0,
+        max: 100,
+      });
+      mockPlanLimitsService.getTeamPlan.mockResolvedValue('FREE');
+      mockPlanLimitsService.getLimits.mockReturnValue({ aiAnalysis: 'basic' });
+
+      await service.create('p1', 'hello', 'creator');
+
+      expect(mockPlanLimitsService.canCreateFeedback).toHaveBeenCalledWith(
+        't1',
+      );
+      expect(mockPlanLimitsService.getTeamPlan).toHaveBeenCalledWith('t1');
     });
   });
 

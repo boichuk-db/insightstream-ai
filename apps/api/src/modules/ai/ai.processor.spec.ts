@@ -46,7 +46,7 @@ describe('AiProcessor', () => {
         feedbackId: 'fb-1',
         content: 'Please add dark mode',
         projectId: 'proj-1',
-        ownerId: 'user-1',
+        teamId: 'team-1',
         aiLevel: 'full',
       }),
     );
@@ -78,7 +78,7 @@ describe('AiProcessor', () => {
         feedbackId: 'fb-2',
         content: 'App crashes',
         projectId: 'proj-1',
-        ownerId: 'user-1',
+        teamId: 'team-1',
         aiLevel: 'basic',
       }),
     );
@@ -100,7 +100,7 @@ describe('AiProcessor', () => {
           feedbackId: 'fb-3',
           content: 'test',
           projectId: 'proj-1',
-          ownerId: 'user-1',
+          teamId: 'team-1',
           aiLevel: 'basic',
         }),
       ),

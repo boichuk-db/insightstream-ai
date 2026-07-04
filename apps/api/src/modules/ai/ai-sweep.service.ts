@@ -56,18 +56,18 @@ export class AiSweepService {
 
       for (const fb of candidates) {
         try {
-          const ownerId = fb.project?.userId;
-          if (!ownerId) {
+          const teamId = fb.project?.teamId;
+          if (!teamId) {
             this.logger.warn(
-              `Feedback ${fb.id} has no owner; skipping sweep re-enqueue`,
+              `Feedback ${fb.id} has no team; skipping sweep re-enqueue`,
             );
             continue;
           }
 
-          let plan = planCache.get(ownerId);
+          let plan = planCache.get(teamId);
           if (plan === undefined) {
-            plan = await this.planLimitsService.getUserPlan(ownerId);
-            planCache.set(ownerId, plan);
+            plan = await this.planLimitsService.getTeamPlan(teamId);
+            planCache.set(teamId, plan);
           }
           const aiLevel = this.planLimitsService.getLimits(plan).aiAnalysis;
           if (aiLevel === 'none') continue;
@@ -77,7 +77,7 @@ export class AiSweepService {
               feedbackId: fb.id,
               content: fb.content,
               projectId: fb.projectId,
-              ownerId,
+              teamId,
               aiLevel: aiLevel === 'full' ? 'full' : 'basic',
             },
             10,

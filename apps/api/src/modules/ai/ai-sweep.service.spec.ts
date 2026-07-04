@@ -11,7 +11,7 @@ describe('AiSweepService', () => {
   let service: AiSweepService;
   let feedbackRepo: { find: jest.Mock; count: jest.Mock };
   let aiQueue: { addAnalysisJob: jest.Mock };
-  let planLimits: { getUserPlan: jest.Mock; getLimits: jest.Mock };
+  let planLimits: { getTeamPlan: jest.Mock; getLimits: jest.Mock };
 
   const makeFeedback = (over: Partial<Feedback> = {}): Feedback =>
     ({
@@ -19,7 +19,7 @@ describe('AiSweepService', () => {
       content: 'hello',
       projectId: 'proj-1',
       sentimentScore: null,
-      project: { userId: 'owner-1' },
+      project: { teamId: 'team-1' },
       ...over,
     }) as unknown as Feedback;
 
@@ -30,7 +30,7 @@ describe('AiSweepService', () => {
     };
     aiQueue = { addAnalysisJob: jest.fn().mockResolvedValue(undefined) };
     planLimits = {
-      getUserPlan: jest.fn().mockResolvedValue(PlanType.FREE),
+      getTeamPlan: jest.fn().mockResolvedValue(PlanType.FREE),
       getLimits: jest.fn().mockReturnValue({ aiAnalysis: 'basic' }),
     };
 
@@ -56,7 +56,7 @@ describe('AiSweepService', () => {
         feedbackId: 'fb-1',
         content: 'hello',
         projectId: 'proj-1',
-        ownerId: 'owner-1',
+        teamId: 'team-1',
         aiLevel: 'basic',
       },
       10,
@@ -105,7 +105,7 @@ describe('AiSweepService', () => {
 
     await service.sweep();
 
-    expect(planLimits.getUserPlan).toHaveBeenCalledTimes(1);
+    expect(planLimits.getTeamPlan).toHaveBeenCalledTimes(1);
     expect(aiQueue.addAnalysisJob).toHaveBeenCalledTimes(2);
   });
 

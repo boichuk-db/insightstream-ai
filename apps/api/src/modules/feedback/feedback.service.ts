@@ -47,19 +47,21 @@ export class FeedbackService {
       throw new BadRequestException('Content is required');
     }
     // Verify the user owns this project if userId is provided
+    let teamId: string | null = null;
     if (userId) {
-      await this.projectsService.findOne(projectId, userId);
-      // Check feedback limit for authenticated user
-      const check = await this.planLimitsService.canCreateFeedback(userId);
-      const plan = await this.planLimitsService.getUserPlan(userId);
+      const project = await this.projectsService.findOne(projectId, userId);
+      teamId = project.teamId;
+      const check = await this.planLimitsService.canCreateFeedback(teamId);
+      const plan = await this.planLimitsService.getTeamPlan(teamId);
       this.planLimitsService.assertAllowed(check, 'feedbacks this month', plan);
     } else {
-      // Public widget — check limit via project owner
+      // Public widget — limits belong to the project's team
       const check =
         await this.planLimitsService.canCreateFeedbackForProject(projectId);
       const project = await this.projectsService.findByOnlyId(projectId);
-      if (project) {
-        const plan = await this.planLimitsService.getUserPlan(project.userId);
+      teamId = project?.teamId ?? null;
+      if (teamId) {
+        const plan = await this.planLimitsService.getTeamPlan(teamId);
         this.planLimitsService.assertAllowed(
           check,
           'feedbacks this month',
@@ -79,24 +81,22 @@ export class FeedbackService {
 
     await this.eventsService.emitFeedbackUpdatedForProject(projectId);
 
-    // Determine the owner's AI analysis level
-    const ownerId =
-      userId || (await this.projectsService.findByOnlyId(projectId))?.userId;
+    // Determine the team's AI analysis level
     let aiLevel: string = 'basic';
-    if (ownerId) {
+    if (teamId) {
       const limits = this.planLimitsService.getLimits(
-        await this.planLimitsService.getUserPlan(ownerId),
+        await this.planLimitsService.getTeamPlan(teamId),
       );
       aiLevel = limits.aiAnalysis;
     }
 
-    if (aiLevel !== 'none') {
+    if (aiLevel !== 'none' && teamId) {
       await this.aiQueueService.addAnalysisJob(
         {
           feedbackId: savedFeedback.id,
           content,
           projectId,
-          ownerId: ownerId ?? '',
+          teamId,
           aiLevel: aiLevel === 'full' ? 'full' : 'basic',
         },
         10,
@@ -194,16 +194,15 @@ export class FeedbackService {
       throw new ForbiddenException('Feedback not found or access denied');
     }
 
-    // Determine the owner's AI analysis level
-    const ownerId = userId || feedback.project?.userId;
+    // Determine the team's AI analysis level
+    const teamId = feedback.project?.teamId;
     let aiLevel: string = 'basic';
-    if (ownerId) {
+    if (teamId) {
       const limits = this.planLimitsService.getLimits(
-        await this.planLimitsService.getUserPlan(ownerId),
+        await this.planLimitsService.getTeamPlan(teamId),
       );
       aiLevel = limits.aiAnalysis;
     }
-
     if (aiLevel === 'none')
       return { success: false, message: 'AI Analysis disabled for your plan' };
 
@@ -212,7 +211,7 @@ export class FeedbackService {
         feedbackId: feedback.id,
         content: feedback.content,
         projectId: feedback.projectId,
-        ownerId,
+        teamId: teamId!,
         aiLevel: aiLevel === 'full' ? 'full' : 'basic',
       },
       1,

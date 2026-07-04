@@ -8,7 +8,7 @@ export interface AnalysisJobData {
   feedbackId: string;
   content: string;
   projectId: string;
-  ownerId: string;
+  teamId: string;
   aiLevel: 'basic' | 'full';
 }
 
