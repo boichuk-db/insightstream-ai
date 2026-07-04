@@ -2,7 +2,6 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual } from 'typeorm';
 import {
-  User,
   Project,
   Feedback,
   TeamMember,
@@ -15,20 +14,20 @@ import {
 @Injectable()
 export class PlanLimitsService {
   constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(Feedback) private feedbackRepo: Repository<Feedback>,
     @InjectRepository(TeamMember) private memberRepo: Repository<TeamMember>,
     @InjectRepository(Team) private teamRepo: Repository<Team>,
   ) {}
 
-  async getUserPlan(userId: string): Promise<PlanType> {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
-    const planStatus = user?.planStatus ?? 'active';
+  /** Effective plan of a team; past_due/canceled degrade to FREE. */
+  async getTeamPlan(teamId: string): Promise<PlanType> {
+    const team = await this.teamRepo.findOne({ where: { id: teamId } });
+    const planStatus = team?.planStatus ?? 'active';
     if (planStatus === 'past_due' || planStatus === 'canceled') {
       return PlanType.FREE;
     }
-    return (user?.plan as PlanType) || PlanType.FREE;
+    return (team?.plan as PlanType) || PlanType.FREE;
   }
 
   getLimits(plan: PlanType): PlanLimits {
@@ -36,11 +35,11 @@ export class PlanLimitsService {
   }
 
   async canCreateProject(
-    userId: string,
+    teamId: string,
   ): Promise<{ allowed: boolean; current: number; max: number }> {
-    const plan = await this.getUserPlan(userId);
+    const plan = await this.getTeamPlan(teamId);
     const limits = this.getLimits(plan);
-    const current = await this.projectRepo.count({ where: { userId } });
+    const current = await this.projectRepo.count({ where: { teamId } });
     return {
       allowed: current < limits.maxProjects,
       current,
@@ -49,9 +48,9 @@ export class PlanLimitsService {
   }
 
   async canCreateFeedback(
-    userId: string,
+    teamId: string,
   ): Promise<{ allowed: boolean; current: number; max: number }> {
-    const plan = await this.getUserPlan(userId);
+    const plan = await this.getTeamPlan(teamId);
     const limits = this.getLimits(plan);
 
     const startOfMonth = new Date();
@@ -60,7 +59,7 @@ export class PlanLimitsService {
 
     const current = await this.feedbackRepo.count({
       where: {
-        project: { userId },
+        project: { teamId },
         createdAt: MoreThanOrEqual(startOfMonth),
       },
       relations: ['project'],
@@ -82,14 +81,14 @@ export class PlanLimitsService {
     if (!project) {
       return { allowed: false, current: 0, max: 0 };
     }
-    return this.canCreateFeedback(project.userId);
+    return this.canCreateFeedback(project.teamId);
   }
 
   async canUseFeature(
-    userId: string,
+    teamId: string,
     feature: keyof PlanLimits,
   ): Promise<boolean> {
-    const plan = await this.getUserPlan(userId);
+    const plan = await this.getTeamPlan(teamId);
     const limits = this.getLimits(plan);
     const value = limits[feature];
     if (typeof value === 'boolean') return value;
@@ -101,14 +100,8 @@ export class PlanLimitsService {
   async canInviteMember(
     teamId: string,
   ): Promise<{ allowed: boolean; current: number; max: number }> {
-    const team = await this.teamRepo.findOne({
-      where: { id: teamId },
-      relations: ['owner'],
-    });
-    if (!team) return { allowed: false, current: 0, max: 0 };
-
-    const ownerPlan = await this.getUserPlan(team.owner.id);
-    const limits = this.getLimits(ownerPlan);
+    const plan = await this.getTeamPlan(teamId);
+    const limits = this.getLimits(plan);
     const current = await this.memberRepo.count({ where: { teamId } });
     return {
       allowed: current < limits.maxTeamMembers,
@@ -117,11 +110,11 @@ export class PlanLimitsService {
     };
   }
 
-  async getUsageSummary(userId: string) {
-    const plan = await this.getUserPlan(userId);
+  async getUsageSummary(teamId: string) {
+    const plan = await this.getTeamPlan(teamId);
     const limits = this.getLimits(plan);
-    const projectCheck = await this.canCreateProject(userId);
-    const feedbackCheck = await this.canCreateFeedback(userId);
+    const projectCheck = await this.canCreateProject(teamId);
+    const feedbackCheck = await this.canCreateFeedback(teamId);
 
     return {
       plan,

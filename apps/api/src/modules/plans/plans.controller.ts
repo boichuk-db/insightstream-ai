@@ -1,15 +1,23 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Request,
+  Query,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PlanLimitsService } from './plan-limits.service';
-import { User, PlanType, PLAN_CONFIGS } from '@insightstream/database';
+import { TeamMember, PLAN_CONFIGS } from '@insightstream/database';
 
 @Controller('plans')
 export class PlansController {
   constructor(
     private planLimitsService: PlanLimitsService,
-    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(TeamMember) private memberRepo: Repository<TeamMember>,
   ) {}
 
   @Get()
@@ -27,8 +35,13 @@ export class PlansController {
 
   @Get('usage')
   @UseGuards(JwtAuthGuard)
-  async getUsage(@Request() req: any) {
-    const summary = await this.planLimitsService.getUsageSummary(req.user.id);
+  async getUsage(@Request() req: any, @Query('teamId') teamId: string) {
+    if (!teamId) throw new BadRequestException('teamId is required');
+    const member = await this.memberRepo.findOne({
+      where: { teamId, userId: req.user.id },
+    });
+    if (!member) throw new ForbiddenException('Not a member of this team');
+    const summary = await this.planLimitsService.getUsageSummary(teamId);
     return {
       ...summary,
       projects: {
