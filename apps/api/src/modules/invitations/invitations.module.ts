@@ -5,12 +5,14 @@ import { InvitationsService } from './invitations.service';
 import { InvitationsController } from './invitations.controller';
 import { MailModule } from '../mail/mail.module';
 import { ActivityModule } from '../activity/activity.module';
+import { PlansModule } from '../plans/plans.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Invitation, TeamMember, Team, User]),
     MailModule,
     ActivityModule,
+    PlansModule,
   ],
   controllers: [InvitationsController],
   providers: [InvitationsService],

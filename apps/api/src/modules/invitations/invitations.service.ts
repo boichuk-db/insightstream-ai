@@ -17,10 +17,10 @@ import {
   User,
   ActivityAction,
   PLAN_CONFIGS,
-  PlanType,
 } from '@insightstream/database';
 import { MailService } from '../mail/mail.service';
 import { ActivityService } from '../activity/activity.service';
+import { PlanLimitsService } from '../plans/plan-limits.service';
 
 @Injectable()
 export class InvitationsService {
@@ -33,6 +33,7 @@ export class InvitationsService {
     private mailService: MailService,
     private activityService: ActivityService,
     private config: ConfigService,
+    private planLimitsService: PlanLimitsService,
   ) {}
 
   async create(
@@ -63,14 +64,11 @@ export class InvitationsService {
     }
 
     // Check plan limits for team members
-    const team = await this.teamRepo.findOne({
-      where: { id: teamId },
-      relations: ['owner'],
-    });
+    const team = await this.teamRepo.findOne({ where: { id: teamId } });
     if (!team) throw new NotFoundException('Team not found');
 
-    const ownerPlan = (team.owner?.plan as PlanType) || PlanType.FREE;
-    const limits = PLAN_CONFIGS[ownerPlan];
+    const teamPlan = await this.planLimitsService.getTeamPlan(teamId);
+    const limits = PLAN_CONFIGS[teamPlan];
     const currentMembers = await this.memberRepo.count({ where: { teamId } });
     const pendingCount = await this.invitationRepo.count({
       where: { teamId, status: InvitationStatus.PENDING },
@@ -85,7 +83,7 @@ export class InvitationsService {
         statusCode: 403,
         error: 'PlanLimitExceeded',
         message: `Your ${limits.name} plan allows ${limits.maxTeamMembers} team members. Upgrade for more.`,
-        currentPlan: ownerPlan,
+        currentPlan: teamPlan,
         limit: limits.maxTeamMembers,
         current: currentMembers,
       });

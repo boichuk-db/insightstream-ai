@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   Team,
   TeamMember,
@@ -67,24 +67,12 @@ export class TeamsService {
   }
 
   async ensurePersonalTeam(userId: string): Promise<Team> {
-    const existingMembership = await this.memberRepo.findOne({
-      where: { userId },
-      relations: ['team'],
+    const owned = await this.teamRepo.findOne({
+      where: { ownerId: userId },
+      order: { createdAt: 'ASC' },
     });
-
-    if (existingMembership) {
-      return existingMembership.team;
-    }
-
-    const team = await this.createPersonalTeam(userId);
-
-    // Migrate orphan projects (no teamId) to this team
-    await this.projectRepo.update(
-      { userId, teamId: IsNull() },
-      { teamId: team.id },
-    );
-
-    return team;
+    if (owned) return owned;
+    return this.createPersonalTeam(userId);
   }
 
   async findAllByUser(userId: string): Promise<Team[]> {
@@ -195,6 +183,12 @@ export class TeamsService {
     const team = await this.findOne(teamId);
     if (team.ownerId !== userId) {
       throw new ForbiddenException('Only the team owner can delete the team');
+    }
+    const projectCount = await this.projectRepo.count({ where: { teamId } });
+    if (projectCount > 0) {
+      throw new ForbiddenException(
+        'Delete or move the team projects before deleting the team',
+      );
     }
     await this.teamRepo.remove(team);
   }
