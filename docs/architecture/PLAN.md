@@ -1,6 +1,6 @@
 # InsightStream AI — Architecture Plan (Living Document)
 
-> Last updated: **2026-07-03**
+> Last updated: **2026-07-05**
 > This is the single source of truth for architecture decisions and roadmap. `system-architecture.drawio` holds diagrams only — this file holds the reasoning, priorities and status.
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
@@ -42,6 +42,7 @@ Previously recommended or already existed — do not re-recommend these.
 - **Single digest scheduler** (2026-07-03) — removed the duplicate EventBridge → Lambda `digest-trigger` → `/digest/internal-trigger` path; the weekly digest now fires only from the in-process `@Cron` (Mon 09:00). Deleted the `internal-trigger` endpoint, `lambda/digest-trigger/`, the `INTERNAL_SECRET` env wiring, the scheduler IAM policy file, and the digest-Lambda CloudWatch widget. Re-introduce external scheduling only at multi-instance, with leader election or a queue job.
   - **AWS teardown done (2026-07-03), `eu-north-1`:** deleted EventBridge Scheduler schedule `insightstream-daily-digest` (cron `0 9 * * ? *`), Lambda `insightstream-digest-trigger`, and its dedicated invoke role `InsightStreamSchedulerRole` (inline policy `InvokeDigestLambda`); re-applied the `InsightStream-Production` CloudWatch dashboard. No digest CloudWatch alarm existed and the `INTERNAL_SECRET` SSM param was already absent — nothing to delete there. **Kept** `InsightStreamLambdaRole` — it is shared with the surviving `feedback-processor` Lambda.
   - **Deferred (2026-07-03):** the new image is built and pushed to ECR (`insightstream-api:latest`, digest `dd619b2d…`), but the running EC2 container was **not** restarted — the only path in is SSH, which is unavailable (no local key; SSM Session Manager is under the verification gate). No urgency: zero users, and the `internal-trigger` endpoint is already unreachable (schedule + Lambda deleted, still secret-gated). Finish later with `scripts/deploy-api.sh` (verifies `POST /digest/internal-trigger` → 404) once SSH access exists. Until then prod still serves the old image (endpoint returns 401, not 404).
+- **Team as Tenant** (2026-07-05) — the tenant is now `Team`, not `User` or `Project`. Billing columns (`plan`, `planUpdatedAt`, `planStatus`, `stripeCustomerId`, `stripeSubscriptionId`, `stripePriceId`, `trialEndsAt`, `lastStripeEventAt`) moved `users` → `teams`; migration `1774910000000-TeamAsTenant` backfills a personal team per user, copies billing to the oldest owned team, backfills `projects.teamId`, then applies `SET NOT NULL` + FK `CASCADE` and drops the old `users` billing columns. `PlanLimitsService` keyed by `teamId` (`getTeamPlan` degrades past_due/canceled → FREE); limits now counted per team, closing "admin teammate spends their own plan" and "owner of two teams shares one limit". Projects: `teamId` required, role ≥ ADMIN to create/delete, access = membership only (creator shortcut removed in both projects and feedback). Stripe customer/checkout/webhooks per team with an ordering guard on `teams.lastStripeEventAt`; legacy pre-migration subscriptions resolved via `stripeCustomerId` fallback; checkout/portal owner-only. Digest gated by team plan, delivered to every team member. WS clients join `team-{id}` rooms — one emit per event replaces the prior per-member fan-out (**stale premise**: the WS-to-owner-only bug named in the original #7 write-up had already been fixed by `EventsService` fan-out; this is a simplification, not a fix). `ensurePersonalTeam` now finds an owned team (fixed an invited-user bug); team deletion is atomic-guarded (owner-only, refuses while projects exist). `plan` dropped from JWT/login/IUser. Web fully team-scoped (`TeamProvider`, teamId in query keys, billing UI owner-gated). 13 commits, `6b8a4e7..3b018a2`; typecheck/lint/test green, e2e 11/11. **Deferred:** see Changelog entry same date.
 
 ---
 
@@ -76,10 +77,18 @@ Dedup via a new `StripeEvent` log (Stripe event id as PK → recording an event 
 **Action:** cache the user by id in Redis with a 30–60s TTL. Revocation latency = TTL. Composes cleanly with the future refresh-token work.
 **Effort:** hours. **Type:** performance.
 
-### 7. Team as Tenant (structural — the big one)
-**Problem:** the tenant is ambiguous (user vs team vs project): billing lives on `User`, limits are computed via `project.userId`, WebSocket events go to the owner's room only (**team members' dashboards do not update in realtime — a live bug**), digests email the owner only.
-**Action:** make `teamId` required on `Project` (the auto-created personal team makes this nearly free), move billing + limits to `Team`, emit WS events to room `team-{id}`.
-**Effort:** ~1 week now vs a quarter after real customers exist. **Type:** structural.
+### 7. ~~Team as Tenant (structural — the big one)~~ — ✔ Done (2026-07-05)
+Full implementation detail in ✔ Completed above. **Stale premise:** the original problem statement below named "WS events to the owner's room only — a live bug" as a driver; that was already fixed by `EventsService` fan-out before this work started, so the `team-{id}` room change shipped as a simplification (one emit vs per-member fan-out), not a bug fix. Original problem statement, for context: the tenant was ambiguous (user vs team vs project) — billing lived on `User`, limits were computed via `project.userId`, digests emailed the owner only.
+**Deferred follow-ups** (deliberate, not oversights):
+- Fold pending-invitation counting into `PlanLimitsService.canInviteMember` and have invitations delegate (today: two implementations of the invite limit).
+- `createOrGetCustomer` check-then-create race — two concurrent checkouts can mint two Stripe customers.
+- `planUpdatedAt` is stamped on every applied webhook incl. `payment_failed` (semantic drift if it ever drives "plan changed" logic).
+- `TeamContext` value not memoized — all consumers re-render on any provider query update; fine at current scale.
+- Landing footer "Pricing" now lands on a login-gated route (no public pricing page anymore) — product decision pending.
+- `apps/e2e/tsconfig.json` lacks `"types": ["node"]` — ~323 pre-existing noise errors on `tsc`.
+- UI e2e for team-switch-on-billing-tab; manual Stripe test-mode checkout verification (webhooks covered by 14 unit tests).
+- Local e2e envs: web must be **built** with `NEXT_PUBLIC_API_URL=http://localhost:3001`; DB env overrides for the docker-compose stack.
+**Type:** structural.
 
 ### 8. Widget: versioned URL now, weight later
 **Problem:** `widget.iife.js` is a 380 KB React bundle served from an unversioned S3 URL — any breaking change instantly breaks every customer site with no rollback; the weight hurts customers' page scores (the widget *is* the product).
@@ -232,7 +241,7 @@ Current state: team rename/delete, member remove, role change, invitations — a
 
 | Pri | Feature | Notes |
 |---|---|---|
-| 🟠 | Digest preferences: on/off, frequency, recipients | Recipients-part lands naturally inside Team-as-Tenant (🔥 #7) — digest should go to the team, honoring per-member opt-out |
+| 🟠 | Digest preferences: on/off, frequency, per-member opt-out | Recipients-to-team landed with ✔ #7 (digest now emails every team member); on/off, frequency, and per-member opt-out still open |
 | 🟠 | Leave team (self) + transfer ownership | Owner leaving is currently unrepresentable |
 | ⚪ | In-app notification center | Only when a second notification channel exists (🟡 NotificationDispatcher trigger) |
 
@@ -284,7 +293,7 @@ Deliberate decisions and why they stay.
 - **Socket.io + Redis adapter** — the hard part is already done; scales horizontally today. No reason to touch it.
 - **`PLAN_CONFIGS` + `PlanLimitsService`** — single source of plan truth. Caveat to remember: `JSON.stringify(Infinity)` → `null`; audit any endpoint that serializes plan configs to the frontend.
 - **Current AI flow** (queue → Gemini → write-back → WS emit) — the shape is right; the worker split (🔥 #5) changes *where* it runs, not the flow.
-- **Current module boundaries** — correct except the tenant fix (🔥 #7). Split identity-auth from widget-key-auth only when auth is next touched anyway.
+- **Current module boundaries** — correct; the tenant fix (✔ #7) is done. Split identity-auth from widget-key-auth only when auth is next touched anyway.
 
 ### Platform & Practices
 - **EC2 + manual Docker deploy** 🎓 — the intentional learning path (VPC, SGs, ALB, SSM the hard way). Graduation trigger: the Fargate item in 🟡.
@@ -316,6 +325,7 @@ From earlier reviews — kept for history, with reasons.
 
 ## Changelog
 
+- **2026-07-05** — 🔥 #7 done: Team as Tenant. Billing (`plan`, `planUpdatedAt`, `planStatus`, `stripeCustomerId`, `stripeSubscriptionId`, `stripePriceId`, `trialEndsAt`, `lastStripeEventAt`) moved `users` → `teams` (migration `1774910000000-TeamAsTenant`: personal-team backfill, billing copied to oldest owned team, `projects.teamId` backfilled + `SET NOT NULL` + FK `CASCADE`, old `users` columns dropped); `PlanLimitsService` keyed by team; projects require `teamId` (role ≥ ADMIN create/delete, membership-only access — creator shortcut removed in projects and feedback); Stripe per-team with a legacy-`stripeCustomerId` fallback for pre-migration subscriptions; digest sent to every team member; WS emits to `team-{id}` rooms (one emit, not per-member fan-out — **not** a bug fix, see stale-premise note in 🔥 #7); `plan` dropped from JWT/login/IUser; web fully team-scoped (`TeamProvider`, teamId in query keys). 13 commits `6b8a4e7..3b018a2`; typecheck/lint/test green; e2e 11/11 (new specs `project-delete-authz`, `team-scoped-plans`). Deferred follow-ups (invite-limit dedup, Stripe-customer race, `planUpdatedAt` semantic drift, `TeamContext` memoization, gated pricing page, e2e tsconfig noise, UI e2e for team-switch-on-billing, manual Stripe checkout verification, local e2e env docs) recorded in 🔥 #7 above. ER diagram updated: billing columns moved `users` → `teams`, `projects.teamId` now required (FK `CASCADE`).
 - **2026-07-03** — 🔥 #4 done: self-healing AI sweep. New `AiSweepService` `@Cron('*/5 * * * *')` re-enqueues `sentimentScore IS NULL` feedback in the (15 min, 24 h) window via `AiQueueService`; abandoned rows (>24 h) logged. No jobId dedup (15-min age ⇒ no live job); recovers crash/instance-loss/exhausted-retry loss modes in one idempotent pass — subsumes the retired DLQ. Registered in `AiModule` (now imports `PlansModule`). 6 unit tests (incl. query date-math under fake timers), boot-verified. Index + worker-mode-guard recorded as deliberate follow-ups in the design doc.
 - **2026-07-03** — 🔥 #3 done: Stripe webhook idempotency + ordering. New `StripeEvent` log (event id PK → dedup) + `users.lastStripeEventAt` ordering stamp; subscription handlers now apply via an atomic conditional `UPDATE … WHERE "lastStripeEventAt" <= :eventCreated` that ignores stale/out-of-order events (no more resurrecting a canceled plan). Controller delegates to `StripeWebhookService.handleEvent`. Migration `1774840000000-AddStripeEventsAndOrdering`. Seeds the future subscription-history table. ER diagram updated: added the `StripeEvent` entity and `users.lastStripeEventAt` in `system-architecture.drawio`.
 - **2026-07-03** — 🔥 #2 closed as ✔ Done: the stated OAuth personal-team gap didn't exist (new OAuth users have gotten a team since `oauthLogin` landed; `ensurePersonalTeam` already lazily backfills stragglers via `GET /teams`). Hardened instead: both `register` and `oauthLogin` now call the idempotent `ensurePersonalTeam()` hook; `createPersonalTeam()` made `private`. Cross-service transaction deliberately skipped (self-healing lazy backfill makes it disproportionate). No code changes to team-creation behavior for the happy path.
