@@ -41,7 +41,7 @@ export function PlanLimitBanner({ data, isAtLimit }: PlanLimitBannerProps) {
       <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
       <span className="flex-1">{message}</span>
       <button
-        onClick={() => router.push("/pricing")}
+        onClick={() => router.push("/dashboard/billing")}
         className="shrink-0 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold rounded-lg transition-colors"
       >
         Upgrade Plan

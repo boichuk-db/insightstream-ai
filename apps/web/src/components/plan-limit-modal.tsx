@@ -33,7 +33,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
 
   const handleUpgrade = () => {
     onClose();
-    router.push("/pricing");
+    router.push("/dashboard/billing");
   };
 
   return (
