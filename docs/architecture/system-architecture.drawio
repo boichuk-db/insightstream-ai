@@ -1162,7 +1162,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="regTitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Registration &amp; Onboarding Flow (verified 2026-07-01)" vertex="1">
+        <mxCell id="regTitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Registration &amp; Onboarding Flow (verified 2026-07-01; auth/tenant labels synced 2026-07-05)" vertex="1">
           <mxGeometry height="30" width="1350" x="20" y="10" as="geometry" />
         </mxCell>
         <mxCell id="regPanelLanding" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/landing — insightstream.ai (Vercel, port 3002, zero @insightstream/* deps)" vertex="1">
@@ -1198,22 +1198,22 @@
         <mxCell id="regStep4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="④ bcrypt.hash(password, 10)" vertex="1">
           <mxGeometry height="40" width="380" x="690" y="305" as="geometry" />
         </mxCell>
-        <mxCell id="regStep5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑤ usersService.create({email, passwordHash})&#xa;INSERT INTO users (role: user, plan: free)" vertex="1">
+        <mxCell id="regStep5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑤ usersService.create({email, passwordHash})&#xa;INSERT INTO users (role: user)" vertex="1">
           <mxGeometry height="55" width="380" x="690" y="360" as="geometry" />
         </mxCell>
-        <mxCell id="regStep6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑥ teamsService.createPersonalTeam(userId)&#xa;INSERT INTO teams + INSERT INTO team_members (role: owner)" vertex="1">
+        <mxCell id="regStep6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑥ teamsService.ensurePersonalTeam(userId)&#xa;INSERT INTO teams (plan: free default) + INSERT INTO team_members (role: owner)" vertex="1">
           <mxGeometry height="60" width="380" x="690" y="430" as="geometry" />
         </mxCell>
-        <mxCell id="regStep7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑦ login(user) → jwtService.sign({sub, email, role, plan})&#xa;returns { access_token, user } — expiresIn: 7d" vertex="1">
+        <mxCell id="regStep7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="⑦ login(user) → jwtService.sign({sub, email, role})&#xa;returns { access_token, user } — expiresIn: 7d" vertex="1">
           <mxGeometry height="55" width="380" x="690" y="505" as="geometry" />
         </mxCell>
         <mxCell id="regPanelDb" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=#f8cecc;strokeColor=#b85450;" value="PostgreSQL — writes on registration" vertex="1">
           <mxGeometry height="560" width="240" x="1130" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="regDbUsers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="users&#xa;email, passwordHash&#xa;role: user, plan: free" vertex="1">
+        <mxCell id="regDbUsers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="users&#xa;email, passwordHash&#xa;role: user" vertex="1">
           <mxGeometry height="65" width="200" x="1150" y="360" as="geometry" />
         </mxCell>
-        <mxCell id="regDbTeams" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="teams&#xa;name: Personal, ownerId" vertex="1">
+        <mxCell id="regDbTeams" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="teams&#xa;name: Personal, ownerId&#xa;plan: free (billing lives here)" vertex="1">
           <mxGeometry height="55" width="200" x="1150" y="440" as="geometry" />
         </mxCell>
         <mxCell id="regDbTeamMembers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="team_members&#xa;userId, teamId, role: owner" vertex="1">
@@ -1222,19 +1222,19 @@
         <mxCell id="regOauthPanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#666666;dashed=1;" value="OAuth Registration Path (alternative to password)" vertex="1">
           <mxGeometry height="195" width="650" x="20" y="355" as="geometry" />
         </mxCell>
-        <mxCell id="regOauthText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="GET /auth/google|github → Passport OAuth strategy → provider callback&#xa;→ findByProviderId(id): if found → login() directly&#xa;→ findByEmail(email): if email matches existing user → auto-link accounts → login()&#xa;→ if new user: usersService.create({email, googleId|githubId}) → login()&#xa;&#xa;⚠ createPersonalTeam() is called only in register(), NOT in oauthLogin()&#xa;   New OAuth users have no personal team — potential gap in the codebase.&#xa;&#xa;Callback redirect: ${FRONTEND_URL}/auth/oauth/callback?token={access_token}" vertex="1">
+        <mxCell id="regOauthText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="GET /auth/google|github → Passport OAuth strategy → provider callback&#xa;→ findByProviderId(id): if found → login() directly&#xa;→ findByEmail(email): if email matches existing user → auto-link accounts → login()&#xa;→ if new user: usersService.create({email, googleId|githubId}) → login()&#xa;&#xa;✔ Both register() and oauthLogin() call the idempotent ensurePersonalTeam()&#xa;   (hardened 2026-07-03, PLAN #2) — no teamless OAuth users.&#xa;&#xa;Callback redirect: ${FRONTEND_URL}/auth/oauth/callback?token={access_token}" vertex="1">
           <mxGeometry height="165" width="610" x="40" y="380" as="geometry" />
         </mxCell>
         <mxCell id="regResponsePanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Response &amp; Token Storage" vertex="1">
           <mxGeometry height="125" width="1080" x="20" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="regResponseText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="API returns: { access_token: &quot;eyJhbGciOiJIUzI1NiJ9...&quot;, user: { id, email, role, plan } }&#xa;Web app stores Bearer token — sent as Authorization header on all subsequent API requests.&#xa;Redirect to /dashboard. Token expiry: 7 days. No refresh token. No server-side revocation (stateless JWT — same as login path)." vertex="1">
+        <mxCell id="regResponseText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="API returns: { access_token: &quot;eyJhbGciOiJIUzI1NiJ9...&quot;, user: { id, email, role } }&#xa;Web app stores Bearer token — sent as Authorization header on all subsequent API requests.&#xa;Redirect to /dashboard. Token expiry: 7 days. No refresh token. No server-side revocation (stateless JWT — same as login path)." vertex="1">
           <mxGeometry height="90" width="1040" x="40" y="670" as="geometry" />
         </mxCell>
         <mxCell id="regNotesPanel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Implementation Notes" vertex="1">
           <mxGeometry height="710" width="430" x="1410" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="regNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• isEmailAllowed(): invite-only guard — throws 403 ForbiddenException if email domain or address not in allowlist. Restricts public signups.&#xa;&#xa;• Personal Team auto-creation: every password-registered user auto-gets a personal team (role: owner) at step ⑥, before login(). Cannot be skipped.&#xa;&#xa;• OAuth gap: createPersonalTeam() is in register() only, NOT in oauthLogin(). New Google/GitHub users may have no personal team. Potential bug worth fixing.&#xa;&#xa;• No email verification: registration immediately returns a valid JWT. No pending/unverified user state.&#xa;&#xa;• plan on registration: defaults to &quot;free&quot;. The ?plan= query param from the Quiz is a UI pre-selection only — NOT applied server-side during POST /auth/register.&#xa;&#xa;• apps/landing has zero @insightstream/* package deps. Pure Next.js 16 + TailwindCSS + framer-motion + PostHog. No API calls from landing — all CTAs are plain &lt;a href&gt; links to app.insightstream.ai.&#xa;&#xa;• Landing port 3002 (dev), insightstream.ai (prod). Web port 3000 (dev), app.insightstream.ai (prod). Both deployed to Vercel, independently." vertex="1">
+        <mxCell id="regNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• isEmailAllowed(): invite-only guard — throws 403 ForbiddenException if email domain or address not in allowlist. Restricts public signups.&#xa;&#xa;• Personal Team auto-creation: every password-registered user auto-gets a personal team (role: owner) at step ⑥, before login(). Cannot be skipped.&#xa;&#xa;• OAuth team parity: both register() and oauthLogin() call the idempotent ensurePersonalTeam() (hardened 2026-07-03, PLAN #2) — the earlier &quot;OAuth gap&quot; note is obsolete.&#xa;&#xa;• No email verification: registration immediately returns a valid JWT. No pending/unverified user state.&#xa;&#xa;• plan on registration: the personal team defaults to plan: free — billing lives on teams since 2026-07-05 (Team-as-Tenant); plan is no longer in the JWT or login response. The ?plan= query param from the Quiz is a UI pre-selection only — NOT applied server-side during POST /auth/register.&#xa;&#xa;• apps/landing has zero @insightstream/* package deps. Pure Next.js 16 + TailwindCSS + framer-motion + PostHog. No API calls from landing — all CTAs are plain &lt;a href&gt; links to app.insightstream.ai.&#xa;&#xa;• Landing port 3002 (dev), insightstream.ai (prod). Web port 3000 (dev), app.insightstream.ai (prod). Both deployed to Vercel, independently." vertex="1">
           <mxGeometry height="650" width="390" x="1430" y="100" as="geometry" />
         </mxCell>
         <mxCell id="regELandingCta" edge="1" parent="1" source="regLandingHome" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.4;" target="regWebRegister" value="CTA click">
