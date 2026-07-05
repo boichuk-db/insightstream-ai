@@ -42,22 +42,37 @@ export default async function globalSetup() {
     )
   }
 
+  // Teams are the tenant boundary now — every /projects call is team-scoped.
+  let teamId: string
+  try {
+    const { data: teams } = await axios.get(`${API_URL}/teams`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!teams.length) throw new Error('user has no teams')
+    teamId = teams[0].id
+  } catch (err: unknown) {
+    throw new Error(
+      `globalSetup: team lookup failed — ${axios.isAxiosError(err) ? err.response?.data?.message ?? err.message : String(err)}`,
+    )
+  }
+
   // Find or create the test project
   let project: { id: string; apiKey: string; name: string }
   try {
     const { data: projects } = await axios.get(`${API_URL}/projects`, {
+      params: { teamId },
       headers: { Authorization: `Bearer ${token}` },
     })
     const existing = projects.find((p: any) => p.name === TEST_PROJECT_NAME)
     if (existing) {
       project = existing
     } else if (projects.length > 0) {
-      // Default Project was auto-created by findAllByUser — reuse it
+      // Default Project was auto-created by findAllForMember — reuse it
       project = projects[0]
     } else {
       const { data } = await axios.post(
         `${API_URL}/projects`,
-        { name: TEST_PROJECT_NAME },
+        { name: TEST_PROJECT_NAME, teamId },
         { headers: { Authorization: `Bearer ${token}` } },
       )
       project = data
