@@ -59,8 +59,8 @@ export class StripeController {
       team,
       team.owner.email,
       body.priceId,
-      `${frontendUrl}/dashboard/billing?success=true`,
-      `${frontendUrl}/dashboard/billing`,
+      `${frontendUrl}/dashboard/settings?tab=billing&success=true`,
+      `${frontendUrl}/dashboard/settings?tab=billing`,
     );
     return { url };
   }

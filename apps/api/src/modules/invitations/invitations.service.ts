@@ -74,7 +74,10 @@ export class InvitationsService {
       where: { teamId, status: InvitationStatus.PENDING },
     });
 
-    const bypassPlanLimits = process.env.E2E_BYPASS_PLAN_LIMITS === 'true';
+    // Test-only escape hatch; hard-disabled in production regardless of env value.
+    const bypassPlanLimits =
+      process.env.E2E_BYPASS_PLAN_LIMITS === 'true' &&
+      process.env.NODE_ENV !== 'production';
     if (
       !bypassPlanLimits &&
       currentMembers + pendingCount >= limits.maxTeamMembers
