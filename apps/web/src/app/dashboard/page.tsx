@@ -65,6 +65,7 @@ export default function FeedbackPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["planUsage"] });
       setSelectedProjectId(null);
     },
     onError: () => {

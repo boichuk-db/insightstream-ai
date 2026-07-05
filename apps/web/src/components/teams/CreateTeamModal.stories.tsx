@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TeamProvider } from '@/contexts/TeamContext';
 import { CreateTeamModal } from './CreateTeamModal';
 
 const queryClient = new QueryClient({
@@ -14,7 +15,9 @@ const meta: Meta<typeof CreateTeamModal> = {
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>
-        <Story />
+        <TeamProvider>
+          <Story />
+        </TeamProvider>
       </QueryClientProvider>
     ),
   ],

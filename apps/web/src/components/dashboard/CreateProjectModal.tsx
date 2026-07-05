@@ -32,6 +32,7 @@ export function CreateProjectModal({
     },
     onSuccess: (newProject) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["planUsage"] });
       setName("");
       setDomain("");
       if (onCreated) onCreated(newProject.id);

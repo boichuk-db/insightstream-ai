@@ -1495,6 +1495,8 @@ git add apps/web packages/shared-types
 git commit -m "feat(tenant): web billing and project queries scoped to active team"
 ```
 
+Follow-up (review): activeTeamId lifted to TeamProvider context — per-instance useState allowed cross-component team drift (wrong-team checkout); hook API unchanged.
+
 ---
 
 ### Task 11: E2E + full verification gate

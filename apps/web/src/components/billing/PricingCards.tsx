@@ -126,7 +126,7 @@ export function PricingCards() {
               </ul>
               <button
                 onClick={() => handleUpgrade(priceId)}
-                disabled={isCurrentPlan || isNonOwner || loadingPriceId === priceId}
+                disabled={!status || isCurrentPlan || isNonOwner || loadingPriceId === priceId}
                 title={isNonOwner ? "Only the team owner manages billing" : undefined}
                 className={cn(
                   "w-full py-2 rounded-lg text-sm font-medium transition-colors",

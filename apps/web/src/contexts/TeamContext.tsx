@@ -1,0 +1,128 @@
+"use client";
+
+import { createContext, useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect, useCallback } from "react";
+import { userProfileQuery } from "@/lib/queries";
+import { api } from "@/lib/api";
+
+export interface TeamMember {
+  id: string;
+  userId: string;
+  email: string;
+  role: "owner" | "admin" | "member" | "viewer";
+  joinedAt: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+}
+
+function useTeamState() {
+  const queryClient = useQueryClient();
+  const [activeTeamId, setActiveTeamId] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem("activeTeamId") : null,
+  );
+
+  const { data: teams, isLoading: teamsLoading } = useQuery<Team[]>({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const { data } = await api.get("/teams");
+      return data;
+    },
+  });
+
+  // Auto-select first team if none selected
+  useEffect(() => {
+    if (teams?.length && !activeTeamId) {
+      const firstTeam = teams[0];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTeamId(firstTeam.id);
+      localStorage.setItem("activeTeamId", firstTeam.id);
+    }
+  }, [teams, activeTeamId]);
+
+  const activeTeam =
+    teams?.find((t) => t.id === activeTeamId) || teams?.[0] || null;
+
+  const { data: members } = useQuery<TeamMember[]>({
+    queryKey: ["teamMembers", activeTeam?.id],
+    queryFn: async () => {
+      const { data } = await api.get(`/teams/${activeTeam!.id}/members`);
+      return data;
+    },
+    enabled: !!activeTeam?.id,
+  });
+
+  const { data: userProfile } = useQuery(userProfileQuery);
+
+  const userRole =
+    members?.find((m) => m.userId === userProfile?.id)?.role || null;
+
+  const switchTeam = useCallback(
+    (teamId: string) => {
+      setActiveTeamId(teamId);
+      localStorage.setItem("activeTeamId", teamId);
+      queryClient.invalidateQueries({ queryKey: ["teamMembers"] });
+      queryClient.invalidateQueries({ queryKey: ["teamProjects"] });
+      queryClient.invalidateQueries({ queryKey: ["teamActivity"] });
+    },
+    [queryClient],
+  );
+
+  const createTeam = useMutation({
+    mutationFn: async (name: string) => {
+      const { data } = await api.post("/teams", { name });
+      return data as Team;
+    },
+    onSuccess: (newTeam) => {
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      switchTeam(newTeam.id);
+    },
+  });
+
+  const updateTeamName = useMutation({
+    mutationFn: async ({ teamId, name }: { teamId: string; name: string }) => {
+      const { data } = await api.patch(`/teams/${teamId}`, { name });
+      return data as Team;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+    },
+  });
+
+  return {
+    teams: teams || [],
+    activeTeam,
+    activeTeamId: activeTeam?.id || null,
+    members: members || [],
+    userRole,
+    teamsLoading,
+    switchTeam,
+    createTeam,
+    updateTeamName,
+  };
+}
+
+export type TeamContextValue = ReturnType<typeof useTeamState>;
+
+const TeamContext = createContext<TeamContextValue | null>(null);
+
+export function TeamProvider({ children }: { children: React.ReactNode }) {
+  const value = useTeamState();
+  return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>;
+}
+
+export function useTeamContext(): TeamContextValue {
+  const ctx = useContext(TeamContext);
+  if (!ctx) {
+    throw new Error(
+      "useTeamContext must be used within a <TeamProvider>. " +
+        "Mount TeamProvider (see app/dashboard/layout.tsx) above any component that calls useTeam().",
+    );
+  }
+  return ctx;
+}

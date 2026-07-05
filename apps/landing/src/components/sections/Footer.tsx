@@ -12,7 +12,7 @@ export function Footer() {
         </div>
         <nav className="flex items-center gap-6 text-sm text-zinc-500">
           <Link href="/quiz" className="hover:text-zinc-300 transition-colors">Quiz</Link>
-          <a href={`${APP_URL}/pricing`} className="hover:text-zinc-300 transition-colors">Pricing</a>
+          <a href={`${APP_URL}/dashboard/billing`} className="hover:text-zinc-300 transition-colors">Pricing</a>
           <a href={`${APP_URL}/`} className="hover:text-zinc-300 transition-colors">Sign In</a>
         </nav>
         <div className="text-xs text-zinc-600">
