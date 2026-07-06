@@ -64,4 +64,32 @@ describe('JwtStrategy', () => {
     );
     expect(mockRedisService.set).not.toHaveBeenCalled();
   });
+
+  it('falls back to the database when RedisService.get rejects', async () => {
+    mockRedisService.get.mockRejectedValue(new Error('redis down'));
+    mockUsersService.findOneById.mockResolvedValue({
+      id: '5',
+      email: 'g@h.com',
+      role: 'user',
+    });
+
+    const result = await strategy.validate({ sub: '5' });
+
+    expect(mockUsersService.findOneById).toHaveBeenCalledWith('5');
+    expect(result).toEqual({ id: '5', email: 'g@h.com', role: 'user' });
+  });
+
+  it('falls back to the database when the cached value is malformed or for a different user', async () => {
+    mockRedisService.get.mockResolvedValue('not valid json');
+    mockUsersService.findOneById.mockResolvedValue({
+      id: '6',
+      email: 'i@j.com',
+      role: 'user',
+    });
+
+    const result = await strategy.validate({ sub: '6' });
+
+    expect(mockUsersService.findOneById).toHaveBeenCalledWith('6');
+    expect(result).toEqual({ id: '6', email: 'i@j.com', role: 'user' });
+  });
 });
