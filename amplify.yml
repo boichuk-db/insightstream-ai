@@ -5,7 +5,11 @@ applications:
         preBuild:
           commands:
             - npm install -g pnpm@9
-            - echo "node-linker=hoisted" >> .npmrc
+            # Scoped here (not a committed repo-root .npmrc) — hoisted node_modules is needed
+            # only for Amplify's SSR bundling step; a repo-wide .npmrc broke apps/api's
+            # migration:run script under GitHub Actions/local dev. See PLAN.md and
+            # docs/superpowers/specs/2026-07-06-scope-hoisted-linker-to-amplify-design.md.
+            - echo "node-linker=hoisted" > ../../.npmrc
             - pnpm install --frozen-lockfile
         build:
           commands:
