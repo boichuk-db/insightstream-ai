@@ -29,7 +29,12 @@ async function bootstrap() {
   // req.path; Nest's CorsOptionsDelegate could do this too, but a plain
   // middleware keeps the two branches (public route vs. everything else)
   // easy to read side by side.
-  const frontendUrl = process.env.FRONTEND_URL;
+  // Comma-separated so Vercel + Amplify can both be allowed during a
+  // staged cutover, without an app restart to swap a single value.
+  const frontendUrls = (process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
   const PUBLIC_FEEDBACK_PATH = '/feedback/public';
   app.use((req: Request, res: Response, next: NextFunction) => {
     const origin = req.headers.origin;
@@ -44,7 +49,7 @@ async function bootstrap() {
         allowed =
           hostname === 'localhost' ||
           hostname === '127.0.0.1' ||
-          origin === frontendUrl;
+          frontendUrls.includes(origin);
       } catch {
         allowed = false;
       }

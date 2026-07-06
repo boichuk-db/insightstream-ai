@@ -13,7 +13,12 @@ import { TeamMember } from '@insightstream/database';
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    // Comma-separated so Vercel + Amplify can both be allowed during a
+    // staged cutover, without an app restart to swap a single value.
+    origin: (process.env.FRONTEND_URL || 'http://localhost:3000')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
     credentials: true,
   },
 })

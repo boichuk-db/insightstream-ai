@@ -4,6 +4,8 @@
 > This is the single source of truth for architecture decisions and roadmap. `system-architecture.drawio` holds diagrams only — this file holds the reasoning, priorities and status.
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
+>
+> **AWS verification note (2026-07-05):** the new-account verification gate is confirmed lifted for CodeBuild, Amplify, and Bedrock (real API calls succeeded — see 🔥 #11 and the `AIProvider` row in 🟡). CloudFront (`CreateDistribution`) is still blocked with the same error as before — the gate is per-service, not account-wide.
 
 ## Project Constraints
 
@@ -106,6 +108,11 @@ Full implementation detail in ✔ Completed above. **Stale premise:** the origin
 - **ACM certificate + HTTPS listener on the ALB** now — do not wait for the CloudFront verification unblock.
 
 **Effort:** hours each. **Type:** operational readiness.
+
+### 11. Amplify deploy for `apps/web` (verification gate lifted 2026-07-05)
+**Context:** the new-account verification gate that blocked Amplify since ~2026-06-25 lifted for this service — confirmed by a real `aws amplify create-app` call succeeding (test app created, then deleted immediately after confirming). CodeBuild is confirmed unblocked too: concurrent-build quota is now 15 (was 0), and a real build on `insightstream-api-build` reached the `BUILD` phase instead of being rejected at submission — the existing GitHub webhook should now build automatically on the next real push, no code changes needed.
+**Action:** connect `apps/web` to the GitHub repo in Amplify, configure build settings + env vars (source from SSM, same pattern as the EC2 deploy), verify a build + the default `*.amplifyapp.com` domain. Do **not** cut DNS/env vars away from Vercel yet — follow the existing staged-cutover plan (parallel run → verify parity → only then decommission).
+**Effort:** hours. **Type:** infra migration, unblocks old-infra decommission step 3.
 
 ---
 
@@ -256,10 +263,10 @@ Adopt when the trigger fires, not before.
 | Item | Trigger |
 |---|---|
 | ECS Fargate / App Runner 🏭 | AWS carries real production traffic **and** manual deploys start hurting. EC2 stays while the goal is learning it the hard way. |
-| Automated CD (CodeBuild unblock or GitHub Actions OIDC → ECR → SSM) | Deploying more than ~1×/week, or the first botched manual deploy. |
+| Automated CD (CodeBuild unblock or GitHub Actions OIDC → ECR → SSM) | Deploying more than ~1×/week, or the first botched manual deploy. CodeBuild itself is confirmed technically unblocked (2026-07-05, quota 0→15) — this row is now a business-priority trigger, not a feasibility one. |
 | ASG + RDS Multi-AZ 🏭 | Paying users on AWS — buy HA with revenue, not before. |
 | PgBouncer / RDS Proxy | 2+ API processes in prod (the worker split brings this closer), or the first connection-limit errors (db.t3.micro ≈ 85 connections). |
-| CloudFront ×2 + Amplify | The account verification gate lifts (already planned, tracked on the AWS pages). |
+| CloudFront ×2 (S3 widget + ALB API HTTPS) | Still blocked (confirmed 2026-07-05: `CreateDistribution` → same `AccessDenied` as before) — the verification gate is per-service, not account-wide; needs its own support ticket citing this exact error. Amplify moved to 🔥 #11 since it's unblocked. |
 | Multi-region | A contractual data-residency demand only. Likely never — eu-north-1 + EU data residency is a GDPR selling point. |
 | Observability: OTel tracing + BullMQ queue metrics | More than one process in prod, or the first cross-process debugging pain. |
 | Digest fan-out as queue jobs | ~50+ digest-eligible projects (today's serial loop meets the 60s ALB idle timeout). |
@@ -269,7 +276,7 @@ Adopt when the trigger fires, not before.
 | Item | Trigger |
 |---|---|
 | Refresh tokens + HttpOnly cookies | Before public launch with real customers; touch the Socket.io handshake auth in the same change. |
-| `AIProvider` interface + `PromptBuilderService` | The moment a second provider (Bedrock) is actually usable. From day one of that work: persist raw model output + model version, or providers can never be compared. |
+| `AIProvider` interface + `PromptBuilderService` | The moment a second provider (Bedrock) is actually usable. From day one of that work: persist raw model output + model version, or providers can never be compared. Permission gate confirmed lifted 2026-07-05 (`invoke-model` now returns normal validation errors, not "Operation not allowed") — remaining work is just picking a model/inference-profile that's on-demand-eligible in `eu-north-1`. |
 | Hash project API keys | Next rework of project settings. Downgraded from HIGH in earlier reviews: the key is public in customer page source by design; the origin whitelist + throttles are the real controls. |
 | Usage counters table | Plan-limit `COUNT` appears in the slow-query log (~100k feedback rows). Also fixes the check-then-act race on limits. |
 | Subscription history table | First billing dispute or churn-analytics need (the webhook-idempotency work seeds it). |
@@ -325,6 +332,7 @@ From earlier reviews — kept for history, with reasons.
 
 ## Changelog
 
+- **2026-07-05** — AWS verification gate partially lifted: confirmed via real CLI calls (not re-checking old errors) — CodeBuild concurrent-build quota 0→15 (real build reached `BUILD` phase), Amplify `create-app` succeeded (test app created then deleted), Bedrock `invoke-model`/`list-foundation-models` now return normal errors instead of "Operation not allowed". CloudFront `CreateDistribution` still returns the same `AccessDenied` — confirmed the gate is per-service, needs its own support ticket. Added 🔥 #11 (Amplify deploy for `apps/web`); updated the CloudFront/Amplify 🟡 row and the `AIProvider` Bedrock note accordingly. Not yet re-tested: CloudShell, SSM Session Manager.
 - **2026-07-05** — 🔥 #7 done: Team as Tenant. Billing (`plan`, `planUpdatedAt`, `planStatus`, `stripeCustomerId`, `stripeSubscriptionId`, `stripePriceId`, `trialEndsAt`, `lastStripeEventAt`) moved `users` → `teams` (migration `1774910000000-TeamAsTenant`: personal-team backfill, billing copied to oldest owned team, `projects.teamId` backfilled + `SET NOT NULL` + FK `CASCADE`, old `users` columns dropped); `PlanLimitsService` keyed by team; projects require `teamId` (role ≥ ADMIN create/delete, membership-only access — creator shortcut removed in projects and feedback); Stripe per-team with a legacy-`stripeCustomerId` fallback for pre-migration subscriptions; digest sent to every team member; WS emits to `team-{id}` rooms (one emit, not per-member fan-out — **not** a bug fix, see stale-premise note in 🔥 #7); `plan` dropped from JWT/login/IUser; web fully team-scoped (`TeamProvider`, teamId in query keys). 13 commits `6b8a4e7..3b018a2`; typecheck/lint/test green; e2e 11/11 (new specs `project-delete-authz`, `team-scoped-plans`). Deferred follow-ups (invite-limit dedup, Stripe-customer race, `planUpdatedAt` semantic drift, `TeamContext` memoization, gated pricing page, e2e tsconfig noise, UI e2e for team-switch-on-billing, manual Stripe checkout verification, local e2e env docs) recorded in 🔥 #7 above. ER diagram updated: billing columns moved `users` → `teams`, `projects.teamId` now required (FK `CASCADE`).
 - **2026-07-03** — 🔥 #4 done: self-healing AI sweep. New `AiSweepService` `@Cron('*/5 * * * *')` re-enqueues `sentimentScore IS NULL` feedback in the (15 min, 24 h) window via `AiQueueService`; abandoned rows (>24 h) logged. No jobId dedup (15-min age ⇒ no live job); recovers crash/instance-loss/exhausted-retry loss modes in one idempotent pass — subsumes the retired DLQ. Registered in `AiModule` (now imports `PlansModule`). 6 unit tests (incl. query date-math under fake timers), boot-verified. Index + worker-mode-guard recorded as deliberate follow-ups in the design doc.
 - **2026-07-03** — 🔥 #3 done: Stripe webhook idempotency + ordering. New `StripeEvent` log (event id PK → dedup) + `users.lastStripeEventAt` ordering stamp; subscription handlers now apply via an atomic conditional `UPDATE … WHERE "lastStripeEventAt" <= :eventCreated` that ignores stale/out-of-order events (no more resurrecting a canceled plan). Controller delegates to `StripeWebhookService.handleEvent`. Migration `1774840000000-AddStripeEventsAndOrdering`. Seeds the future subscription-history table. ER diagram updated: added the `StripeEvent` entity and `users.lastStripeEventAt` in `system-architecture.drawio`.

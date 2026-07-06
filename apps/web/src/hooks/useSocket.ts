@@ -20,8 +20,11 @@ export function useSocket(
     const token = localStorage.getItem("access_token");
     if (!token) return;
 
+    // No transports override: let Socket.io fall back to HTTP long-polling
+    // when a WebSocket upgrade isn't available (API Gateway HTTP APIs don't
+    // support WS). If the API ever scales past one instance, polling needs
+    // ALB target-group stickiness to keep hitting the same instance.
     const socket = io(SOCKET_URL, {
-      transports: ["websocket"],
       auth: { token },
     });
     socketRef.current = socket;

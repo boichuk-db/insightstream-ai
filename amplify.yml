@@ -8,7 +8,7 @@ applications:
             - pnpm install --frozen-lockfile
         build:
           commands:
-            - pnpm --filter web build
+            - npx turbo build --filter=web
       artifacts:
         baseDirectory: apps/web/.next
         files:
