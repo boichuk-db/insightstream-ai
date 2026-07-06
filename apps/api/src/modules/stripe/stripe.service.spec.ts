@@ -146,6 +146,10 @@ describe('StripeService', () => {
       );
 
       expect(url).toBe('https://checkout');
+      expect(mockStripeInstance.subscriptions.list).toHaveBeenCalledWith({
+        customer: 'cus_1',
+        status: 'all',
+      });
     });
 
     it('proceeds after cancellation when the live list is empty', async () => {
@@ -168,6 +172,10 @@ describe('StripeService', () => {
       );
 
       expect(url).toBe('https://checkout');
+      expect(mockStripeInstance.subscriptions.list).toHaveBeenCalledWith({
+        customer: 'cus_1',
+        status: 'all',
+      });
     });
   });
 });
