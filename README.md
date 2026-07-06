@@ -153,7 +153,7 @@ Stripe can't deliver webhooks to `localhost` directly. To test checkout/subscrip
 stripe listen --forward-to localhost:3001/webhooks/stripe
 ```
 
-Copy the `whsec_...` it prints into `apps/api/.env` as `STRIPE_WEBHOOK_SECRET` (it changes every time you restart `stripe listen`). Without this running, checkout still completes and creates a Stripe customer (a direct API call from the server), but the subscription/plan never gets written to the DB — that only happens in the webhook handler.
+First time only: `stripe login`, then copy the `whsec_...` it prints into `apps/api/.env` as `STRIPE_WEBHOOK_SECRET` — it stays stable across restarts (tied to your account's CLI endpoint), so this is a one-time setup, not a per-session step. Without `stripe listen` actually running, checkout still completes and creates a Stripe customer (a direct API call from the server), but the subscription/plan never gets written to the DB — that only happens in the webhook handler.
 
 ---
 
