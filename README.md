@@ -145,6 +145,16 @@ pnpm dev
 | API        | http://localhost:3001 |
 | Widget dev | http://localhost:8080 |
 
+### 5. Test Stripe Webhooks (optional, for billing work)
+
+Stripe can't deliver webhooks to `localhost` directly. To test checkout/subscription flows locally, forward events with the [Stripe CLI](https://stripe.com/docs/stripe-cli):
+
+```bash
+stripe listen --forward-to localhost:3001/webhooks/stripe
+```
+
+Copy the `whsec_...` it prints into `apps/api/.env` as `STRIPE_WEBHOOK_SECRET` (it changes every time you restart `stripe listen`). Without this running, checkout still completes and creates a Stripe customer (a direct API call from the server), but the subscription/plan never gets written to the DB — that only happens in the webhook handler.
+
 ---
 
 ## Widget Integration
