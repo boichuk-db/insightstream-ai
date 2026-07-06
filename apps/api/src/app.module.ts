@@ -22,6 +22,7 @@ import { InvitationsModule } from './modules/invitations/invitations.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { RedisModule } from './redis/redis.module';
 import {
   User,
   Feedback,
@@ -46,6 +47,7 @@ import {
         url: process.env.REDIS_URL || 'redis://localhost:6379',
       },
     }),
+    RedisModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
