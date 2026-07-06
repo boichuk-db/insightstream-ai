@@ -67,7 +67,7 @@
         <mxCell id="fLayerFrontend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#6c8ebf;" value="apps/ — Frontend" vertex="1">
           <mxGeometry height="370" width="260" x="320" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="fWeb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/web — Next.js 16&#xa;Vercel → Amplify (planned)" vertex="1">
+        <mxCell id="fWeb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/web — Next.js 16&#xa;Vercel → Amplify (live, not cut over)" vertex="1">
           <mxGeometry height="90" width="220" x="340" y="140" as="geometry" />
         </mxCell>
         <mxCell id="fWidget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/widget — Vite/IIFE&#xa;S3 → CloudFront (planned)" vertex="1">
@@ -364,16 +364,16 @@
         <mxCell id="cfWidget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of S3 widget" vertex="1">
           <mxGeometry height="70" width="190" x="280" y="1005" as="geometry" />
         </mxCell>
-        <mxCell id="amplify" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Amplify&#xa;deploy apps/web&#xa;(replaces Vercel)" vertex="1">
+        <mxCell id="apigwDone" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="✔ API Gateway&#xa;(insightstream-api-proxy)&#xa;HTTPS front for ALB — done" vertex="1">
           <mxGeometry height="70" width="190" x="500" y="1005" as="geometry" />
         </mxCell>
         <mxCell id="bedrock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Bedrock&#xa;amazon.nova-micro-v1:0&#xa;(retry, remaining credits)" vertex="1">
           <mxGeometry height="70" width="190" x="720" y="1005" as="geometry" />
         </mxCell>
-        <mxCell id="cfApi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of ALB" vertex="1">
+        <mxCell id="cfApi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of ALB&#xa;(lower urgency — API Gateway already gives free HTTPS)" vertex="1">
           <mxGeometry height="70" width="190" x="940" y="1005" as="geometry" />
         </mxCell>
-        <mxCell id="pendingNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Also blocked: CloudShell, SSM Session Manager. NOT blocked: EC2, RDS, S3, SQS, Lambda, IAM, ALB, CloudWatch, SNS, Budgets, SES." vertex="1">
+        <mxCell id="pendingNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Also blocked: CloudShell, SSM Session Manager. NOT blocked: EC2, RDS, S3, SQS, Lambda, IAM, ALB, CloudWatch, SNS, Budgets, SES, CodeBuild, Amplify, Bedrock (all confirmed unblocked 2026-07-05/06)." vertex="1">
           <mxGeometry height="70" width="570" x="1150" y="1005" as="geometry" />
         </mxCell>
         <mxCell id="ctBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#444444;" value="Current (live prod traffic) → Target (this diagram — migration in progress, no cutover yet)" vertex="1">
@@ -385,7 +385,7 @@
         <mxCell id="ctWebArrow" parent="1" style="text;html=1;fontSize=16;align=center;" value="→" vertex="1">
           <mxGeometry height="35" width="40" x="530" y="1185" as="geometry" />
         </mxCell>
-        <mxCell id="ctWebTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;" value="Amplify (planned, blocked)" vertex="1">
+        <mxCell id="ctWebTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amplify (live, not cut over)" vertex="1">
           <mxGeometry height="35" width="280" x="580" y="1185" as="geometry" />
         </mxCell>
         <mxCell id="ctApiCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Railway (apps/api)" vertex="1">
@@ -858,14 +858,14 @@
         <mxCell id="m7" value="Application running&#xa;:3001, behind ALB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="1360" y="420" width="200" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="plannedNote" value="Planned: CodeBuild + GitHub webhook (provisioned, BLOCKED — 0 concurrent-build quota on new AWS account). Would replace steps m1–m3 once unblocked; m4–m7 stay the same." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" vertex="1" parent="1">
+        <mxCell id="plannedNote" value="Planned: CodeBuild + GitHub webhook (provisioned, quota unblocked 2026-07-05 — was 0 concurrent builds, now 15). Would replace steps m1–m3; not yet wired up (business-priority trigger now, not a feasibility one — see PLAN.md). m4–m7 stay the same." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" vertex="1" parent="1">
           <mxGeometry x="40" y="620" width="780" height="60" as="geometry" />
         </mxCell>
         <!-- ===== Current vs Target ===== -->
         <mxCell id="ctBox" value="Current (live prod) → Target (this pipeline produces, not cut over yet)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
           <mxGeometry x="900" y="600" width="500" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="ctWeb" value="Vercel (apps/web) → Amplify (planned, blocked)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
+        <mxCell id="ctWeb" value="Vercel (apps/web) → Amplify (live, not cut over)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
           <mxGeometry x="920" y="635" width="460" height="20" as="geometry" />
         </mxCell>
         <mxCell id="ctApi" value="Railway (apps/api) → EC2 + ALB (live via steps above, not cut over)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
