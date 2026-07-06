@@ -77,5 +77,34 @@ describe('StripeService', () => {
         mockStripeInstance.checkout.sessions.create,
       ).not.toHaveBeenCalled();
     });
+
+    it('blocks via the live fallback when local DB is stale (webhook-lag race)', async () => {
+      const team = baseTeam({
+        stripeCustomerId: 'cus_1',
+        stripeSubscriptionId: null,
+        planStatus: 'canceled',
+      });
+      mockStripeInstance.subscriptions.list.mockResolvedValue({
+        data: [{ status: 'active' }],
+      });
+
+      await expect(
+        service.createCheckoutSession(
+          team,
+          'owner@x.com',
+          'price_1',
+          'https://s',
+          'https://c',
+        ),
+      ).rejects.toThrow(ConflictException);
+
+      expect(mockStripeInstance.subscriptions.list).toHaveBeenCalledWith({
+        customer: 'cus_1',
+        status: 'all',
+      });
+      expect(
+        mockStripeInstance.checkout.sessions.create,
+      ).not.toHaveBeenCalled();
+    });
   });
 });
