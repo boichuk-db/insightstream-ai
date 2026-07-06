@@ -82,4 +82,12 @@ describe('RedisService', () => {
       await expect(service.del('some-key')).resolves.toBeUndefined();
     });
   });
+
+  describe('onModuleDestroy', () => {
+    it('disconnects the client', () => {
+      service.onModuleDestroy();
+
+      expect(mockClient.disconnect).toHaveBeenCalled();
+    });
+  });
 });

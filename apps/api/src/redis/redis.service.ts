@@ -1,6 +1,10 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
+function extractErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 @Injectable()
 export class RedisService implements OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
@@ -8,7 +12,11 @@ export class RedisService implements OnModuleDestroy {
 
   constructor() {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.client = new Redis(redisUrl);
+    this.client = new Redis(redisUrl, {
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
+      commandTimeout: 500,
+    });
   }
 
   async get(key: string): Promise<string | null> {
@@ -16,7 +24,7 @@ export class RedisService implements OnModuleDestroy {
       return await this.client.get(key);
     } catch (error) {
       this.logger.warn(
-        `get failed for key "${key}": ${(error as Error).message}`,
+        `get failed for key "${key}": ${extractErrorMessage(error)}`,
       );
       return null;
     }
@@ -27,7 +35,7 @@ export class RedisService implements OnModuleDestroy {
       await this.client.set(key, value, 'EX', ttlSeconds);
     } catch (error) {
       this.logger.warn(
-        `set failed for key "${key}": ${(error as Error).message}`,
+        `set failed for key "${key}": ${extractErrorMessage(error)}`,
       );
     }
   }
@@ -37,7 +45,7 @@ export class RedisService implements OnModuleDestroy {
       await this.client.del(key);
     } catch (error) {
       this.logger.warn(
-        `del failed for key "${key}": ${(error as Error).message}`,
+        `del failed for key "${key}": ${extractErrorMessage(error)}`,
       );
     }
   }
