@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { api } from "@/lib/api";
 import { planStatusQuery } from "@/lib/queries";
 import { useTeam } from "@/hooks/useTeam";
@@ -60,8 +61,14 @@ export function PricingCards() {
       });
       // eslint-disable-next-line react-hooks/immutability
       window.location.href = res.data.url;
-    } catch {
-      toast.error("Failed to start checkout. Please try again.");
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        toast.error(
+          "You already have an active subscription — manage it from Billing settings.",
+        );
+      } else {
+        toast.error("Failed to start checkout. Please try again.");
+      }
       setLoadingPriceId(null);
     }
   };
