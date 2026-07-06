@@ -37,7 +37,10 @@ pnpm typecheck    # tsc --noEmit all
 pnpm format       # Prettier all
 pnpm test         # API unit tests (Jest)
 docker compose up -d  # start local PostgreSQL + Redis
+stripe listen --forward-to localhost:3001/webhooks/stripe  # для тестування Stripe webhooks локально
 ```
+
+**Stripe webhooks локально:** без `stripe listen` вебхуки від Stripe (`checkout.session.completed` і т.д.) не долетять до `localhost` — чекаут пройде успішно (Stripe customer створюється прямим викликом з сервера), але підписка/план у БД не оновляться, бо це відбувається лише в обробнику вебхука. Секрет, який `stripe listen` друкує при старті (`whsec_...`), треба вписати в `apps/api/.env` як `STRIPE_WEBHOOK_SECRET` — він новий щоразу після перезапуску `stripe listen`.
 
 ## Key Conventions
 
