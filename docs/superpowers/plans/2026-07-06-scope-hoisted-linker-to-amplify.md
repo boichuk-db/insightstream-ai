@@ -102,11 +102,11 @@ to:
         preBuild:
           commands:
             - npm install -g pnpm@9
-            - echo "node-linker=hoisted" >> .npmrc
+            - echo "node-linker=hoisted" > ../../.npmrc
             - pnpm install --frozen-lockfile
 ```
 
-Leave every other line in `amplify.yml` unchanged.
+`appRoot: apps/web` means `preBuild.commands` run with cwd = `apps/web`, so the path must be `../../.npmrc` (climbing two levels to the repo root), matching the existing `cache.paths: ../../node_modules/**/*` convention already in `amplify.yml` — a bare `.npmrc` would land in `apps/web/.npmrc` instead, which pnpm's workspace-wide `node-linker` setting would not affect. Leave every other line in `amplify.yml` unchanged.
 
 - [ ] **Step 6: Commit**
 
@@ -151,7 +151,7 @@ This push also triggers Amplify's auto-build on `main` (per PLAN.md 🔥 #11, Am
 aws amplify list-jobs --app-id d4bl0rp7zigqy --branch-name main --max-results 1
 ```
 
-Expected: the most recent job's `status` is `SUCCEED` (it may show `RUNNING` or `PENDING` immediately after the push — if so, wait and re-run the command rather than reporting success prematurely). This confirms the `preBuild`-scoped `echo "node-linker=hoisted" >> .npmrc` step is doing its job inside Amplify's container.
+Expected: the most recent job's `status` is `SUCCEED` (it may show `RUNNING` or `PENDING` immediately after the push — if so, wait and re-run the command rather than reporting success prematurely). This confirms the `preBuild`-scoped `echo "node-linker=hoisted" > ../../.npmrc` step is doing its job inside Amplify's container.
 
 - [ ] **Step 4: Update `docs/architecture/PLAN.md`**
 

@@ -28,10 +28,10 @@ Restore the previously-green CI (local dev, GitHub Actions) without touching Amp
    preBuild:
      commands:
        - npm install -g pnpm@9
-       - echo "node-linker=hoisted" >> .npmrc
+       - echo "node-linker=hoisted" > ../../.npmrc
        - pnpm install --frozen-lockfile
    ```
-   This appends to (or creates) `.npmrc` inside Amplify's cloned checkout at build time — never committed, never affecting any other environment's install.
+   `appRoot: apps/web` means `preBuild.commands` run with cwd = `apps/web`, so the path must climb two levels (`../../`) to land on the actual repo root — matching the existing `cache.paths: ../../node_modules/**/*` convention already in `amplify.yml`. This overwrites (creates) `.npmrc` inside Amplify's cloned checkout at build time — never committed, never affecting any other environment's install.
 
 No application code, migration script, or test changes. This is a two-file infra-config change.
 
