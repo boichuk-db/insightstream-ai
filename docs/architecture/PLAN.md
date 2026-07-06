@@ -88,7 +88,7 @@ Full implementation detail in ✔ Completed above. **Stale premise:** the origin
 - `TeamContext` value not memoized — all consumers re-render on any provider query update; fine at current scale.
 - Landing footer "Pricing" now lands on a login-gated route (no public pricing page anymore) — product decision pending.
 - `apps/e2e/tsconfig.json` lacks `"types": ["node"]` — ~323 pre-existing noise errors on `tsc`.
-- UI e2e for team-switch-on-billing-tab; manual Stripe test-mode checkout verification (webhooks covered by 14 unit tests).
+- UI e2e for team-switch-on-billing-tab; manual Stripe test-mode checkout verification (webhooks covered by 14 unit tests). **Concrete gap found 2026-07-06:** confirmed via direct RDS query that `boichuk.db's Team` (the owner's own team) has `plan=PRO, planStatus=active` but no `stripeCustomerId`/`stripeSubscriptionId` at all — a manually-set flag, not a real subscription. `CurrentPlanCard`'s "Manage subscription →" button (→ `GET /plans/portal` → Stripe Customer Portal, which has cancellation built in) correctly stays hidden without a real subscription — not a code bug — but it means the whole manage/cancel path has **never been exercised end-to-end**. Do the real test-mode checkout, confirm the button appears, and confirm in the Stripe Dashboard (Settings → Billing → Customer portal) that "Cancel subscriptions" is actually enabled there — that's a dashboard toggle, not code.
 - Local e2e envs: web must be **built** with `NEXT_PUBLIC_API_URL=http://localhost:3001`; DB env overrides for the docker-compose stack.
 **Type:** structural.
 
