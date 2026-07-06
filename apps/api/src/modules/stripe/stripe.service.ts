@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,12 +9,42 @@ import Stripe from 'stripe';
 export class StripeService {
   private readonly logger = new Logger(StripeService.name);
   private readonly stripe: Stripe;
+  private static readonly BLOCKING_STATUSES = [
+    'active',
+    'trialing',
+    'past_due',
+  ];
 
   constructor(
     private config: ConfigService,
     @InjectRepository(Team) private teamRepo: Repository<Team>,
   ) {
     this.stripe = new Stripe(this.config.getOrThrow('STRIPE_SECRET_KEY'));
+  }
+
+  private async assertNoActiveSubscription(team: Team): Promise<void> {
+    if (
+      team.stripeSubscriptionId &&
+      StripeService.BLOCKING_STATUSES.includes(team.planStatus)
+    ) {
+      throw new ConflictException('Team already has an active subscription');
+    }
+
+    if (!team.stripeCustomerId) return;
+
+    const subscriptions = await this.stripe.subscriptions.list({
+      customer: team.stripeCustomerId,
+      status: 'all',
+    });
+    const hasLiveSubscription = subscriptions.data.some((sub) =>
+      StripeService.BLOCKING_STATUSES.includes(sub.status),
+    );
+    if (hasLiveSubscription) {
+      this.logger.warn(
+        `Blocked duplicate checkout for team ${team.id}: local DB showed no active subscription but Stripe customer ${team.stripeCustomerId} has one`,
+      );
+      throw new ConflictException('Team already has an active subscription');
+    }
   }
 
   async createOrGetCustomer(team: Team, ownerEmail: string): Promise<string> {
@@ -37,6 +67,7 @@ export class StripeService {
     successUrl: string,
     cancelUrl: string,
   ): Promise<string> {
+    await this.assertNoActiveSubscription(team);
     const customerId = await this.createOrGetCustomer(team, ownerEmail);
     const session = await this.stripe.checkout.sessions.create({
       customer: customerId,
