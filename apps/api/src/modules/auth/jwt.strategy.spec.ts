@@ -79,7 +79,7 @@ describe('JwtStrategy', () => {
     expect(result).toEqual({ id: '5', email: 'g@h.com', role: 'user' });
   });
 
-  it('falls back to the database when the cached value is malformed or for a different user', async () => {
+  it('falls back to the database when the cached value is malformed JSON', async () => {
     mockRedisService.get.mockResolvedValue('not valid json');
     mockUsersService.findOneById.mockResolvedValue({
       id: '6',
@@ -91,5 +91,21 @@ describe('JwtStrategy', () => {
 
     expect(mockUsersService.findOneById).toHaveBeenCalledWith('6');
     expect(result).toEqual({ id: '6', email: 'i@j.com', role: 'user' });
+  });
+
+  it('falls back to the database when the cached value belongs to a different user', async () => {
+    mockRedisService.get.mockResolvedValue(
+      JSON.stringify({ id: 'someone-else', email: 'x@y.com', role: 'user' }),
+    );
+    mockUsersService.findOneById.mockResolvedValue({
+      id: '7',
+      email: 'k@l.com',
+      role: 'user',
+    });
+
+    const result = await strategy.validate({ sub: '7' });
+
+    expect(mockUsersService.findOneById).toHaveBeenCalledWith('7');
+    expect(result).toEqual({ id: '7', email: 'k@l.com', role: 'user' });
   });
 });
