@@ -106,5 +106,68 @@ describe('StripeService', () => {
         mockStripeInstance.checkout.sessions.create,
       ).not.toHaveBeenCalled();
     });
+
+    it('skips the live check and proceeds when the team has no Stripe customer yet', async () => {
+      const team = baseTeam({ stripeCustomerId: null, planStatus: 'canceled' });
+      mockStripeInstance.customers.create.mockResolvedValue({ id: 'cus_new' });
+      mockStripeInstance.checkout.sessions.create.mockResolvedValue({
+        url: 'https://checkout',
+      });
+
+      const url = await service.createCheckoutSession(
+        team,
+        'owner@x.com',
+        'price_1',
+        'https://s',
+        'https://c',
+      );
+
+      expect(url).toBe('https://checkout');
+      expect(mockStripeInstance.subscriptions.list).not.toHaveBeenCalled();
+    });
+
+    it('proceeds when both local and live checks are clear', async () => {
+      const team = baseTeam({
+        stripeCustomerId: 'cus_1',
+        stripeSubscriptionId: null,
+        planStatus: 'canceled',
+      });
+      mockStripeInstance.subscriptions.list.mockResolvedValue({ data: [] });
+      mockStripeInstance.checkout.sessions.create.mockResolvedValue({
+        url: 'https://checkout',
+      });
+
+      const url = await service.createCheckoutSession(
+        team,
+        'owner@x.com',
+        'price_1',
+        'https://s',
+        'https://c',
+      );
+
+      expect(url).toBe('https://checkout');
+    });
+
+    it('proceeds after cancellation when the live list is empty', async () => {
+      const team = baseTeam({
+        stripeCustomerId: 'cus_1',
+        stripeSubscriptionId: 'sub_old',
+        planStatus: 'canceled',
+      });
+      mockStripeInstance.subscriptions.list.mockResolvedValue({ data: [] });
+      mockStripeInstance.checkout.sessions.create.mockResolvedValue({
+        url: 'https://checkout',
+      });
+
+      const url = await service.createCheckoutSession(
+        team,
+        'owner@x.com',
+        'price_1',
+        'https://s',
+        'https://c',
+      );
+
+      expect(url).toBe('https://checkout');
+    });
   });
 });
