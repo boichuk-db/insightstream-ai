@@ -14,6 +14,7 @@ import {
   hasMinRole,
 } from '@insightstream/database';
 import { PlanLimitsService } from '../plans/plan-limits.service';
+import { UpdateProjectDto } from './dto/update-project.dto';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -103,6 +104,31 @@ export class ProjectsService {
     });
     if (!member) throw new NotFoundException('Project not found');
     return project;
+  }
+
+  async update(
+    id: string,
+    userId: string,
+    dto: UpdateProjectDto,
+  ): Promise<Project> {
+    const project = await this.findOne(id, userId);
+    const member = await this.memberRepo.findOne({
+      where: { teamId: project.teamId, userId },
+    });
+    if (!member || !hasMinRole(member.role, TeamRole.ADMIN)) {
+      throw new ForbiddenException('Requires admin role in this team');
+    }
+
+    if (dto.name === undefined && dto.domain === undefined) {
+      throw new BadRequestException(
+        'At least one of name or domain must be provided',
+      );
+    }
+
+    if (dto.name !== undefined) project.name = dto.name;
+    if (dto.domain !== undefined) project.domain = dto.domain;
+
+    return this.projectsRepository.save(project);
   }
 
   async findByApiKey(apiKey: string): Promise<Project | null> {
