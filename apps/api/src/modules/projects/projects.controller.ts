@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Param,
   Body,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProjectsService } from './projects.service';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('projects')
@@ -35,6 +37,15 @@ export class ProjectsController {
   @Get(':id')
   async findOne(@Request() req: any, @Param('id') id: string) {
     return this.projectsService.findOne(id, req.user.id);
+  }
+
+  @Patch(':id')
+  async update(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: UpdateProjectDto,
+  ) {
+    return this.projectsService.update(id, req.user.id, body);
   }
 
   @Delete(':id')
