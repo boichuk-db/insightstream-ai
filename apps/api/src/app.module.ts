@@ -16,6 +16,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { EventsModule } from './modules/events/events.module';
 import { DigestModule } from './modules/digest/digest.module';
+import { AiSweepModule } from './modules/ai/ai-sweep.module';
 import { PlansModule } from './modules/plans/plans.module';
 import { TeamsModule } from './modules/teams/teams.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
@@ -52,6 +53,7 @@ import { getBullConfig } from './config/bull.config';
     ProjectsModule,
     EventsModule,
     DigestModule,
+    AiSweepModule,
     PlansModule,
     TeamsModule,
     InvitationsModule,
