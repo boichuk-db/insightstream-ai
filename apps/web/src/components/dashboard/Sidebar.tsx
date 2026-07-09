@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Check,
   Trash2,
+  Pencil,
   Settings,
   Activity,
   BarChart2,
@@ -24,6 +25,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getPlanConfig, isPaidPlan, PlanType } from "@/lib/plans";
 import { CreateTeamModal } from "@/components/teams/CreateTeamModal";
 import { CreateTeamProjectModal } from "@/components/teams/CreateTeamProjectModal";
+import { EditProjectModal } from "@/components/dashboard/EditProjectModal";
 import { Dropdown } from "@/components/ui/dropdown";
 
 export function Sidebar({
@@ -61,6 +63,7 @@ export function Sidebar({
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [isCreateTeamProjectOpen, setIsCreateTeamProjectOpen] = useState(false);
   const [isDeleteProjectOpen, setIsDeleteProjectOpen] = useState(false);
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
 
   const { data: feedbacks = [] } = useQuery({
     ...feedbacksQuery(activeProject?.id ?? ""),
@@ -223,6 +226,12 @@ export function Sidebar({
             {activeProject && (isAdminOrOwner || !activeTeam) && (
               <>
                 <Dropdown.Separator />
+                <Dropdown.Item
+                  icon={<Pencil className="h-4 w-4" />}
+                  onClick={() => setIsEditProjectOpen(true)}
+                >
+                  Edit project…
+                </Dropdown.Item>
                 <Dropdown.Item
                   icon={<Trash2 className="h-4 w-4 text-red-400" />}
                   onClick={() => setIsDeleteProjectOpen(true)}
@@ -388,6 +397,11 @@ export function Sidebar({
           teamId={activeTeam.id}
         />
       )}
+      <EditProjectModal
+        isOpen={isEditProjectOpen}
+        onClose={() => setIsEditProjectOpen(false)}
+        project={activeProject ?? null}
+      />
     </>
   );
 }
