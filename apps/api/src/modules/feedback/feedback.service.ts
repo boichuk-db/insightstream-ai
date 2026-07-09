@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   ForbiddenException,
   BadRequestException,
   NotFoundException,
@@ -16,15 +15,9 @@ import { AiQueueService } from '../ai/ai-queue.service';
 import { EventsService } from '../events/events.service';
 import { ProjectsService } from '../projects/projects.service';
 import { PlanLimitsService } from '../plans/plan-limits.service';
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 
 @Injectable()
 export class FeedbackService {
-  private readonly logger = new Logger(FeedbackService.name);
-  private readonly sqs = new SQSClient({
-    region: process.env.AWS_REGION || 'eu-north-1',
-  });
-
   constructor(
     @InjectRepository(Feedback)
     private feedbackRepository: Repository<Feedback>,
@@ -97,24 +90,6 @@ export class FeedbackService {
         },
         10,
       );
-    }
-
-    const queueUrl = process.env.SQS_FEEDBACK_QUEUE_URL;
-    if (queueUrl) {
-      this.sqs
-        .send(
-          new SendMessageCommand({
-            QueueUrl: queueUrl,
-            MessageBody: JSON.stringify({
-              feedbackId: savedFeedback.id,
-              projectId: savedFeedback.projectId,
-              content: savedFeedback.content,
-              source: savedFeedback.source,
-              createdAt: savedFeedback.createdAt,
-            }),
-          }),
-        )
-        .catch((err) => this.logger.error('SQS publish failed', err));
     }
 
     return savedFeedback;

@@ -106,9 +106,6 @@
         <mxCell id="fOauth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Google OAuth / GitHub OAuth" vertex="1">
           <mxGeometry height="60" width="260" x="980" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="fSqsStub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="SQS → Lambda feedback-processor&#xa;STUB — logs only, not real processing" vertex="1">
-          <mxGeometry height="60" width="260" x="980" y="215" as="geometry" />
-        </mxCell>
         <mxCell id="fStripe" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Stripe" vertex="1">
           <mxGeometry height="60" width="260" x="980" y="300" as="geometry" />
         </mxCell>
@@ -151,13 +148,13 @@
         <mxCell id="implNotes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Implementation notes (trimmed from boxes above — verified against code 2026-06-30)" vertex="1">
           <mxGeometry height="220" width="940" x="320" y="960" as="geometry" />
         </mxCell>
-        <mxCell id="implNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Auth: JWT + Google/GitHub OAuth.&#xa;• Feedback: public submissions go through throttling + API-key &amp; origin whitelist (validated via CreatePublicFeedbackDto + global ValidationPipe, content ≤5000 chars); saves to Postgres synchronously, then enqueues a BullMQ job (if plan allows AI) and separately fires a fire-and-forget SQS message.&#xa;• Billing: Stripe webhooks at /webhooks/stripe.&#xa;• AI: BullMQ worker (ai-analysis queue) calls Gemini, writes the result back to Postgres, then emits Socket.io feedbackUpdated.&#xa;• Digest: weekly AI digest — scheduled in-process via @Cron (Mon 09:00). The duplicate EventBridge→Lambda→internal-endpoint trigger was removed 2026-07-03.&#xa;• Events Gateway: single event feedbackUpdated (room user-{userId}) — emitted after AI analysis, on status update, and on bulk archive. NOT emitted on initial feedback creation.&#xa;• SQS/Lambda feedback-processor: currently a stub — only console.log&#39;s the event, not wired to real processing yet (comment in code: future Slack/webhook/analytics).&#xa;• Landing (apps/landing, insightstream.ai): pure marketing Next.js 16 app — zero @insightstream/* deps. All CTAs are plain &lt;a href&gt; links to app.insightstream.ai/auth/register. Registration auto-creates a personal team. See Registration &amp; Onboarding Flow tab." vertex="1">
+        <mxCell id="implNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Auth: JWT + Google/GitHub OAuth.&#xa;• Feedback: public submissions go through throttling + API-key &amp; origin whitelist (validated via CreatePublicFeedbackDto + global ValidationPipe, content ≤5000 chars); saves to Postgres synchronously, then enqueues a BullMQ job (if plan allows AI).&#xa;• Billing: Stripe webhooks at /webhooks/stripe.&#xa;• AI: BullMQ worker (ai-analysis queue) calls Gemini, writes the result back to Postgres, then emits Socket.io feedbackUpdated.&#xa;• Digest: weekly AI digest — scheduled in-process via @Cron (Mon 09:00). The duplicate EventBridge→Lambda→internal-endpoint trigger was removed 2026-07-03.&#xa;• Events Gateway: single event feedbackUpdated (room user-{userId}) — emitted after AI analysis, on status update, and on bulk archive. NOT emitted on initial feedback creation.&#xa;• SQS/Lambda feedback-processor stub removed 2026-07-09 (PLAN 🔥 #9) — it only console.log&#39;d the event and shipped no feature; the seam right after feedbackRepository.save() stays in the code for a future real consumer (Slack, analytics).&#xa;• Landing (apps/landing, insightstream.ai): pure marketing Next.js 16 app — zero @insightstream/* deps. All CTAs are plain &lt;a href&gt; links to app.insightstream.ai/auth/register. Registration auto-creates a personal team. See Registration &amp; Onboarding Flow tab." vertex="1">
           <mxGeometry height="170" width="900" x="340" y="1000" as="geometry" />
         </mxCell>
         <mxCell id="archDecisions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Architecture Decisions" vertex="1">
           <mxGeometry height="450" width="380" x="1300" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="archDecisionsText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Monorepo (pnpm + Turbo) — share types/DB entities across apps without publishing packages.&#xa;• PostgreSQL over MongoDB — relational data (users/projects/teams/feedback) benefits from FK integrity and TypeORM tooling.&#xa;• BullMQ (Redis) for AI analysis — decouples slow Gemini calls from the feedback-submission request/response cycle.&#xa;• SQS + Lambda reserved for future async work — infra provisioned ahead of the AWS migration, not yet load-bearing (currently a stub).&#xa;• Socket.io for realtime dashboard updates — pushes AI results and status changes without polling.&#xa;• Stateless API — no session state on EC2/Railway, safe to scale horizontally or swap ALB target groups.&#xa;• AWS migration in progress, gradual EC2-centric move off Railway/Vercel/Supabase — see Current vs Target panel on the AWS Infrastructure tab." vertex="1">
+        <mxCell id="archDecisionsText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Monorepo (pnpm + Turbo) — share types/DB entities across apps without publishing packages.&#xa;• PostgreSQL over MongoDB — relational data (users/projects/teams/feedback) benefits from FK integrity and TypeORM tooling.&#xa;• BullMQ (Redis) for AI analysis — decouples slow Gemini calls from the feedback-submission request/response cycle.&#xa;• Socket.io for realtime dashboard updates — pushes AI results and status changes without polling.&#xa;• Stateless API — no session state on EC2/Railway, safe to scale horizontally or swap ALB target groups.&#xa;• AWS migration in progress, gradual EC2-centric move off Railway/Vercel/Supabase — see Current vs Target panel on the AWS Infrastructure tab." vertex="1">
           <mxGeometry height="400" width="340" x="1320" y="130" as="geometry" />
         </mxCell>
         <mxCell id="fe1" edge="1" parent="1" source="fUser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fWeb">
@@ -176,9 +173,6 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="fe14" edge="1" parent="1" source="fApiAuth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fOauth">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="fe18" edge="1" parent="1" source="fApiFeedback" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fSqsStub">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="fe13" edge="1" parent="1" source="fApiBilling" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="fStripe">
@@ -307,7 +301,7 @@
         <mxCell id="rds" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="RDS PostgreSQL&#xa;db.t3.micro, SSL required&#xa;Multi-AZ disabled" vertex="1">
           <mxGeometry height="70" width="260" x="290" y="465" as="geometry" />
         </mxCell>
-        <mxCell id="lambdaVpcNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Lambda feedback-processor (see Async Processing below) runs OUTSIDE this VPC, no NAT Gateway. The weekly digest is scheduled in-process on EC2 via @Cron — no external scheduler." vertex="1">
+        <mxCell id="lambdaVpcNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="The weekly digest is scheduled in-process on EC2 via @Cron — no external scheduler. The SQS/Lambda feedback-processor stub (retired 2026-07-09, PLAN 🔥 #9) previously ran outside this VPC, no NAT Gateway." vertex="1">
           <mxGeometry height="50" width="950" x="600" y="465" as="geometry" />
         </mxCell>
         <mxCell id="staticBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#82b366;" value="Static Assets" vertex="1">
@@ -328,20 +322,11 @@
         <mxCell id="manualBuild" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;" value="Workaround: local docker build/push to ECR + SSH run docker-run.sh" vertex="1">
           <mxGeometry height="35" width="380" x="580" y="765" as="geometry" />
         </mxCell>
-        <mxCell id="asyncBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#d6b656;dashed=1;" value="Async Processing (AWS)" vertex="1">
-          <mxGeometry height="220" width="420" x="1000" y="650" as="geometry" />
-        </mxCell>
-        <mxCell id="sqs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="SQS&#xa;insightstream-feedback" vertex="1">
-          <mxGeometry height="50" width="180" x="1020" y="685" as="geometry" />
-        </mxCell>
-        <mxCell id="lambdaFeedback" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Lambda&#xa;feedback-processor" vertex="1">
-          <mxGeometry height="50" width="180" x="1220" y="685" as="geometry" />
-        </mxCell>
-        <mxCell id="stubNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=9;fontStyle=2;align=left;" value="STUB: only console.log&#39;s the event today — not wired to real processing (see Request Lifecycle tab)." vertex="1">
-          <mxGeometry height="45" width="180" x="1220" y="740" as="geometry" />
+        <mxCell id="asyncBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#d6b656;dashed=1;" value="Email (AWS)" vertex="1">
+          <mxGeometry height="100" width="420" x="1000" y="650" as="geometry" />
         </mxCell>
         <mxCell id="ses" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="SES&#xa;verified identity (single email)" vertex="1">
-          <mxGeometry height="50" width="180" x="1220" y="795" as="geometry" />
+          <mxGeometry height="50" width="180" x="1020" y="685" as="geometry" />
         </mxCell>
         <mxCell id="opsBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#9673a6;" value="Ops: Secrets &amp; Monitoring" vertex="1">
           <mxGeometry height="300" width="280" x="1460" y="650" as="geometry" />
@@ -446,12 +431,6 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="e7" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.3;" target="extGemini">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="sqs">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e9" edge="1" parent="1" source="sqs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="lambdaFeedback">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="e12" edge="1" parent="1" source="ec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ssm">
@@ -567,21 +546,6 @@
         <mxCell id="se9" edge="1" parent="1" source="s9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="s10" value="WebSocket push">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="sqsBranchLabel" parent="1" style="text;html=1;fontSize=10;fontStyle=2;align=left;" value="Parallel, fire-and-forget — NOT part of the AI pipeline above" vertex="1">
-          <mxGeometry height="20" width="500" x="720" y="320" as="geometry" />
-        </mxCell>
-        <mxCell id="s5b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="5b. SQS message&#xa;insightstream-feedback" vertex="1">
-          <mxGeometry height="60" width="180" x="720" y="350" as="geometry" />
-        </mxCell>
-        <mxCell id="s5c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" value="Lambda feedback-processor&#xa;STUB: console.log only" vertex="1">
-          <mxGeometry height="60" width="220" x="930" y="350" as="geometry" />
-        </mxCell>
-        <mxCell id="se10" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="s5b">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="se11" edge="1" parent="1" source="s5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="s5c">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="digestBranchLabel" parent="1" style="text;html=1;fontSize=10;fontStyle=2;align=left;" value="Separate scheduled trigger — not initiated by end-user feedback submission. Weekly AI digest, scheduled in-process via @Cron (Mon 09:00). The duplicate EventBridge→Lambda trigger was removed 2026-07-03." vertex="1">
           <mxGeometry height="20" width="820" x="20" y="460" as="geometry" />
         </mxCell>
@@ -598,163 +562,155 @@
     </mxGraphModel>
   </diagram>
   <diagram id="auth-flow" name="Authentication Flow">
-    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="650" math="0" shadow="0">
+    <mxGraphModel dx="1147" dy="1050" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="650" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="atitle" value="InsightStream AI — Authentication Flow" style="text;html=1;fontSize=18;fontStyle=1;align=left;" vertex="1" parent="1">
-          <mxGeometry x="20" y="10" width="900" height="30" as="geometry" />
+        <mxCell id="atitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Authentication Flow" vertex="1">
+          <mxGeometry height="30" width="900" x="20" y="10" as="geometry" />
         </mxCell>
-        <mxCell id="asubtitle" value="Verified against code 2026-06-30 (apps/api/src/modules/auth). Single JWT access token, 7-day expiry. No refresh token, no server-side logout endpoint." style="text;html=1;fontSize=11;fontStyle=2;align=left;" vertex="1" parent="1">
-          <mxGeometry x="20" y="40" width="1100" height="20" as="geometry" />
+        <mxCell id="asubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against code 2026-06-30 (apps/api/src/modules/auth). Single JWT access token, 7-day expiry. No refresh token, no server-side logout endpoint." vertex="1">
+          <mxGeometry height="20" width="1100" x="20" y="40" as="geometry" />
         </mxCell>
-        <!-- ===== Legend ===== -->
-        <mxCell id="lgBox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
-          <mxGeometry x="1620" y="50" width="260" height="170" as="geometry" />
+        <mxCell id="lgBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Legend" vertex="1">
+          <mxGeometry height="170" width="260" x="1720" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="lgSw1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="90" width="24" height="16" as="geometry" />
+        <mxCell id="lgSw1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="lgTx1" value="Frontend" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
-          <mxGeometry x="1674" y="86" width="190" height="20" as="geometry" />
+        <mxCell id="lgTx1" parent="1" style="text;html=1;fontSize=12;align=left;" value="Frontend" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="86" as="geometry" />
         </mxCell>
-        <mxCell id="lgSw2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="118" width="24" height="16" as="geometry" />
+        <mxCell id="lgSw2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="118" as="geometry" />
         </mxCell>
-        <mxCell id="lgTx2" value="Backend" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
-          <mxGeometry x="1674" y="114" width="190" height="20" as="geometry" />
+        <mxCell id="lgTx2" parent="1" style="text;html=1;fontSize=12;align=left;" value="Backend" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="114" as="geometry" />
         </mxCell>
-        <mxCell id="lgSw3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="146" width="24" height="16" as="geometry" />
+        <mxCell id="lgSw3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="146" as="geometry" />
         </mxCell>
-        <mxCell id="lgTx3" value="Data Layer" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
-          <mxGeometry x="1674" y="142" width="190" height="20" as="geometry" />
+        <mxCell id="lgTx3" parent="1" style="text;html=1;fontSize=12;align=left;" value="Data Layer" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="142" as="geometry" />
         </mxCell>
-        <mxCell id="lgSw4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="174" width="24" height="16" as="geometry" />
+        <mxCell id="lgSw4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry height="16" width="24" x="1740" y="174" as="geometry" />
         </mxCell>
-        <mxCell id="lgTx4" value="External Services" style="text;html=1;fontSize=12;align=left;" vertex="1" parent="1">
-          <mxGeometry x="1674" y="170" width="190" height="20" as="geometry" />
+        <mxCell id="lgTx4" parent="1" style="text;html=1;fontSize=12;align=left;" value="External Services" vertex="1">
+          <mxGeometry height="20" width="190" x="1774" y="170" as="geometry" />
         </mxCell>
-        <!-- ===== Password login path ===== -->
-        <mxCell id="pa1" value="Browser&#xa;login form" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="20" y="100" width="160" height="70" as="geometry" />
+        <mxCell id="pa1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Browser&#xa;login form" vertex="1">
+          <mxGeometry height="70" width="160" x="20" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="pa2" value="POST /auth/login&#xa;validateUser() — bcrypt compare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="220" y="100" width="200" height="70" as="geometry" />
+        <mxCell id="pa2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="POST /auth/login&#xa;validateUser() — bcrypt compare" vertex="1">
+          <mxGeometry height="70" width="200" x="220" y="100" as="geometry" />
         </mxCell>
-        <!-- ===== OAuth login path ===== -->
-        <mxCell id="oa1" value="Browser&#xa;&#39;Sign in with Google/GitHub&#39;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="20" y="200" width="160" height="70" as="geometry" />
+        <mxCell id="oa1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Browser&#xa;&#39;Sign in with Google/GitHub&#39;" vertex="1">
+          <mxGeometry height="70" width="160" x="20" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="oa2" value="GET /auth/google|github&#xa;redirect to provider" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="220" y="200" width="200" height="70" as="geometry" />
+        <mxCell id="oa2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="GET /auth/google|github&#xa;redirect to provider" vertex="1">
+          <mxGeometry height="70" width="200" x="220" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="oa3" value="Google OAuth /&#xa;GitHub OAuth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="460" y="200" width="160" height="70" as="geometry" />
+        <mxCell id="oa3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Google OAuth /&#xa;GitHub OAuth" vertex="1">
+          <mxGeometry height="70" width="160" x="460" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="oa4" value="GET .../callback&#xa;Passport strategy validates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="660" y="200" width="200" height="70" as="geometry" />
+        <mxCell id="oa4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="GET .../callback&#xa;Passport strategy validates" vertex="1">
+          <mxGeometry height="70" width="200" x="660" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="oa5" value="oauthLogin()&#xa;find by providerId → auto-link by email → create if new" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="900" y="190" width="240" height="90" as="geometry" />
+        <mxCell id="oa5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="oauthLogin()&#xa;find by providerId → auto-link by email → create if new" vertex="1">
+          <mxGeometry height="90" width="240" x="900" y="190" as="geometry" />
         </mxCell>
-        <!-- ===== JWT generation (merge point) ===== -->
-        <mxCell id="jwtgen" value="login(user) — JWT generation&#xa;payload {sub,email,role,plan}&#xa;signed JWT_SECRET, expiresIn 7d" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="1190" y="140" width="220" height="90" as="geometry" />
+        <mxCell id="jwtgen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="login(user) — JWT generation&#xa;payload {sub,email,role,plan}&#xa;signed JWT_SECRET, expiresIn 7d" vertex="1">
+          <mxGeometry height="90" width="220" x="1190" y="140" as="geometry" />
         </mxCell>
-        <mxCell id="refreshNote" value="Refresh Token — NOT IMPLEMENTED (future)&#xa;single access token only, no rotation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1190" y="250" width="220" height="50" as="geometry" />
+        <mxCell id="refreshNote" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;" value="Refresh Token — NOT IMPLEMENTED (future)&#xa;single access token only, no rotation" vertex="1">
+          <mxGeometry height="50" width="220" x="1190" y="250" as="geometry" />
         </mxCell>
-        <!-- ===== Response split ===== -->
-        <mxCell id="respPwd" value="Password path:&#xa;JSON { access_token, user }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="1460" y="110" width="220" height="60" as="geometry" />
+        <mxCell id="respPwd" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Password path:&#xa;JSON { access_token, user }" vertex="1">
+          <mxGeometry height="60" width="220" x="1460" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="respOauth" value="OAuth path: redirect →&#xa;FRONTEND_URL/auth/oauth/callback?token=..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="1460" y="190" width="220" height="60" as="geometry" />
+        <mxCell id="respOauth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="OAuth path: redirect →&#xa;FRONTEND_URL/auth/oauth/callback?token=..." vertex="1">
+          <mxGeometry height="60" width="220" x="1460" y="190" as="geometry" />
         </mxCell>
-        <mxCell id="browserStore" value="Browser stores access_token&#xa;(client-side)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="1460" y="270" width="220" height="60" as="geometry" />
+        <mxCell id="browserStore" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Browser stores access_token&#xa;(client-side)" vertex="1">
+          <mxGeometry height="60" width="220" x="1460" y="270" as="geometry" />
         </mxCell>
-        <!-- ===== Protected request flow ===== -->
-        <mxCell id="pr1" value="Protected API request&#xa;Authorization: Bearer &lt;token&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="20" y="380" width="220" height="70" as="geometry" />
+        <mxCell id="pr1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Protected API request&#xa;Authorization: Bearer &lt;token&gt;" vertex="1">
+          <mxGeometry height="70" width="220" x="20" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="pr2" value="JwtAuthGuard&#xa;(Passport AuthGuard &#39;jwt&#39;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="280" y="380" width="220" height="70" as="geometry" />
+        <mxCell id="pr2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="JwtAuthGuard&#xa;(Passport AuthGuard &#39;jwt&#39;)" vertex="1">
+          <mxGeometry height="70" width="220" x="280" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="pr3" value="JwtStrategy.validate()&#xa;verify signature + expiry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="540" y="380" width="220" height="70" as="geometry" />
+        <mxCell id="pr3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="JwtStrategy.validate()&#xa;verify signature + expiry" vertex="1">
+          <mxGeometry height="70" width="220" x="540" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="pr4" value="Lookup user by sub&#xa;fresh read from PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="800" y="380" width="220" height="70" as="geometry" />
+        <mxCell id="pr4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Lookup user by sub&#xa;fresh read from PostgreSQL" vertex="1">
+          <mxGeometry height="70" width="220" x="800" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="pr5" value="Current User attached&#xa;(req.user) → handler runs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="1060" y="350" width="240" height="60" as="geometry" />
+        <mxCell id="pr5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Current User attached&#xa;(req.user) → handler runs" vertex="1">
+          <mxGeometry height="60" width="240" x="1060" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="pr6" value="401 Unauthorized&#xa;bad signature / expired / user deleted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="1060" y="430" width="240" height="60" as="geometry" />
+        <mxCell id="pr6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="401 Unauthorized&#xa;bad signature / expired / user deleted" vertex="1">
+          <mxGeometry height="60" width="240" x="1060" y="430" as="geometry" />
         </mxCell>
-        <mxCell id="logoutNote" value="Logout = client deletes token locally. No server endpoint exists — JWT is stateless, no blacklist, can&#39;t force-revoke a token before its 7-day expiry." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" vertex="1" parent="1">
-          <mxGeometry x="20" y="480" width="500" height="60" as="geometry" />
+        <mxCell id="logoutNote" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;align=left;" value="Logout = client deletes token locally. No server endpoint exists — JWT is stateless, no blacklist, can&#39;t force-revoke a token before its 7-day expiry." vertex="1">
+          <mxGeometry height="60" width="500" x="20" y="480" as="geometry" />
         </mxCell>
-        <!-- ===== Architecture Notes ===== -->
-        <mxCell id="authNotes" value="Architecture Notes — why JWT over server sessions" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" vertex="1" parent="1">
-          <mxGeometry x="1340" y="380" width="540" height="240" as="geometry" />
+        <mxCell id="authNotes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Architecture Notes — why JWT over server sessions" vertex="1">
+          <mxGeometry height="240" width="540" x="1340" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="authNotesText" value="• Stateless — no session store needed; any EC2 instance can validate any request independently.&#xa;• Simplifies horizontal scaling — no sticky sessions or shared session store required for auth (Redis here is reserved for BullMQ, not sessions).&#xa;• Same JWT works for both password and OAuth users — one unified identity payload (sub/email/role/plan) regardless of login method.&#xa;• Trade-off accepted: can&#39;t force-revoke a token before its 7-day expiry (no blacklist) — acceptable at this low-risk, pre-launch stage; refresh-token rotation is a planned hardening step, not yet built." style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="1360" y="415" width="500" height="195" as="geometry" />
+        <mxCell id="authNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Stateless — no session store needed; any EC2 instance can validate any request independently.&#xa;• Simplifies horizontal scaling — no sticky sessions or shared session store required for auth (Redis here is reserved for BullMQ, not sessions).&#xa;• Same JWT works for both password and OAuth users — one unified identity payload (sub/email/role/plan) regardless of login method.&#xa;• Trade-off accepted: can&#39;t force-revoke a token before its 7-day expiry (no blacklist) — acceptable at this low-risk, pre-launch stage; refresh-token rotation is a planned hardening step, not yet built." vertex="1">
+          <mxGeometry height="195" width="500" x="1360" y="415" as="geometry" />
         </mxCell>
-        <!-- ===== Edges ===== -->
-        <mxCell id="ae1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pa1" target="pa2">
+        <mxCell id="ae1" edge="1" parent="1" source="pa1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pa2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae2" value="(password path)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="pa2" target="jwtgen">
+        <mxCell id="ae2" edge="1" parent="1" source="pa2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="jwtgen" value="(password path)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa1" target="oa2">
+        <mxCell id="ae3" edge="1" parent="1" source="oa1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="oa2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa2" target="oa3">
+        <mxCell id="ae4" edge="1" parent="1" source="oa2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="oa3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa3" target="oa4">
+        <mxCell id="ae5" edge="1" parent="1" source="oa3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="oa4">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="oa4" target="oa5">
+        <mxCell id="ae6" edge="1" parent="1" source="oa4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="oa5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae7" value="(oauth path)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="oa5" target="jwtgen">
+        <mxCell id="ae7" edge="1" parent="1" source="oa5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="jwtgen" value="(oauth path)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="jwtgen" target="refreshNote">
+        <mxCell id="ae8" edge="1" parent="1" source="jwtgen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="refreshNote">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae9" value="(password)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="jwtgen" target="respPwd">
+        <mxCell id="ae9" edge="1" parent="1" source="jwtgen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="respPwd" value="(password)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae10" value="(oauth)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" edge="1" parent="1" source="jwtgen" target="respOauth">
+        <mxCell id="ae10" edge="1" parent="1" source="jwtgen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;" target="respOauth" value="(oauth)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="respPwd" target="browserStore">
+        <mxCell id="ae11" edge="1" parent="1" source="respPwd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="browserStore">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="respOauth" target="browserStore">
+        <mxCell id="ae12" edge="1" parent="1" source="respOauth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="browserStore">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr1" target="pr2">
+        <mxCell id="ae13" edge="1" parent="1" source="pr1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pr2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr2" target="pr3">
+        <mxCell id="ae14" edge="1" parent="1" source="pr2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pr3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="pr3" target="pr4">
+        <mxCell id="ae15" edge="1" parent="1" source="pr3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pr4">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae16" value="valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.3;" edge="1" parent="1" source="pr4" target="pr5">
+        <mxCell id="ae16" edge="1" parent="1" source="pr4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.3;" target="pr5" value="valid">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae17" value="invalid / not found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.7;" edge="1" parent="1" source="pr4" target="pr6">
+        <mxCell id="ae17" edge="1" parent="1" source="pr4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;exitX=1;exitY=0.7;" target="pr6" value="invalid / not found">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
@@ -1045,7 +1001,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="er-diagram" name="Database ER Diagram">
-    <mxGraphModel dx="1852" dy="1695" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="1003" dy="918" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
