@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project, TeamMember } from '@insightstream/database';
 import { EventsGateway } from './events.gateway';
 import { EventsService } from './events.service';
+import { FEEDBACK_EVENTS_PUBLISHER } from './feedback-events-publisher.token';
 
 @Global()
 @Module({
@@ -18,7 +19,11 @@ import { EventsService } from './events.service';
       }),
     }),
   ],
-  providers: [EventsGateway, EventsService],
-  exports: [EventsGateway, EventsService],
+  providers: [
+    EventsGateway,
+    EventsService,
+    { provide: FEEDBACK_EVENTS_PUBLISHER, useExisting: EventsService },
+  ],
+  exports: [EventsGateway, EventsService, FEEDBACK_EVENTS_PUBLISHER],
 })
 export class EventsModule {}
