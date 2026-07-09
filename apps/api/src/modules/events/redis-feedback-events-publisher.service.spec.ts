@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '@insightstream/database';
+import { Redis } from 'ioredis';
 import { RedisFeedbackEventsPublisher } from './redis-feedback-events-publisher.service';
 
 const mockEmit = jest.fn();
@@ -17,10 +18,12 @@ jest.mock('ioredis', () => ({
 describe('RedisFeedbackEventsPublisher', () => {
   let service: RedisFeedbackEventsPublisher;
   let projectRepo: { findOne: jest.Mock };
+  let mockClient: { disconnect: jest.Mock };
 
   beforeEach(async () => {
     mockEmit.mockClear();
     mockTo.mockClear();
+    (Redis as unknown as jest.Mock).mockClear();
     projectRepo = { findOne: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +34,7 @@ describe('RedisFeedbackEventsPublisher', () => {
     }).compile();
 
     service = module.get(RedisFeedbackEventsPublisher);
+    mockClient = (Redis as unknown as jest.Mock).mock.results[0].value;
   });
 
   it('emits feedbackUpdated to the project team room via the Redis emitter', async () => {
@@ -54,5 +58,13 @@ describe('RedisFeedbackEventsPublisher', () => {
     await service.emitFeedbackUpdatedForProject('missing-proj');
 
     expect(mockTo).not.toHaveBeenCalled();
+  });
+
+  describe('onModuleDestroy', () => {
+    it('disconnects the Redis client', () => {
+      service.onModuleDestroy();
+
+      expect(mockClient.disconnect).toHaveBeenCalled();
+    });
   });
 });
