@@ -23,30 +23,15 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { RedisModule } from './redis/redis.module';
-import {
-  User,
-  Feedback,
-  Project,
-  AuditLog,
-  Team,
-  TeamMember,
-  Invitation,
-  Comment,
-  ActivityEvent,
-  UserProjectLastSeen,
-  StripeEvent,
-} from '@insightstream/database';
+import { getTypeOrmConfig } from './config/database.config';
+import { getBullConfig } from './config/bull.config';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      connection: {
-        url: process.env.REDIS_URL || 'redis://localhost:6379',
-      },
-    }),
+    BullModule.forRoot(getBullConfig()),
     RedisModule,
     ThrottlerModule.forRoot({
       throttlers: [
@@ -60,32 +45,7 @@ import {
         process.env.REDIS_URL ?? 'redis://localhost:6379',
       ),
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USERNAME || 'insight_user',
-      password: process.env.DB_PASSWORD || 'insight_password',
-      database: process.env.DB_DATABASE || 'insightstream_dev',
-      entities: [
-        User,
-        Feedback,
-        Project,
-        AuditLog,
-        Team,
-        TeamMember,
-        Invitation,
-        Comment,
-        ActivityEvent,
-        UserProjectLastSeen,
-        StripeEvent,
-      ],
-      synchronize: process.env.NODE_ENV !== 'production',
-      migrations: [__dirname + '/migrations/**/*.{ts,js}'],
-      migrationsRun: true,
-      ssl:
-        process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-    }),
+    TypeOrmModule.forRoot(getTypeOrmConfig()),
     UsersModule,
     AuthModule,
     FeedbackModule,
