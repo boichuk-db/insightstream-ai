@@ -6,14 +6,12 @@ import { Feedback } from '@insightstream/database';
 import { AiService } from './ai.service';
 import { AiProcessor } from './ai.processor';
 import { AiQueueService, AI_ANALYSIS_QUEUE } from './ai-queue.service';
-import { PlansModule } from '../plans/plans.module';
 
 @Module({
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([Feedback]),
     BullModule.registerQueue({ name: AI_ANALYSIS_QUEUE }),
-    PlansModule,
   ],
   providers: [AiService, AiProcessor, AiQueueService],
   exports: [AiService, AiQueueService],
