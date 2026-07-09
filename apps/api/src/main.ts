@@ -2,13 +2,20 @@ import './instrument';
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { HttpAdapterHost } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import type { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
+import { WorkerModule } from './worker.module';
 import { SentryExceptionFilter } from './filters/sentry-exception.filter';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
 
-async function bootstrap() {
+async function bootstrapWorker() {
+  const logger = new Logger('WorkerBootstrap');
+  await NestFactory.createApplicationContext(WorkerModule);
+  logger.log('Worker process started (WORKER_MODE=1) — no HTTP, no WS server');
+}
+
+async function bootstrapHttp() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
@@ -72,6 +79,15 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3001);
 }
+
+async function bootstrap() {
+  if (process.env.WORKER_MODE === '1') {
+    await bootstrapWorker();
+    return;
+  }
+  await bootstrapHttp();
+}
+
 bootstrap().catch((err) => {
   console.error('Fatal error during bootstrap:', err);
   process.exit(1);
