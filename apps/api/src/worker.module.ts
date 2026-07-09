@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 import { getTypeOrmConfig } from './config/database.config';
 import { getBullConfig } from './config/bull.config';
-import { AiModule } from './modules/ai/ai.module';
+import { AiWorkerModule } from './modules/ai/ai-worker.module';
 import { WorkerEventsModule } from './worker-events.module';
 
 @Module({
@@ -14,7 +14,7 @@ import { WorkerEventsModule } from './worker-events.module';
     ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRoot(getBullConfig()),
     TypeOrmModule.forRoot(getTypeOrmConfig({ migrationsRun: false })),
-    AiModule,
+    AiWorkerModule,
     WorkerEventsModule,
   ],
 })
