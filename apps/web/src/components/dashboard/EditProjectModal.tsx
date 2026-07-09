@@ -15,7 +15,7 @@ export function EditProjectModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  project: { id: string; name: string; domain: string } | null;
+  project: { id: string; name: string; domain: string | null } | null;
 }) {
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("");
@@ -25,7 +25,7 @@ export function EditProjectModal({
     if (isOpen && project) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(project.name);
-      setDomain(project.domain);
+      setDomain(project.domain ?? "");
     }
   }, [isOpen, project]);
 
