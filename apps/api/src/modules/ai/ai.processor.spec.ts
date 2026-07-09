@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AiProcessor } from './ai.processor';
 import { AiService } from './ai.service';
-import { EventsService } from '../events/events.service';
+import { FEEDBACK_EVENTS_PUBLISHER } from '../events/feedback-events-publisher.token';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Feedback } from '@insightstream/database';
 import { Job } from 'bullmq';
@@ -11,19 +11,19 @@ describe('AiProcessor', () => {
   let processor: AiProcessor;
   let aiService: { analyzeFeedback: jest.Mock };
   let feedbackRepo: { update: jest.Mock };
-  let eventsService: { emitFeedbackUpdatedForProject: jest.Mock };
+  let eventsPublisher: { emitFeedbackUpdatedForProject: jest.Mock };
 
   beforeEach(async () => {
     aiService = { analyzeFeedback: jest.fn() };
     feedbackRepo = { update: jest.fn().mockResolvedValue({}) };
-    eventsService = { emitFeedbackUpdatedForProject: jest.fn() };
+    eventsPublisher = { emitFeedbackUpdatedForProject: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AiProcessor,
         { provide: AiService, useValue: aiService },
         { provide: getRepositoryToken(Feedback), useValue: feedbackRepo },
-        { provide: EventsService, useValue: eventsService },
+        { provide: FEEDBACK_EVENTS_PUBLISHER, useValue: eventsPublisher },
       ],
     }).compile();
 
@@ -60,9 +60,9 @@ describe('AiProcessor', () => {
       aiSummary: 'User wants dark mode',
       tags: ['design'],
     });
-    expect(eventsService.emitFeedbackUpdatedForProject).toHaveBeenCalledWith(
-      'proj-1',
-    );
+    expect(
+      eventsPublisher.emitFeedbackUpdatedForProject,
+    ).toHaveBeenCalledWith('proj-1');
   });
 
   it('omits aiSummary and tags when aiLevel is basic', async () => {

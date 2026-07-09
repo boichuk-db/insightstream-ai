@@ -1,11 +1,14 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from 'bullmq';
 import { Feedback } from '@insightstream/database';
 import { AiService } from './ai.service';
-import { EventsService } from '../events/events.service';
+import {
+  FEEDBACK_EVENTS_PUBLISHER,
+  FeedbackEventsPublisher,
+} from '../events/feedback-events-publisher.token';
 import { AI_ANALYSIS_QUEUE, AnalysisJobData } from './ai-queue.service';
 
 @Processor(AI_ANALYSIS_QUEUE, { concurrency: 3 })
@@ -17,7 +20,8 @@ export class AiProcessor extends WorkerHost {
     private readonly aiService: AiService,
     @InjectRepository(Feedback)
     private readonly feedbackRepository: Repository<Feedback>,
-    private readonly eventsService: EventsService,
+    @Inject(FEEDBACK_EVENTS_PUBLISHER)
+    private readonly eventsPublisher: FeedbackEventsPublisher,
   ) {
     super();
   }
@@ -41,7 +45,9 @@ export class AiProcessor extends WorkerHost {
       tags: aiLevel === 'full' ? analysis.tags : undefined,
     });
 
-    await this.eventsService.emitFeedbackUpdatedForProject(job.data.projectId);
+    await this.eventsPublisher.emitFeedbackUpdatedForProject(
+      job.data.projectId,
+    );
     this.logger.log(`AI analysis completed for feedback ${feedbackId}`);
   }
 }
