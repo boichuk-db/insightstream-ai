@@ -60,9 +60,9 @@ describe('AiProcessor', () => {
       aiSummary: 'User wants dark mode',
       tags: ['design'],
     });
-    expect(
-      eventsPublisher.emitFeedbackUpdatedForProject,
-    ).toHaveBeenCalledWith('proj-1');
+    expect(eventsPublisher.emitFeedbackUpdatedForProject).toHaveBeenCalledWith(
+      'proj-1',
+    );
   });
 
   it('omits aiSummary and tags when aiLevel is basic', async () => {
