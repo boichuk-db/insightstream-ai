@@ -307,7 +307,7 @@
         <mxCell id="staticBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#82b366;" value="Static Assets" vertex="1">
           <mxGeometry height="120" width="280" x="260" y="650" as="geometry" />
         </mxCell>
-        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="S3 bucket&#xa;insightstream-widget&#xa;widget.js, public HTTPS" vertex="1">
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="S3 bucket&#xa;insightstream-widget&#xa;v1/widget.js, public HTTPS" vertex="1">
           <mxGeometry height="70" width="240" x="280" y="685" as="geometry" />
         </mxCell>
         <mxCell id="buildBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#9673a6;" value="Build Pipeline" vertex="1">
