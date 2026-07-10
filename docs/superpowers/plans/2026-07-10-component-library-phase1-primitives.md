@@ -1385,6 +1385,12 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   danger?: boolean;
+  /**
+   * Set while onConfirm's async work is in flight — disables both buttons
+   * and shows a spinner on Confirm, so a double-click can't fire a
+   * destructive mutation twice.
+   */
+  isConfirming?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -1396,6 +1402,7 @@ export function ConfirmDialog({
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
   danger,
+  isConfirming,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -1407,10 +1414,16 @@ export function ConfirmDialog({
       size="sm"
       footer={
         <>
-          <Button variant="secondary" size="sm" onClick={onCancel}>
+          <Button type="button" variant="secondary" size="sm" onClick={onCancel} disabled={isConfirming}>
             {cancelLabel}
           </Button>
-          <Button variant={danger ? "danger" : "primary"} size="sm" onClick={onConfirm}>
+          <Button
+            type="button"
+            variant={danger ? "danger" : "primary"}
+            size="sm"
+            onClick={onConfirm}
+            isLoading={isConfirming}
+          >
             {confirmLabel}
           </Button>
         </>
@@ -1421,6 +1434,8 @@ export function ConfirmDialog({
   );
 }
 ```
+
+Code review found two gaps in this first draft, both fixed before merging: (1) neither button had `type="button"`, unlike every other raw-`<button>`-based primitive built elsewhere in this same plan — a real risk if `ConfirmDialog` is ever rendered inside a `<form>` (a plausible Phase 2 scenario, e.g. `TeamTab.tsx` already has forms elsewhere in the same component); (2) there was no way to disable/loading-state the buttons while an async `onConfirm` is in flight, so a double-click could fire a destructive mutation twice — all 4 real Phase-2 target call sites (TeamTab, KanbanBoard, KanbanCard, Sidebar) are backed by async mutations. Added the optional `isConfirming?: boolean` prop above to close that gap once, here, rather than leaving each Phase-2 consumer to build its own double-submit guard.
 
 - [ ] **Step 2: Create its story**
 
@@ -1460,6 +1475,19 @@ function Controlled() {
 
 export const Default: Story = {
   render: () => <Controlled />,
+};
+
+export const Confirming: Story = {
+  args: {
+    open: true,
+    title: 'Delete project?',
+    message: 'This action cannot be undone. All feedback data for this project will be permanently deleted.',
+    confirmLabel: 'Delete',
+    danger: true,
+    isConfirming: true,
+    onConfirm: () => {},
+    onCancel: () => {},
+  },
 };
 ```
 
