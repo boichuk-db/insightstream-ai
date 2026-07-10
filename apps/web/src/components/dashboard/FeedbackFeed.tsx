@@ -163,7 +163,9 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
         f.source ?? "",
         f.category ?? "",
         f.status,
-        f.sentimentScore !== undefined ? String(Math.round(f.sentimentScore * 100)) + "%" : "",
+        f.sentimentScore !== undefined && f.sentimentScore !== null
+          ? String(Math.round(f.sentimentScore * 100)) + "%"
+          : "",
         new Date(f.createdAt).toISOString(),
       ]),
     ];
@@ -228,7 +230,7 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
             ) && (
               <button
                 onClick={markAllRead}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface text-xs text-brand-muted hover:text-brand-fg hover:border-brand-muted transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface text-xs text-brand-fg-muted hover:text-brand-fg hover:border-brand-muted transition-colors"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
                 Mark all read

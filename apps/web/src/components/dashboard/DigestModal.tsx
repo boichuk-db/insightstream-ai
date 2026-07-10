@@ -43,11 +43,11 @@ export function DigestModal({
   const sentimentPct = data ? Math.round(data.avgSentiment * 100) : 0;
   const sentimentColor = data
     ? data.avgSentiment > 0.6
-      ? "text-emerald-400"
+      ? "text-status-success"
       : data.avgSentiment < 0.4
-        ? "text-red-400"
-        : "text-amber-400"
-    : "text-brand-muted";
+        ? "text-status-danger"
+        : "text-status-warning"
+    : "text-brand-fg-muted";
 
   const since = data
     ? new Date(data.since).toLocaleDateString("uk-UA", {
@@ -76,7 +76,7 @@ export function DigestModal({
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
             <Loader2 className="h-8 w-8 text-brand-accent animate-spin" />
-            <p className="text-sm text-brand-muted">Gemini аналізує тренди...</p>
+            <p className="text-sm text-brand-fg-muted">Gemini аналізує тренди...</p>
           </div>
         )}
 
@@ -90,7 +90,7 @@ export function DigestModal({
         {data && !isLoading && (
           <>
             {/* Subtitle */}
-            <p className="text-xs text-brand-muted -mt-2">
+            <p className="text-xs text-brand-fg-muted -mt-2">
               {data.projectName} · {since} – сьогодні
             </p>
 
@@ -100,7 +100,7 @@ export function DigestModal({
                 <p className="text-2xl font-black text-brand-accent">
                   {data.totalCount}
                 </p>
-                <p className="text-[10px] text-brand-muted uppercase tracking-wider mt-1 flex items-center justify-center gap-1">
+                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1 flex items-center justify-center gap-1">
                   <CalendarDays className="h-3 w-3" /> Фідбеків
                 </p>
               </div>
@@ -108,7 +108,7 @@ export function DigestModal({
                 <p className={cn("text-2xl font-black", sentimentColor)}>
                   {sentimentPct}%
                 </p>
-                <p className="text-[10px] text-brand-muted uppercase tracking-wider mt-1">
+                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1">
                   Avg Sentiment
                 </p>
               </div>
@@ -116,7 +116,7 @@ export function DigestModal({
                 <p className="text-lg font-black text-brand-fg truncate">
                   {topCategory?.[0] ?? "—"}
                 </p>
-                <p className="text-[10px] text-brand-muted uppercase tracking-wider mt-1">
+                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1">
                   Топ категорія
                 </p>
               </div>
@@ -132,7 +132,7 @@ export function DigestModal({
 
             {/* Category bars */}
             {Object.keys(data.categories).length > 0 && (
-              <LabeledSection icon={BarChart2} label="Розбивка по категоріях" iconColor="text-brand-muted">
+              <LabeledSection icon={BarChart2} label="Розбивка по категоріях" iconColor="text-brand-fg-muted">
                 <div className="space-y-2">
                   {Object.entries(data.categories)
                     .sort((a, b) => b[1] - a[1])
@@ -144,7 +144,7 @@ export function DigestModal({
                       ); // Use full opacity for bars
                       return (
                         <div key={cat} className="flex items-center gap-3">
-                          <span className="text-xs text-brand-muted w-24 shrink-0">
+                          <span className="text-xs text-brand-fg-muted w-24 shrink-0">
                             {cat}
                           </span>
                           <div className="flex-1 h-1.5 bg-brand-border rounded-full overflow-hidden">
@@ -153,7 +153,7 @@ export function DigestModal({
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <span className="text-[10px] font-mono text-brand-muted w-12 text-right">
+                          <span className="text-[10px] font-mono text-brand-fg-muted w-12 text-right">
                             {count} ({pct}%)
                           </span>
                         </div>
@@ -165,7 +165,7 @@ export function DigestModal({
 
             {/* Tags */}
             {data.topTags.length > 0 && (
-              <LabeledSection icon={Tag} label="Топ теги" iconColor="text-brand-muted">
+              <LabeledSection icon={Tag} label="Топ теги" iconColor="text-brand-fg-muted">
                 <div className="flex flex-wrap gap-2">
                   {data.topTags.map((tag) => (
                     <span
@@ -181,7 +181,7 @@ export function DigestModal({
 
             {/* Most negative */}
             {data.mostNegative.length > 0 && (
-              <LabeledSection icon={TrendingDown} label="Найбільш негативні" iconColor="text-red-400">
+              <LabeledSection icon={TrendingDown} label="Найбільш негативні" iconColor="text-status-danger">
                 <div className="space-y-2">
                   {data.mostNegative.map((fb, i) => (
                     <div
@@ -189,7 +189,7 @@ export function DigestModal({
                       className="flex items-start gap-3 p-3 bg-brand-surface border border-brand-border rounded-xl"
                     >
                       <SentimentBar
-                        score={fb.sentimentScore ?? 0.5}
+                        score={fb.sentimentScore}
                         className="shrink-0 mt-0.5"
                       />
                       <p className="text-xs text-brand-fg leading-relaxed line-clamp-2">

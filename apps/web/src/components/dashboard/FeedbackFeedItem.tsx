@@ -21,10 +21,10 @@ import type { IFeedback } from "@insightstream/shared-types";
 
 const STATUSES = [
   { id: "New", color: "text-brand-accent" },
-  { id: "In Review", color: "text-amber-400" },
-  { id: "In Progress", color: "text-blue-400" },
-  { id: "Done", color: "text-emerald-400" },
-  { id: "Rejected", color: "text-red-400" },
+  { id: "In Review", color: "text-status-warning" },
+  { id: "In Progress", color: "text-status-info" },
+  { id: "Done", color: "text-status-success" },
+  { id: "Rejected", color: "text-status-danger" },
 ];
 
 const PREVIEW_COMMENT_COUNT = 3;
@@ -96,21 +96,19 @@ export function FeedbackFeedItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             {feedback.source && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md bg-brand-surface-hover border border-brand-border text-brand-muted">
+              <span className="text-[10px] px-2 py-0.5 rounded-md bg-brand-surface-hover border border-brand-border text-brand-fg-muted">
                 {feedback.source}
               </span>
             )}
             {feedback.category && (
               <Badge variant="category" value={feedback.category} size="sm" />
             )}
-            {feedback.sentimentScore !== undefined && (
-              <SentimentBar
-                score={feedback.sentimentScore}
-                className="ml-0.5"
-              />
-            )}
+            <SentimentBar
+              score={feedback.sentimentScore}
+              className="ml-0.5"
+            />
             <span
-              className="ml-auto text-[11px] text-brand-muted shrink-0"
+              className="ml-auto text-[11px] text-brand-fg-muted shrink-0"
               title={formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
             >
               {isThisYear(new Date(feedback.createdAt))
@@ -137,7 +135,7 @@ export function FeedbackFeedItem({
           )}
         </div>
 
-        <div className="flex-shrink-0 mt-0.5 text-brand-muted">
+        <div className="flex-shrink-0 mt-0.5 text-brand-fg-muted">
           {isExpanded ? (
             <ChevronDown className="w-4 h-4" />
           ) : (
@@ -179,7 +177,7 @@ export function FeedbackFeedItem({
                       value={feedback.status}
                       size="sm"
                     />
-                    <ChevronDown className="w-3 h-3 text-brand-muted" />
+                    <ChevronDown className="w-3 h-3 text-brand-fg-muted" />
                   </button>
                   {showStatusPicker && (
                     <div className="absolute top-full left-0 mt-1 z-10 bg-brand-surface border border-brand-border rounded-xl shadow-lg py-1 min-w-[130px]">
@@ -205,7 +203,7 @@ export function FeedbackFeedItem({
                 <button
                   onClick={() => onReanalyze(feedback.id)}
                   disabled={isReanalyzing}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface-hover text-xs text-brand-muted hover:text-brand-fg hover:border-brand-muted transition-colors disabled:opacity-40"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface-hover text-xs text-brand-fg-muted hover:text-brand-fg hover:border-brand-muted transition-colors disabled:opacity-40"
                 >
                   <RotateCcw className="w-3 h-3" />
                   Re-analyze
@@ -223,7 +221,7 @@ export function FeedbackFeedItem({
 
               {/* Comments */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-brand-muted">
+                <div className="flex items-center gap-2 text-xs text-brand-fg-muted">
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span>
                     {commentsLoading
@@ -241,7 +239,7 @@ export function FeedbackFeedItem({
                       <p className="text-xs text-brand-fg leading-relaxed">
                         {comment.content}
                       </p>
-                      <p className="text-[10px] text-brand-muted mt-1">
+                      <p className="text-[10px] text-brand-fg-muted mt-1">
                         {formatDistanceToNow(new Date(comment.createdAt), {
                           addSuffix: true,
                         })}
@@ -250,7 +248,7 @@ export function FeedbackFeedItem({
                     {comment.user?.id === currentUserId && (
                       <button
                         onClick={() => deleteComment(comment.id)}
-                        className="opacity-0 group-hover:opacity-100 text-brand-muted hover:text-red-400 transition-all"
+                        className="opacity-0 group-hover:opacity-100 text-brand-fg-muted hover:text-red-400 transition-all"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -279,7 +277,7 @@ export function FeedbackFeedItem({
                       }
                     }}
                     placeholder="Add a comment..."
-                    className="flex-1 px-3 py-2 text-xs bg-brand-bg border border-brand-border rounded-lg text-brand-fg placeholder:text-brand-muted focus:outline-none focus:border-brand-accent transition-colors"
+                    className="flex-1 px-3 py-2 text-xs bg-brand-bg border border-brand-border rounded-lg text-brand-fg placeholder:text-brand-fg-muted focus:outline-none focus:border-brand-accent transition-colors"
                   />
                   <button
                     onClick={submit}

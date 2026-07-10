@@ -107,7 +107,7 @@ export function KanbanCard({
                   if (confirm("Delete this feedback?")) onDelete(feedback.id);
                 }}
                 disabled={isDeleting}
-                className="text-brand-muted hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                className="text-brand-fg-muted hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -120,7 +120,7 @@ export function KanbanCard({
 
           {!feedback.aiSummary && !isReanalyzing && (
             <div className="mb-3 p-3 bg-brand-accent/5 border border-dashed border-brand-accent/20 rounded-xl flex items-center justify-between group/re">
-              <span className="text-[11px] text-brand-muted">
+              <span className="text-[11px] text-brand-fg-muted">
                 Not analyzed yet
               </span>
               <button
@@ -137,7 +137,7 @@ export function KanbanCard({
 
           {feedback.aiSummary && (
             <div className="mb-3 p-2 bg-brand-bg/50 rounded border border-brand-border/50">
-              <p className="text-[11px] text-brand-muted italic leading-snug line-clamp-2 wrap-break-word">
+              <p className="text-[11px] text-brand-fg-muted italic leading-snug line-clamp-2 wrap-break-word">
                 <Sparkles className="h-3 w-3 inline mr-1 text-brand-accent" />
                 {feedback.aiSummary}
               </p>
@@ -149,7 +149,7 @@ export function KanbanCard({
               {feedback.tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="text-[10px] px-1.5 py-0.5 bg-brand-bg text-brand-muted rounded-md border border-brand-border"
+                  className="text-[10px] px-1.5 py-0.5 bg-brand-bg text-brand-fg-muted rounded-md border border-brand-border"
                 >
                   #{tag}
                 </span>
@@ -158,12 +158,7 @@ export function KanbanCard({
           )}
 
           <div className="mt-auto pt-3 border-t border-brand-border/50 flex items-center justify-between">
-            {feedback.sentimentScore !== null &&
-            feedback.sentimentScore !== undefined ? (
-              <SentimentBar score={feedback.sentimentScore} />
-            ) : (
-              <div />
-            )}
+            <SentimentBar score={feedback.sentimentScore} />
 
             <div className="flex items-center gap-3">
               <button
@@ -171,12 +166,12 @@ export function KanbanCard({
                   e.stopPropagation();
                   onOpenComments?.(feedback.id);
                 }}
-                className="flex items-center gap-1 text-[10px] text-brand-muted hover:text-brand-accent transition-colors"
+                className="flex items-center gap-1 text-[10px] text-brand-fg-muted hover:text-brand-accent transition-colors"
               >
                 <MessageCircle className="h-3 w-3" />
                 {commentCount || 0}
               </button>
-              <div className="flex items-center text-[10px] text-brand-muted font-mono gap-1">
+              <div className="flex items-center text-[10px] text-brand-fg-muted font-mono gap-1">
                 <CalendarDays className="h-3 w-3" />
                 {formatDistanceToNow(new Date(feedback.createdAt), {
                   addSuffix: true,
@@ -191,7 +186,7 @@ export function KanbanCard({
               onClick={(e) => e.stopPropagation()}
               className="mt-3 pt-3 border-t border-brand-border flex flex-col gap-1"
             >
-              <p className="text-[10px] uppercase tracking-wider text-brand-muted font-semibold mb-1">
+              <p className="text-[10px] uppercase tracking-wider text-brand-fg-muted font-semibold mb-1">
                 Move to
               </p>
               <div className="grid grid-cols-1 gap-1">
@@ -207,7 +202,7 @@ export function KanbanCard({
                       "flex items-center gap-2 w-full px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left",
                       s.id === feedback.status
                         ? "bg-brand-border text-brand-fg cursor-default"
-                        : "text-brand-muted hover:bg-brand-surface-hover hover:text-brand-fg",
+                        : "text-brand-fg-muted hover:bg-brand-surface-hover hover:text-brand-fg",
                     )}
                   >
                     <span
@@ -215,7 +210,7 @@ export function KanbanCard({
                     />
                     {s.id}
                     {s.id === feedback.status && (
-                      <span className="ml-auto text-[9px] text-brand-muted">
+                      <span className="ml-auto text-[9px] text-brand-fg-muted">
                         current
                       </span>
                     )}
