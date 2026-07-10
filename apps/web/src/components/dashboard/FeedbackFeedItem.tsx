@@ -94,29 +94,7 @@ export function FeedbackFeedItem({
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            {feedback.source && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md bg-brand-surface-hover border border-brand-border text-brand-fg-muted">
-                {feedback.source}
-              </span>
-            )}
-            {feedback.category && (
-              <Badge variant="category" value={feedback.category} size="sm" />
-            )}
-            <SentimentBar
-              score={feedback.sentimentScore}
-              className="ml-0.5"
-            />
-            <span
-              className="ml-auto text-[11px] text-brand-fg-muted shrink-0"
-              title={formatDistanceToNow(new Date(feedback.createdAt), { addSuffix: true })}
-            >
-              {isThisYear(new Date(feedback.createdAt))
-                ? format(new Date(feedback.createdAt), "MMM d, HH:mm")
-                : format(new Date(feedback.createdAt), "MMM d yyyy")}
-            </span>
-          </div>
-
+          {/* Feedback content is the primary thing on this row — it comes first. */}
           <p
             className={cn(
               "text-sm text-brand-fg leading-relaxed",
@@ -126,13 +104,34 @@ export function FeedbackFeedItem({
             {feedback.content}
           </p>
 
-          {!isExpanded && feedback.category && (
-            <p className="mt-1.5 text-[11px] text-brand-accent flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-accent inline-block" />
-              {feedback.category}
-              {feedback.aiSummary && " · AI analyzed"}
-            </p>
-          )}
+          {/* Meta line — secondary info, below the content it describes. */}
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            {feedback.source && (
+              <span className="text-xs px-2 py-0.5 rounded-md bg-brand-surface-hover border border-brand-border text-brand-fg-muted">
+                {feedback.source}
+              </span>
+            )}
+            {feedback.category && (
+              <Badge variant="category" value={feedback.category} size="sm" />
+            )}
+            <SentimentBar score={feedback.sentimentScore} className="ml-0.5" />
+            {!isExpanded && feedback.aiSummary && (
+              <span className="text-xs text-brand-accent flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                AI analyzed
+              </span>
+            )}
+            <span
+              className="ml-auto text-xs text-brand-fg-muted shrink-0"
+              title={formatDistanceToNow(new Date(feedback.createdAt), {
+                addSuffix: true,
+              })}
+            >
+              {isThisYear(new Date(feedback.createdAt))
+                ? format(new Date(feedback.createdAt), "MMM d, HH:mm")
+                : format(new Date(feedback.createdAt), "MMM d yyyy")}
+            </span>
+          </div>
         </div>
 
         <div className="flex-shrink-0 mt-0.5 text-brand-fg-muted">
@@ -172,11 +171,7 @@ export function FeedbackFeedItem({
                     onClick={() => setShowStatusPicker((s) => !s)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface-hover text-xs text-brand-fg hover:border-brand-muted transition-colors"
                   >
-                    <Badge
-                      variant="status"
-                      value={feedback.status}
-                      size="sm"
-                    />
+                    <Badge variant="status" value={feedback.status} size="sm" />
                     <ChevronDown className="w-3 h-3 text-brand-fg-muted" />
                   </button>
                   {showStatusPicker && (
@@ -239,7 +234,7 @@ export function FeedbackFeedItem({
                       <p className="text-xs text-brand-fg leading-relaxed">
                         {comment.content}
                       </p>
-                      <p className="text-[10px] text-brand-fg-muted mt-1">
+                      <p className="text-xs text-brand-fg-muted mt-1">
                         {formatDistanceToNow(new Date(comment.createdAt), {
                           addSuffix: true,
                         })}
