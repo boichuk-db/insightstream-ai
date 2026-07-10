@@ -1777,13 +1777,16 @@ interface NavItemProps {
   label: string;
   active?: boolean;
   onClick?: () => void;
+  /** Trailing content, e.g. an unread-count pill — real Sidebar consumers need this. */
+  badge?: React.ReactNode;
 }
 
-export function NavItem({ href, icon: Icon, label, active, onClick }: NavItemProps) {
+export function NavItem({ href, icon: Icon, label, active, onClick, badge }: NavItemProps) {
   return (
     <Link
       href={href}
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
         active
@@ -1792,11 +1795,16 @@ export function NavItem({ href, icon: Icon, label, active, onClick }: NavItemPro
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
-      {label}
+      <span className="flex-1">{label}</span>
+      {badge}
     </Link>
   );
 }
 ```
+
+Two additions from a first draft (which matched the design doc's original spec exactly), made during code review: `badge?: React.ReactNode` and `aria-current="page"` when `active`. The `badge` slot exists because the real Sidebar has a trailing unread-count pill on its "Feedback" nav item (`Sidebar.tsx` — `justify-between` layout with the icon+label on the left and a conditional count `<span>` on the right); without it, Phase 2's Sidebar cluster couldn't migrate that one item without either patching this Phase-1-owned file (violating the plan's own file-ownership rule) or forking `NavItem`. `label` is now wrapped in a `flex-1` span so it expands and pushes `badge` to the right, reproducing the `justify-between` visual without changing the outer container's layout mode. `aria-current="page"` is the standard, cheap way to expose "this is the current page" to assistive tech for a persistent primary-nav element — free to add now, and each of the 4 real call sites benefits without repeating it.
+
+**Deliberately not fixed here, noted for Phase 2's Sidebar cluster:** (1) `active` stays an externally-computed boolean rather than `NavItem` deriving it from `usePathname()` itself — keeps this primitive pure and framework-boundary-free, but means `Sidebar.tsx`'s 4 `pathname === path` comparisons aren't deduplicated by this change; if that duplication matters, the fix belongs in Sidebar's own code (a tiny local `isActive()` helper), not by baking route-matching semantics into the primitive. (2) `Sidebar.tsx` today hardcodes `text-brand-accent` on every nav icon regardless of active state; `NavItem`'s icon has no color class and inherits `currentColor` from the link's text color, so inactive icons will visibly go from accent-tinted to muted-gray once Phase 2 wires this in — likely an intentional normalization (same spirit as Task 1's `Eyebrow` tracking-width fix) but nothing currently documents it as deliberate, so Phase 2 should call it out explicitly if it lands rather than let it read as an unexplained visual regression.
 
 - [ ] **Step 2: Create its story**
 
@@ -1821,6 +1829,20 @@ export const Default: Story = {
 
 export const Active: Story = {
   args: { href: '#', icon: LayoutDashboard, label: 'Dashboard', active: true },
+};
+
+export const WithBadge: Story = {
+  args: {
+    href: '#',
+    icon: LayoutDashboard,
+    label: 'Feedback',
+    active: false,
+    badge: (
+      <span className="bg-brand-accent text-brand-bg rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold">
+        3
+      </span>
+    ),
+  },
 };
 ```
 
