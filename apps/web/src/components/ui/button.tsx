@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   variant?: "primary" | "secondary" | "ghost" | "danger";
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -35,6 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
+      xs: "h-7 px-2.5 text-[10px] font-semibold",
       sm: "h-9 px-3.5 text-[11px] font-bold",
       md: "h-10 px-4 text-sm font-semibold",
     };
