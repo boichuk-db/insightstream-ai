@@ -6,7 +6,11 @@ interface SentimentBarProps {
   className?: string;
 }
 
-export function SentimentBar({ score, showLabel = true, className }: SentimentBarProps) {
+export function SentimentBar({
+  score,
+  showLabel = true,
+  className,
+}: SentimentBarProps) {
   // Sentiment honesty: feedback with no AI analysis yet must never render as "0%"
   // (which reads as a real, maximally-negative score). Show an honest pending state instead.
   if (score === null || score === undefined) {
@@ -14,7 +18,7 @@ export function SentimentBar({ score, showLabel = true, className }: SentimentBa
       <div className={cn("flex items-center gap-1.5", className)}>
         <div className="w-10 h-1 bg-brand-border rounded-full overflow-hidden" />
         {showLabel && (
-          <span className="text-[10px] text-brand-fg-muted font-medium font-mono italic">
+          <span className="text-xs text-brand-fg-muted font-medium italic">
             Analyzing…
           </span>
         )}
@@ -22,12 +26,24 @@ export function SentimentBar({ score, showLabel = true, className }: SentimentBa
     );
   }
 
-  const colorClass =
-    score > 0.6
-      ? "bg-status-success"
-      : score < 0.4
-        ? "bg-status-danger"
-        : "bg-status-warning";
+  const isPositive = score > 0.6;
+  const isNegative = score < 0.4;
+
+  const colorClass = isPositive
+    ? "bg-status-success"
+    : isNegative
+      ? "bg-status-danger"
+      : "bg-status-warning";
+
+  // Word label instead of a bare percentage — a number with no context ("72%")
+  // doesn't tell the reader whether that's good or bad without doing the math themselves.
+  const textColorClass = isPositive
+    ? "text-status-success"
+    : isNegative
+      ? "text-status-danger"
+      : "text-status-warning";
+
+  const label = isPositive ? "Positive" : isNegative ? "Negative" : "Neutral";
 
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
@@ -38,8 +54,8 @@ export function SentimentBar({ score, showLabel = true, className }: SentimentBa
         />
       </div>
       {showLabel && (
-        <span className="text-[10px] text-brand-fg-muted font-medium font-mono">
-          {Math.round(score * 100)}%
+        <span className={cn("text-xs font-medium", textColorClass)}>
+          {label}
         </span>
       )}
     </div>
