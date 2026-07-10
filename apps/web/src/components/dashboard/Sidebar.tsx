@@ -302,10 +302,10 @@ export function Sidebar({
         </div>
 
         {/* User Footer */}
-        <div className="p-4 border-t bg-brand-surface/50 border-brand-border/50 mt-auto">
+        <div className="p-4 border-t bg-brand-surface/50 border-brand-border/50 mt-auto flex flex-col gap-4">
           <Link
             href="/dashboard/settings"
-            className="flex items-center gap-3 mb-4 group cursor-pointer rounded-xl p-1.5 -m-1.5 hover:bg-brand-border/50 transition-colors"
+            className="flex items-center gap-3 group cursor-pointer rounded-lg p-1.5 -m-1.5 hover:bg-brand-border/50 transition-colors"
           >
             <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-brand-border overflow-hidden text-brand-fg-muted group-hover:border-brand-muted transition-colors">
               <User size={16} />
