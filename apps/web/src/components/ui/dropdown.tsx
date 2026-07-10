@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, cloneElement, Children } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, cloneElement, Children } from "react";
 import { cn } from "@/lib/utils";
+import { Popover } from "./popover";
 
 interface DropdownItemProps {
   onClick?: () => void;
@@ -57,61 +57,31 @@ interface DropdownProps {
 }
 
 function Dropdown({ trigger, children, align = "left", className }: DropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    if (isOpen) document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [isOpen]);
-
-  const close = () => setIsOpen(false);
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   const injectClose = (node: React.ReactNode): React.ReactNode => {
     if (!node || typeof node !== "object") return node;
     const element = node as React.ReactElement<{ children?: React.ReactNode }>;
     if (element.type === DropdownItem) {
-      return cloneElement(
-        element as React.ReactElement<DropdownItemProps>,
-        { onClose: close },
-      );
+      return cloneElement(element as React.ReactElement<DropdownItemProps>, { onClose: close });
     }
     if (element.props?.children) {
-      return cloneElement(element, {
-        children: Children.map(element.props.children, injectClose),
-      });
+      return cloneElement(element, { children: Children.map(element.props.children, injectClose) });
     }
     return node;
   };
 
-  const childrenWithClose = Children.map(children, injectClose);
-
   return (
-    <div ref={ref} className="relative">
-      <div onClick={() => setIsOpen((v) => !v)}>{trigger}</div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.12 }}
-            className={cn(
-              "absolute top-full mt-2 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface shadow-2xl p-1",
-              align === "right" ? "right-0" : "left-0",
-              className,
-            )}
-          >
-            {childrenWithClose}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <Popover
+      trigger={trigger}
+      align={align}
+      open={open}
+      onOpenChange={setOpen}
+      className={cn("min-w-[160px]", className)}
+    >
+      {Children.map(children, injectClose)}
+    </Popover>
   );
 }
 
