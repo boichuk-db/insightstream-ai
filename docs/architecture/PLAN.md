@@ -27,6 +27,32 @@ The filter every roadmap item must pass:
 | 🏭 | Production recommendation — what a revenue-stage product would do |
 | ⛔ | Retired — recommendation from an earlier review, dropped with reason |
 
+## 📋 Roadmap At a Glance
+
+Scope: 🔥 Implement Soon + 🎨 UI/UX Roadmap only — these carry the day/hour estimates below. 🔍 Analysis Backlog and 📦 Product Backlog already have their own status/priority tables inline in their own sections (not duplicated here to avoid two places drifting out of sync).
+
+| # | Title | Status | Est. (if open) |
+|---|---|---|---|
+| 1 | Remove the duplicate digest scheduler | ✔ Done (2026-07-03) | — |
+| 2 | Fix the OAuth personal-team gap | ✔ Done (2026-07-03) | — |
+| 3 | Stripe webhook idempotency + ordering | ✔ Done (2026-07-03) | — |
+| 4 | Self-healing AI sweep | ✔ Done (2026-07-03) | — |
+| 5 | Separate BullMQ worker process | ✔ Done (2026-07-09, merged to `main` 2026-07-10) | — |
+| 6 | Redis cache for the JWT user lookup | ✔ Done (2026-07-06) | — |
+| 7 | Team as Tenant | ✔ Done (2026-07-05) | — |
+| 8a | Widget: versioned URL | ✔ Done (2026-07-09) | — |
+| 8b | Widget: weight reduction (Preact/vanilla, <30KB) | 🔲 Open | not estimated — "next widget cycle" |
+| 9 | Delete the SQS → Lambda stub | ✔ Done (2026-07-09) — live AWS teardown still deferred, needs explicit confirmation | — |
+| 10 | Ops checklist (SES prod access, ACM+HTTPS on ALB, RDS restore drill) | 🔲 Open | hours each |
+| 11 | Amplify deploy for `apps/web` | ✔ Done (2026-07-06) | — |
+| 12 | Guard against duplicate active subscriptions | ✔ Done (2026-07-06) | — |
+| 13 | P0 — Color system & contrast | ✔ Done (2026-07-10) | — |
+| 14 | P1 — Feed hierarchy & typography | ✔ Mostly done (2026-07-10) — "new" counter semantics gap open, pending product decision | — |
+| 15 | P1 — Navigation & shell consistency | ✔ Mostly done (2026-07-10) — decorative glow-blob removal still open | — |
+| 16 | P1 — Component library consolidation | 🔲 Open | ~2–3 days |
+| 17 | P2 — Analytics 2.0 | 🔲 Open | ~1–2 days |
+| 18 | P2 — Activity Log & Embed polish | 🔲 Open | ~1 day |
+
 ---
 
 ## ✔ Completed
