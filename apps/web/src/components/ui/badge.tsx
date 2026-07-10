@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { getCategoryColor } from "@/lib/colors";
+import { getStatusConfig } from "@/lib/statusConfig";
 
 type BadgeVariant = "role" | "plan" | "category" | "status";
 
@@ -13,17 +14,6 @@ const PLAN_COLORS: Record<string, string> = {
   free: "bg-zinc-500/15 text-brand-fg-muted border-zinc-500/30",
   pro: "bg-brand-accent/15 text-brand-accent border-brand-accent/30",
   enterprise: "bg-status-warning/15 text-status-warning border-status-warning/30",
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  new: "bg-brand-accent/15 text-brand-accent border-brand-accent/30",
-  in_review: "bg-status-warning/15 text-status-warning border-status-warning/30",
-  "In Review": "bg-status-warning/15 text-status-warning border-status-warning/30",
-  "In Progress": "bg-status-info/15 text-status-info border-status-info/30",
-  resolved: "bg-status-success/15 text-status-success border-status-success/30",
-  Done: "bg-status-success/15 text-status-success border-status-success/30",
-  archived: "bg-zinc-500/15 text-brand-fg-muted border-zinc-500/30",
-  Rejected: "bg-status-danger/15 text-status-danger border-status-danger/30",
 };
 
 interface BadgeProps {
@@ -44,7 +34,7 @@ export function Badge({ variant, value, size = "md", className }: BadgeProps) {
   } else if (variant === "plan") {
     colorClass = PLAN_COLORS[value.toLowerCase()] ?? "bg-zinc-500/15 text-brand-fg-muted border-zinc-500/30";
   } else {
-    colorClass = STATUS_COLORS[value] ?? "bg-zinc-500/15 text-brand-fg-muted border-zinc-500/30";
+    colorClass = getStatusConfig(value).badge;
   }
 
   return (

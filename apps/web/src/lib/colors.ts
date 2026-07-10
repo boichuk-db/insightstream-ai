@@ -65,3 +65,5 @@ export const STATUS_COLORS: Record<string, string> = {
   Done: "bg-status-success",
   Rejected: "bg-status-danger",
 };
+
+export { STATUS_CONFIG, getStatusConfig } from "./statusConfig";
