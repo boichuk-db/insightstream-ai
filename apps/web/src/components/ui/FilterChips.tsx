@@ -114,7 +114,7 @@ function DropdownChip({
                 onChange([]);
                 setOpen(false);
               }}
-              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-brand-muted hover:text-brand-fg border-t border-brand-border mt-1"
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-brand-fg-muted hover:text-brand-fg border-t border-brand-border mt-1"
             >
               <X className="w-3 h-3" /> Clear
             </button>

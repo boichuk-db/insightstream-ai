@@ -53,7 +53,7 @@ export function AITrendsBar({ projectId, onThemeFilter }: AITrendsBarProps) {
         )}
         {expanded && <div className="flex-1" />}
 
-        <div className="flex items-center gap-1 text-brand-muted text-[11px] shrink-0">
+        <div className="flex items-center gap-1 text-brand-fg-muted text-[11px] shrink-0">
           {expanded ? (
             <>
               Collapse <ChevronDown className="w-3 h-3" />

@@ -85,7 +85,7 @@ export function TeamTab() {
 
   if (!activeTeam) {
     return (
-      <div className="text-center py-16 text-brand-muted text-sm">
+      <div className="text-center py-16 text-brand-fg-muted text-sm">
         No team selected.
       </div>
     );

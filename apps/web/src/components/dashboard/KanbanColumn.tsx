@@ -42,7 +42,7 @@ export function KanbanColumn({
           />
           {title}
         </h3>
-        <span className="text-[10px] font-mono font-bold text-brand-muted px-2 py-0.5 bg-brand-surface rounded-md border border-brand-border">
+        <span className="text-[10px] font-mono font-bold text-brand-fg-muted px-2 py-0.5 bg-brand-surface rounded-md border border-brand-border">
           {feedbacks.length}
         </span>
       </div>

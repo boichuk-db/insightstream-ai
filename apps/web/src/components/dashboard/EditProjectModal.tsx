@@ -91,7 +91,7 @@ export function EditProjectModal({
               className="pl-10"
               required
             />
-            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export function EditProjectModal({
               className="pl-10"
               required
             />
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
       </div>

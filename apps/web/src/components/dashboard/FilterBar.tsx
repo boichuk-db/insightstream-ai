@@ -45,7 +45,7 @@ export function FilterBar({
                   "h-3.5 w-3.5",
                   hasActiveFilters
                     ? "text-brand-accent"
-                    : "text-brand-muted group-hover:text-brand-fg",
+                    : "text-brand-fg-muted group-hover:text-brand-fg",
                 )}
               />
               <span className="text-[11px] uppercase tracking-wider">Filter</span>
@@ -54,7 +54,7 @@ export function FilterBar({
                   {selectedTags.length}
                 </span>
               )}
-              <ChevronDown className="h-3 w-3 text-brand-muted group-hover:text-brand-fg" />
+              <ChevronDown className="h-3 w-3 text-brand-fg-muted group-hover:text-brand-fg" />
             </Button>
           }
           className="w-72 p-4"
@@ -63,7 +63,7 @@ export function FilterBar({
             <h4 className="text-[10px] font-bold text-brand-fg uppercase tracking-widest flex items-center gap-2">
               <Filter className="h-3 w-3 text-brand-accent" /> Refine View
             </h4>
-            <p className="text-[10px] text-brand-muted font-mono">
+            <p className="text-[10px] text-brand-fg-muted font-mono">
               {filteredCount}/{totalCount}
             </p>
           </div>
@@ -71,7 +71,7 @@ export function FilterBar({
           {/* Tags Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold text-brand-muted tracking-widest">
+              <span className="text-[10px] uppercase font-bold text-brand-fg-muted tracking-widest">
                 Tags
               </span>
               {selectedTags.length > 0 && (
@@ -94,7 +94,7 @@ export function FilterBar({
                       "px-2.5 py-1.5 rounded-xl text-[11px] font-medium border transition-all flex items-center gap-1.5",
                       selectedTags.includes(tag)
                         ? "bg-brand-accent/20 border-brand-accent/50 text-brand-accent"
-                        : "bg-brand-bg border-brand-border text-brand-muted hover:border-brand-border hover:text-brand-fg",
+                        : "bg-brand-bg border-brand-border text-brand-fg-muted hover:border-brand-border hover:text-brand-fg",
                     )}
                   >
                     {selectedTags.includes(tag) && (
@@ -104,7 +104,7 @@ export function FilterBar({
                   </button>
                 ))
               ) : (
-                <p className="text-[11px] text-brand-muted italic py-2 px-1 text-center w-full">
+                <p className="text-[11px] text-brand-fg-muted italic py-2 px-1 text-center w-full">
                   No tags available yet.
                 </p>
               )}
@@ -112,7 +112,7 @@ export function FilterBar({
           </div>
 
           <div className="mt-4 pt-3 border-t border-brand-border/50">
-            <p className="text-[9px] text-brand-muted italic leading-relaxed text-center">
+            <p className="text-[9px] text-brand-fg-muted italic leading-relaxed text-center">
               Drag & drop is disabled when filters are active.
             </p>
           </div>
@@ -121,7 +121,7 @@ export function FilterBar({
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="flex items-center gap-1.5 px-2 h-8 text-[10px] uppercase tracking-widest font-bold text-brand-muted hover:text-red-400 transition-colors"
+            className="flex items-center gap-1.5 px-2 h-8 text-[10px] uppercase tracking-widest font-bold text-brand-fg-muted hover:text-red-400 transition-colors"
           >
             <X className="h-3 w-3" />
             Clear

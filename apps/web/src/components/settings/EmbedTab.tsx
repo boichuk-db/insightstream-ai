@@ -188,7 +188,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                           "min-w-[80px] px-3 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                           selectedShape === shape
                             ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                            : "text-brand-muted hover:text-brand-fg border border-transparent",
+                            : "text-brand-fg-muted hover:text-brand-fg border border-transparent",
                         )}
                       >
                         {shape}
@@ -208,7 +208,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                           "min-w-[100px] px-4 py-2 text-xs font-semibold rounded-lg capitalize transition-all whitespace-nowrap",
                           selectedPosition === pos
                             ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                            : "text-brand-muted hover:text-brand-fg border border-transparent",
+                            : "text-brand-fg-muted hover:text-brand-fg border border-transparent",
                         )}
                       >
                         {pos.replace("-", " ")}
@@ -235,7 +235,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                     "min-w-[70px] px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all",
                     selectedFramework === fw
                       ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm"
-                      : "text-brand-muted hover:text-brand-fg border border-transparent",
+                      : "text-brand-fg-muted hover:text-brand-fg border border-transparent",
                   )}
                 >
                   {fw === "html" ? "HTML" : fw}
@@ -258,7 +258,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
           </div>
           <div className="mt-4 flex items-start gap-3 p-4 bg-brand-bg/50 rounded-xl border border-brand-border/50">
             <Globe className="h-4 w-4 text-brand-accent mt-0.5 shrink-0" />
-            <p className="text-xs text-brand-muted leading-relaxed">
+            <p className="text-xs text-brand-fg-muted leading-relaxed">
               {selectedFramework === "html" && (
                 <>Paste this script into the <code>&lt;body&gt;</code> tag of your website. It handles loading and initialization automatically.</>
               )}
@@ -310,7 +310,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                 <div className="w-7 h-7 rounded-full bg-brand-bg flex items-center justify-center text-[10px] font-bold text-brand-accent border border-brand-border shrink-0">{n}</div>
                 <div>
                   <p className="text-xs font-bold text-brand-fg">{title}</p>
-                  <p className="text-xs text-brand-muted mt-1 leading-relaxed">{desc}</p>
+                  <p className="text-xs text-brand-fg-muted mt-1 leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}

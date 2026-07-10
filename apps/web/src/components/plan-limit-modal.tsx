@@ -47,7 +47,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-brand-muted hover:text-brand-fg transition-colors"
+          className="absolute top-4 right-4 p-1 text-brand-fg-muted hover:text-brand-fg transition-colors"
           aria-label="Close"
         >
           <X className="h-5 w-5" />
@@ -61,7 +61,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
             <h2 className="text-lg font-bold text-brand-fg">Plan Limit Reached</h2>
           </div>
 
-          <p className="text-brand-muted text-sm leading-relaxed">
+          <p className="text-brand-fg-muted text-sm leading-relaxed">
             {errorData.message}
           </p>
 
@@ -74,7 +74,7 @@ export function PlanLimitModal({ open, onClose, errorData }: PlanLimitModalProps
             </button>
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-brand-surface hover:bg-brand-surface-hover text-brand-muted text-sm font-medium rounded-xl transition-colors"
+              className="flex-1 px-4 py-2.5 bg-brand-surface hover:bg-brand-surface-hover text-brand-fg-muted text-sm font-medium rounded-xl transition-colors"
             >
               Maybe later
             </button>

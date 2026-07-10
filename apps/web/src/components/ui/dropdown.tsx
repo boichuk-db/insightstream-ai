@@ -34,7 +34,7 @@ function DropdownItem({
         "flex w-full items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left",
         destructive
           ? "text-red-400 hover:bg-red-500/10"
-          : "text-brand-muted hover:bg-white/5 hover:text-brand-fg",
+          : "text-brand-fg-muted hover:bg-white/5 hover:text-brand-fg",
         disabled && "opacity-40 pointer-events-none",
         className,
       )}

@@ -146,7 +146,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
           <div className="flex flex-col gap-4">
             <div>
               <h3 className="text-sm font-semibold text-brand-fg mb-2 flex items-center gap-2">
-                <Maximize size={14} className="text-brand-muted" /> Button
+                <Maximize size={14} className="text-brand-fg-muted" /> Button
                 Shape
               </h3>
               <div className="flex bg-brand-bg rounded-lg p-1 border border-brand-border w-fit">
@@ -154,7 +154,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   <button
                     key={shape}
                     onClick={() => setSelectedShape(shape)}
-                    className={`min-w-[90px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedShape === shape ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-muted hover:text-brand-fg border border-transparent"}`}
+                    className={`min-w-[90px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedShape === shape ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-fg-muted hover:text-brand-fg border border-transparent"}`}
                   >
                     {shape}
                   </button>
@@ -164,7 +164,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 
             <div>
               <h3 className="text-sm font-semibold text-brand-fg mb-2 flex items-center gap-2">
-                <Type size={14} className="text-brand-muted" /> Screen
+                <Type size={14} className="text-brand-fg-muted" /> Screen
                 Position
               </h3>
               <div className="flex bg-brand-bg rounded-lg p-1 border border-brand-border w-fit">
@@ -172,7 +172,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   <button
                     key={pos}
                     onClick={() => setSelectedPosition(pos)}
-                    className={`min-w-[110px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedPosition === pos ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-muted hover:text-brand-fg border border-transparent"}`}
+                    className={`min-w-[110px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedPosition === pos ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-fg-muted hover:text-brand-fg border border-transparent"}`}
                   >
                     {pos.replace("-", " ")}
                   </button>
@@ -184,7 +184,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
           {/* Color Customization (Right) */}
           <div>
             <h3 className="text-sm font-semibold text-brand-fg mb-3 flex items-center gap-2">
-              <Sparkles size={14} className="text-brand-muted" /> Brand
+              <Sparkles size={14} className="text-brand-fg-muted" /> Brand
               Color
             </h3>
             <div className="flex gap-2.5 flex-wrap">
@@ -208,7 +208,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
         {/* API Key */}
         <div>
           <h3 className="text-sm font-semibold text-brand-fg mb-2 flex items-center gap-2">
-            <Key size={14} className="text-brand-muted" /> Your API Key
+            <Key size={14} className="text-brand-fg-muted" /> Your API Key
           </h3>
           <div className="flex items-center gap-2">
             <code className="flex-1 bg-brand-bg border border-brand-border rounded-lg px-4 py-2.5 text-sm text-brand-accent font-mono truncate select-all">
@@ -216,9 +216,9 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             </code>
             <CopyButton text={apiKey} label="Copy" size="sm" />
           </div>
-          <p className="mt-1.5 text-xs text-brand-muted">
+          <p className="mt-1.5 text-xs text-brand-fg-muted">
             Replace{" "}
-            <code className="text-brand-muted bg-brand-surface px-1 py-0.5 rounded">
+            <code className="text-brand-fg-muted bg-brand-surface px-1 py-0.5 rounded">
               YOUR_API_KEY
             </code>{" "}
             in the snippet below with this key.
@@ -230,7 +230,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-3">
             <div className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold text-brand-fg flex items-center gap-2">
-                <LayoutTemplate size={14} className="text-brand-muted" />{" "}
+                <LayoutTemplate size={14} className="text-brand-fg-muted" />{" "}
                 Framework Snippet
               </h3>
               <div className="flex bg-brand-bg rounded-lg p-1 border border-brand-border w-fit">
@@ -238,7 +238,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
                   <button
                     key={fw}
                     onClick={() => setSelectedFramework(fw)}
-                    className={`min-w-[80px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedFramework === fw ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-muted hover:text-brand-fg border border-transparent"}`}
+                    className={`min-w-[80px] px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${selectedFramework === fw ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shadow-sm" : "text-brand-fg-muted hover:text-brand-fg border border-transparent"}`}
                   >
                     {fw === "html" ? "HTML" : fw}
                   </button>
@@ -253,11 +253,11 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
               <code>{snippet}</code>
             </pre>
           </div>
-          <p className="mt-3 text-xs text-brand-muted">
+          <p className="mt-3 text-xs text-brand-fg-muted">
             {selectedFramework === "html" && (
               <>
                 Paste this script into the{" "}
-                <code className="text-brand-muted bg-brand-surface px-1 py-0.5 rounded">
+                <code className="text-brand-fg-muted bg-brand-surface px-1 py-0.5 rounded">
                   &lt;body&gt;
                 </code>{" "}
                 tag of your website.
@@ -266,7 +266,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
             {selectedFramework === "react" && (
               <>
                 Use this component in your React application (e.g., inside{" "}
-                <code className="text-brand-muted bg-brand-surface px-1 py-0.5 rounded">
+                <code className="text-brand-fg-muted bg-brand-surface px-1 py-0.5 rounded">
                   App.jsx
                 </code>{" "}
                 or a layout wrapper).

@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
         {submitted ? (
           <div data-testid="success-message" className="space-y-4">
             <h2 className="text-2xl font-bold">Check your inbox</h2>
-            <p className="text-brand-muted">
+            <p className="text-brand-fg-muted">
               If an account with <strong>{email}</strong> exists, we&apos;ve
               sent a reset link. Check your spam folder too.
             </p>
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
           <>
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-2">Forgot your password?</h2>
-              <p className="text-brand-muted text-sm">
+              <p className="text-brand-fg-muted text-sm">
                 Enter your email and we&apos;ll send you a reset link.
               </p>
             </div>
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <label className="text-sm font-medium text-brand-muted ml-1">
+                <label className="text-sm font-medium text-brand-fg-muted ml-1">
                   Email
                 </label>
                 <div className="relative">
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                     className="pl-10"
                     required
                   />
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
                 </div>
               </div>
 
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-brand-muted">
+            <div className="mt-6 text-center text-sm text-brand-fg-muted">
               <Link href="/" className="text-brand-accent hover:text-brand-accent/80">
                 ← Back to sign in
               </Link>

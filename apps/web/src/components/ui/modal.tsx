@@ -71,7 +71,7 @@ export function Modal({
               </h3>
               <button
                 onClick={onClose}
-                className="text-brand-muted hover:text-brand-fg transition-colors"
+                className="text-brand-fg-muted hover:text-brand-fg transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>

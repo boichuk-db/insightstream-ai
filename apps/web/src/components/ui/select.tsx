@@ -51,7 +51,7 @@ export function Select({
         <span className="capitalize">{selectedOption}</span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-brand-muted transition-transform duration-200",
+            "h-4 w-4 text-brand-fg-muted transition-transform duration-200",
             isOpen && "rotate-180",
           )}
         />
@@ -79,7 +79,7 @@ export function Select({
                     "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors",
                     value === option
                       ? "bg-brand-accent/10 text-brand-accent font-medium"
-                      : "text-brand-muted hover:bg-brand-surface hover:text-brand-fg",
+                      : "text-brand-fg-muted hover:bg-brand-surface hover:text-brand-fg",
                   )}
                 >
                   <span className="capitalize">{option}</span>

@@ -91,7 +91,7 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
           {events.map((event: any, i: number) => {
             const config = ACTION_CONFIG[event.action] || {
               icon: Activity,
-              color: "text-brand-muted",
+              color: "text-brand-fg-muted",
               label: event.action,
             };
             const Icon = config.icon;
@@ -115,19 +115,19 @@ export function ActivityFeed({ teamId }: ActivityFeedProps) {
                     </span>{" "}
                     {config.label}
                     {event.metadata?.email && (
-                      <span className="text-brand-muted">
+                      <span className="text-brand-fg-muted">
                         {" "}
                         ({event.metadata.email})
                       </span>
                     )}
                     {event.metadata?.teamName && (
-                      <span className="text-brand-muted">
+                      <span className="text-brand-fg-muted">
                         {" "}
                         "{event.metadata.teamName}"
                       </span>
                     )}
                   </p>
-                  <p className="text-[10px] text-brand-muted mt-0.5">
+                  <p className="text-[10px] text-brand-fg-muted mt-0.5">
                     {formatDistanceToNow(new Date(event.createdAt), {
                       addSuffix: true,
                     })}

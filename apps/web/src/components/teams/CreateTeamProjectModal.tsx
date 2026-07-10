@@ -52,7 +52,7 @@ export function CreateTeamProjectModal({
       footer={
         <div className="flex gap-3 w-full">
           <Button
-            className="flex-1 bg-transparent border border-brand-border hover:bg-brand-surface-hover text-brand-muted"
+            className="flex-1 bg-transparent border border-brand-border hover:bg-brand-surface-hover text-brand-fg-muted"
             onClick={onClose}
             disabled={createMutation.isPending}
           >
@@ -71,7 +71,7 @@ export function CreateTeamProjectModal({
     >
       <div className="space-y-5">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             Project Name <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -83,12 +83,12 @@ export function CreateTeamProjectModal({
               className="pl-10"
               autoFocus
             />
-            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             Domain <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -99,7 +99,7 @@ export function CreateTeamProjectModal({
               onChange={(e) => setDomain(e.target.value)}
               className="pl-10"
             />
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
       </div>

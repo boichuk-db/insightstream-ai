@@ -19,7 +19,7 @@ export default function ActivityPage() {
         right={
           <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-brand-surface/40 border border-brand-border/50 rounded-2xl backdrop-blur-sm">
             <Clock className="h-4 w-4 text-brand-accent" />
-            <span className="text-xs font-medium text-brand-muted">Real-time updates enabled</span>
+            <span className="text-xs font-medium text-brand-fg-muted">Real-time updates enabled</span>
           </div>
         }
       />

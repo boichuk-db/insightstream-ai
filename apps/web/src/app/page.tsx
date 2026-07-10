@@ -66,7 +66,7 @@ function AuthForm() {
         <h2 className="text-3xl font-bold tracking-tight mb-2">
           {isLogin ? "Welcome back" : "Create an account"}
         </h2>
-        <p className="text-brand-muted">
+        <p className="text-brand-fg-muted">
           {isLogin
             ? "Enter your credentials to access your dashboard."
             : "Sign up to start analyzing feedback with AI."}
@@ -117,7 +117,7 @@ function AuthForm() {
           <div className="w-full border-t border-brand-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-brand-bg px-2 text-brand-muted">or</span>
+          <span className="bg-brand-bg px-2 text-brand-fg-muted">or</span>
         </div>
       </div>
 
@@ -148,7 +148,7 @@ function AuthForm() {
         className="space-y-4"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             Email
           </label>
           <div className="relative">
@@ -161,13 +161,13 @@ function AuthForm() {
               className="pl-10"
               required
             />
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-brand-muted ml-1">
+            <label className="text-sm font-medium text-brand-fg-muted ml-1">
               Password
             </label>
             {isLogin && (
@@ -189,7 +189,7 @@ function AuthForm() {
               className="pl-10"
               required
             />
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
@@ -206,7 +206,7 @@ function AuthForm() {
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-brand-muted">
+      <div className="mt-8 text-center text-sm text-brand-fg-muted">
         {isLogin ? "Don't have an account? " : "Already have an account? "}
         <button
           onClick={() => setIsLogin(!isLogin)}
@@ -243,13 +243,13 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-brand-muted text-lg sm:text-xl leading-relaxed"
+            className="text-brand-fg-muted text-lg sm:text-xl leading-relaxed"
           >
             A powerful, AI-driven platform for collecting, analyzing, and acting
             upon user feedback at scale.
           </motion.p>
         </div>
-        <div className="relative z-10 mt-12 text-sm text-brand-muted">
+        <div className="relative z-10 mt-12 text-sm text-brand-fg-muted">
           © {new Date().getFullYear()} InsightStream. All rights reserved.
         </div>
       </div>

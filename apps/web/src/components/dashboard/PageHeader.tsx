@@ -32,7 +32,7 @@ export function PageHeader({ icon, title, subtitle, right, onBack }: PageHeaderP
         {right}
       </div>
       {subtitle && (
-        <p className="text-brand-muted text-sm leading-relaxed max-w-2xl">{subtitle}</p>
+        <p className="text-brand-fg-muted text-sm leading-relaxed max-w-2xl">{subtitle}</p>
       )}
     </header>
   );

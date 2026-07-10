@@ -36,7 +36,7 @@ export function StatusTabs({
             "flex items-center gap-1.5 px-4 py-2.5 text-xs whitespace-nowrap border-b-2 -mb-px transition-colors",
             activeTab === tab.value
               ? "border-brand-accent text-brand-fg"
-              : "border-transparent text-brand-muted hover:text-brand-fg",
+              : "border-transparent text-brand-fg-muted hover:text-brand-fg",
           )}
         >
           {tab.label}
@@ -45,7 +45,7 @@ export function StatusTabs({
               "px-1.5 py-0.5 rounded-full text-[10px] font-medium",
               activeTab === tab.value
                 ? "bg-brand-accent/15 text-brand-accent"
-                : "bg-brand-surface-hover text-brand-muted",
+                : "bg-brand-surface-hover text-brand-fg-muted",
             )}
           >
             {tab.count}

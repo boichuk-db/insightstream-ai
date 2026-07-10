@@ -33,11 +33,11 @@ export function EmptyState({
           size === "sm" ? "h-8 w-8" : "h-12 w-12",
         )}
       />
-      <p className={cn("font-medium text-brand-muted", size === "sm" ? "text-xs" : "text-sm")}>
+      <p className={cn("font-medium text-brand-fg-muted", size === "sm" ? "text-xs" : "text-sm")}>
         {title}
       </p>
       {description && (
-        <p className="text-xs text-brand-muted max-w-[200px]">{description}</p>
+        <p className="text-xs text-brand-fg-muted max-w-[200px]">{description}</p>
       )}
       {action && <div className="mt-1">{action}</div>}
     </div>

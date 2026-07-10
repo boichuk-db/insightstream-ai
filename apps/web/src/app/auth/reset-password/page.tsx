@@ -32,7 +32,7 @@ function ResetPasswordForm() {
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Invalid link</h2>
-        <p className="text-brand-muted">This reset link is missing a token.</p>
+        <p className="text-brand-fg-muted">This reset link is missing a token.</p>
         <Link
           href="/auth/forgot-password"
           className="text-brand-accent hover:text-brand-accent/80 text-sm"
@@ -47,7 +47,7 @@ function ResetPasswordForm() {
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Password updated!</h2>
-        <p className="text-brand-muted">Redirecting you to sign in…</p>
+        <p className="text-brand-fg-muted">Redirecting you to sign in…</p>
       </div>
     );
   }
@@ -56,7 +56,7 @@ function ResetPasswordForm() {
     <>
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-2">Set a new password</h2>
-        <p className="text-brand-muted text-sm">Must be at least 8 characters.</p>
+        <p className="text-brand-fg-muted text-sm">Must be at least 8 characters.</p>
       </div>
 
       <form
@@ -76,7 +76,7 @@ function ResetPasswordForm() {
         className="space-y-4"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             New password
           </label>
           <div className="relative">
@@ -88,12 +88,12 @@ function ResetPasswordForm() {
               className="pl-10"
               required
             />
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             Confirm password
           </label>
           <div className="relative">
@@ -105,7 +105,7 @@ function ResetPasswordForm() {
               className="pl-10"
               required
             />
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export default function ResetPasswordPage() {
           <Sparkles className="text-brand-accent" />
           <span>InsightStream AI</span>
         </div>
-        <Suspense fallback={<p className="text-brand-muted">Loading…</p>}>
+        <Suspense fallback={<p className="text-brand-fg-muted">Loading…</p>}>
           <ResetPasswordForm />
         </Suspense>
       </div>

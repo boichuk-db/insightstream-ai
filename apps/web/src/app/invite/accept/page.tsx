@@ -49,7 +49,7 @@ function AcceptInviteContent() {
   if (!token) {
     return (
       <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-        <div className="text-brand-muted text-center">
+        <div className="text-brand-fg-muted text-center">
           <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
           <h1 className="text-xl font-bold text-brand-fg mb-2">Invalid Link</h1>
           <p>No invitation token found.</p>
@@ -68,7 +68,7 @@ function AcceptInviteContent() {
         {isLoading ? (
           <div className="py-8">
             <div className="w-12 h-12 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-brand-muted">Loading invitation...</p>
+            <p className="text-brand-fg-muted">Loading invitation...</p>
           </div>
         ) : isError ? (
           <div>
@@ -76,7 +76,7 @@ function AcceptInviteContent() {
             <h1 className="text-xl font-bold text-brand-fg mb-2">
               Invitation Not Found
             </h1>
-            <p className="text-brand-muted mb-6">
+            <p className="text-brand-fg-muted mb-6">
               This invitation link may be invalid or expired.
             </p>
             <Link
@@ -92,7 +92,7 @@ function AcceptInviteContent() {
             <h1 className="text-xl font-bold text-brand-fg mb-2">
               Invitation Expired
             </h1>
-            <p className="text-brand-muted mb-6">
+            <p className="text-brand-fg-muted mb-6">
               This invitation to{" "}
               <strong className="text-brand-fg">{info.teamName}</strong> has
               expired. Ask the team admin to send a new one.
@@ -104,7 +104,7 @@ function AcceptInviteContent() {
             <h1 className="text-xl font-bold text-brand-fg mb-2">
               Already Accepted
             </h1>
-            <p className="text-brand-muted mb-6">
+            <p className="text-brand-fg-muted mb-6">
               You've already joined{" "}
               <strong className="text-brand-fg">{info.teamName}</strong>.
             </p>

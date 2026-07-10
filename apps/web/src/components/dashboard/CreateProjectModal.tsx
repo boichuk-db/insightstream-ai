@@ -91,7 +91,7 @@ export function CreateProjectModal({
               className="pl-10"
               required
             />
-            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
@@ -108,11 +108,11 @@ export function CreateProjectModal({
               className="pl-10"
               required
             />
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
           </div>
         </div>
 
-        <p className="text-xs text-brand-muted pt-2 leading-relaxed">
+        <p className="text-xs text-brand-fg-muted pt-2 leading-relaxed">
           A unique API Key will be automatically generated. You can use this
           key to identify feedback from your website.
         </p>

@@ -77,7 +77,7 @@ export function CommentsPanel({
               <h3 className="text-lg font-bold text-brand-fg">Comments</h3>
               <button
                 onClick={onClose}
-                className="p-1.5 text-brand-muted hover:text-brand-fg transition-colors"
+                className="p-1.5 text-brand-fg-muted hover:text-brand-fg transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -105,7 +105,7 @@ export function CommentsPanel({
                         <span className="text-sm font-medium text-brand-fg">
                           {comment.userEmail}
                         </span>
-                        <span className="text-[10px] text-brand-muted ml-2">
+                        <span className="text-[10px] text-brand-fg-muted ml-2">
                           {formatDistanceToNow(new Date(comment.createdAt), {
                             addSuffix: true,
                           })}
@@ -114,7 +114,7 @@ export function CommentsPanel({
                       {comment.userId === currentUserId && (
                         <button
                           onClick={() => deleteMutation.mutate(comment.id)}
-                          className="p-1 text-brand-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                          className="p-1 text-brand-fg-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -140,7 +140,7 @@ export function CommentsPanel({
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
-                className="flex-1 bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-fg placeholder-brand-muted focus:border-brand-primary outline-none"
+                className="flex-1 bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-fg placeholder-brand-fg-muted focus:border-brand-primary outline-none"
               />
               <button
                 type="submit"

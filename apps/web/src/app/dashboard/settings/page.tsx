@@ -61,7 +61,7 @@ function ColorThemeButton({
         "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
         active
           ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
-          : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+          : "border-brand-border bg-brand-surface text-brand-fg-muted hover:border-brand-accent/30 hover:text-brand-fg",
       )}
     >
       <span
@@ -92,7 +92,7 @@ function ModeButton({
         "flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium transition-all",
         active
           ? "bg-brand-accent/10 text-brand-fg shadow-sm"
-          : "text-brand-muted hover:text-brand-fg",
+          : "text-brand-fg-muted hover:text-brand-fg",
       )}
     >
       <Icon className="h-4 w-4" />
@@ -152,7 +152,7 @@ function SettingsContent() {
                   "px-4 py-2 rounded-lg text-sm font-medium transition-all",
                   activeTab === tab.id
                     ? "bg-brand-accent/10 text-brand-accent border border-brand-accent/20"
-                    : "text-brand-muted hover:text-brand-fg",
+                    : "text-brand-fg-muted hover:text-brand-fg",
                 )}
               >
                 {tab.label}
@@ -174,7 +174,7 @@ function SettingsContent() {
                 </h2>
                 <div className="space-y-6">
                   <div>
-                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
+                    <p className="mb-3 text-sm font-medium text-brand-fg-muted flex items-center gap-2">
                       <Palette className="h-4 w-4" /> Color Theme
                     </p>
                     <div className="flex gap-3">
@@ -193,7 +193,7 @@ function SettingsContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
+                    <p className="mb-3 text-sm font-medium text-brand-fg-muted flex items-center gap-2">
                       <Monitor className="h-4 w-4" /> Appearance Mode
                     </p>
                     <div className="flex gap-1 rounded-xl border border-brand-border bg-brand-surface p-1">
@@ -221,7 +221,7 @@ function SettingsContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="mb-3 text-sm font-medium text-brand-muted flex items-center gap-2">
+                    <p className="mb-3 text-sm font-medium text-brand-fg-muted flex items-center gap-2">
                       <LayoutList className="h-4 w-4" /> Feedback View
                     </p>
                     <div className="flex gap-3">
@@ -231,7 +231,7 @@ function SettingsContent() {
                           "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
                           feedbackView === "feed"
                             ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
-                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                            : "border-brand-border bg-brand-surface text-brand-fg-muted hover:border-brand-accent/30 hover:text-brand-fg",
                         )}
                       >
                         <LayoutList className="h-4 w-4 shrink-0" />
@@ -243,7 +243,7 @@ function SettingsContent() {
                           "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
                           feedbackView === "kanban"
                             ? "border-brand-accent/50 bg-brand-accent/10 text-brand-fg"
-                            : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-accent/30 hover:text-brand-fg",
+                            : "border-brand-border bg-brand-surface text-brand-fg-muted hover:border-brand-accent/30 hover:text-brand-fg",
                         )}
                       >
                         <LayoutGrid className="h-4 w-4 shrink-0" />

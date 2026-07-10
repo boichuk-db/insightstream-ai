@@ -288,7 +288,7 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
 
   if (!mounted) {
     return (
-      <div className="h-64 flex items-center justify-center text-brand-muted">
+      <div className="h-64 flex items-center justify-center text-brand-fg-muted">
         Loading Board...
       </div>
     );
@@ -408,7 +408,7 @@ function ExportMenu({
       <div className="space-y-4">
         {/* Scope Selection */}
         <div>
-          <h4 className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-2 px-1">
+          <h4 className="text-[10px] font-bold text-brand-fg-muted uppercase tracking-widest mb-2 px-1">
             Select Scope
           </h4>
           <div className="grid grid-cols-1 gap-1">
@@ -418,7 +418,7 @@ function ExportMenu({
                 "text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between",
                 scope === "all"
                   ? "bg-brand-accent/15 text-brand-accent font-bold"
-                  : "text-brand-muted hover:bg-brand-bg hover:text-brand-fg",
+                  : "text-brand-fg-muted hover:bg-brand-bg hover:text-brand-fg",
               )}
             >
               All columns ({totalCount})
@@ -432,7 +432,7 @@ function ExportMenu({
                   "text-left px-3 py-2 rounded-xl text-[11px] transition-all flex items-center justify-between",
                   scope === c.id
                     ? "bg-brand-accent/15 text-brand-accent font-bold"
-                    : "text-brand-muted hover:bg-brand-bg hover:text-brand-fg",
+                    : "text-brand-fg-muted hover:bg-brand-bg hover:text-brand-fg",
                 )}
               >
                 {c.title} ({displayColumns[c.id]?.length ?? 0})

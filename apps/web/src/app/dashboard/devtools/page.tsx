@@ -97,7 +97,7 @@ export default function DevtoolsPage() {
         <h2 className="text-lg font-bold text-brand-fg flex items-center gap-2 mb-4">
           <Plus className="h-5 w-5 text-brand-accent" /> Manual Input Testing
         </h2>
-        <p className="text-xs text-brand-muted mb-6">
+        <p className="text-xs text-brand-fg-muted mb-6">
           Submit internal feedback to test migrations or AI response tags.
         </p>
         <form

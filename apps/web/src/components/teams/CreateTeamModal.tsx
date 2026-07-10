@@ -37,7 +37,7 @@ export function CreateTeamModal({
       footer={
         <div className="flex gap-3 w-full">
           <Button
-            className="flex-1 bg-transparent border border-brand-border hover:bg-brand-surface-hover text-brand-muted"
+            className="flex-1 bg-transparent border border-brand-border hover:bg-brand-surface-hover text-brand-fg-muted"
             onClick={onClose}
             disabled={createTeam.isPending}
           >
@@ -56,7 +56,7 @@ export function CreateTeamModal({
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-muted ml-1">
+          <label className="text-sm font-medium text-brand-fg-muted ml-1">
             Team Name <span className="text-red-400">*</span>
           </label>
           <Input

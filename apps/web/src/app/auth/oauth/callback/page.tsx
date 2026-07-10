@@ -22,7 +22,7 @@ function OAuthCallbackHandler() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-bg">
-      <p className="text-brand-muted animate-pulse">Signing you in…</p>
+      <p className="text-brand-fg-muted animate-pulse">Signing you in…</p>
     </div>
   );
 }
@@ -32,7 +32,7 @@ export default function OAuthCallbackPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-brand-bg">
-          <p className="text-brand-muted">Loading…</p>
+          <p className="text-brand-fg-muted">Loading…</p>
         </div>
       }
     >

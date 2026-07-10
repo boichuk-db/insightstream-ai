@@ -9,9 +9,14 @@
   --color-brand-surface-hover: var(--brand-surface-hover);
   --color-brand-border:       var(--brand-border);
   --color-brand-muted:        var(--brand-muted);
+  --color-brand-fg-muted:     var(--brand-fg-muted);
   --color-brand-fg:           var(--brand-fg);
   --color-brand-primary:      var(--brand-primary);
   --color-brand-accent:       var(--brand-accent);
+  --color-status-success:     var(--status-success);
+  --color-status-warning:     var(--status-warning);
+  --color-status-danger:      var(--status-danger);
+  --color-status-info:        var(--status-info);
 }
 
 /* ── Teal · Light (default) ─────────────────────────── */
@@ -21,9 +26,16 @@
   --brand-surface-hover: #f0f5f4;
   --brand-border:       #dde8e7;
   --brand-muted:        #8ab0ae;
+  --brand-fg-muted:     #5b7975;
   --brand-fg:           #1a2e2d;
   --brand-primary:      #2d6b66;
   --brand-accent:       #3d8a84;
+
+  /* Semantic status colors — text-safe (>=4.5:1) on light surfaces */
+  --status-success:     #047857;
+  --status-warning:     #92400e;
+  --status-danger:      #b91c1c;
+  --status-info:        #1d4ed8;
 }
 
 /* ── Teal · Dark ─────────────────────────────────────── */
@@ -31,11 +43,18 @@
   --brand-bg:           #090c0c;
   --brand-surface:      #0e1515;
   --brand-surface-hover: #162020;
-  --brand-border:       #182222;
+  --brand-border:       #243232;
   --brand-muted:        #2e4d4a;
+  --brand-fg-muted:     #8aa8a4;
   --brand-fg:           #e0eded;
   --brand-primary:      #3d8a84;
   --brand-accent:       #6eb5af;
+
+  /* Semantic status colors — text-safe (>=4.5:1) on dark surfaces */
+  --status-success:     #34d399;
+  --status-warning:     #fcd34d;
+  --status-danger:      #f87171;
+  --status-info:        #60a5fa;
 }
 
 /* ── Slate Blue · Light ──────────────────────────────── */

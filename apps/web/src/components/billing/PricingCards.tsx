@@ -76,13 +76,13 @@ export function PricingCards() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-brand-muted">Upgrade Plan</h3>
+        <h3 className="text-sm font-semibold text-brand-fg-muted">Upgrade Plan</h3>
         <div className="flex items-center gap-1 bg-brand-border rounded-lg p-1 text-xs">
           <button
             onClick={() => setBilling("monthly")}
             className={cn(
               "px-3 py-1 rounded-md transition-colors",
-              billing === "monthly" ? "bg-brand-surface text-brand-fg" : "text-brand-muted hover:text-brand-fg",
+              billing === "monthly" ? "bg-brand-surface text-brand-fg" : "text-brand-fg-muted hover:text-brand-fg",
             )}
           >
             Monthly
@@ -91,7 +91,7 @@ export function PricingCards() {
             onClick={() => setBilling("annual")}
             className={cn(
               "px-3 py-1 rounded-md transition-colors",
-              billing === "annual" ? "bg-brand-surface text-brand-fg" : "text-brand-muted hover:text-brand-fg",
+              billing === "annual" ? "bg-brand-surface text-brand-fg" : "text-brand-fg-muted hover:text-brand-fg",
             )}
           >
             Annual <span className="text-brand-accent">–17%</span>
@@ -114,19 +114,19 @@ export function PricingCards() {
               className="p-5 bg-brand-surface border border-brand-border rounded-xl flex flex-col gap-4"
             >
               <div>
-                <p className="text-xs text-brand-muted uppercase tracking-wider font-semibold">
+                <p className="text-xs text-brand-fg-muted uppercase tracking-wider font-semibold">
                   {plan.name}
                 </p>
                 <p className="text-2xl font-bold text-brand-fg mt-1">
                   {displayPrice}
-                  <span className="text-sm font-normal text-brand-muted">
+                  <span className="text-sm font-normal text-brand-fg-muted">
                     /{billing === "monthly" ? "mo" : "yr"}
                   </span>
                 </p>
               </div>
               <ul className="flex flex-col gap-1.5 flex-1">
                 {plan.features.map((f) => (
-                  <li key={f} className="text-xs text-brand-muted flex items-center gap-1.5">
+                  <li key={f} className="text-xs text-brand-fg-muted flex items-center gap-1.5">
                     <span className="text-brand-accent shrink-0">✓</span> {f}
                   </li>
                 ))}
@@ -138,7 +138,7 @@ export function PricingCards() {
                 className={cn(
                   "w-full py-2 rounded-lg text-sm font-medium transition-colors",
                   isCurrentPlan
-                    ? "bg-brand-border text-brand-muted cursor-default"
+                    ? "bg-brand-border text-brand-fg-muted cursor-default"
                     : "bg-brand-primary hover:bg-brand-primary/90 text-white disabled:opacity-70",
                 )}
               >

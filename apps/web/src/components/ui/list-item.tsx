@@ -25,7 +25,7 @@ export function ListItem({ icon, primary, secondary, actions, className }: ListI
         <div className="min-w-0">
           <div className="text-sm font-medium text-brand-fg truncate">{primary}</div>
           {secondary && (
-            <div className="text-[10px] text-brand-muted mt-0.5">{secondary}</div>
+            <div className="text-[10px] text-brand-fg-muted mt-0.5">{secondary}</div>
           )}
         </div>
       </div>
