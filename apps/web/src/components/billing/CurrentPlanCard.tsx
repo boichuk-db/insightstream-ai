@@ -27,15 +27,15 @@ function statusLabel(status: PlanStatus["planStatus"]) {
 function statusBadgeClass(status: PlanStatus["planStatus"]) {
   if (status === "trialing") return "bg-brand-accent/20 text-brand-accent";
   if (status === "past_due" || status === "unpaid")
-    return "bg-red-500/20 text-red-400";
+    return "bg-status-danger/20 text-status-danger";
   if (
     status === "canceled" ||
     status === "incomplete_expired" ||
     status === "paused"
   )
-    return "bg-zinc-500/20 text-brand-muted";
-  if (status === "incomplete") return "bg-yellow-500/20 text-yellow-400";
-  return "bg-green-500/20 text-green-400";
+    return "bg-zinc-500/20 text-brand-fg-muted";
+  if (status === "incomplete") return "bg-status-warning/20 text-status-warning";
+  return "bg-status-success/20 text-status-success";
 }
 
 export function CurrentPlanCard() {
@@ -76,12 +76,12 @@ export function CurrentPlanCard() {
           </span>
         </div>
         {daysLeft !== null && (
-          <p className="text-sm text-brand-muted">
+          <p className="text-sm text-brand-fg-muted">
             Trial ends in {daysLeft} day{daysLeft !== 1 ? "s" : ""}
           </p>
         )}
         {data.planStatus === "past_due" && (
-          <p className="text-sm text-red-400">
+          <p className="text-sm text-status-danger">
             Payment failed — update your payment method to avoid downgrade to Free
           </p>
         )}

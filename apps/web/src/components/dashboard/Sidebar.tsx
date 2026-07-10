@@ -148,7 +148,7 @@ export function Sidebar({
                           "truncate pr-2",
                           activeTeam?.id === t.id
                             ? "text-brand-accent font-semibold"
-                            : "text-brand-muted",
+                            : "text-brand-fg-muted",
                         )}
                       >
                         {t.name}
@@ -199,7 +199,7 @@ export function Sidebar({
                       "truncate pr-2",
                       activeProject?.id === p.id
                         ? "text-brand-accent font-semibold"
-                        : "text-brand-muted",
+                        : "text-brand-fg-muted",
                     )}
                   >
                     {p.name}
@@ -251,7 +251,7 @@ export function Sidebar({
               "flex items-center justify-between w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
+                : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <span className="flex items-center gap-3">
@@ -269,7 +269,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/analytics")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
+                : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <BarChart2 className="h-4 w-4 text-brand-accent" /> Analytics
@@ -280,7 +280,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/activity")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
+                : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Activity className="h-4 w-4 text-brand-accent" /> Activity Log
@@ -294,7 +294,7 @@ export function Sidebar({
               "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
               isActive("/dashboard/settings")
                 ? "bg-brand-accent/10 text-brand-accent"
-                : "text-brand-muted hover:text-brand-fg hover:bg-brand-border",
+                : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
             )}
           >
             <Settings className="h-4 w-4 text-brand-accent" /> Settings
@@ -307,7 +307,7 @@ export function Sidebar({
             href="/dashboard/settings"
             className="flex items-center gap-3 mb-4 group cursor-pointer rounded-xl p-1.5 -m-1.5 hover:bg-brand-border/50 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-brand-border overflow-hidden text-brand-muted group-hover:border-brand-muted transition-colors">
+            <div className="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center border border-brand-border overflow-hidden text-brand-fg-muted group-hover:border-brand-muted transition-colors">
               <User size={16} />
             </div>
             <div className="flex flex-col overflow-hidden">
@@ -319,10 +319,10 @@ export function Sidebar({
                   className={cn(
                     "text-[10px] font-bold uppercase px-1.5 py-0.5 rounded",
                     planStatus?.plan === PlanType.BUSINESS
-                      ? "bg-amber-500/20 text-amber-400"
+                      ? "bg-status-warning/20 text-status-warning"
                       : planStatus?.plan === PlanType.PRO
                         ? "bg-brand-accent/20 text-brand-accent"
-                        : "bg-brand-border text-brand-muted",
+                        : "bg-brand-border text-brand-fg-muted",
                   )}
                 >
                   {getPlanConfig(planStatus?.plan || "FREE").name}
@@ -344,7 +344,7 @@ export function Sidebar({
             onClick={onLogout}
             variant="secondary"
             size="sm"
-            className="w-full text-brand-muted hover:text-brand-fg justify-start px-3"
+            className="w-full text-brand-fg-muted hover:text-brand-fg justify-start px-3"
           >
             <LogOut className="h-4 w-4 mr-2 text-brand-accent" /> Sign Out
           </Button>
@@ -358,7 +358,7 @@ export function Sidebar({
           />
           <div className="relative z-10 bg-brand-surface border border-brand-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
             <h3 className="text-base font-bold text-brand-fg mb-2">Delete project?</h3>
-            <p className="text-sm text-brand-muted mb-6">
+            <p className="text-sm text-brand-fg-muted mb-6">
               This will permanently delete{" "}
               <strong className="text-brand-fg">{activeProject?.name}</strong> and all
               its feedback. This cannot be undone.
@@ -366,7 +366,7 @@ export function Sidebar({
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setIsDeleteProjectOpen(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-brand-muted hover:text-brand-fg border border-brand-border hover:border-brand-muted transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-brand-fg-muted hover:text-brand-fg border border-brand-border hover:border-brand-muted transition-colors"
               >
                 Cancel
               </button>

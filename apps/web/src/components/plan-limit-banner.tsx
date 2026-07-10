@@ -37,18 +37,18 @@ export function PlanLimitBanner({ data, isAtLimit }: PlanLimitBannerProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-sm">
-      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+    <div className="flex items-center gap-3 px-4 py-3 bg-status-warning/10 border border-status-warning/30 rounded-xl text-status-warning text-sm">
+      <AlertTriangle className="h-4 w-4 shrink-0 text-status-warning" />
       <span className="flex-1">{message}</span>
       <button
         onClick={() => router.push("/dashboard/billing")}
-        className="shrink-0 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold rounded-lg transition-colors"
+        className="shrink-0 px-3 py-1 bg-status-warning hover:opacity-90 text-black text-xs font-semibold rounded-lg transition-colors"
       >
         Upgrade Plan
       </button>
       <button
         onClick={handleDismiss}
-        className="shrink-0 p-1 hover:text-amber-200 transition-colors"
+        className="shrink-0 p-1 hover:opacity-70 transition-colors"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />
