@@ -61,4 +61,27 @@ docker run -d \
   -e STRIPE_BUSINESS_ANNUAL_PRICE_ID="$STRIPE_BUSINESS_ANNUAL_PRICE_ID" \
   $IMAGE
 
+docker stop insightstream-worker 2>/dev/null || true
+docker rm insightstream-worker 2>/dev/null || true
+
+docker run -d \
+  --name insightstream-worker \
+  --network insightstream-net \
+  --restart unless-stopped \
+  --log-driver=json-file \
+  --log-opt max-size=10m \
+  -e NODE_ENV=production \
+  -e WORKER_MODE=1 \
+  -e REDIS_URL=redis://redis:6379 \
+  -e DB_SSL=true \
+  -e DB_HOST="$DB_HOST" \
+  -e DB_PORT="$DB_PORT" \
+  -e DB_USERNAME="$DB_USERNAME" \
+  -e DB_PASSWORD="$DB_PASSWORD" \
+  -e DB_DATABASE="$DB_DATABASE" \
+  -e GEMINI_API_KEY="$GEMINI_API_KEY" \
+  $IMAGE
+
+echo "Worker started: $(docker ps --filter name=insightstream-worker --format '{{.Status}}')"
+
 echo "API started: $(docker ps --filter name=insightstream-api --format '{{.Status}}')"
