@@ -115,7 +115,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 w-full">
       {/* Sentiment Trend Chart */}
-      <Section glow="top-right">
+      <Section>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-brand-fg flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-brand-accent" /> Sentiment Trend
@@ -177,7 +177,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
       </Section>
 
       {/* Category Distribution Chart */}
-      <Section glow="bottom-left">
+      <Section>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-brand-fg flex items-center gap-2">
             <PieChart className="h-5 w-5 text-emerald-400" /> Category

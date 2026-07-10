@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { feedbacksQuery, planStatusQuery } from "@/lib/queries";
-import { FeedbackStatus } from "@insightstream/shared-types";
+import { feedbacksQuery, planStatusQuery, lastSeenQuery } from "@/lib/queries";
 import type { IFeedback } from "@insightstream/shared-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -70,8 +69,13 @@ export function Sidebar({
     enabled: !!activeProject?.id,
   });
   const { data: planStatus } = useQuery(planStatusQuery(activeTeam?.id ?? ""));
-  const newCount = (feedbacks as IFeedback[]).filter(
-    (f) => f.status === FeedbackStatus.NEW,
+  const { data: lastSeen } = useQuery(lastSeenQuery(activeProject?.id ?? ""));
+  const newCount = (feedbacks as IFeedback[]).filter((f) =>
+    lastSeen === undefined
+      ? false
+      : lastSeen === null
+        ? true
+        : new Date(f.createdAt) > lastSeen,
   ).length;
 
   const isAdminOrOwner = userRole === "owner" || userRole === "admin";
@@ -99,9 +103,6 @@ export function Sidebar({
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        {/* Decorative Glow */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-brand-accent/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-
         {/* Brand & Team/Project Switcher */}
         <div className="p-5 flex flex-col gap-6 border-b border-brand-border/50">
           <div className="flex items-center gap-2 font-bold text-lg text-brand-fg">

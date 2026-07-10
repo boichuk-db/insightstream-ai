@@ -7,16 +7,8 @@ const PADDING = {
   lg: "p-8",
 };
 
-const GLOW_CLASSES = {
-  "top-right":
-    "absolute top-0 right-0 w-48 h-48 bg-brand-accent/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none",
-  "bottom-left":
-    "absolute bottom-0 left-0 w-48 h-48 bg-brand-accent/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none",
-};
-
 interface SectionProps {
   children: React.ReactNode;
-  glow?: "top-right" | "bottom-left" | "none";
   padding?: "none" | "sm" | "md" | "lg";
   className?: string;
   as?: React.ElementType;
@@ -24,7 +16,6 @@ interface SectionProps {
 
 export function Section({
   children,
-  glow = "top-right",
   padding = "md",
   className,
   as: Tag = "section",
@@ -36,11 +27,6 @@ export function Section({
         className,
       )}
     >
-      {glow !== "none" && (
-        <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-          <div className={GLOW_CLASSES[glow]} />
-        </div>
-      )}
       <div className={cn("relative", PADDING[padding] ?? PADDING.md)}>{children}</div>
     </Tag>
   );

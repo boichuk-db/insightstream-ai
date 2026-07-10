@@ -24,7 +24,7 @@ export default function ActivityPage() {
         }
       />
 
-      <Section glow="top-right">
+      <Section>
         <ActivityFeed teamId={activeTeam?.id ?? null} />
       </Section>
     </DashboardShell>
