@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
           </div>
         )}
         {!isLoading && feedbacks.length === 0 && (
-          <div className="p-12 text-center border border-dashed border-brand-border/30 rounded-2xl text-brand-fg-muted">
+          <div className="p-12 text-center border border-dashed border-brand-border/30 rounded-xl text-brand-fg-muted">
             No feedback data yet. Add some feedback to see analytics.
           </div>
         )}

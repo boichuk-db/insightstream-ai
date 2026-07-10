@@ -134,7 +134,7 @@ export default function FeedbackPage() {
                   />
                 ) : null
               ) : isError ? (
-                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-2xl text-red-400">
+                <div className="p-12 text-center border border-dashed border-red-500/20 bg-red-500/5 rounded-xl text-red-400">
                   <span className="block text-lg font-bold mb-1">Service Error</span>
                   Failed to load feedback. Make sure your local API server is running on port 3001.
                 </div>

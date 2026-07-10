@@ -113,7 +113,7 @@ export function Sidebar({
           {teams && teams.length > 0 && (
             <Dropdown
               trigger={
-                <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-brand-border rounded-xl transition-colors">
+                <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-brand-border rounded-lg transition-colors">
                   <div className="flex items-center gap-2 px-2">
                     <div className="flex flex-col items-start">
                       <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider">
@@ -169,7 +169,7 @@ export function Sidebar({
 
           <Dropdown
             trigger={
-              <button className="w-full flex items-center justify-between p-2 rx-3 bg-brand-bg border border-brand-border hover:border-brand-border rounded-xl transition-colors group">
+              <button className="w-full flex items-center justify-between p-2 bg-brand-bg border border-brand-border hover:border-brand-border rounded-lg transition-colors group">
                 <div className="flex flex-col items-start px-2">
                   <span className="text-[10px] text-brand-accent/80 font-medium uppercase tracking-wider mb-0.5">
                     Active Project
@@ -248,7 +248,7 @@ export function Sidebar({
           <Link
             href="/dashboard"
             className={cn(
-              "flex items-center justify-between w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              "flex items-center justify-between w-full p-2.5 rounded-lg font-medium text-sm transition-colors",
               isActive("/dashboard")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
@@ -266,7 +266,7 @@ export function Sidebar({
           <Link
             href="/dashboard/analytics"
             className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              "flex items-center gap-3 w-full p-2.5 rounded-lg font-medium text-sm transition-colors",
               isActive("/dashboard/analytics")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
@@ -277,7 +277,7 @@ export function Sidebar({
           <Link
             href="/dashboard/activity"
             className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              "flex items-center gap-3 w-full p-2.5 rounded-lg font-medium text-sm transition-colors",
               isActive("/dashboard/activity")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
@@ -291,7 +291,7 @@ export function Sidebar({
           <Link
             href="/dashboard/settings"
             className={cn(
-              "flex items-center gap-3 w-full p-2.5 rounded-xl font-medium text-sm transition-colors",
+              "flex items-center gap-3 w-full p-2.5 rounded-lg font-medium text-sm transition-colors",
               isActive("/dashboard/settings")
                 ? "bg-brand-accent/10 text-brand-accent"
                 : "text-brand-fg-muted hover:text-brand-fg hover:bg-brand-border",
@@ -317,7 +317,7 @@ export function Sidebar({
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span
                   className={cn(
-                    "text-[10px] font-bold uppercase px-1.5 py-0.5 rounded",
+                    "text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-lg",
                     planStatus?.plan === PlanType.BUSINESS
                       ? "bg-status-warning/20 text-status-warning"
                       : planStatus?.plan === PlanType.PRO
@@ -328,7 +328,7 @@ export function Sidebar({
                   {getPlanConfig(planStatus?.plan || "FREE").name}
                 </span>
                 {userRole && (
-                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand-accent/20 text-brand-accent">
+                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-lg bg-brand-accent/20 text-brand-accent">
                     {userRole}
                   </span>
                 )}
@@ -369,7 +369,7 @@ export function Sidebar({
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setIsDeleteProjectOpen(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-brand-fg-muted hover:text-brand-fg border border-brand-border hover:border-brand-muted transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-brand-fg-muted hover:text-brand-fg border border-brand-border hover:border-brand-muted transition-colors"
               >
                 Cancel
               </button>
@@ -381,7 +381,7 @@ export function Sidebar({
                   }
                 }}
                 disabled={isDeletingProject || projects.length <= 1}
-                className="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2 rounded-lg text-sm font-bold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isDeletingProject ? "Deleting…" : "Delete"}
               </button>
