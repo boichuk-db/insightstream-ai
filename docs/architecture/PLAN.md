@@ -1,6 +1,6 @@
 # InsightStream AI — Architecture Plan (Living Document)
 
-> Last updated: **2026-07-09**
+> Last updated: **2026-07-10**
 > This is the single source of truth for architecture decisions and roadmap. `system-architecture.drawio` holds diagrams only — this file holds the reasoning, priorities and status.
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
@@ -133,7 +133,8 @@ Full implementation detail in ✔ Completed above. **Stale premise:** the origin
 
 From the 2026-07-03 design review (screenshots + `apps/web` code audit). Full visual spec with token tables, contrast math and before/after mockups: Claude Artifact "InsightStream — UI/UX Audit & Design Scheme". Ordered by priority; P0 items are defects (unreadable UI / misleading data), not polish.
 
-### P0 — Color system & contrast (~1 day)
+### P0 — Color system & contrast — ✔ Done (2026-07-10)
+Design: `docs/superpowers/specs/2026-07-10-p0-color-contrast-design.md`. All items below shipped, plus a same-day follow-up: the blue accent theme was missing its own `--brand-fg-muted` (silently inherited teal's via CSS cascade) — added `#475569`/`#cbd5e1`. `typecheck`/`lint` clean; contrast verified via WCAG relative luminance (4.73:1–12.81:1, all above the 4.5:1 norm). Original problem statement kept below for context.
 **Problem:** one `--brand-muted` token serves both decorative elements and secondary *text*. As text it fails WCAG hard: `#2e4d4a` on dark surface `#0e1515` = 2.0:1, `#8ab0ae` on white = 2.4:1 (norm 4.5:1) — the dark theme is near-unreadable. Status colors are hardcoded dark-theme Tailwind shades (`text-amber-300` etc.) that wash out on light theme (~1.5:1). `AnalyticsOverview` charts embed dark-only grays (`#262626` grid, `#737373` ticks, `#171717` cursor) — broken in light theme.
 **Action:**
 - Split `--brand-muted` → `--brand-fg-muted` (secondary text, ≥4.5:1: light `#5b7975`, dark `#8aa8a4`) + keep `--brand-muted` for non-text only.
@@ -345,6 +346,7 @@ From earlier reviews — kept for history, with reasons.
 
 ## Changelog
 
+- **2026-07-10** — 🎨 UI/UX Roadmap P0 done: color system & contrast. Split `--brand-muted` into decorative-only + `--brand-fg-muted` (readable text, ≥4.5:1 in both themes); added semantic `--status-success/warning/danger/info` tokens; fixed `AnalyticsOverview`'s hardcoded dark-only chart colors; fixed the dark-theme card border; fixed the "0%" sentiment bug at its root (`SentimentBar` now handles null/undefined directly instead of each of its 4 call sites carrying its own guard). Same-day follow-up gave the blue accent theme its own `--brand-fg-muted` (was silently inheriting teal's via CSS cascade). `typecheck`/`lint` clean; contrast verified via WCAG relative luminance. Design: `docs/superpowers/specs/2026-07-10-p0-color-contrast-design.md`. Ran as an isolated background sub-agent — isolation didn't hold as expected (commits landed on local `main`, caught and fixed before merge); see `CLAUDE.md`'s "Background/Sub-Agent Dispatch" rule added as a result.
 - **2026-07-09** — Closed the deferred manual step from the same-day #8 entry below: `./scripts/deploy-widget.sh` run for real (`v1/widget.js` confirmed live on S3, 200 + correct content-type), `NEXT_PUBLIC_WIDGET_URL` updated and redeployed on both Amplify and Vercel. The versioned widget URL is now actually serving production traffic, not just committed to the repo.
 - **2026-07-09** — 🔥 #8 (URL-versioning portion) done: widget deploy target moved from the mutable, script-less `s3://insightstream-widget/widget.js` to `s3://insightstream-widget/v1/widget.js`. New `scripts/deploy-widget.sh` (build + upload + verify) replaces the manual `aws s3 cp` command previously documented only inside a historical AWS-migration plan file. `system-architecture.drawio`'s S3 node label updated to match. Bundle-weight/Preact-rewrite portion of #8 stays open, tracked separately. Design: `docs/superpowers/specs/2026-07-09-versioned-widget-url-design.md`.
 - **2026-07-09** — 🔥 #9 done: deleted the SQS → Lambda feedback-processor stub. `FeedbackService.create()` no longer publishes to SQS (removed the `SQSClient` field and the now-unused `Logger`); `@aws-sdk/client-sqs` dropped from `apps/api/package.json`; `lambda/feedback-processor/` deleted; `infra/cloudwatch-dashboard.json` and `scripts/docker-run.sh` cleaned of the queue/widget references. Diagram updated across 3 pages. Typecheck/lint/test green (0 errors, 141 API tests pass). **Not done in this pass:** actual AWS teardown (SQS queue + Lambda function) — deliberately left for an explicit confirmation step since it deletes live cloud resources; code has no functional dependency on them anymore.

@@ -90,3 +90,8 @@ Never write "done", "ready", or "OK" without running `pnpm typecheck && pnpm lin
 
 **Context Management:**
 For tasks with 3+ steps — break into milestones at the start of the conversation. When the conversation becomes long (many code edits, many turns) — summarize completed work and suggest starting a new chat with that summary as context.
+
+**Background/Sub-Agent Dispatch:**
+`isolation: "worktree"` on a dispatched agent is not a guarantee — verify it actually held before treating the result as isolated/discardable: run `git worktree list` and `git log --oneline -5` on the main branch. If the agent's commits landed directly on `main` (or whatever branch was checked out) instead of a separate worktree, extract them onto a new branch and reset the affected branch back to its pre-dispatch tip before reviewing or merging (`git branch <name>`, `git reset --hard <prior-tip>`, restore any stashed local changes). Confirmed to actually happen once (2026-07-10, P0 color-contrast task) — recoverable because the agent had no push/deploy access, but don't assume isolation without checking. Never grant a background/dispatched agent `git push` or deploy-script access; that boundary is what makes an isolation failure a non-event instead of an incident.
+
+**Escalation for architecture decisions:** use `docs/architecture/PLAN.md`'s own status legend as the source of truth, not judgment calls. Only the four 🎓-tagged items (EC2, BullMQ, Socket.io, the AWS migration itself) require escalation before replacing with a managed alternative. Everything else already resolved via an external service (Stripe, RDS, SES, Sentry, Gemini) is accepted default practice, not a pending decision.
