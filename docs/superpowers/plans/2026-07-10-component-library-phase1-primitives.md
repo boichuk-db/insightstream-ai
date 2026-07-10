@@ -1539,6 +1539,7 @@ Wraps `useComments`; the design doc's stated scope for this primitive is the lis
 
 import { useComments } from "@/hooks/useComments";
 import { Button } from "./button";
+import { Input } from "./input";
 import { Trash2 } from "lucide-react";
 
 interface CommentThreadProps {
@@ -1547,8 +1548,16 @@ interface CommentThreadProps {
 }
 
 export function CommentThread({ feedbackId, currentUserId }: CommentThreadProps) {
-  const { comments, isLoading, draft, setDraft, submit, isSubmitting, deleteComment } =
-    useComments(feedbackId);
+  const {
+    comments,
+    isLoading,
+    draft,
+    setDraft,
+    submit,
+    isSubmitting,
+    deleteComment,
+    isDeleting,
+  } = useComments(feedbackId);
 
   return (
     <div className="flex flex-col gap-4">
@@ -1569,7 +1578,8 @@ export function CommentThread({ feedbackId, currentUserId }: CommentThreadProps)
               {comment.user?.id === currentUserId && (
                 <button
                   onClick={() => deleteComment(comment.id)}
-                  className="text-brand-fg-muted hover:text-red-400 transition-colors shrink-0"
+                  disabled={isDeleting}
+                  className="text-brand-fg-muted hover:text-red-400 transition-colors shrink-0 disabled:opacity-40 disabled:pointer-events-none"
                   aria-label="Delete comment"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -1581,12 +1591,12 @@ export function CommentThread({ feedbackId, currentUserId }: CommentThreadProps)
       )}
 
       <div className="flex items-center gap-2">
-        <input
+        <Input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submit()}
           placeholder="Add a comment..."
-          className="flex-1 h-9 rounded-lg border border-brand-border bg-brand-bg px-3 text-sm text-brand-fg placeholder:text-brand-fg-muted focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+          className="flex-1 h-9"
         />
         <Button size="sm" onClick={submit} isLoading={isSubmitting} disabled={!draft.trim()}>
           Post
@@ -1597,19 +1607,29 @@ export function CommentThread({ feedbackId, currentUserId }: CommentThreadProps)
 }
 ```
 
+Two changes from a first draft, made during code review: (1) the add-comment field now uses the existing `Input` primitive (`apps/web/src/components/ui/input.tsx`) instead of a hand-rolled `<input>` — a first draft duplicated `Input`'s exact styling inline, which is precisely the kind of duplication this consolidation initiative exists to remove; (2) the delete button is now disabled while `isDeleting` (from `useComments`) is true, so a rapid double-click can't fire two delete requests — `useComments` already exposed `isDeleting`, the first draft just didn't destructure or use it.
+
 - [ ] **Step 3: Create its story**
 
-Storybook has no live API to hit, so this story documents the component's shape without a functioning backend — acceptable since Phase 2's Comments cluster is responsible for the real end-to-end wiring and manual verification against a running app:
+`useComments` calls `useQuery`/`useMutation` from `@tanstack/react-query`, so the story needs a `QueryClientProvider` decorator or the component throws on mount ("No QueryClient set") — this was missing from a first draft and caught in code review; the fix mirrors the existing decorator on `apps/web/src/components/dashboard/CommentsPanel.stories.tsx`, which wraps the same `useComments` hook for the same reason. The decorator makes the story mount without errors; it still has no live API to hit, so comments/mutations don't do anything real — that end-to-end wiring and verification is Phase 2's Comments cluster's job:
 
 ```tsx
 // apps/web/src/components/ui/comment-thread.stories.tsx
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CommentThread } from './comment-thread';
 
 const meta: Meta<typeof CommentThread> = {
   title: 'UI/CommentThread',
   component: CommentThread,
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
 };
 
 export default meta;
