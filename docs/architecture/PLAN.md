@@ -5,7 +5,7 @@
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
 >
-> **AWS verification note (2026-07-05):** the new-account verification gate is confirmed lifted for CodeBuild, Amplify, and Bedrock (real API calls succeeded — see 🔥 #11 and the `AIProvider` row in 🟡). CloudFront (`CreateDistribution`) is still blocked with the same error as before — the gate is per-service, not account-wide.
+> **AWS verification note (2026-07-05, re-confirmed 2026-07-10):** the new-account verification gate is confirmed lifted for CodeBuild, Amplify, and Bedrock (real API calls succeeded — see 🔥 #11 and the `AIProvider` row in 🟡). CloudFront (`CreateDistribution`) is still blocked with the same `AccessDenied` error as before — re-tested 2026-07-10 via a real CLI call, identical error — the gate is per-service, not account-wide, and CloudFront hasn't cleared yet.
 
 ## Project Constraints
 

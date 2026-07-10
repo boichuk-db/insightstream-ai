@@ -9,6 +9,8 @@ apps/
   api/      — NestJS 11, port 3001
   web/      — Next.js 16 App Router, port 3000
   widget/   — Vite embeddable widget, port 8080
+  landing/  — Next.js marketing/landing page, port 3002
+  e2e/      — Playwright end-to-end suite (no dev server)
 packages/
   database/       — TypeORM entities + PostgreSQL config
   shared-types/   — Feedback & User TypeScript interfaces
@@ -23,8 +25,8 @@ packages/
 | Web        | Next.js 16 App Router, React 19, TailwindCSS 4, TanStack Query 5 |
 | Widget     | Vite, TypeScript, IIFE bundle                                    |
 | AI         | Google Gemini API                                                |
-| DB         | PostgreSQL (Docker local, Supabase EU pooled in prod)            |
-| Infra      | Railway (API), Vercel (Web), Docker, GitHub Actions              |
+| DB         | PostgreSQL (Docker local, AWS RDS in prod — migrated from Supabase 2026-06-30) |
+| Infra      | AWS EC2+ALB (API), Vercel + Amplify in parallel (Web, cutover pending), Docker, GitHub Actions |
 | Monitoring | Sentry (API + Web)                                               |
 
 ## Dev Commands
@@ -60,11 +62,11 @@ docker compose up -d  # start local PostgreSQL + Redis
 | Код                  | `superpowers:test-driven-development` skill        |
 | Ревʼю                | `superpowers:requesting-code-review` skill         |
 | Верифікація          | `superpowers:verification-before-completion` skill |
-| Деплой               | Git push → GitHub Actions → Railway + Vercel       |
+| Деплой               | API: `scripts/deploy-api.sh` → EC2 (CodeBuild webhook unblocked but unverified end-to-end). Web: Git push → Vercel + Amplify (parallel run) |
 
 ## Services & Secrets
 
-- **Database**: Supabase pooled connection (`DB_HOST`, `DB_*` env vars)
+- **Database**: AWS RDS PostgreSQL, private subnet, SSL required (`DB_HOST`, `DB_*` env vars). Supabase is legacy — data migrated 2026-06-30, old project not yet decommissioned
 - **AI**: Google Gemini (`GEMINI_API_KEY`)
 - **Auth**: JWT (`JWT_SECRET`), Google OAuth, GitHub OAuth
 - **Email**: SMTP Nodemailer (`SMTP_*` env vars)
