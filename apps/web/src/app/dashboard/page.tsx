@@ -99,6 +99,13 @@ export default function FeedbackPage() {
         />
 
         <main className="flex-1 overflow-hidden flex flex-col bg-brand-bg/20">
+          {/*
+            Intentionally full-width (unlike other dashboard pages, which use
+            .brand-page-container / max-w-6xl via DashboardShell). KanbanBoard
+            renders 5 fixed status columns at min-w-[280-300px] each — ~1500px
+            minimum before gaps — which exceeds max-w-6xl (1152px). Constraining
+            this page would cramp the Kanban view it exists to host.
+          */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 max-w-full">
             {isNearLimit && planUsage && (
               <PlanLimitBanner data={planUsage} isAtLimit={isAtLimit} />
