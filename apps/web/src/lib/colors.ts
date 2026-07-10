@@ -58,6 +58,7 @@ export const getCategoryColor = (category: string | undefined | null) => {
   );
 };
 
+/** @deprecated Use STATUS_CONFIG (lib/statusConfig.ts) instead — kept only until KanbanBoard.tsx migrates off this. */
 export const STATUS_COLORS: Record<string, string> = {
   New: "bg-brand-accent",
   "In Review": "bg-status-warning",
