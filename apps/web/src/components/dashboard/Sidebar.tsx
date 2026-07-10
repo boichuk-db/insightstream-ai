@@ -332,11 +332,14 @@ export function Sidebar({
                     {userRole}
                   </span>
                 )}
-                {!isPaidPlan(planStatus?.plan || "FREE") && (
-                  <span className="text-[10px] text-brand-accent font-medium">
-                    Upgrade
-                  </span>
-                )}
+                {/* TrialBanner (dashboard/layout.tsx) already shows an Upgrade
+                    CTA with days-left context while trialing — don't duplicate it here. */}
+                {!isPaidPlan(planStatus?.plan || "FREE") &&
+                  planStatus?.planStatus !== "trialing" && (
+                    <span className="text-[10px] text-brand-accent font-medium">
+                      Upgrade
+                    </span>
+                  )}
               </div>
             </div>
           </Link>
