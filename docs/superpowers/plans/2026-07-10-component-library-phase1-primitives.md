@@ -682,6 +682,7 @@ export { Dropdown };
 // apps/web/src/components/ui/select.tsx
 "use client";
 
+import { useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover } from "./popover";
@@ -695,10 +696,13 @@ interface SelectProps {
 }
 
 export function Select({ value, onChange, options, className, placeholder }: SelectProps) {
+  const [open, setOpen] = useState(false);
   const selectedOption = value || placeholder;
 
   return (
     <Popover
+      open={open}
+      onOpenChange={setOpen}
       className={cn("min-w-[120px] w-full mt-1.5 p-1", className)}
       trigger={
         <button
@@ -717,7 +721,7 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
           <button
             key={option}
             type="button"
-            onClick={() => onChange(option)}
+            onClick={() => { onChange(option); setOpen(false); }}
             className={cn(
               "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm transition-colors",
               value === option
@@ -735,7 +739,7 @@ export function Select({ value, onChange, options, className, placeholder }: Sel
 }
 ```
 
-Note: the chevron's `rotate-180`-on-open styling is dropped since `Popover` doesn't expose its internal open state to the trigger. If this visual detail matters, `Popover`'s `onOpenChange` controlled mode (already added in Step 1) can wire it back — left as-is here since it's a minor cosmetic detail, not a behavior change, and the design doc doesn't call it out.
+Note: `Select` manages its own `open` state and passes it into `Popover`'s controlled mode specifically so option selection can call `setOpen(false)` — without this, choosing an option would no longer auto-close the panel (a real regression caught during implementation review, not a hypothetical). The chevron's `rotate-180`-on-open styling is still dropped for simplicity even though `open` is now available locally — a minor cosmetic detail, not a behavior change.
 
 - [ ] **Step 5: Refactor `FilterChips`'s internal `DropdownChip` onto `Popover`**
 
@@ -743,8 +747,9 @@ Note: the chevron's `rotate-180`-on-open styling is dropped since `Popover` does
 
 ```tsx
 // apps/web/src/components/ui/FilterChips.tsx — only the DropdownChip function body changes, everything else in the file (ChipOption, FilterGroup, FilterChips) stays as-is
+import { useState } from "react";
 import { Popover } from "./popover";
-// ... keep existing imports (cn, Check, ChevronDown, X) plus the above
+// ... keep existing imports (cn, Check, ChevronDown, X) plus the above; drop the old useRef/useEffect click-outside imports, they're no longer needed
 
 function DropdownChip({
   group,
@@ -755,11 +760,14 @@ function DropdownChip({
   selected: string[];
   onChange: (values: string[]) => void;
 }) {
+  const [open, setOpen] = useState(false);
+
   function toggle(value: string) {
     if (group.multi) {
       onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
     } else {
       onChange(selected.includes(value) ? [] : [value]);
+      setOpen(false);
     }
   }
 
@@ -767,6 +775,8 @@ function DropdownChip({
 
   return (
     <Popover
+      open={open}
+      onOpenChange={setOpen}
       className="min-w-[160px] py-1"
       trigger={
         <button
@@ -804,7 +814,7 @@ function DropdownChip({
       ))}
       {selected.length > 0 && (
         <button
-          onClick={() => onChange([])}
+          onClick={() => { onChange([]); setOpen(false); }}
           className="w-full flex items-center gap-2 px-3 py-2 text-xs text-brand-fg-muted hover:text-brand-fg border-t border-brand-border mt-1"
         >
           <X className="w-3 h-3" /> Clear
@@ -815,7 +825,7 @@ function DropdownChip({
 }
 ```
 
-Note: this drops the exit animation `FilterChips` never had (it was the one implementation of the 4 without `AnimatePresence`) — going through `Popover` now gives it the same fade/slide exit the other 3 already had. This is an intentional side-effect of consolidation (uniform behavior), not a regression.
+Note: `DropdownChip` manages its own `open` state, passed into `Popover`'s controlled mode, for the same reason as `Select` above — `toggle()`'s non-multi branch and the `Clear` button both need to close the panel explicitly, matching the original pre-refactor behavior exactly (multi-select stays open across toggles; non-multi selection and Clear both close). Omitting either `setOpen(false)` call is a regression, not a simplification — this was caught during implementation review and is called out here so a future re-read of this plan doesn't reintroduce it. Separately: this also drops the exit animation `FilterChips` never had (it was the one implementation of the 4 without `AnimatePresence`) — going through `Popover` now gives it the same fade/slide exit the other 3 already had. That part is an intentional side-effect of consolidation (uniform behavior), not a regression.
 
 - [ ] **Step 6: Verify**
 
