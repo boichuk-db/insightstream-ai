@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Eyebrow } from "./eyebrow";
 
 interface LabeledSectionProps {
   icon: LucideIcon;
@@ -20,9 +21,7 @@ export function LabeledSection({
     <div className={className}>
       <div className="flex items-center gap-2 mb-3">
         <Icon className={cn("h-3.5 w-3.5", iconColor)} />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-fg-muted">
-          {label}
-        </span>
+        <Eyebrow>{label}</Eyebrow>
       </div>
       {children}
     </div>

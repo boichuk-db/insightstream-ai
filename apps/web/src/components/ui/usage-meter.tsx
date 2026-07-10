@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Eyebrow } from "./eyebrow";
 
 interface UsageMeterProps {
   label: string;
@@ -14,9 +15,7 @@ export function UsageMeter({ label, current, max, className }: UsageMeterProps) 
 
   return (
     <div className={cn("p-4 bg-brand-surface rounded-xl border border-brand-border", className)}>
-      <p className="text-[10px] uppercase tracking-wider text-brand-fg-muted font-semibold mb-1">
-        {label}
-      </p>
+      <Eyebrow className="block mb-1">{label}</Eyebrow>
       <p className="text-lg font-bold text-brand-fg">
         {current}{" "}
         <span className="text-brand-fg-muted text-sm font-normal">/ {max === null ? "∞" : max}</span>
