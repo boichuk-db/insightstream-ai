@@ -1130,8 +1130,14 @@ Extracted from `Modal`'s existing backdrop:
 "use client";
 
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface OverlayProps {
+  /**
+   * Overlay is meant to own the dismiss-on-backdrop-click behavior by
+   * itself — don't also attach an onClick={onClose} to a wrapping element
+   * that contains this Overlay, or onClose fires twice per click.
+   */
   onClick?: () => void;
   className?: string;
 }
@@ -1139,7 +1145,7 @@ interface OverlayProps {
 export function Overlay({ onClick, className }: OverlayProps) {
   return (
     <motion.div
-      className={className ?? "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"}
+      className={cn("fixed inset-0 bg-black/60 backdrop-blur-sm", className)}
       onClick={onClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -1148,6 +1154,8 @@ export function Overlay({ onClick, className }: OverlayProps) {
   );
 }
 ```
+
+`className` merges with `cn()` rather than fully replacing the default (a first-draft version of this used `className ?? "..."`, which forced `Modal` to duplicate the literal `bg-black/60 backdrop-blur-sm` string instead of composing off `Overlay`'s own default — defeating the point of extracting it). No `z-*` in the default: `Drawer`'s own panel already carries an explicit `z-50` that outranks any `z-index:auto` backdrop, and leaving `z-index` unset here avoids a stacking-context trap in `Modal` (if the default carried e.g. `z-40` and `Modal` merged its own classes on top without overriding it, the backdrop could end up on a positive z-index layer above the dialog's default `z-index:auto`, since positioned siblings with a positive z-index paint after `z-index:auto` siblings regardless of DOM order).
 
 - [ ] **Step 2: Refactor `Modal` onto `Overlay`**
 
@@ -1201,11 +1209,8 @@ export function Modal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={onClose}
-        >
-          <Overlay className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <Overlay className="absolute inset-0" onClick={onClose} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -1243,7 +1248,7 @@ export function Modal({
 }
 ```
 
-Note: `Overlay`'s own `onClick` already stops nothing — the outer `<div onClick={onClose}>` still owns the click-to-dismiss behavior exactly as before (clicking the dialog itself calls `e.stopPropagation()` further down, unchanged). This refactor only moves the backdrop's motion-div markup into `Overlay`; behavior is identical.
+Note: `Overlay` itself now owns the dismiss-on-click behavior (`onClick={onClose}` on `Overlay`, not on the outer wrapping div) — matching `Drawer`'s pattern below, so there's exactly one convention for "who owns backdrop dismissal" across both components, not two. The dialog's own `e.stopPropagation()` is kept as defense-in-depth even though it's no longer strictly load-bearing (the dialog is a sibling of `Overlay`, not a descendant, so its clicks were never going to reach `Overlay`'s handler regardless). An earlier draft put `onClick={onClose}` on the outer div instead and gave `Overlay` no `onClick` at all — functionally equivalent (clicks bubble to the div either way) but inconsistent with `Drawer`, which always had `Overlay` own the click. Standardized on `Overlay`-owns-the-click since that's the pattern `Drawer` already used and it keeps the contract in one place (documented on `Overlay`'s own `onClick` prop, not just at each call site).
 
 - [ ] **Step 3: Create `Drawer`**
 
@@ -1253,6 +1258,7 @@ Slide-in panel built on `Overlay`, for the Comments and Sidebar Phase-2 clusters
 // apps/web/src/components/ui/drawer.tsx
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Overlay } from "./overlay";
@@ -1267,6 +1273,14 @@ interface DrawerProps {
 
 export function Drawer({ isOpen, onClose, side = "right", children, className }: DrawerProps) {
   const offscreen = side === "right" ? "100%" : "-100%";
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
@@ -1292,6 +1306,8 @@ export function Drawer({ isOpen, onClose, side = "right", children, className }:
   );
 }
 ```
+
+`Drawer` gets the same Escape-to-close `useEffect` `Modal` already has — added during Task 7's code review, since `Drawer` had zero real consumers yet (the cheapest possible moment to add it) and users conventionally expect Esc to dismiss a slide-in panel the same way it dismisses a modal.
 
 - [ ] **Step 4: Create its story**
 
