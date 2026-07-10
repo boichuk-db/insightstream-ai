@@ -91,6 +91,7 @@ export default function DevtoolsPage() {
         icon={<Terminal className="h-8 w-8 text-brand-accent" />}
         title="Developer Tools"
         subtitle="Internal tools for testing and seeding feedback data."
+        showBackButton
       />
 
       <Section>
