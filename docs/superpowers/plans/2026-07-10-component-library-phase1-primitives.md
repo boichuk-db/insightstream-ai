@@ -1674,14 +1674,26 @@ interface FormFieldProps {
   label: string;
   required?: boolean;
   icon?: LucideIcon;
+  /**
+   * Pass the same id to your control (e.g. <Input id={htmlFor} />) so
+   * clicking the label focuses it and screen readers announce it —
+   * without this, the label has no programmatic association with the
+   * control rendered in `children`. Scope the id per-form (e.g.
+   * "login-email", not bare "email") — two FormFields with the same
+   * generic id mounted on the same page collide on a duplicate DOM id.
+   */
+  htmlFor?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export function FormField({ label, required, icon: Icon, children, className }: FormFieldProps) {
+export function FormField({ label, required, icon: Icon, htmlFor, children, className }: FormFieldProps) {
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      <label className="flex items-center gap-1.5 text-sm font-medium text-brand-fg">
+      <label
+        htmlFor={htmlFor}
+        className="flex items-center gap-1.5 text-sm font-medium text-brand-fg"
+      >
         {Icon && <Icon className="h-3.5 w-3.5 text-brand-fg-muted" />}
         {label}
         {required && <span className="text-red-400">*</span>}
@@ -1691,6 +1703,8 @@ export function FormField({ label, required, icon: Icon, children, className }: 
   );
 }
 ```
+
+`htmlFor` was added after a first draft (matching the design doc's original code exactly) was caught in self-review missing any programmatic label/input association — label and control were DOM siblings with no `htmlFor`/`id` pairing at all. Made optional rather than required or auto-generated via `useId()` + `cloneElement`: `children` is intentionally unconstrained `React.ReactNode` (the real target consumers, e.g. `CreateProjectModal.tsx`, often wrap the actual input in a positioning `<div>` for an inline icon, so the *immediate* child isn't the focusable control — auto-injecting an id via `cloneElement` would target the wrong element). Manual opt-in is a smaller footgun than a clone that silently attaches to the wrong DOM node, given this component's scope.
 
 - [ ] **Step 2: Create its story**
 
@@ -1715,7 +1729,11 @@ export const Default: Story = {
     label: 'Email',
     required: true,
     icon: Mail,
-    children: <Input type="email" placeholder="you@example.com" />,
+    // Scoped, not the bare field name ("email") — a consumer copying this
+    // pattern into two forms on the same page (e.g. login + team invite,
+    // both with an email field) would otherwise collide on a duplicate DOM id.
+    htmlFor: 'form-field-demo-email',
+    children: <Input id="form-field-demo-email" type="email" placeholder="you@example.com" />,
   },
 };
 ```
