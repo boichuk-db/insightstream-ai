@@ -384,6 +384,7 @@ KanbanBoard.tsx) until the Kanban Phase-2 cluster migrates off it."
 // apps/web/src/components/ui/status-select.tsx
 "use client";
 
+import { useState } from "react";
 import { FeedbackStatus } from "@insightstream/shared-types";
 import { getStatusConfig } from "@/lib/statusConfig";
 import { cn } from "@/lib/utils";
@@ -400,11 +401,14 @@ interface StatusSelectProps {
 }
 
 export function StatusSelect({ value, onChange, size = "md", className }: StatusSelectProps) {
+  const [open, setOpen] = useState(false);
   const config = getStatusConfig(value);
 
   return (
     <Popover
       align="left"
+      open={open}
+      onOpenChange={setOpen}
       trigger={
         <button
           type="button"
@@ -425,7 +429,13 @@ export function StatusSelect({ value, onChange, size = "md", className }: Status
           <button
             key={status}
             type="button"
-            onClick={() => onChange(status)}
+            onClick={() => {
+              onChange(status);
+              // Closes the popover on selection — Popover has no built-in
+              // close-on-select; omitting this is a caught, recurring regression
+              // (see Task 5's Select/FilterChips fixes for the same bug).
+              setOpen(false);
+            }}
             className={cn(
               "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left transition-colors",
               status === value
@@ -443,7 +453,9 @@ export function StatusSelect({ value, onChange, size = "md", className }: Status
 }
 ```
 
-This depends on `Popover` from Task 5 — implement Task 5 first if executing out of order (this plan's numbering is the intended order; Popover is next).
+`className` here is applied only to `StatusSelect`'s own trigger button, never forwarded into `Popover`'s `className` — so this component does not have the trigger/panel `className`-target confusion that Task 5's `Select` had (that bug was specific to `Select` forwarding its `className` straight into `Popover`'s panel-only `className` prop; `StatusSelect` never does that here).
+
+This depends on `Popover` from Task 5, which is done — Task 5 is executed before Task 4 in this plan's actual dependency order (Popover must exist first).
 
 - [ ] **Step 2: Create its story**
 
