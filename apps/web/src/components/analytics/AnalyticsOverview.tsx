@@ -32,11 +32,17 @@ interface AnalyticsProps {
   feedbacks: Feedback[];
 }
 
+// Chart colors read live theme tokens (not literals) so Recharts renders
+// correctly in both light and dark theme instead of being pinned to dark-only grays.
+const CHART_GRID_COLOR = "var(--brand-border)";
+const CHART_TICK_COLOR = "var(--brand-fg-muted)";
+const CHART_CURSOR_FILL = "var(--brand-surface-hover)";
+
 function CustomTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-brand-surface border border-brand-border rounded-lg shadow-xl p-3">
-        <p className="text-brand-muted font-medium mb-1">{label}</p>
+        <p className="text-brand-fg-muted font-medium mb-1">{label}</p>
         <div className="flex items-center gap-2">
           <div
             className="w-2 h-2 rounded-full"
@@ -114,7 +120,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
           <h3 className="text-lg font-bold text-brand-fg flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-brand-accent" /> Sentiment Trend
           </h3>
-          <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
+          <span className="text-xs text-brand-fg-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
             Avg Score (%)
           </span>
         </div>
@@ -135,20 +141,20 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#262626"
+                  stroke={CHART_GRID_COLOR}
                 />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#737373", fontSize: 12 }}
+                  tick={{ fill: CHART_TICK_COLOR, fontSize: 12 }}
                   dy={10}
                 />
                 <YAxis
                   domain={[0, 100]}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#737373", fontSize: 12 }}
+                  tick={{ fill: CHART_TICK_COLOR, fontSize: 12 }}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
@@ -163,7 +169,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-brand-muted text-sm gap-2">
+            <div className="flex items-center justify-center h-full text-brand-fg-muted text-sm gap-2">
               <Info size={16} /> Not enough AI sentiment data yet.
             </div>
           )}
@@ -177,7 +183,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
             <PieChart className="h-5 w-5 text-emerald-400" /> Category
             Distribution
           </h3>
-          <span className="text-xs text-brand-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
+          <span className="text-xs text-brand-fg-muted px-2.5 py-1 bg-brand-bg rounded-full border border-brand-border/50">
             Total count
           </span>
         </div>
@@ -194,25 +200,25 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
                   strokeDasharray="3 3"
                   horizontal={true}
                   vertical={false}
-                  stroke="#262626"
+                  stroke={CHART_GRID_COLOR}
                 />
                 <XAxis
                   type="number"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#737373", fontSize: 12 }}
+                  tick={{ fill: CHART_TICK_COLOR, fontSize: 12 }}
                 />
                 <YAxis
                   dataKey="name"
                   type="category"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#a3a3a3", fontSize: 12, fontWeight: 500 }}
+                  tick={{ fill: CHART_TICK_COLOR, fontSize: 12, fontWeight: 500 }}
                   width={100}
                 />
                 <Tooltip
                   content={<CustomTooltip />}
-                  cursor={{ fill: "#171717" }}
+                  cursor={{ fill: CHART_CURSOR_FILL }}
                 />
                 <Bar
                   dataKey="value"
@@ -233,7 +239,7 @@ export function AnalyticsOverview({ feedbacks }: AnalyticsProps) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-brand-muted text-sm gap-2">
+            <div className="flex items-center justify-center h-full text-brand-fg-muted text-sm gap-2">
               <Info size={16} /> No categories found.
             </div>
           )}
