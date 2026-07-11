@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { useTeam } from "@/hooks/useTeam";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { Section } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
 import { ListItem } from "@/components/ui/list-item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const ROLE_OPTIONS = ["admin", "member", "viewer"] as const;
 
@@ -21,6 +23,7 @@ export function TeamTab() {
   const { activeTeam, activeTeamId, userRole } = useTeam();
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("member");
+  const [memberToRemove, setMemberToRemove] = useState<{ userId: string; email: string } | null>(null);
 
   const { data: members, isLoading: membersLoading } = useQuery({
     queryKey: ["teamMembers", activeTeamId],
@@ -50,7 +53,7 @@ export function TeamTab() {
       queryClient.invalidateQueries({ queryKey: ["teamInvitations"] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to send invitation");
+      toast.error(err.response?.data?.message || "Failed to send invitation");
     },
   });
 
@@ -203,11 +206,7 @@ export function TeamTab() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            if (confirm(`Remove ${member.email} from the team?`)) {
-                              removeMemberMutation.mutate(member.userId);
-                            }
-                          }}
+                          onClick={() => setMemberToRemove({ userId: member.userId, email: member.email })}
                           className="hover:text-red-400"
                         >
                           <Trash2 className="h-4 w-4 text-brand-accent" />
@@ -221,6 +220,22 @@ export function TeamTab() {
           )}
         </Section>
       </motion.div>
+
+      <ConfirmDialog
+        isOpen={!!memberToRemove}
+        title="Remove team member"
+        message={`Remove ${memberToRemove?.email} from the team?`}
+        confirmLabel="Remove"
+        danger
+        isConfirming={removeMemberMutation.isPending}
+        onConfirm={() => {
+          if (!memberToRemove) return;
+          removeMemberMutation.mutate(memberToRemove.userId, {
+            onSettled: () => setMemberToRemove(null),
+          });
+        }}
+        onCancel={() => setMemberToRemove(null)}
+      />
     </div>
   );
 }
