@@ -37,7 +37,7 @@ pnpm build        # build all
 pnpm lint         # ESLint all
 pnpm typecheck    # tsc --noEmit all
 pnpm format       # Prettier all
-pnpm test         # API unit tests (Jest)
+pnpm test         # API (Jest) + Web (Vitest) unit tests
 docker compose up -d  # start local PostgreSQL + Redis
 ```
 

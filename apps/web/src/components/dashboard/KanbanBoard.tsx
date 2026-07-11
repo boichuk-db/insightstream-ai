@@ -26,7 +26,7 @@ const COLUMNS = [
   { id: "Rejected", title: "Rejected", color: STATUS_COLORS["Rejected"] },
 ];
 
-function applyFilters(
+export function applyFilters(
   feedbacks: any[],
   searchText: string,
   selectedCategories: string[],
@@ -64,6 +64,41 @@ function applyFilters(
   }
 
   return result;
+}
+
+export interface ReorderResult {
+  columns: Record<string, any[]>;
+  crossColumnMove: boolean;
+}
+
+export function reorderColumns(
+  columns: Record<string, any[]>,
+  source: { droppableId: string; index: number },
+  destination: { droppableId: string; index: number },
+): ReorderResult {
+  const sourceColumn = [...(columns[source.droppableId] || [])];
+  const destColumn = [...(columns[destination.droppableId] || [])];
+  const [movedItem] = sourceColumn.splice(source.index, 1);
+
+  movedItem.status = destination.droppableId;
+
+  if (source.droppableId === destination.droppableId) {
+    sourceColumn.splice(destination.index, 0, movedItem);
+    return {
+      columns: { ...columns, [source.droppableId]: sourceColumn },
+      crossColumnMove: false,
+    };
+  }
+
+  destColumn.splice(destination.index, 0, movedItem);
+  return {
+    columns: {
+      ...columns,
+      [source.droppableId]: sourceColumn,
+      [destination.droppableId]: destColumn,
+    },
+    crossColumnMove: true,
+  };
 }
 
 export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
@@ -266,23 +301,14 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
         return;
       }
 
-      const sourceColumn = [...(columns[source.droppableId] || [])];
-      const destColumn = [...(columns[destination.droppableId] || [])];
-      const [movedItem] = sourceColumn.splice(source.index, 1);
+      const { columns: nextColumns, crossColumnMove } = reorderColumns(
+        columns,
+        source,
+        destination,
+      );
+      setColumns(nextColumns);
 
-      movedItem.status = destination.droppableId;
-
-      if (source.droppableId === destination.droppableId) {
-        sourceColumn.splice(destination.index, 0, movedItem);
-        setColumns({ ...columns, [source.droppableId]: sourceColumn });
-      } else {
-        destColumn.splice(destination.index, 0, movedItem);
-        setColumns({
-          ...columns,
-          [source.droppableId]: sourceColumn,
-          [destination.droppableId]: destColumn,
-        });
-
+      if (crossColumnMove) {
         updateStatusMutation.mutate({
           id: draggableId,
           status: destination.droppableId,
