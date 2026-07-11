@@ -13,9 +13,14 @@ function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  function Wrapper({ children }: { children: ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+  }
+  return Wrapper;
 }
 
 describe("usePlanUsage", () => {
@@ -40,6 +45,26 @@ describe("usePlanUsage", () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.isNearLimit).toBe(true);
+    expect(result.current.isAtLimit).toBe(false);
+  });
+
+  it("does not flag isNearLimit below the 80% threshold", async () => {
+    vi.mocked(api.get).mockResolvedValue({
+      data: {
+        plan: "PRO",
+        planName: "Pro",
+        feedbacksThisMonth: { current: 50, max: 100 },
+        projects: { current: 1, max: 5 },
+      },
+    });
+
+    const { result } = renderHook(() => usePlanUsage("team-1"), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isNearLimit).toBe(false);
     expect(result.current.isAtLimit).toBe(false);
   });
 
