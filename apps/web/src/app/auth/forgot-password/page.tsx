@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { Mail, Sparkles } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -57,23 +58,21 @@ export default function ForgotPasswordPage() {
               }}
               className="space-y-4"
             >
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-brand-fg-muted ml-1">
-                  Email
-                </label>
-                <div className="relative">
-                  <Input
-                    type="email"
-                    data-testid="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-                </div>
-              </div>
+              <FormField
+                label="Email"
+                icon={Mail}
+                htmlFor="forgot-password-email"
+              >
+                <Input
+                  id="forgot-password-email"
+                  type="email"
+                  data-testid="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </FormField>
 
               {mutation.isError && (
                 <p className="text-red-400 text-sm">
@@ -94,7 +93,10 @@ export default function ForgotPasswordPage() {
             </form>
 
             <div className="mt-6 text-center text-sm text-brand-fg-muted">
-              <Link href="/" className="text-brand-accent hover:text-brand-accent/80">
+              <Link
+                href="/"
+                className="text-brand-accent hover:text-brand-accent/80"
+              >
                 ← Back to sign in
               </Link>
             </div>

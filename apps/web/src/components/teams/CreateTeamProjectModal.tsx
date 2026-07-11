@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { FormField } from "@/components/ui/form-field";
 
 export function CreateTeamProjectModal({
   isOpen,
@@ -70,38 +71,36 @@ export function CreateTeamProjectModal({
       }
     >
       <div className="space-y-5">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg-muted ml-1">
-            Project Name <span className="text-red-400">*</span>
-          </label>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="e.g. My Awesome App"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="pl-10"
-              autoFocus
-            />
-            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-          </div>
-        </div>
+        <FormField
+          label="Project Name"
+          required
+          icon={Type}
+          htmlFor="create-team-project-name"
+        >
+          <Input
+            id="create-team-project-name"
+            type="text"
+            placeholder="e.g. My Awesome App"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
+        </FormField>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg-muted ml-1">
-            Domain <span className="text-red-400">*</span>
-          </label>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="e.g. my-app.com"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              className="pl-10"
-            />
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-          </div>
-        </div>
+        <FormField
+          label="Domain"
+          required
+          icon={Globe}
+          htmlFor="create-team-project-domain"
+        >
+          <Input
+            id="create-team-project-domain"
+            type="text"
+            placeholder="e.g. my-app.com"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+          />
+        </FormField>
       </div>
     </Modal>
   );
