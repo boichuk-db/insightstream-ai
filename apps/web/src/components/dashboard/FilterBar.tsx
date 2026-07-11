@@ -4,6 +4,7 @@ import { Filter, X, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Dropdown } from "../ui/dropdown";
+import { Eyebrow } from "../ui/eyebrow";
 
 interface FilterBarProps {
   searchText: string;
@@ -60,8 +61,9 @@ export function FilterBar({
           className="w-72 p-4"
         >
           <div className="flex items-center justify-between mb-4 border-b border-brand-border/50 pb-3">
-            <h4 className="text-[10px] font-bold text-brand-fg uppercase tracking-widest flex items-center gap-2">
-              <Filter className="h-3 w-3 text-brand-accent" /> Refine View
+            <h4 className="flex items-center gap-2">
+              <Filter className="h-3 w-3 text-brand-accent" />
+              <Eyebrow className="text-brand-fg">Refine View</Eyebrow>
             </h4>
             <p className="text-[10px] text-brand-fg-muted font-mono">
               {filteredCount}/{totalCount}
@@ -71,9 +73,7 @@ export function FilterBar({
           {/* Tags Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold text-brand-fg-muted tracking-widest">
-                Tags
-              </span>
+              <Eyebrow>Tags</Eyebrow>
               {selectedTags.length > 0 && (
                 <button
                   onClick={() => onClearFilters()}

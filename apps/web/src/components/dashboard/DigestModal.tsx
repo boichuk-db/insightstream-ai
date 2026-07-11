@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
 import { SentimentBar } from "@/components/ui/sentiment-bar";
 import { LabeledSection } from "@/components/ui/labeled-section";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { getCategoryColor } from "@/lib/colors";
 
 interface DigestData {
@@ -100,25 +101,21 @@ export function DigestModal({
                 <p className="text-2xl font-black text-brand-accent">
                   {data.totalCount}
                 </p>
-                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1 flex items-center justify-center gap-1">
+                <Eyebrow className="mt-1 flex items-center justify-center gap-1">
                   <CalendarDays className="h-3 w-3" /> Фідбеків
-                </p>
+                </Eyebrow>
               </div>
               <div className="bg-brand-surface border border-brand-border rounded-xl p-4 text-center">
                 <p className={cn("text-2xl font-black", sentimentColor)}>
                   {sentimentPct}%
                 </p>
-                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1">
-                  Avg Sentiment
-                </p>
+                <Eyebrow className="mt-1">Avg Sentiment</Eyebrow>
               </div>
               <div className="bg-brand-surface border border-brand-border rounded-xl p-4 text-center">
                 <p className="text-lg font-black text-brand-fg truncate">
                   {topCategory?.[0] ?? "—"}
                 </p>
-                <p className="text-[10px] text-brand-fg-muted uppercase tracking-wider mt-1">
-                  Топ категорія
-                </p>
+                <Eyebrow className="mt-1">Топ категорія</Eyebrow>
               </div>
             </div>
 
