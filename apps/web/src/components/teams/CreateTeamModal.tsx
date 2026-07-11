@@ -5,6 +5,7 @@ import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { FormField } from "@/components/ui/form-field";
 import { useTeam } from "@/hooks/useTeam";
 
 export function CreateTeamModal({
@@ -55,11 +56,9 @@ export function CreateTeamModal({
       }
     >
       <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg-muted ml-1">
-            Team Name <span className="text-red-400">*</span>
-          </label>
+        <FormField label="Team Name" required htmlFor="create-team-name">
           <Input
+            id="create-team-name"
             type="text"
             placeholder="e.g. Product Team"
             value={name}
@@ -67,7 +66,7 @@ export function CreateTeamModal({
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             autoFocus
           />
-        </div>
+        </FormField>
       </div>
     </Modal>
   );

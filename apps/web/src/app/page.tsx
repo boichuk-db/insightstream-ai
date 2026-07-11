@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { captureEvent } from "@/lib/posthog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { Sparkles, ArrowRight, Lock, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -34,7 +35,7 @@ function AuthForm() {
     },
     onSuccess: (data) => {
       if (!isLogin) {
-        captureEvent('user_signed_up', { method: 'email' })
+        captureEvent("user_signed_up", { method: "email" });
       }
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
@@ -147,23 +148,17 @@ function AuthForm() {
         }}
         className="space-y-4"
       >
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg-muted ml-1">
-            Email
-          </label>
-          <div className="relative">
-            <Input
-              type="email"
-              data-testid="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10"
-              required
-            />
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-          </div>
-        </div>
+        <FormField label="Email" icon={Mail} htmlFor="auth-email">
+          <Input
+            id="auth-email"
+            type="email"
+            data-testid="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </FormField>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">

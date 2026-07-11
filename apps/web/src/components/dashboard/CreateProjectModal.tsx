@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { FormField } from "@/components/ui/form-field";
 import { Globe, Type } from "lucide-react";
 import { useTeam } from "@/hooks/useTeam";
 
@@ -78,43 +79,41 @@ export function CreateProjectModal({
       }
     >
       <div className="space-y-5">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg ml-1">
-            Project Name <span className="text-red-400">*</span>
-          </label>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="e.g. My Awesome Startup"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="pl-10"
-              required
-            />
-            <Type className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-          </div>
-        </div>
+        <FormField
+          label="Project Name"
+          required
+          icon={Type}
+          htmlFor="create-project-name"
+        >
+          <Input
+            id="create-project-name"
+            type="text"
+            placeholder="e.g. My Awesome Startup"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </FormField>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-brand-fg ml-1">
-            Domain <span className="text-red-400">*</span>
-          </label>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="e.g. my-startup.com"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              className="pl-10"
-              required
-            />
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-fg-muted" />
-          </div>
-        </div>
+        <FormField
+          label="Domain"
+          required
+          icon={Globe}
+          htmlFor="create-project-domain"
+        >
+          <Input
+            id="create-project-domain"
+            type="text"
+            placeholder="e.g. my-startup.com"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            required
+          />
+        </FormField>
 
         <p className="text-xs text-brand-fg-muted pt-2 leading-relaxed">
-          A unique API Key will be automatically generated. You can use this
-          key to identify feedback from your website.
+          A unique API Key will be automatically generated. You can use this key
+          to identify feedback from your website.
         </p>
       </div>
     </Modal>
