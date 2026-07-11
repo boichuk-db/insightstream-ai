@@ -12,8 +12,9 @@ import { AITrendsBar } from "@/components/dashboard/AITrendsBar";
 import { FeedbackFeedItem } from "@/components/dashboard/FeedbackFeedItem";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { MessageSquare, Download, CheckCheck } from "lucide-react";
-import type { IFeedback } from "@insightstream/shared-types";
+import type { IFeedback, FeedbackStatus } from "@insightstream/shared-types";
 
 const STATUS_TABS = [
   { label: "All", value: "all" },
@@ -179,7 +180,7 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
     URL.revokeObjectURL(url);
   }
 
-  async function handleStatusChange(id: string, status: string) {
+  async function handleStatusChange(id: string, status: FeedbackStatus) {
     await api.patch(`/feedback/${id}/status`, { status });
     queryClient.invalidateQueries({ queryKey: ["feedbacks", projectId] });
   }
@@ -228,22 +229,21 @@ export function FeedbackFeed({ projectId, currentUserId }: FeedbackFeedProps) {
             {lastSeen !== undefined && (feedbacks as IFeedback[]).some(
               (f) => lastSeen === null || new Date(f.createdAt) > lastSeen,
             ) && (
-              <button
-                onClick={markAllRead}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface text-xs text-brand-fg-muted hover:text-brand-fg hover:border-brand-muted transition-colors"
-              >
-                <CheckCheck className="w-3.5 h-3.5" />
+              <Button size="xs" variant="secondary" onClick={markAllRead}>
+                <CheckCheck className="w-3.5 h-3.5 mr-1.5" />
                 Mark all read
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              size="xs"
+              variant="secondary"
               onClick={exportCSV}
               disabled={filtered.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-accent/30 bg-brand-accent/8 text-xs text-brand-accent hover:bg-brand-accent/15 transition-colors disabled:opacity-40"
+              className="border-brand-accent/30 bg-brand-accent/8 text-brand-accent hover:bg-brand-accent/15 hover:text-brand-accent"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 mr-1.5" />
               Export CSV
-            </button>
+            </Button>
           </div>
         }
       />
