@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FeedbackStatus, type IFeedback } from "@insightstream/shared-types";
@@ -92,16 +92,8 @@ function renderFeedbackFeed() {
 
 describe("FeedbackFeed", () => {
   beforeEach(() => {
-    vi.mocked(api.get).mockImplementation(mockApiGet);
+    vi.mocked(api.get).mockClear().mockImplementation(mockApiGet);
   });
-
-  // This project doesn't set `test.globals: true` in vitest.config.ts, so
-  // @testing-library/react's automatic afterEach(cleanup) registration
-  // (which only self-registers when it detects a global `afterEach`) never
-  // fires. Without this, each `it` block's render() stacks a new tree onto
-  // the previous one in document.body, and text queries starting from the
-  // second test match duplicate elements. Register cleanup explicitly.
-  afterEach(cleanup);
 
   it("shows non-archived feedback by default and hides archived items", async () => {
     renderFeedbackFeed();
@@ -121,7 +113,7 @@ describe("FeedbackFeed", () => {
     renderFeedbackFeed();
     await screen.findByText("Login button is broken on Safari");
 
-    await user.click(screen.getByRole("button", { name: /In Review/ }));
+    await user.click(screen.getByRole("button", { name: /^In Review\d+$/ }));
 
     await waitFor(() => {
       expect(screen.getByText("Please add SSO support")).toBeInTheDocument();
@@ -139,7 +131,7 @@ describe("FeedbackFeed", () => {
     renderFeedbackFeed();
     await screen.findByText("Login button is broken on Safari");
 
-    await user.click(screen.getByRole("button", { name: /Archived/ }));
+    await user.click(screen.getByRole("button", { name: /^Archived\d+$/ }));
 
     await waitFor(() => {
       expect(screen.getByText("Old ticket, no longer relevant")).toBeInTheDocument();
@@ -154,7 +146,7 @@ describe("FeedbackFeed", () => {
     renderFeedbackFeed();
     await screen.findByText("Login button is broken on Safari");
 
-    await user.click(screen.getByRole("button", { name: /Negative/ }));
+    await user.click(screen.getByRole("button", { name: /^😞 Negative$/ }));
 
     await waitFor(() => {
       expect(
