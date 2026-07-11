@@ -58,12 +58,15 @@ describe("applyFilters", () => {
 });
 
 describe("reorderColumns", () => {
-  const columns = {
-    New: [{ id: "a", status: "New" }, { id: "b", status: "New" }],
-    Done: [{ id: "c", status: "Done" }],
-  };
+  function makeColumns() {
+    return {
+      New: [{ id: "a", status: "New" }, { id: "b", status: "New" }],
+      Done: [{ id: "c", status: "Done" }],
+    };
+  }
 
   it("reorders within the same column without a cross-column move", () => {
+    const columns = makeColumns();
     const result = reorderColumns(
       columns,
       { droppableId: "New", index: 0 },
@@ -75,6 +78,7 @@ describe("reorderColumns", () => {
   });
 
   it("moves an item to a different column and flags crossColumnMove", () => {
+    const columns = makeColumns();
     const result = reorderColumns(
       columns,
       { droppableId: "New", index: 0 },
@@ -86,6 +90,7 @@ describe("reorderColumns", () => {
   });
 
   it("updates the moved item's status to the destination column id", () => {
+    const columns = makeColumns();
     const result = reorderColumns(
       columns,
       { droppableId: "New", index: 0 },
@@ -93,5 +98,18 @@ describe("reorderColumns", () => {
     );
     const moved = result.columns.Done.find((f: any) => f.id === "a");
     expect(moved.status).toBe("Done");
+  });
+
+  it("does not mutate the input columns object", () => {
+    const original = makeColumns();
+    const originalNewIds = original.New.map((f) => f.id);
+    const originalDoneIds = original.Done.map((f) => f.id);
+    reorderColumns(
+      original,
+      { droppableId: "New", index: 0 },
+      { droppableId: "Done", index: 0 },
+    );
+    expect(original.New.map((f) => f.id)).toEqual(originalNewIds);
+    expect(original.Done.map((f) => f.id)).toEqual(originalDoneIds);
   });
 });
