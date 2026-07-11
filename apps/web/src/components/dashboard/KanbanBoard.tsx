@@ -26,7 +26,7 @@ const COLUMNS = [
   { id: "Rejected", title: "Rejected", color: STATUS_COLORS["Rejected"] },
 ];
 
-function applyFilters(
+export function applyFilters(
   feedbacks: any[],
   searchText: string,
   selectedCategories: string[],
