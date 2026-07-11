@@ -17,7 +17,7 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onChange, className, rightSlot }: TabsProps) {
   return (
-    <div className={cn("flex items-center border-b border-brand-border bg-brand-surface overflow-x-auto", className)}>
+    <div className={cn("flex items-center border-b border-brand-border bg-brand-surface overflow-x-auto overflow-y-hidden", className)}>
       {tabs.map((tab) => (
         <button
           key={tab.value}
