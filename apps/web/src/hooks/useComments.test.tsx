@@ -27,9 +27,11 @@ function createWrapper() {
 
 describe("useComments", () => {
   beforeEach(() => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
-    vi.mocked(api.post).mockResolvedValue({ data: { id: "c1", content: "hi" } });
-    vi.mocked(api.delete).mockResolvedValue({ data: {} });
+    vi.mocked(api.get).mockReset().mockResolvedValue({ data: [] });
+    vi.mocked(api.post)
+      .mockReset()
+      .mockResolvedValue({ data: { id: "c1", content: "hi" } });
+    vi.mocked(api.delete).mockReset().mockResolvedValue({ data: {} });
   });
 
   it("does not submit when the draft is empty or whitespace-only", async () => {
@@ -41,9 +43,15 @@ describe("useComments", () => {
     act(() => {
       result.current.setDraft("   ");
     });
-    act(() => {
+    // submit() is a no-op guard (`if (!draft.trim()) return;`), so there's no
+    // state change to waitFor. Flush the microtask queue explicitly — TanStack
+    // Query's mutate() dispatches through a promise chain before it ever
+    // reaches mutationFn, so asserting immediately after a bare act() would
+    // pass trivially even if the guard were deleted (proven during review).
+    await act(async () => {
       result.current.submit();
     });
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(api.post).not.toHaveBeenCalled();
   });
