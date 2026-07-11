@@ -1,40 +1,29 @@
 // apps/web/src/components/dashboard/FeedbackFeedItem.tsx
 "use client";
 
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
   Trash2,
   RotateCcw,
-  MessageCircle,
   ChevronDown,
   ChevronRight,
-  Send,
 } from "lucide-react";
 import { formatDistanceToNow, format, isThisYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SentimentBar } from "@/components/ui/sentiment-bar";
-import { useComments } from "@/hooks/useComments";
-import type { IFeedback } from "@insightstream/shared-types";
-
-const STATUSES = [
-  { id: "New", color: "text-brand-accent" },
-  { id: "In Review", color: "text-status-warning" },
-  { id: "In Progress", color: "text-status-info" },
-  { id: "Done", color: "text-status-success" },
-  { id: "Rejected", color: "text-status-danger" },
-];
-
-const PREVIEW_COMMENT_COUNT = 3;
+import { Button } from "@/components/ui/button";
+import { StatusSelect } from "@/components/ui/status-select";
+import { CommentThread } from "@/components/ui/comment-thread";
+import type { IFeedback, FeedbackStatus } from "@insightstream/shared-types";
 
 interface FeedbackFeedItemProps {
   feedback: IFeedback;
   isNew: boolean;
   isExpanded: boolean;
   onToggleExpand: () => void;
-  onStatusChange: (id: string, status: string) => void;
+  onStatusChange: (id: string, status: FeedbackStatus) => void;
   onDelete: (id: string) => void;
   onReanalyze: (id: string) => void;
   isDeleting: boolean;
@@ -54,23 +43,6 @@ export function FeedbackFeedItem({
   isReanalyzing,
   currentUserId,
 }: FeedbackFeedItemProps) {
-  const [showStatusPicker, setShowStatusPicker] = useState(false);
-  const [showAllComments, setShowAllComments] = useState(false);
-  const {
-    comments,
-    isLoading: commentsLoading,
-    draft,
-    setDraft,
-    submit,
-    isSubmitting,
-    deleteComment,
-  } = useComments(isExpanded ? feedback.id : null);
-
-  const visibleComments = showAllComments
-    ? comments
-    : comments.slice(0, PREVIEW_COMMENT_COUNT);
-  const hiddenCount = comments.length - PREVIEW_COMMENT_COUNT;
-
   return (
     <div
       className={cn(
@@ -165,124 +137,39 @@ export function FeedbackFeedItem({
 
               {/* Actions row */}
               <div className="flex items-center gap-2 flex-wrap">
-                {/* Status picker */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowStatusPicker((s) => !s)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface-hover text-xs text-brand-fg hover:border-brand-muted transition-colors"
-                  >
-                    <Badge variant="status" value={feedback.status} size="sm" />
-                    <ChevronDown className="w-3 h-3 text-brand-fg-muted" />
-                  </button>
-                  {showStatusPicker && (
-                    <div className="absolute top-full left-0 mt-1 z-10 bg-brand-surface border border-brand-border rounded-xl shadow-lg py-1 min-w-[130px]">
-                      {STATUSES.map((s) => (
-                        <button
-                          key={s.id}
-                          onClick={() => {
-                            onStatusChange(feedback.id, s.id);
-                            setShowStatusPicker(false);
-                          }}
-                          className={cn(
-                            "w-full text-left px-3 py-2 text-xs hover:bg-brand-surface-hover transition-colors",
-                            s.color,
-                          )}
-                        >
-                          {s.id}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <StatusSelect
+                  value={feedback.status}
+                  onChange={(status) => onStatusChange(feedback.id, status)}
+                  size="sm"
+                />
 
-                <button
+                <Button
+                  size="xs"
+                  variant="secondary"
                   onClick={() => onReanalyze(feedback.id)}
-                  disabled={isReanalyzing}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border bg-brand-surface-hover text-xs text-brand-fg-muted hover:text-brand-fg hover:border-brand-muted transition-colors disabled:opacity-40"
+                  isLoading={isReanalyzing}
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="w-3 h-3 mr-1.5" />
                   Re-analyze
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  size="xs"
+                  variant="danger"
                   onClick={() => onDelete(feedback.id)}
-                  disabled={isDeleting}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 text-xs text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40 ml-auto"
+                  isLoading={isDeleting}
+                  className="ml-auto"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3 h-3 mr-1.5" />
                   Delete
-                </button>
+                </Button>
               </div>
 
               {/* Comments */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-brand-fg-muted">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>
-                    {commentsLoading
-                      ? "Loading comments..."
-                      : `${comments.length} comment${comments.length !== 1 ? "s" : ""}`}
-                  </span>
-                </div>
-
-                {visibleComments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="group flex gap-2.5 p-2.5 rounded-lg bg-brand-bg border border-brand-border"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-brand-fg leading-relaxed">
-                        {comment.content}
-                      </p>
-                      <p className="text-xs text-brand-fg-muted mt-1">
-                        {formatDistanceToNow(new Date(comment.createdAt), {
-                          addSuffix: true,
-                        })}
-                      </p>
-                    </div>
-                    {comment.user?.id === currentUserId && (
-                      <button
-                        onClick={() => deleteComment(comment.id)}
-                        className="opacity-0 group-hover:opacity-100 text-brand-fg-muted hover:text-red-400 transition-all"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-
-                {hiddenCount > 0 && !showAllComments && (
-                  <button
-                    onClick={() => setShowAllComments(true)}
-                    className="text-xs text-brand-accent hover:underline"
-                  >
-                    View all {comments.length} comments →
-                  </button>
-                )}
-
-                {/* Comment input */}
-                <div className="flex gap-2 mt-2">
-                  <input
-                    value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        submit();
-                      }
-                    }}
-                    placeholder="Add a comment..."
-                    className="flex-1 px-3 py-2 text-xs bg-brand-bg border border-brand-border rounded-lg text-brand-fg placeholder:text-brand-fg-muted focus:outline-none focus:border-brand-accent transition-colors"
-                  />
-                  <button
-                    onClick={submit}
-                    disabled={!draft.trim() || isSubmitting}
-                    className="p-2 rounded-lg bg-brand-accent/10 border border-brand-accent/25 text-brand-accent hover:bg-brand-accent/20 transition-colors disabled:opacity-40"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
+              <CommentThread
+                feedbackId={feedback.id}
+                currentUserId={currentUserId}
+              />
             </div>
           </motion.div>
         )}
