@@ -9,6 +9,8 @@ import { FileDown, Printer, ChevronDown, Archive, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Dropdown } from "../ui/dropdown";
+import { ConfirmDialog } from "../ui/confirm-dialog";
+import { Eyebrow } from "../ui/eyebrow";
 import { STATUS_COLORS } from "@/lib/colors";
 
 interface KanbanBoardProps {
@@ -150,6 +152,9 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
   // Export state
   const [exportScope, setExportScope] = useState<"all" | string>("all");
 
+  // Archive confirmation
+  const [confirmArchiveOpen, setConfirmArchiveOpen] = useState(false);
+
   const getExportFeedbacks = useCallback(() => {
     if (exportScope === "all") return Object.values(displayColumns).flat();
     return displayColumns[exportScope] || [];
@@ -215,8 +220,9 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
     mutationFn: async () => {
       await api.post("/feedback/bulk-archive", { projectId });
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+      setConfirmArchiveOpen(false);
     },
     onError: (err: any) => {
       alert(`Archiving failed: ${err?.response?.data?.message || err.message}`);
@@ -330,11 +336,7 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
           <Button
             variant="danger"
             size="sm"
-            onClick={() => {
-              if (confirm('Archive all "Done" and "Rejected" cards?')) {
-                archiveMutation.mutate();
-              }
-            }}
+            onClick={() => setConfirmArchiveOpen(true)}
             isLoading={archiveMutation.isPending}
             disabled={
               displayColumns["Done"]?.length === 0 &&
@@ -348,6 +350,17 @@ export function KanbanBoard({ initialFeedbacks, projectId }: KanbanBoardProps) {
           </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmArchiveOpen}
+        title="Archive board"
+        message='Archive all "Done" and "Rejected" cards?'
+        confirmLabel="Archive"
+        danger
+        isConfirming={archiveMutation.isPending}
+        onConfirm={() => archiveMutation.mutate()}
+        onCancel={() => setConfirmArchiveOpen(false)}
+      />
 
       <div className="flex w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 px-4 sm:px-0 gap-4 overflow-x-auto lg:overflow-x-hidden pb-6 scrollbar-hide">
         <DragDropContext onDragEnd={handleDragEnd}>
@@ -408,9 +421,7 @@ function ExportMenu({
       <div className="space-y-4">
         {/* Scope Selection */}
         <div>
-          <h4 className="text-[10px] font-bold text-brand-fg-muted uppercase tracking-widest mb-2 px-1">
-            Select Scope
-          </h4>
+          <Eyebrow className="block mb-2 px-1">Select Scope</Eyebrow>
           <div className="grid grid-cols-1 gap-1">
             <button
               onClick={() => onScopeChange("all")}

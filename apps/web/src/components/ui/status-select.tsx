@@ -14,9 +14,10 @@ interface StatusSelectProps {
   onChange: (value: FeedbackStatus) => void;
   size?: "sm" | "md";
   className?: string;
+  options?: FeedbackStatus[];
 }
 
-export function StatusSelect({ value, onChange, size = "md", className }: StatusSelectProps) {
+export function StatusSelect({ value, onChange, size = "md", className, options = ALL_STATUSES }: StatusSelectProps) {
   const [open, setOpen] = useState(false);
   const config = getStatusConfig(value);
 
@@ -41,7 +42,7 @@ export function StatusSelect({ value, onChange, size = "md", className }: Status
       }
     >
       <div className="flex flex-col gap-0.5 min-w-[140px]">
-        {ALL_STATUSES.map((status) => (
+        {options.map((status) => (
           <button
             key={status}
             type="button"
