@@ -55,6 +55,8 @@ docs/**
 docs/architecture/**
 !docs/architecture/PLAN.md
 !docs/architecture/system-architecture.drawio
+!docs/architecture/diagrams/
+!docs/architecture/diagrams/**
 
 # AWS local config (contains resource IDs, never commit)
 infra/aws-ids.txt
