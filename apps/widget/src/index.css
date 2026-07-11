@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+/* Replaces the two framer-motion micro-animations from the React build. */
+@keyframes success-pop {
+  0% {
+    transform: scale(0) rotate(0deg);
+  }
+  60% {
+    transform: scale(1.05) rotate(10deg);
+  }
+  80% {
+    transform: scale(1) rotate(-10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-success-pop {
+  animation: success-pop 0.4s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}

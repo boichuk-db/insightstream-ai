@@ -1,5 +1,4 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { render } from "preact";
 // ?inline returns the compiled CSS as a string instead of injecting it
 // into the host document — required for Shadow DOM isolation.
 import cssText from "./index.css?inline";
@@ -23,11 +22,7 @@ const initWidget = () => {
   const container = document.createElement("div");
   shadow.appendChild(container);
 
-  createRoot(container).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  );
+  render(<App />, container);
 };
 
 // Handle late loading or direct execution
