@@ -18,7 +18,7 @@ function Controlled() {
     <>
       <Button variant="danger" onClick={() => setOpen(true)}>Delete project</Button>
       <ConfirmDialog
-        open={open}
+        isOpen={open}
         title="Delete project?"
         message="This action cannot be undone. All feedback data for this project will be permanently deleted."
         confirmLabel="Delete"
@@ -36,7 +36,7 @@ export const Default: Story = {
 
 export const Confirming: Story = {
   args: {
-    open: true,
+    isOpen: true,
     title: 'Delete project?',
     message: 'This action cannot be undone. All feedback data for this project will be permanently deleted.',
     confirmLabel: 'Delete',

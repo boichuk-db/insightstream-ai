@@ -4,7 +4,7 @@ import { Modal } from "./modal";
 import { Button } from "./button";
 
 interface ConfirmDialogProps {
-  open: boolean;
+  isOpen: boolean;
   title: string;
   message: React.ReactNode;
   confirmLabel?: string;
@@ -21,7 +21,7 @@ interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({
-  open,
+  isOpen,
   title,
   message,
   confirmLabel = "Confirm",
@@ -33,7 +33,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Modal
-      isOpen={open}
+      isOpen={isOpen}
       onClose={onCancel}
       title={title}
       size="sm"
