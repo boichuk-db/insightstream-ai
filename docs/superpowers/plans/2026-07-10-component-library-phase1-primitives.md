@@ -2189,9 +2189,10 @@ Add one line under `PLAN.md`'s 🔍 Analysis Backlog or as a new small 🟡 Futu
 
 ## Final verification (all of Phase 1)
 
-- [ ] Run: `pnpm --filter web exec tsc --noEmit` — expect 0 errors.
-- [ ] Run: `pnpm --filter web exec eslint .` — expect the same pre-existing baseline as before this plan started (no new errors; new files may add the same kind of `no-unsafe-*`/`no-unused-vars` warnings already common elsewhere, but zero new `error`-level findings).
-- [ ] Confirm every new file under `components/ui/` has a matching `.stories.tsx` (10 primitives × 1 story each, per the discipline rule).
+- [x] Run: `pnpm --filter web exec tsc --noEmit` — 0 errors, confirmed.
+- [x] Run: `pnpm --filter web exec eslint .` — identical to the pre-Phase-1 baseline: 0 errors, the same 2 pre-existing warnings in `KanbanBoard.tsx`/`useSelectedProject.ts` unrelated to this work.
+- [x] Confirm every new file under `components/ui/` has a matching `.stories.tsx` — found one gap (`overlay.tsx` had no story; Task 7's plan spec'd one for `Drawer` but not `Overlay` itself), fixed.
+- [x] A final holistic review (looking across all 12 tasks together, not task-by-task) found two whole-phase-level API-consistency gaps invisible at the single-task level, both fixed before merge: `Popover` (and everything built on it — `Dropdown`/`Select`/`FilterChips`/`StatusSelect`) had no Escape-to-close, unlike `Modal`/`Drawer`; `ConfirmDialog` named its own boolean prop `open` instead of `isOpen`, inconsistent with the `Modal` it's built directly on. Both fixed with zero real consumers yet, the cheapest possible moment.
 - [ ] Push to a branch and merge into `main` before Phase 2 dispatch begins — Phase 2's 8 clusters all depend on these primitives existing.
 
 ## Spec coverage check (self-review)
