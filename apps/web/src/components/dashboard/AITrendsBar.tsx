@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Sparkles, ChevronRight, ChevronDown } from "lucide-react";
 import { feedbackTrendsQuery } from "@/lib/queries";
 import { cn } from "@/lib/utils";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 interface AITrendsBarProps {
   projectId: string;
@@ -26,9 +27,7 @@ export function AITrendsBar({ projectId, onThemeFilter }: AITrendsBarProps) {
       >
         <div className="flex items-center gap-1.5 text-brand-accent shrink-0">
           <Sparkles className="w-3.5 h-3.5" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">
-            AI Trends
-          </span>
+          <Eyebrow className="text-brand-accent">AI Trends</Eyebrow>
         </div>
 
         {!expanded && (

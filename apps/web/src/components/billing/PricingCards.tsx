@@ -8,6 +8,7 @@ import { planStatusQuery } from "@/lib/queries";
 import { useTeam } from "@/hooks/useTeam";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 const PLANS = [
   {
@@ -114,9 +115,7 @@ export function PricingCards() {
               className="p-5 bg-brand-surface border border-brand-border rounded-xl flex flex-col gap-4"
             >
               <div>
-                <p className="text-xs text-brand-fg-muted uppercase tracking-wider font-semibold">
-                  {plan.name}
-                </p>
+                <Eyebrow>{plan.name}</Eyebrow>
                 <p className="text-2xl font-bold text-brand-fg mt-1">
                   {displayPrice}
                   <span className="text-sm font-normal text-brand-fg-muted">
