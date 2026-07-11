@@ -1,6 +1,6 @@
 # InsightStream AI — Architecture Plan (Living Document)
 
-> Last updated: **2026-07-11**
+> Last updated: **2026-07-11** (Phase 2 of component library consolidation merged)
 > This is the single source of truth for architecture decisions and roadmap. `system-architecture.drawio` holds diagrams only — this file holds the reasoning, priorities and status.
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
@@ -49,7 +49,7 @@ Scope: 🔥 Implement Soon + 🎨 UI/UX Roadmap only — these carry the day/hou
 | 13 | P0 — Color system & contrast | ✔ Done (2026-07-10) | — |
 | 14 | P1 — Feed hierarchy & typography | ✔ Done (2026-07-10) | — |
 | 15 | P1 — Navigation & shell consistency | ✔ Done (2026-07-10) | — |
-| 16 | P1 — Component library consolidation | 🟡 Phase 1 done (unmerged), Phase 2 not started | Phase 2: ~1–2 days across 8 parallel clusters |
+| 16 | P1 — Component library consolidation | ✔ Done (Phase 1 merged 2026-07-11, Phase 2 merged 2026-07-11) | — |
 | 17 | P2 — Analytics 2.0 | 🔲 Open | ~1–2 days |
 | 18 | P2 — Activity Log & Embed polish | 🔲 Open | ~1 day |
 | 19 | Documentation actualization (README, full docs, drawio sync) | 🔲 Open | not estimated — needs a brainstorming pass first (tool choice, doc structure) |
@@ -201,10 +201,17 @@ Original problem/action kept below for context.
 **Problem:** flat undated event list; "Real-time updates enabled" badge while data actually polls every 30s; Embed tab renders API key in plain text and a `localhost:8080` snippet URL.
 **Action:** group events by day, add event-type/project filter, honest update label; mask API key with reveal+copy; snippet always uses the production widget URL (pairs with 🔥 #8 versioned widget URL).
 
-### P1 — Component library consolidation (~2–3 days, can run parallel to the packages above) — 🟡 Phase 1 done, Phase 2 pending
+### P1 — Component library consolidation — ✔ Done (Phase 1 merged 2026-07-11, Phase 2 merged 2026-07-11)
 **Goal:** a real internal UI library in `apps/web/src/components/ui` — one implementation per pattern, every primitive with a Storybook story. Extraction to a `packages/ui` workspace package is **not** part of this (trigger below). Found duplications, ordered by payoff:
 
-**Status (2026-07-11):** Design doc + two-phase rollout plan written (`docs/superpowers/specs/2026-07-10-component-library-consolidation-design.md`). **Phase 1 (all 10 primitives below, built in isolated worktree `feature/component-library-phase1-primitives`) is implementation-complete and code-reviewed** — every primitive has a Storybook story, `tsc`/`eslint` clean, three rounds of review caught and fixed real regressions (Popover close-on-select lost twice, a `className` semantics break in `Select` affecting real `TeamTab.tsx` call sites, a `Modal`/`Overlay` double-`onClose` fire, an XSS-adjacent injection gap in `buildWidgetSnippet`, a missing `htmlFor` on `FormField`, a missing `badge` slot on `NavItem`). **Not yet merged to `main`** — pending final Phase 1 verification and push. **Phase 2 (8 file-disjoint clusters rewiring `Sidebar`, `KanbanBoard`/`KanbanCard`, `FeedbackFeedItem`/`FeedbackFeed`, `CommentsPanel`, `EmbedTab`/`WidgetGeneratorModal`, the Settings shell, Forms, and a small Eyebrow-only sweep onto these primitives) has not started.** One deliberately-shipped duplication remains from Phase 1 itself: `WidgetConfigForm`'s 3 selectors hand-roll the `SegmentedControl` pattern rather than consuming it (documented, not silently shipped — see the Phase 1 plan's Task 12 for why).
+**Status (2026-07-11):** Design doc + two-phase rollout plan: `docs/superpowers/specs/2026-07-10-component-library-consolidation-design.md`. **Phase 1** (all 10 primitives below, built in isolated worktree, implementer→spec-review→code-review per task) merged to `main` first. Three rounds of review caught and fixed real regressions (Popover close-on-select lost twice, a `className` semantics break in `Select` affecting real `TeamTab.tsx` call sites, a `Modal`/`Overlay` double-`onClose` fire, an XSS-adjacent injection gap in `buildWidgetSnippet`, a missing `htmlFor` on `FormField`, a missing `badge` slot on `NavItem`), plus a same-day follow-up fixing a `StatusTabs`/`Tabs` vertical-scrollbar bug (`overflow-x-auto` without `overflow-y-hidden` computes `overflow-y: auto` per the CSS Overflow spec's pairing rule). **Phase 2** (8 file-disjoint clusters, one agent per cluster in its own isolated worktree, dispatched in parallel) rewired every real consumer onto the Phase 1 primitives: `Sidebar`, `KanbanBoard`/`KanbanCard`, `FeedbackFeedItem`/`FeedbackFeed`, `CommentsPanel`, `EmbedTab`/`WidgetGeneratorModal`, the Settings shell + `TeamTab`, Forms (6 files across `CreateProjectModal`/`CreateTeamModal`/`CreateTeamProjectModal`/auth pages/`app/page.tsx`), and a small Eyebrow-only sweep (`PricingCards`/`AITrendsBar`/`DigestModal`/`FilterBar`). All 8 merged cleanly (file-disjoint by construction, zero conflicts); full `tsc --noEmit`, `eslint`, and `next build` all clean on the merged result. One real bug caught before merge and fixed directly (not by a subagent): `StatusSelect` unconditionally listed all 6 `FeedbackStatus` values including `Archived`, which isn't a Kanban column — picking it silently vanished the card from the board with no recovery short of a DB edit. Fixed by adding an optional `options` prop to `StatusSelect` (defaults to all statuses, so `FeedbackFeedItem`'s usage is unaffected) and passing the board's 5-column list from `KanbanCard`.
+**Deliberately-shipped duplication carried from Phase 1:** `WidgetConfigForm`'s 3 selectors hand-roll the `SegmentedControl` pattern rather than consuming it (see the Phase 1 plan's Task 12 for why).
+**Primitive API gaps surfaced during Phase 2, deliberately not fixed (each consumer worked around it in its own file rather than touching a frozen primitive; revisit only if a future consumer hits the same wall):**
+- `NavItem` has no `className`/icon-color override — `Sidebar`'s nav icons now always inherit the active/hover text color instead of a constant accent tint.
+- `ConfirmDialog` has no prop for a permanently-disabled (non-loading) Confirm button — `Sidebar`'s "can't delete your last project" guard moved to disabling the trigger instead.
+- `Drawer`'s `Overlay` doesn't auto-dismiss on a breakpoint resize — a sidebar left open on mobile and then resized past `lg` keeps a dimmed backdrop until clicked.
+- `CommentThread` has no preview/"view all N comments" truncation — `FeedbackFeedItem` now always renders the full comment list instead of a capped preview.
+- `FormField` has no slot for a trailing label-row element — the login page's password field (inline "Forgot password?" link) was deliberately left hand-rolled rather than force-fitting it.
 
 | # | Extract | Replaces (today) |
 |---|---|---|
