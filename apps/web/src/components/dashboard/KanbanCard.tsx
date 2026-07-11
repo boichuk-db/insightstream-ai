@@ -3,12 +3,21 @@ import { Draggable } from "@hello-pangea/dnd";
 import { Sparkles, Trash2, CalendarDays, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { FeedbackStatus } from "@insightstream/shared-types";
 import { Badge } from "@/components/ui/badge";
 import { SentimentBar } from "@/components/ui/sentiment-bar";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { StatusSelect } from "@/components/ui/status-select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+
+const KANBAN_STATUSES = [
+  FeedbackStatus.NEW,
+  FeedbackStatus.IN_REVIEW,
+  FeedbackStatus.IN_PROGRESS,
+  FeedbackStatus.DONE,
+  FeedbackStatus.REJECTED,
+];
 
 interface KanbanCardProps {
   feedback: any;
@@ -74,6 +83,7 @@ export function KanbanCard({
                   value={feedback.status}
                   onChange={(status) => onStatusChange(feedback.id, status)}
                   size="sm"
+                  options={KANBAN_STATUSES}
                 />
               </div>
 
