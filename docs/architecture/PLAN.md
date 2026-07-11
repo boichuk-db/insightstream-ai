@@ -1,6 +1,6 @@
 # InsightStream AI — Architecture Plan (Living Document)
 
-> Last updated: **2026-07-10**
+> Last updated: **2026-07-11**
 > This is the single source of truth for architecture decisions and roadmap. `system-architecture.drawio` holds diagrams only — this file holds the reasoning, priorities and status.
 >
 > **Update rule:** any change that alters the architecture (new module, new infra piece, a completed roadmap item, a decision reversed) updates this file in the same PR, and bumps the date above. Tasks for future work are pulled from this plan, not invented ad hoc.
@@ -49,9 +49,10 @@ Scope: 🔥 Implement Soon + 🎨 UI/UX Roadmap only — these carry the day/hou
 | 13 | P0 — Color system & contrast | ✔ Done (2026-07-10) | — |
 | 14 | P1 — Feed hierarchy & typography | ✔ Done (2026-07-10) | — |
 | 15 | P1 — Navigation & shell consistency | ✔ Done (2026-07-10) | — |
-| 16 | P1 — Component library consolidation | 🔲 Open | ~2–3 days |
+| 16 | P1 — Component library consolidation | 🟡 Phase 1 done (unmerged), Phase 2 not started | Phase 2: ~1–2 days across 8 parallel clusters |
 | 17 | P2 — Analytics 2.0 | 🔲 Open | ~1–2 days |
 | 18 | P2 — Activity Log & Embed polish | 🔲 Open | ~1 day |
+| 19 | Documentation actualization (README, full docs, drawio sync) | 🔲 Open | not estimated — needs a brainstorming pass first (tool choice, doc structure) |
 
 ---
 
@@ -157,6 +158,11 @@ Full implementation detail in ✔ Completed above. **Stale premise:** the origin
 **What was done:** `StripeService.createCheckoutSession` now calls a new `assertNoActiveSubscription(team)` guard before creating any Stripe resource. Fast path: blocks locally when `team.stripeSubscriptionId` is set and `team.planStatus` is `active`/`trialing`/`past_due`. Live fallback (closes the exact reproduced race): if the local check passes but `team.stripeCustomerId` already exists, one `stripe.subscriptions.list` call checks Stripe directly — catches the case where a webhook hasn't yet synced the local DB. Either path throws `ConflictException` (409). Frontend (`PricingCards.tsx`) shows a distinct "manage it from Billing settings" message on 409 instead of the generic retry toast. Deliberately out of scope: plan-change/upgrade-downgrade flow (still blocked by this guard — a real proration-based upgrade flow is separate future work) and self-healing the DB from the live-check path (sync stays the webhook handler's job), and fully closing a same-customer concurrent-tab race at payment time (the guard closes the reproduced webhook-lag race and the simple double-click case, not two tabs both completing payment before either syncs — that needs payment-time locking). Design: `docs/superpowers/specs/2026-07-06-duplicate-subscription-checkout-guard-design.md`.
 **Type:** correctness / billing-integrity defect.
 
+### 13. Documentation actualization — README, full docs, architecture diagram sync
+**Problem:** `README.md` and the project's docs haven't been actualized alongside the pace of recent work (Team-as-Tenant, Stripe billing, AWS migration steps, the P0/P1 UI passes, the in-progress component library consolidation). There's no full-fledged, readable end-to-end documentation site today — just this `PLAN.md`, scattered design/spec docs under `docs/superpowers/`, and `system-architecture.drawio`. `system-architecture.drawio` also needs a pass to confirm it still matches reality (e.g. Amplify+Vercel parallel run, the BullMQ worker split, Team-as-Tenant's ER-diagram changes — some of this was updated incrementally per the "Update rule," but a full read-through pass hasn't happened recently).
+**Action:** (1) Actualize `README.md` — setup steps, current stack, current dev commands, current architecture summary. (2) Stand up real, readable, full documentation — evaluate a low/zero-cost external doc service (e.g. Docusaurus, self-hosted and free; Mintlify/GitBook have hosted free tiers but check limits before committing) rather than only relying on scattered markdown — pick a tool before implementing, since this is a real scope/cost decision, not just a content-writing task. (3) Full pass over `system-architecture.drawio` to confirm every page (Full Architecture, AWS Infrastructure, Request Lifecycle, ER diagram) matches current code, fixing drift found along the way.
+**Type:** documentation / developer experience. Not yet scoped to hours — needs its own brainstorming pass (tool choice, doc structure) before an estimate is meaningful.
+
 ---
 
 ## 🎨 UI/UX Roadmap
@@ -195,8 +201,10 @@ Original problem/action kept below for context.
 **Problem:** flat undated event list; "Real-time updates enabled" badge while data actually polls every 30s; Embed tab renders API key in plain text and a `localhost:8080` snippet URL.
 **Action:** group events by day, add event-type/project filter, honest update label; mask API key with reveal+copy; snippet always uses the production widget URL (pairs with 🔥 #8 versioned widget URL).
 
-### P1 — Component library consolidation (~2–3 days, can run parallel to the packages above)
+### P1 — Component library consolidation (~2–3 days, can run parallel to the packages above) — 🟡 Phase 1 done, Phase 2 pending
 **Goal:** a real internal UI library in `apps/web/src/components/ui` — one implementation per pattern, every primitive with a Storybook story. Extraction to a `packages/ui` workspace package is **not** part of this (trigger below). Found duplications, ordered by payoff:
+
+**Status (2026-07-11):** Design doc + two-phase rollout plan written (`docs/superpowers/specs/2026-07-10-component-library-consolidation-design.md`). **Phase 1 (all 10 primitives below, built in isolated worktree `feature/component-library-phase1-primitives`) is implementation-complete and code-reviewed** — every primitive has a Storybook story, `tsc`/`eslint` clean, three rounds of review caught and fixed real regressions (Popover close-on-select lost twice, a `className` semantics break in `Select` affecting real `TeamTab.tsx` call sites, a `Modal`/`Overlay` double-`onClose` fire, an XSS-adjacent injection gap in `buildWidgetSnippet`, a missing `htmlFor` on `FormField`, a missing `badge` slot on `NavItem`). **Not yet merged to `main`** — pending final Phase 1 verification and push. **Phase 2 (8 file-disjoint clusters rewiring `Sidebar`, `KanbanBoard`/`KanbanCard`, `FeedbackFeedItem`/`FeedbackFeed`, `CommentsPanel`, `EmbedTab`/`WidgetGeneratorModal`, the Settings shell, Forms, and a small Eyebrow-only sweep onto these primitives) has not started.** One deliberately-shipped duplication remains from Phase 1 itself: `WidgetConfigForm`'s 3 selectors hand-roll the `SegmentedControl` pattern rather than consuming it (documented, not silently shipped — see the Phase 1 plan's Task 12 for why).
 
 | # | Extract | Replaces (today) |
 |---|---|---|
@@ -336,6 +344,7 @@ Adopt when the trigger fires, not before.
 | `NotificationDispatcher` | A second channel (Slack / in-app) is committed. |
 | Generic cache layer | Only if the targeted caches (JWT user, plan lookups) prove insufficient. |
 | Extract `packages/ui` workspace package | A second React consumer of the components appears (e.g. a marketing site or admin app). Until then the library lives in `apps/web/src/components/ui` — moving it earlier buys build complexity for zero reuse. The widget is **not** a future consumer: its 30 KB budget (🔥 #8) forbids sharing React dashboard components. |
+| Fix or trim `button.stories.tsx` | Found 2026-07-10 during the component library consolidation (🔥 #16, Task 2): the story references `size: 'lg'` and `variant: 'outline'`/`'brand'`, none of which exist on `Button`. Undetected by `tsc` because `apps/web/tsconfig.json` excludes `**/*.stories.tsx` from its type-checked `include` — a Storybook-only build/render pass would be the only thing to catch this class of drift. Decide: add the missing variants for real, or trim the stories to match what `Button` actually supports. |
 
 ---
 
