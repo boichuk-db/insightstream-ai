@@ -8,7 +8,7 @@ B2B SaaS для збору та AI-аналізу user feedback. Embeddable widg
 apps/
   api/      — NestJS 11, port 3001
   web/      — Next.js 16 App Router, port 3000
-  widget/   — Vite embeddable widget, port 8080
+  widget/   — Vite embeddable widget, port 5173 (Vite default)
   landing/  — Next.js marketing/landing page, port 3002
   e2e/      — Playwright end-to-end suite (no dev server)
 packages/

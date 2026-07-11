@@ -11,7 +11,7 @@ Embeddable feedback widget — Vite + TypeScript, outputs a single `widget.js` I
 ## Local Development
 
 ```bash
-pnpm dev    # from apps/widget — runs on http://localhost:8080
+pnpm dev    # from apps/widget — runs on http://localhost:5173 (Vite default)
 ```
 
 ## Build

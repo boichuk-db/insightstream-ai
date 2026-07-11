@@ -15,7 +15,7 @@ B2B SaaS for collecting and AI-analyzing user feedback. Embeddable widget → da
 apps/
   api/      — NestJS 11, port 3001
   web/      — Next.js 16 App Router, port 3000
-  widget/   — Vite embeddable widget (Preact), port 8080
+  widget/   — Vite embeddable widget (Preact), port 5173 (Vite default)
   landing/  — Next.js marketing/landing page, port 3002
   e2e/      — Playwright end-to-end suite (no dev server)
   docs/     — this site (Docusaurus), port 3003
@@ -51,7 +51,7 @@ pnpm dev                  # runs doppler run -- turbo dev — requires Doppler C
 | ---------- | ----------------------- |
 | Dashboard  | http://localhost:3000   |
 | API        | http://localhost:3001   |
-| Widget dev | http://localhost:8080   |
+| Widget dev | http://localhost:5173   |
 | Landing    | http://localhost:3002   |
 | This site  | http://localhost:3003   |
 
