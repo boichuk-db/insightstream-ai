@@ -76,7 +76,7 @@
         <mxCell id="fLanding" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="apps/landing — Next.js 16&#xa;insightstream.ai · port 3002 · Vercel" vertex="1">
           <mxGeometry height="80" width="220" x="340" y="340" as="geometry" />
         </mxCell>
-        <mxCell id="fLayerBackend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#d79b00;" value="apps/api — NestJS 11 (Railway → EC2+ALB)" vertex="1">
+        <mxCell id="fLayerBackend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#d79b00;" value="apps/api — NestJS 11 (AWS EC2 + ALB)" vertex="1">
           <mxGeometry height="620" width="300" x="620" y="90" as="geometry" />
         </mxCell>
         <mxCell id="fApiAuth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Auth Module" vertex="1">
@@ -127,7 +127,7 @@
         <mxCell id="fLayerData" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#b85450;" value="Data" vertex="1">
           <mxGeometry height="100" width="300" x="620" y="850" as="geometry" />
         </mxCell>
-        <mxCell id="fPostgres" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="PostgreSQL&#xa;Supabase → RDS" vertex="1">
+        <mxCell id="fPostgres" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="PostgreSQL&#xa;AWS RDS (migrated from Supabase 2026-06-30, old project not decommissioned)" vertex="1">
           <mxGeometry height="55" width="125" x="640" y="885" as="geometry" />
         </mxCell>
         <mxCell id="fRedis" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Redis — BullMQ queue&#xa;(ai-analysis, REDIS_URL)" vertex="1">
@@ -142,7 +142,7 @@
         <mxCell id="fSentry" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Sentry&#xa;error monitoring (API + Web)" vertex="1">
           <mxGeometry height="50" width="220" x="40" y="530" as="geometry" />
         </mxCell>
-        <mxCell id="fDeployTargets" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="CD: Railway+Vercel → EC2/ALB+Amplify" vertex="1">
+        <mxCell id="fDeployTargets" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="CD: EC2+ALB (API, live) · Vercel + Amplify parallel run (Web, cutover pending)" vertex="1">
           <mxGeometry height="20" width="220" x="40" y="595" as="geometry" />
         </mxCell>
         <mxCell id="implNotes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Implementation notes (trimmed from boxes above — verified against code 2026-06-30)" vertex="1">
@@ -316,7 +316,7 @@
         <mxCell id="ecr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="ECR repo" vertex="1">
           <mxGeometry height="50" width="130" x="580" y="685" as="geometry" />
         </mxCell>
-        <mxCell id="codebuild" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CodeBuild — BLOCKED&#xa;0 concurrent-build quota&#xa;(new account)" vertex="1">
+        <mxCell id="codebuild" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CodeBuild&#xa;quota unblocked 2026-07-05 (15 concurrent)&#xa;provisioned, not yet wired to auto-deploy" vertex="1">
           <mxGeometry height="70" width="230" x="730" y="685" as="geometry" />
         </mxCell>
         <mxCell id="manualBuild" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;" value="Workaround: local docker build/push to ECR + SSH run docker-run.sh" vertex="1">
@@ -343,7 +343,7 @@
         <mxCell id="budgets" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="AWS Budgets&#xa;$5/mo, alerts @ 80%/100%" vertex="1">
           <mxGeometry height="50" width="240" x="1480" y="870" as="geometry" />
         </mxCell>
-        <mxCell id="pendingBox" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;" value="Pending — blocked by new-account AWS verification gate (open since 2026-06-25)" vertex="1">
+        <mxCell id="pendingBox" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;" value="AWS verification gate — per-service status (opened 2026-06-25; CloudFront still blocked, re-confirmed 2026-07-10)" vertex="1">
           <mxGeometry height="150" width="1480" x="260" y="970" as="geometry" />
         </mxCell>
         <mxCell id="cfWidget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of S3 widget" vertex="1">
@@ -352,7 +352,7 @@
         <mxCell id="apigwDone" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="✔ API Gateway&#xa;(insightstream-api-proxy)&#xa;HTTPS front for ALB — done" vertex="1">
           <mxGeometry height="70" width="190" x="500" y="1005" as="geometry" />
         </mxCell>
-        <mxCell id="bedrock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Bedrock&#xa;amazon.nova-micro-v1:0&#xa;(retry, remaining credits)" vertex="1">
+        <mxCell id="bedrock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="✔ Bedrock&#xa;amazon.nova-micro-v1:0&#xa;confirmed unblocked 2026-07-05" vertex="1">
           <mxGeometry height="70" width="190" x="720" y="1005" as="geometry" />
         </mxCell>
         <mxCell id="cfApi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="CloudFront&#xa;in front of ALB&#xa;(lower urgency — API Gateway already gives free HTTPS)" vertex="1">
@@ -361,7 +361,7 @@
         <mxCell id="pendingNote" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=10;fontStyle=2;align=left;" value="Also blocked: CloudShell, SSM Session Manager. NOT blocked: EC2, RDS, S3, SQS, Lambda, IAM, ALB, CloudWatch, SNS, Budgets, SES, CodeBuild, Amplify, Bedrock (all confirmed unblocked 2026-07-05/06)." vertex="1">
           <mxGeometry height="70" width="570" x="1150" y="1005" as="geometry" />
         </mxCell>
-        <mxCell id="ctBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#444444;" value="Current (live prod traffic) → Target (this diagram — migration in progress, no cutover yet)" vertex="1">
+        <mxCell id="ctBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=8;spacingTop=4;fillColor=none;strokeColor=#444444;" value="Cutover status per component (2026-07-11): Web still parallel-run; API and DB already cut over" vertex="1">
           <mxGeometry height="250" width="1480" x="260" y="1150" as="geometry" />
         </mxCell>
         <mxCell id="ctWebCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Vercel (apps/web)" vertex="1">
@@ -373,19 +373,19 @@
         <mxCell id="ctWebTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amplify (live, not cut over)" vertex="1">
           <mxGeometry height="35" width="280" x="580" y="1185" as="geometry" />
         </mxCell>
-        <mxCell id="ctApiCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Railway (apps/api)" vertex="1">
+        <mxCell id="ctApiCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="✔ Railway — decommissioned" vertex="1">
           <mxGeometry height="35" width="240" x="280" y="1230" as="geometry" />
         </mxCell>
         <mxCell id="ctApiArrow" parent="1" style="text;html=1;fontSize=16;align=center;" value="→" vertex="1">
           <mxGeometry height="35" width="40" x="530" y="1230" as="geometry" />
         </mxCell>
-        <mxCell id="ctApiTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="EC2 + ALB (live, not cut over)" vertex="1">
+        <mxCell id="ctApiTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="EC2 + ALB — live prod (cutover complete)" vertex="1">
           <mxGeometry height="35" width="280" x="580" y="1230" as="geometry" />
         </mxCell>
-        <mxCell id="ctDbCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Supabase (source DB)" vertex="1">
+        <mxCell id="ctDbCur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" value="Supabase — legacy, not yet decommissioned" vertex="1">
           <mxGeometry height="35" width="240" x="280" y="1275" as="geometry" />
         </mxCell>
-        <mxCell id="ctDbTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="RDS (data migrated, not cut over)" vertex="1">
+        <mxCell id="ctDbTgt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="✔ RDS — live prod (cutover complete 2026-06-30)" vertex="1">
           <mxGeometry height="35" width="280" x="580" y="1275" as="geometry" />
         </mxCell>
         <mxCell id="3mZjkQ48aVmenKEq-6cS-1" edge="1" parent="1" source="ctCdnTgt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;" target="ctDbTgt">
@@ -477,7 +477,7 @@
         <mxCell id="rtitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Request Lifecycle: feedback submission → AI analysis → realtime dashboard update" vertex="1">
           <mxGeometry height="30" width="1300" x="20" y="10" as="geometry" />
         </mxCell>
-        <mxCell id="rsubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against code 2026-07-03 (apps/api/src/modules/feedback, ai, events). Steps 1–5 are synchronous HTTP request/response — the widget gets its 200 OK here. Steps 6–10 happen asynchronously, after the response already returned." vertex="1">
+        <mxCell id="rsubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against code 2026-07-03; worker-split and team-room updates verified 2026-07-11 (apps/api/src/modules/feedback, ai, events, worker.module.ts). Steps 1–5 are synchronous HTTP request/response — the widget gets its 200 OK here. Steps 6–10 happen asynchronously, after the response already returned; steps 6 and 9 run in a separate WORKER_MODE process since 2026-07-09." vertex="1">
           <mxGeometry height="35" width="1750" x="20" y="40" as="geometry" />
         </mxCell>
         <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="1. Widget&#xa;end user submits feedback" vertex="1">
@@ -495,7 +495,7 @@
         <mxCell id="s5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="5. Enqueue BullMQ job&#xa;ai-analysis queue (Redis)&#xa;only if plan allows AI" vertex="1">
           <mxGeometry height="100" width="160" x="800" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="s6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="6. AiProcessor&#xa;BullMQ worker picks up job" vertex="1">
+        <mxCell id="s6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="6. AiProcessor&#xa;separate WORKER_MODE process&#xa;picks up job" vertex="1">
           <mxGeometry height="100" width="160" x="1040" y="160" as="geometry" />
         </mxCell>
         <mxCell id="s7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="7. Call Gemini API&#xa;gemini-2.5-flash" vertex="1">
@@ -504,7 +504,7 @@
         <mxCell id="s8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="8. Write AI result&#xa;back to PostgreSQL" vertex="1">
           <mxGeometry height="100" width="160" x="1520" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="s9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="9. Socket.io emit&#xa;feedbackUpdated&#xa;room user-{userId}" vertex="1">
+        <mxCell id="s9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="9. Redis-emitter → Socket.io emit&#xa;feedbackUpdated&#xa;room team-{teamId}" vertex="1">
           <mxGeometry height="100" width="160" x="1760" y="160" as="geometry" />
         </mxCell>
         <mxCell id="s10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="10. Dashboard&#xa;apps/web — realtime update&#xa;via WebSocket" vertex="1">
@@ -620,7 +620,7 @@
         <mxCell id="oa5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="oauthLogin()&#xa;find by providerId → auto-link by email → create if new" vertex="1">
           <mxGeometry height="90" width="240" x="900" y="190" as="geometry" />
         </mxCell>
-        <mxCell id="jwtgen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="login(user) — JWT generation&#xa;payload {sub,email,role,plan}&#xa;signed JWT_SECRET, expiresIn 7d" vertex="1">
+        <mxCell id="jwtgen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="login(user) — JWT generation&#xa;payload {sub,email,role}&#xa;signed JWT_SECRET, expiresIn 7d" vertex="1">
           <mxGeometry height="90" width="220" x="1190" y="140" as="geometry" />
         </mxCell>
         <mxCell id="refreshNote" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;fontSize=10;" value="Refresh Token — NOT IMPLEMENTED (future)&#xa;single access token only, no rotation" vertex="1">
@@ -644,7 +644,7 @@
         <mxCell id="pr3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="JwtStrategy.validate()&#xa;verify signature + expiry" vertex="1">
           <mxGeometry height="70" width="220" x="540" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="pr4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Lookup user by sub&#xa;fresh read from PostgreSQL" vertex="1">
+        <mxCell id="pr4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Lookup user by sub&#xa;Redis cache first (TTL 30s)&#xa;miss → PostgreSQL, then warm cache" vertex="1">
           <mxGeometry height="70" width="220" x="800" y="380" as="geometry" />
         </mxCell>
         <mxCell id="pr5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Current User attached&#xa;(req.user) → handler runs" vertex="1">
@@ -659,7 +659,7 @@
         <mxCell id="authNotes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Architecture Notes — why JWT over server sessions" vertex="1">
           <mxGeometry height="240" width="540" x="1340" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="authNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Stateless — no session store needed; any EC2 instance can validate any request independently.&#xa;• Simplifies horizontal scaling — no sticky sessions or shared session store required for auth (Redis here is reserved for BullMQ, not sessions).&#xa;• Same JWT works for both password and OAuth users — one unified identity payload (sub/email/role/plan) regardless of login method.&#xa;• Trade-off accepted: can&#39;t force-revoke a token before its 7-day expiry (no blacklist) — acceptable at this low-risk, pre-launch stage; refresh-token rotation is a planned hardening step, not yet built." vertex="1">
+        <mxCell id="authNotesText" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;verticalAlign=top;" value="• Stateless — no session store needed; any EC2 instance can validate any request independently.&#xa;• Simplifies horizontal scaling — no sticky sessions required for auth; the hot JwtStrategy.validate() lookup is read-through cached in Redis (TTL 30s, fail-open on Redis errors) instead of hitting Postgres every request.&#xa;• Same JWT works for both password and OAuth users — one unified identity payload (sub/email/role) regardless of login method.&#xa;• Trade-off accepted: can&#39;t force-revoke a token before its 7-day expiry (no blacklist) — acceptable at this low-risk, pre-launch stage; refresh-token rotation is a planned hardening step, not yet built." vertex="1">
           <mxGeometry height="195" width="500" x="1360" y="415" as="geometry" />
         </mxCell>
         <mxCell id="ae1" edge="1" parent="1" source="pa1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="pa2">
@@ -824,7 +824,7 @@
         <mxCell id="ctWeb" value="Vercel (apps/web) → Amplify (live, not cut over)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
           <mxGeometry x="920" y="635" width="460" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="ctApi" value="Railway (apps/api) → EC2 + ALB (live via steps above, not cut over)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
+        <mxCell id="ctApi" value="Railway (apps/api) → EC2 + ALB — live prod (cutover complete, Railway decommissioned)" style="text;html=1;whiteSpace=wrap;fontSize=11;align=left;" vertex="1" parent="1">
           <mxGeometry x="920" y="660" width="460" height="20" as="geometry" />
         </mxCell>
         <!-- ===== Notes ===== -->
