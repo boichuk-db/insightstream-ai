@@ -1008,7 +1008,7 @@
         <mxCell id="etitle" parent="1" style="text;html=1;fontSize=18;fontStyle=1;align=left;" value="InsightStream AI — Data Model (Entity Relationship Diagram)" vertex="1">
           <mxGeometry height="30" width="900" x="20" y="10" as="geometry" />
         </mxCell>
-        <mxCell id="esubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against packages/database/src/entities 2026-07-05 — 10 real entities. Columns trimmed to PK/FK/key business fields; see source for full list." vertex="1">
+        <mxCell id="esubtitle" parent="1" style="text;html=1;fontSize=11;fontStyle=2;align=left;" value="Verified against packages/database/src/entities 2026-07-05, entity count re-confirmed 2026-07-12 — 11 real entities. Columns trimmed to PK/FK/key business fields; see source for full list." vertex="1">
           <mxGeometry height="20" width="1300" x="20" y="40" as="geometry" />
         </mxCell>
         <mxCell id="lgBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;align=left;spacingLeft=10;spacingTop=6;fillColor=none;strokeColor=#444444;" value="Legend" vertex="1">
