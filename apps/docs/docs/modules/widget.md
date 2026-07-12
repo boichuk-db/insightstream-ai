@@ -6,9 +6,15 @@ sidebar_position: 3
 
 # apps/widget
 
-The embeddable feedback widget — the product's actual distribution surface. Vite build, **Preact** (not React — rewritten 2026-07-11 to hit a &lt;30 KB gzip budget; result: 42.4 KB raw / 12.9 KB gzip, down from a 380 KB / 122 KB gzip React bundle), IIFE bundle, Shadow DOM style isolation (no Tailwind preflight leaks into the host page — Tailwind is still used internally, compiled and injected as inline `<style>` text inside the shadow root, not into the host document).
+The embeddable feedback widget — the product's actual distribution surface. Vite build, Preact (not React), IIFE bundle, Shadow DOM style isolation.
 
-Dev server runs on Vite's default port **5173** (`vite.config.ts` sets no `server.port` override) — not 8080.
+Rewritten on Preact 2026-07-11 to hit a &lt;30 KB gzip budget: 42.4 KB raw / 12.9 KB gzip, down from a 380 KB / 122 KB gzip React bundle. Tailwind is still used internally — compiled and injected as inline `<style>` text inside the shadow root, so none of it leaks onto the host page.
+
+Dev server runs on Vite's default port 5173 (`vite.config.ts` sets no `server.port` override) — not 8080.
+
+:::warning Live footgun: silent fallback to a dead Railway URL
+`App.tsx` resolves its API base URL as `window.InsightStreamConfig?.apiUrl || import.meta.env.VITE_API_URL || "https://api-production-05c4.up.railway.app"` — a legacy Railway host, not the current AWS ALB. Any embed that doesn't set `apiUrl` and wasn't built with `VITE_API_URL` silently points at a dead host instead of failing loudly. See [`PLAN.md`](https://github.com/boichuk-db/insightstream-ai/blob/main/docs/architecture/PLAN.md) 🔍 Analysis Backlog #3 (widget product audit) — that entry is scheduled "together with the 🔥 #8 widget cycle," which is now done, so it's due for a look.
+:::
 
 ## Deployment
 
@@ -25,4 +31,10 @@ Served from S3 (`insightstream-widget` bucket, `eu-north-1`) at a **versioned** 
 
 POSTs `{apiKey, content, source: "Widget"}` to `POST /feedback/public` on `apps/api`'s `feedback` module (`FeedbackPublicController`, validated by `CreatePublicFeedbackDto`: `apiKey`/`content` required, `content` capped at 5000 chars, `source` optional and capped at 50 chars). Rate-limited per-IP (20/min, default `WIDGET_IP_LIMIT`) and per-project (300/min, default `WIDGET_PROJECT_LIMIT`) by `WidgetThrottlerGuard`, which fails open (allows the request) if the Redis throttler storage is unavailable. The controller also enforces per-project origin whitelisting: if the project has a `domain` set, the request's `Origin` header must match that domain (or a subdomain, or `localhost`/`127.0.0.1`) or it's rejected with 403.
 
-The API base URL comes from `window.InsightStreamConfig.apiUrl` if the host page sets it, else `VITE_API_URL` at build time, else a hardcoded fallback baked into `App.tsx`: `https://api-production-05c4.up.railway.app` — a legacy Railway URL, not the current AWS ALB. Any embed relying on the fallback (no explicit `apiUrl` and no `VITE_API_URL` at build time) is silently pointed at a stale host; see `docs/architecture/PLAN.md`'s widget product-audit entry.
+## Where to look
+
+- `apps/widget/src/App.tsx:68-71` — the API-base-URL fallback chain (see the warning above).
+- `apps/widget/vite.config.ts` — no `server.port` override, hence the Vite default of 5173.
+- `scripts/deploy-widget.sh` — the build → S3 upload → verify flow.
+- `apps/api/src/modules/feedback/feedback.public.controller.ts` + `dto/create-public-feedback.dto.ts` — the public submission contract.
+- `apps/api/src/guards/widget-throttler.guard.ts` — the per-IP/per-project rate limits and fail-open behavior.
