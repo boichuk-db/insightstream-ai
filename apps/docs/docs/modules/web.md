@@ -17,13 +17,13 @@ Next.js 16 App Router dashboard, React 19, TailwindCSS 4, TanStack Query 5. Port
   - root (`page.tsx`) — the feed/Kanban view (`FeedbackFeed` / `KanbanBoard`, toggled via `useFeedbackView`).
   - `analytics/`, `activity/` — real standalone pages.
   - `settings/` — a single tabbed page (Appearance, Profile, Billing, Team, Embed, Developer Tools tabs); this is where team/project/billing management actually lives.
-  - `archive/`, `billing/`, `embed/` — thin redirect stubs to `/dashboard` and `/dashboard/settings?tab=...` respectively, kept for backward-compatible links; they are not separate pages.
+  - `archive/`, `billing/`, `embed/` — thin redirect stubs kept for backward-compatible links, not separate pages: `archive/` redirects to `/dashboard`, `billing/` and `embed/` each redirect to `/dashboard/settings?tab=...`.
   - `devtools/` — the only route among these that's a real standalone page and keeps the back-button pattern (`showBackButton`) instead of collapsing into a settings tab.
 - `settings/` (top level, outside `dashboard/`) — entirely a legacy redirect layer to `/dashboard/settings` (and `/dashboard/settings/team`); it has no content of its own.
 
 ## Component library (`apps/web/src/components/ui/`)
 
-A real internal UI library — one implementation per pattern (`Modal`, `Popover`, `Tabs`, `Drawer`, `FormField`, `StatusSelect`, `ConfirmDialog`, `CommentThread`, `NavItem`, etc.), most paired with a Storybook story (a handful of older components, like `Modal`, don't have one yet). Consolidated from 4-5 duplicate implementations per pattern in 2026-07 (see `PLAN.md` P1 — Component library consolidation, done). Rule: a component may live outside `ui/` only if it's used by exactly one page.
+A real internal UI library — one implementation per pattern (`Modal`, `Popover`, `Tabs`, `Drawer`, `FormField`, `StatusSelect`, `ConfirmDialog`, `CommentThread`, `NavItem`, etc.), just over half (16 of 29) paired with a Storybook story; the rest — mostly older components like `Modal` — don't have one yet. Consolidated from 4-5 duplicate implementations per pattern in 2026-07 — see [Timeline](../timeline) for the two-phase rollout, or `PLAN.md` P1 for the full task-by-task detail. Rule: a component may live outside `ui/` only if it's used by exactly one page.
 
 ## State
 
