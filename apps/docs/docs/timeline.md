@@ -28,11 +28,13 @@ BullMQ + Redis introduced to decouple the (slow, rate-limited) Gemini API call f
 
 The Playwright end-to-end suite (`apps/e2e`) started here: page objects, auth flow tests, widget-embed tests, CI wiring with a Redis service container.
 
-*(Quiet period: no commits 2026-04-10 → 2026-06-24.)*
+## 2026-04-15 and 2026-05-14 — Landing page and analytics
+
+`apps/landing` was scaffolded and built out in two pushes: the interactive plan-recommendation quiz and a PostHog provider on 2026-04-15, then the full marketing page (Hero, Pricing, Testimonials, Footer, SEO/sitemap/JSON-LD) and PostHog event tracking on the dashboard (`apps/web`) on 2026-05-14. This is also where `apps/landing`'s standing rule — zero `@insightstream/*` workspace dependencies, fully decoupled from the app/API packages — originates. See [apps/landing](./modules/landing).
 
 ## 2026-06-24 — The decision to migrate to AWS
 
-`docs/superpowers/specs/2026-06-24-aws-migration-design.md` states the reason plainly: **"Learning hands-on AWS experience for career/portfolio. Zero AWS experience prior to this migration."** Not a cost or reliability complaint about Railway/Vercel/Supabase — a deliberate choice to trade managed-platform convenience for hands-on infrastructure experience, scoped to stay within the AWS Free Tier. The design mapped 18 AWS services against the existing stack (EC2 for Railway, RDS for Supabase, Amplify for Vercel, SES for SMTP, SSM for Doppler, and so on) and picked an **EC2-centric** approach deliberately over more managed alternatives (e.g. Fargate) specifically because EC2 teaches more (servers, SSH, Security Groups) — the same reasoning `docs/architecture/PLAN.md` still codifies today as a standing project constraint, not a one-time note.
+`docs/superpowers/specs/2026-06-24-aws-migration-design.md` states the reason plainly: **"Learning hands-on AWS experience for career/portfolio. Zero AWS experience prior to this migration."** Not a cost or reliability complaint about Railway/Vercel/Supabase — a deliberate choice to trade managed-platform convenience for hands-on infrastructure experience, scoped to stay within the AWS Free Tier. The design mapped 18 AWS services against the existing stack (EC2 for Railway, RDS for Supabase, Amplify for Vercel, SES for SMTP, SSM for Doppler, and so on) and picked an **EC2-centric** approach (over more managed alternatives) specifically because EC2 teaches more (servers, SSH, Security Groups) — that same "EC2/BullMQ/Socket.io/the migration itself are deliberate learning choices" reasoning was later written into `docs/architecture/PLAN.md`'s Project Constraints as a standing rule for the whole project, not just this one decision.
 
 ## 2026-06-25 to 2026-06-30 — AWS infrastructure stood up
 
