@@ -16,8 +16,8 @@ TypeORM entities + PostgreSQL config, imported by `apps/api`. `packages/database
 
 ## `@insightstream/shared-types`
 
-Plain TypeScript interfaces shared between `apps/api` and `apps/web` — `feedback.types.ts`, `project.types.ts`, `user.types.ts`, re-exported through `index.ts`. No runtime code, compile-time only.
+TypeScript types shared between `apps/api` and `apps/web` — `feedback.types.ts`, `project.types.ts`, `user.types.ts`, re-exported through `index.ts`. Mostly interfaces (compile-time only, erased on build), but `feedback.types.ts` also exports a real `FeedbackStatus` enum, which compiles to actual runtime JS and is imported as a value (not just a type) in several `apps/web` files, e.g. `lib/statusConfig.ts`.
 
 ## `config`
 
-Placeholder package for shared ESLint/TS config — `package.json` declares only a name, version, and an empty `scripts` block, with no `eslint-config`/`tsconfig` files and no dependents (`@insightstream/config` doesn't appear as an import anywhere in the monorepo). Every app (`api`, `web`, `widget`, `landing`, `docs`) rolls its own `eslint.config.*`/`tsconfig.json` today.
+Placeholder package for shared ESLint/TS config — `package.json` declares only a name, version, and an empty `scripts` block, and no dependents (`@insightstream/config` doesn't appear as an import anywhere in the monorepo). It does have a `tsconfig.json`, but nothing `extends` it. Every app (`api`, `web`, `widget`, `landing`, `docs`) rolls its own `eslint.config.*`/`tsconfig.json` today.
