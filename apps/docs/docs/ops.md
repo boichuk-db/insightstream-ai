@@ -22,7 +22,7 @@ Database: AWS RDS PostgreSQL, private subnet, SSL required, migrated from Supaba
 
 ## Secrets (names only — see SSM Parameter Store / Doppler for values)
 
-API container (`docker-run.sh`, sourced from SSM `/insightstream/prod/*` via `ssm-env.sh`): `DB_HOST`/`DB_PORT`/`DB_USERNAME`/`DB_PASSWORD`/`DB_DATABASE`, `JWT_SECRET`, `GEMINI_API_KEY`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET`, `AWS_REGION`, `SES_FROM_EMAIL`, `FRONTEND_URL` (comma-separated — Vercel + Amplify, during the parallel-run window), `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`/4 price IDs. Worker container gets a subset (`DB_*`, `GEMINI_API_KEY`, `REDIS_URL`) — no HTTP-only vars.
+API container (`docker-run.sh`, most sourced from SSM `/insightstream/prod/*` via `ssm-env.sh`): `DB_HOST`/`DB_PORT`/`DB_USERNAME`/`DB_PASSWORD`/`DB_DATABASE`, `JWT_SECRET`, `GEMINI_API_KEY`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET`, `AWS_REGION`, `SES_FROM_EMAIL`, `FRONTEND_URL` (comma-separated — Vercel + Amplify, during the parallel-run window), `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`/4 price IDs, plus 5 non-secret rate-limit tunables also sourced from SSM (`API_GLOBAL_LIMIT`, `AUTH_LOGIN_LIMIT`, `AUTH_REGISTER_LIMIT`, `WIDGET_IP_LIMIT`, `WIDGET_PROJECT_LIMIT`). `REDIS_URL` isn't from SSM/Doppler at all — it's hardcoded in `docker-run.sh` (`redis://redis:6379`, the shared container's in-network address) for both containers. Worker container gets a narrower subset (`DB_*`, `GEMINI_API_KEY`, `REDIS_URL`) — no HTTP-only vars.
 
 Web (Vercel + Amplify env vars, `NEXT_PUBLIC_*`): API URL, widget URL, `NEXT_PUBLIC_SENTRY_DSN`, 4 Stripe price IDs.
 
