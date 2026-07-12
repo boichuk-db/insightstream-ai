@@ -808,8 +808,8 @@
         <mxCell id="m5" value="docker pull image&#xa;from ECR (latest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
           <mxGeometry x="850" y="420" width="170" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="m6" value="docker run redis:7-alpine&#xa;+ docker run insightstream-api&#xa;(shared docker network, -p 3001:3001)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="1050" y="420" width="280" height="80" as="geometry" />
+        <mxCell id="m6" value="docker run redis:7-alpine&#xa;+ insightstream-api (-p 3001:3001)&#xa;+ insightstream-worker (WORKER_MODE=1)&#xa;— shared docker network, since 2026-07-09" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="420" width="280" height="90" as="geometry" />
         </mxCell>
         <mxCell id="m7" value="Application running&#xa;:3001, behind ALB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="1360" y="420" width="200" height="80" as="geometry" />
