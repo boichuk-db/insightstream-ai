@@ -13,7 +13,7 @@ Playwright end-to-end suite. No dev server (`next dev`) of its own — `playwrig
 - `auth/` — login, register, forgot-password.
 - `dashboard/` — activity feed, feedback view.
 - `invite/` — accept-invite flow.
-- `teams/` — `project-delete-authz.spec.ts` and `team-scoped-plans.spec.ts`, both pure API-level authorization checks (no UI): who can read plan status, and confirms checkout is owner-only. This is authz coverage for the `/plans/checkout` endpoint, not a functional test of the checkout flow itself.
+- `teams/` — two pure API-level authorization suites (no UI): `team-scoped-plans.spec.ts` (plan status requires team membership; `/plans/checkout` is owner-only) and `project-delete-authz.spec.ts` (only an ADMIN-role member — i.e. the owner — can delete a project; a plain MEMBER gets 403). Neither is a functional test of the checkout flow itself.
 - `widget/` — a real widget-submission round trip (open → fill → submit → success), driving the actual built widget IIFE, not a mock.
 
 **No billing-flow coverage**: nothing exercises checkout → Stripe webhook → plan change end-to-end. See [`PLAN.md`](https://github.com/boichuk-db/insightstream-ai/blob/main/docs/architecture/PLAN.md) 🔍 Analysis Backlog #2 (web test pyramid), which calls this out explicitly and proposes adding a billing e2e happy path.
